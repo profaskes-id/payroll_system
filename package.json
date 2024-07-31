@@ -5,8 +5,6 @@
   "main": "index.js",
   "scripts": {
     "dev": "php yii serve --docroot=\".\"",
-    "fe": "git checkout frontend_page",
-    "be": "git checkout frontend_page",
     "gb" : "git branch",
     "migrate-amnah": "php yii migrate --migrationPath=@vendor/amnah/yii2-user/migrations"
   },
