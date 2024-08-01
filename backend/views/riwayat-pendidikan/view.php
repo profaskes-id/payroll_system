@@ -1,0 +1,47 @@
+<?php
+
+use yii\helpers\Html;
+use yii\widgets\DetailView;
+
+/** @var yii\web\View $this */
+/** @var backend\models\RiwayatPendidikan $model */
+
+$this->title = $model->id_riwayat_pendidikan;
+$this->params['breadcrumbs'][] = ['label' => 'Riwayat Pendidikans', 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
+\yii\web\YiiAsset::register($this);
+?>
+<div class="riwayat-pendidikan-view">
+
+    <div class="costume-container">
+        <p class="">
+            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+        </p>
+    </div>
+
+    <div class='table-container'>
+        <p class="d-flex justify-content-start " style="gap: 10px;">
+            <?= Html::a('Update', ['update', 'nama_group' => $model->nama_group, 'kode' => $model->kode], ['class' => 'add-button']) ?>
+            <?= Html::a('Delete', ['delete', 'nama_group' => $model->nama_group, 'kode' => $model->kode], [
+                'class' => 'reset-button',
+                'data' => [
+                    'confirm' => 'Are you sure you want to delete this item?',
+                    'method' => 'post',
+                ],
+            ]) ?>
+        </p>
+
+        <?= DetailView::widget([
+            'model' => $model,
+            'attributes' => [
+                'id_riwayat_pendidikan',
+                'id_karyawan',
+                'jenjang_pendidikan',
+                'institusi',
+                'tahun_masuk',
+                'tahun_keluar',
+            ],
+        ]) ?>
+    </div>
+
+</div>

@@ -1,81 +1,442 @@
 <?php
 
-/** @var \yii\web\View $this */
-/** @var string $content */
+/* @var $this \yii\web\View */
+/* @var $content string */
 
-use backend\assets\AppAsset;
-use common\widgets\Alert;
-use yii\bootstrap5\Breadcrumbs;
-use yii\bootstrap5\Html;
-use yii\bootstrap5\Nav;
-use yii\bootstrap5\NavBar;
+use yii\helpers\Html;
 
-AppAsset::register($this);
+\hail812\adminlte3\assets\FontAwesomeAsset::register($this);
+\hail812\adminlte3\assets\AdminLteAsset::register($this);
+$this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback');
+
+$assetDir = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2010/adminlte/dist');
+
+$publishedRes = Yii::$app->assetManager->publish('@vendor/hail812/yii2-adminlte3/src/web/js');
+$this->registerJsFile($publishedRes[1] . '/control_sidebar.js', ['depends' => '\hail812\adminlte3\assets\AdminLteAsset']);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>" class="h-100">
+<html lang="<?= Yii::$app->language ?>">
+
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: "Poppins", sans-serif;
+        }
+
+
+
+        .add-button {
+            border: none;
+            display: flex;
+            padding: 0.75rem 1.5rem;
+            background-color: #488aec;
+            color: #ffffff;
+            font-size: 0.75rem;
+            line-height: 1rem;
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            vertical-align: middle;
+            align-items: center;
+            border-radius: 0.5rem;
+            user-select: none;
+            gap: 0.65rem;
+            box-shadow: 0 4px 6px -1px #488aec31, 0 2px 4px -1px #488aec17;
+            transition: all .6s ease;
+        }
+
+        .reset-button {
+            border: none;
+            display: flex;
+            padding: 0.75rem 1.5rem;
+            background-color: #ec484b;
+            color: #ffffff;
+            font-size: 0.75rem;
+            line-height: 1rem;
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            vertical-align: middle;
+            align-items: center;
+            border-radius: 0.5rem;
+            user-select: none;
+            gap: 0.65rem;
+            box-shadow: 0 4px 6px -1px #ec484b31, 0 2px 4px -1px #ec484b17;
+            transition: all .6s ease;
+        }
+
+        .reset-button:hover {
+            color: white;
+        }
+
+        .add-button:hover {
+            box-shadow: 0 10px 15px -3px #488aec4f, 0 4px 6px -2px #488aec17;
+        }
+
+        .add-button:focus,
+        .add-button:active {
+            opacity: .85;
+            box-shadow: none;
+        }
+
+        .add-button svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+
+        thead tr th a {
+            color: #262626;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .table td,
+        .table th {
+            padding-block: .5em !important;
+        }
+
+        .summary {
+            margin-bottom: 10px !important;
+        }
+
+        tbody tr {
+            color: #252525;
+            padding: -10px !important;
+        }
+
+        .help-block {
+            color: #de0a26;
+        }
+
+        .costume-container {
+            top: -80px;
+            position: relative;
+            z-index: 1;
+            margin-bottom: -50px;
+        }
+
+        .table-container {
+            padding: 17px 20px 5px;
+            background-color: white;
+            border-radius: 15px;
+        }
+
+        .costume-btn {
+            width: 130px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #131133;
+            border: none;
+            color: white;
+            font-weight: 600;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.103);
+            position: relative;
+            overflow: hidden;
+            transition-duration: .3s;
+            margin-left: auto;
+        }
+
+        .svgIcon {
+            width: 16px;
+        }
+
+        .svgIcon path {
+            fill: white;
+        }
+
+        .costume-btn::before {
+            width: 130px;
+            height: 130px;
+            position: absolute;
+            content: "";
+            background-color: #ffffff;
+
+            border-radius: 50%;
+            left: -100%;
+            top: 0;
+            transition-duration: .3s;
+            mix-blend-mode: difference;
+        }
+
+        .costume-btn:hover::before {
+            transition-duration: .3s;
+            transform: translate(100%, -50%);
+            border-radius: 0;
+        }
+
+        .costume-btn:active {
+            transform: translate(5px, 5px);
+            transition-duration: .3s;
+        }
+
+
+
+
+
+        /* The design is inspired from the mockapi.io */
+
+        .popup {
+            --burger-line-width: 1.125em;
+            --burger-line-height: 0.125em;
+            --burger-offset: 0.625em;
+            --burger-bg: rgba(0, 0, 0, .15);
+            --burger-color: #333;
+            --burger-line-border-radius: 0.1875em;
+            --burger-diameter: 2.125em;
+            --burger-btn-border-radius: calc(var(--burger-diameter) / 2);
+            --burger-line-transition: .3s;
+            --burger-transition: all .1s ease-in-out;
+            --burger-hover-scale: 1.1;
+            --burger-active-scale: .95;
+            --burger-enable-outline-color: var(--burger-bg);
+            --burger-enable-outline-width: 0.125em;
+            --burger-enable-outline-offset: var(--burger-enable-outline-width);
+            /* nav */
+            --nav-padding-x: 0.25em;
+            --nav-padding-y: 0.625em;
+            --nav-border-radius: 0.375em;
+            --nav-border-color: #ccc;
+            --nav-border-width: 0.0625em;
+            --nav-shadow-color: rgba(0, 0, 0, .2);
+            --nav-shadow-width: 0 1px 5px;
+            --nav-bg: #eee;
+            --nav-font-family: Menlo, Roboto Mono, monospace;
+            --nav-default-scale: .8;
+            --nav-active-scale: 1;
+            --nav-position-left: 0;
+            --nav-position-right: unset;
+            /* if you want to change sides just switch one property */
+            /* from properties to "unset" and the other to 0 */
+            /* title */
+            --nav-title-size: 0.625em;
+            --nav-title-color: #777;
+            --nav-title-padding-x: 1rem;
+            --nav-title-padding-y: 0.25em;
+            /* nav button */
+            --nav-button-padding-x: 1rem;
+            --nav-button-padding-y: 0.375em;
+            --nav-button-border-radius: 0.375em;
+            --nav-button-font-size: 12px;
+            --nav-button-hover-bg: #6495ed;
+            --nav-button-hover-text-color: #fff;
+            --nav-button-distance: 0.875em;
+            /* underline */
+            --underline-border-width: 0.0625em;
+            --underline-border-color: #ccc;
+            --underline-margin-y: 0.3125em;
+        }
+
+        /* popup settings 👆 */
+
+        .popup {
+            display: inline-block;
+            text-rendering: optimizeLegibility;
+            position: relative;
+        }
+
+        .popup input {
+            display: none;
+        }
+
+        .burger {
+            z-index: 1;
+            display: flex;
+            position: relative;
+            align-items: center;
+            justify-content: center;
+            background: var(--burger-bg);
+            width: var(--burger-diameter);
+            height: var(--burger-diameter);
+            border-radius: var(--burger-btn-border-radius);
+            border: none;
+            cursor: pointer;
+            overflow: hidden;
+            transition: var(--burger-transition);
+            outline: var(--burger-enable-outline-width) solid transparent;
+            outline-offset: 0;
+        }
+
+        .burger span {
+            height: var(--burger-line-height);
+            width: var(--burger-line-width);
+            background: var(--burger-color);
+            border-radius: var(--burger-line-border-radius);
+            position: absolute;
+            transition: var(--burger-line-transition);
+        }
+
+        .burger span:nth-child(1) {
+            top: var(--burger-offset);
+        }
+
+        .burger span:nth-child(2) {
+            bottom: var(--burger-offset);
+        }
+
+        .burger span:nth-child(3) {
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .popup-window {
+            z-index: 999;
+            transform: scale(var(--nav-default-scale));
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            padding: var(--nav-padding-y) var(--nav-padding-x);
+            background: var(--nav-bg);
+            font-family: var(--nav-font-family);
+            color: var(--nav-text-color);
+            border-radius: var(--nav-border-radius);
+            box-shadow: var(--nav-shadow-width) var(--nav-shadow-color);
+            border: var(--nav-border-width) solid var(--nav-border-color);
+            top: calc(var(--burger-diameter) + var(--burger-enable-outline-width) + var(--burger-enable-outline-offset));
+            left: var(--nav-position-left);
+            right: var(--nav-position-right);
+            transition: var(--burger-transition);
+        }
+
+        .popup-window legend {
+            padding: var(--nav-title-padding-y) var(--nav-title-padding-x);
+            margin: 0;
+            color: var(--nav-title-color);
+            font-size: var(--nav-title-size);
+            text-transform: uppercase;
+        }
+
+        .popup-window ul {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        .popup-window ul button {
+            outline: none;
+            width: 100%;
+            border: none;
+            background: none;
+            display: flex;
+            align-items: center;
+            color: var(--burger-color);
+            font-size: var(--nav-button-font-size);
+            padding: var(--nav-button-padding-y) var(--nav-button-padding-x);
+            white-space: nowrap;
+            border-radius: var(--nav-button-border-radius);
+            cursor: pointer;
+            column-gap: var(--nav-button-distance);
+        }
+
+        .popup-window ul li:nth-child(1) svg,
+        .popup-window ul li:nth-child(2) svg {
+            color: cornflowerblue;
+        }
+
+        .popup-window ul li:nth-child(4) svg,
+        .popup-window ul li:nth-child(5) svg {
+            color: rgb(153, 153, 153);
+        }
+
+        .popup-window ul li:nth-child(7) svg {
+            color: red;
+        }
+
+        .popup-window hr {
+            margin: var(--underline-margin-y) 0;
+            border: none;
+            border-bottom: var(--underline-border-width) solid var(--underline-border-color);
+        }
+
+        /* actions */
+
+        .popup-window ul button:hover,
+        .popup-window ul button:focus-visible,
+        .popup-window ul button:hover svg,
+        .popup-window ul button:focus-visible svg {
+            color: var(--nav-button-hover-text-color);
+            background: var(--nav-button-hover-bg);
+        }
+
+        .burger:hover {
+            transform: scale(var(--burger-hover-scale));
+        }
+
+        .burger:active {
+            transform: scale(var(--burger-active-scale));
+        }
+
+        .burger:focus:not(:hover) {
+            outline-color: var(--burger-enable-outline-color);
+            outline-offset: var(--burger-enable-outline-offset);
+        }
+
+        .popup input:checked+.burger span:nth-child(1) {
+            top: 50%;
+            transform: translateY(-50%) rotate(45deg);
+        }
+
+        .popup input:checked+.burger span:nth-child(2) {
+            bottom: 50%;
+            transform: translateY(50%) rotate(-45deg);
+        }
+
+        .popup input:checked+.burger span:nth-child(3) {
+            transform: translateX(calc(var(--burger-diameter) * -1 - var(--burger-line-width)));
+        }
+
+        .popup input:checked~nav {
+            transform: scale(var(--nav-active-scale));
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
     <?php $this->head() ?>
+
 </head>
-<body class="d-flex flex-column h-100">
-<?php $this->beginBody() ?>
 
-<header>
-    <?php
-    NavBar::begin([
-        'brandLabel' => Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar navbar-expand-md navbar-dark bg-dark fixed-top',
-        ],
-    ]);
-    $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-    ];
-    if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
-    }     
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav me-auto mb-2 mb-md-0'],
-        'items' => $menuItems,
-    ]);
-    if (Yii::$app->user->isGuest) {
-        echo Html::tag('div',Html::a('Login',['/site/login'],['class' => ['btn btn-link login text-decoration-none']]),['class' => ['d-flex']]);
-    } else {
-        echo Html::beginForm(['/user/logout'], 'post', ['class' => 'd-flex'])
-            . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->username . ')',
-                ['class' => 'btn btn-link logout text-decoration-none']
-            )
-            . Html::endForm();
-    }
-    NavBar::end();
-    ?>
-</header>
+<body class="hold-transition sidebar-mini">
+    <?php $this->beginBody() ?>
 
-<main role="main" class="flex-shrink-0">
-    <div class="container">
-        <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
-        <?= Alert::widget() ?>
-        <?= $content ?>
+    <div class="wrapper">
+        <!-- Navbar -->
+
+        <?php // $this->render('navbar', ['assetDir' => $assetDir])
+        ?>
+        <!-- /.navbar -->
+
+        <!-- Main Sidebar Container -->
+        <?= $this->render('sidebar', ['assetDir' => $assetDir]) ?>
+
+        <!-- Content Wrapper. Contains page content -->
+        <main class="pt-3  " style=" background-color: #000000">
+            <?= $this->render('content', ['content' => $content, 'assetDir' => $assetDir]) ?>
+        </main>
+        <!-- /.content-wrapper -->
+
+        <!-- Control Sidebar -->
+        <?= $this->render('control-sidebar') ?>
+        <!-- /.control-sidebar -->
+
+        <!-- Main Footer -->
+        <?= $this->render('footer') ?>
     </div>
-</main>
 
-<footer class="footer mt-auto py-3 text-muted">
-    <div class="container">
-        <p class="float-start">&copy; <?= Html::encode(Yii::$app->name) ?> <?= date('Y') ?></p>
-        <p class="float-end"><?= Yii::powered() ?></p>
-    </div>
-</footer>
-
-<?php $this->endBody() ?>
+    <?php $this->endBody() ?>
 </body>
+
 </html>
-<?php $this->endPage();
+<?php $this->endPage() ?>
