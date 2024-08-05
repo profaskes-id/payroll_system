@@ -55,6 +55,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => ' text-align: center;'],
                 ],
                 'nama_kode',
+                'urutan',
+                [
+                    'attribute' => 'status',
+                    'value' => function ($model) {
+                        return $model->status == 1 ? 'Aktif' : 'Tidak Aktif';
+                    }
+                ],
                 [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],

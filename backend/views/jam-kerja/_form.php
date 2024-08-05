@@ -1,5 +1,6 @@
 <?php
 
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -12,7 +13,19 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'nama_jam_kerja')->textInput(['maxlength' => true]) ?>
+
+    <?php
+    $data = \yii\helpers\ArrayHelper::map(\backend\models\JamKerja::find()->all(), 'nama_jam_kerja', 'nama_jam_kerja');
+    echo $form->field($model, 'nama_jam_kerja')->widget(Select2::classname(), [
+        'data' => $data,
+        'language' => 'id',
+        'options' => ['placeholder' => 'Pilih Jam Kerja ...'],
+        'pluginOptions' => [
+            'tags' => true,
+            'allowClear' => true
+        ],
+    ]);
+    ?>
 
     <div class="form-group">
         <button class="add-button" type="submit">

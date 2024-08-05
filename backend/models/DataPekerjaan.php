@@ -12,7 +12,7 @@ use Yii;
  * @property int $id_bagian
  * @property string $dari
  * @property string|null $sampai
- * @property string $status
+ * @property int $status
  * @property string $jabatan
  *
  * @property Bagian $bagian
@@ -35,9 +35,9 @@ class DataPekerjaan extends \yii\db\ActiveRecord
     {
         return [
             [['id_karyawan', 'id_bagian', 'dari', 'status', 'jabatan'], 'required'],
-            [['id_karyawan', 'id_bagian'], 'integer'],
+            [['id_karyawan', 'id_bagian', 'status'], 'integer'],
             [['dari', 'sampai'], 'safe'],
-            [['status', 'jabatan'], 'string', 'max' => 255],
+            [['jabatan'], 'string', 'max' => 255],
             [['id_bagian'], 'exist', 'skipOnError' => true, 'targetClass' => Bagian::class, 'targetAttribute' => ['id_bagian' => 'id_bagian']],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
         ];

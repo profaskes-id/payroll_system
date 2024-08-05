@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var backend\models\JadwalKerjaSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Jadwal Kerjas';
+$this->title = 'Jadwal kerja';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="jadwal-kerja-index">
@@ -45,7 +45,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => 'yii\grid\SerialColumn'
                 ],
 
-                'id_jadwal_kerja',
                 'id_jam_kerja',
                 'nama_hari',
                 'jam_masuk',

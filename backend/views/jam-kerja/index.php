@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var backend\models\JamKerjaSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Jam Kerjas';
+$this->title = 'Jam kerja';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="jam-kerja-index">
@@ -46,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                'id_jam_kerja',
+
                 'nama_jam_kerja',
                 [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),

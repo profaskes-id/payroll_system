@@ -3,14 +3,14 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var backend\models\DataKeluarga $model */
+/** @var backend\models\Perusahaan $model */
 
-$this->title = 'Update Data Keluarga: ' . $model->id_data_keluarga;
-$this->params['breadcrumbs'][] = ['label' => 'Data keluarga', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id_data_keluarga, 'url' => ['view', 'id_data_keluarga' => $model->id_data_keluarga]];
+$this->title = 'Update Perusahaan: ' . $model->id_perusahaan;
+$this->params['breadcrumbs'][] = ['label' => 'perusahaan', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => $model->id_perusahaan, 'url' => ['view', 'id_perusahaan' => $model->id_perusahaan]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="data-keluarga-update">
+<div class="perusahaan-update">
 
     <div class="costume-container">
         <p class="">

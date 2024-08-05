@@ -17,10 +17,10 @@ class m240731_075545_create_absensi_table extends Migration
             'id_karyawan' => $this->integer()->notNull(), // Foreign key to karyawan table
             'id_jam_kerja' => $this->integer()->notNull(), // Foreign key to jam_kerja table
             'tanggal' => $this->date()->notNull(), // Date of attendance
-            'hari' => $this->string()->notNull(), // Day of the week (e.g., Monday)
+            'hari' => $this->integer()->notNull(), // Day of the week (e.g., Monday)
             'jam_masuk' => $this->time(), // Time of arrival (nullable)
             'jam_pulang' => $this->time(), // Time of departure (nullable)
-            'kode_status_hadir' => $this->string()->notNull(), // Status code (e.g., present, absent)
+            'kode_status_hadir' => $this->integer()->notNull(), // Status code (e.g., present, absent)
         ]);
 
         // Create index for foreign key to karyawan

@@ -3,19 +3,20 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var backend\models\JamKerjaKaryawan $model */
+/** @var backend\models\Perusahaan $model */
 
-$this->title = 'Tambah Jam Kerja Karyawan';
-$this->params['breadcrumbs'][] = ['label' => 'Jam Kerja Karyawan', 'url' => ['index']];
+$this->title = 'Tabmah perusahaan';
+$this->params['breadcrumbs'][] = ['label' => 'perusahaan', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="jam-kerja-karyawan-create">
+<div class="perusahaan-create">
 
     <div class="costume-container">
         <p class="">
             <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
+
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>

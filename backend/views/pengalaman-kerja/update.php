@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /** @var backend\models\PengalamanKerja $model */
 
 $this->title = 'Update Pengalaman Kerja: ' . $model->id_pengalaman_kerja;
-$this->params['breadcrumbs'][] = ['label' => 'Pengalaman Kerjas', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Pengalaman kerja', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id_pengalaman_kerja, 'url' => ['view', 'id_pengalaman_kerja' => $model->id_pengalaman_kerja]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>

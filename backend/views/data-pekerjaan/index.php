@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var backend\models\DataPekerjaanSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Data Pekerjaans';
+$this->title = 'Data pekerjaan';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="data-pekerjaan-index">
@@ -45,7 +45,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => 'yii\grid\SerialColumn'
                 ],
 
-                'id_data_pekerjaan',
                 'id_karyawan',
 
                 'dari',

@@ -5,8 +5,8 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\DataPekerjaan $model */
 
-$this->title = 'Create Data Pekerjaan';
-$this->params['breadcrumbs'][] = ['label' => 'Data Pekerjaans', 'url' => ['index']];
+$this->title = 'Tambah Data Pekerjaan';
+$this->params['breadcrumbs'][] = ['label' => 'Data pekerjaan', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="data-pekerjaan-create">

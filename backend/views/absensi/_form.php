@@ -1,5 +1,6 @@
 <?php
 
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -16,11 +17,32 @@ use yii\widgets\ActiveForm;
 
 
         <div class="col-md-6">
-            <?= $form->field($model, 'id_karyawan')->textInput() ?>
+            <?php
+            $data = \yii\helpers\ArrayHelper::map(\backend\models\Karyawan::find()->all(), 'id_karyawan', 'nama');
+            echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
+                'data' => $data,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Pilih Karyawan ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+            ?>
         </div>
 
         <div class="col-md-6">
-            <?= $form->field($model, 'id_jam_kerja')->textInput() ?>
+            <?php
+            $data = \yii\helpers\ArrayHelper::map(\backend\models\JamKerja::find()->all(), 'id_jam_kerja', 'nama_jam_kerja');
+            echo $form->field($model, 'id_jam_kerja')->widget(Select2::classname(), [
+                'data' => $data,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Pilih Jam Kerja ...'],
+                'pluginOptions' => [
+                    // 'tags' => true,
+                    'allowClear' => true
+                ],
+            ]);
+            ?>
         </div>
 
         <div class="col-md-6">
@@ -40,7 +62,17 @@ use yii\widgets\ActiveForm;
         </div>
 
         <div class="col-md-6">
-            <?= $form->field($model, 'kode_status_hadir')->textInput(['maxlength' => true]) ?>
+            <?php
+            $data = \yii\helpers\ArrayHelper::map(\backend\models\MasterKode::find()->where(['nama_group' => 'status-hadir'])->all(), 'kode', 'nama_kode');
+            echo $form->field($model, 'kode_status_hadir')->widget(Select2::classname(), [
+                'data' => $data,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Pilih Status Kehadiran ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+            ?>
         </div>
     </div>
 

@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var backend\models\HariLiburSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Hari Liburs';
+$this->title = 'Hari libur';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="hari-libur-index">
@@ -45,7 +45,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => 'yii\grid\SerialColumn'
                 ],
 
-                'id_hari_libur',
                 'tanggal',
                 'nama_hari_libur',
                 [

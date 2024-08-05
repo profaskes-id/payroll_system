@@ -1,19 +1,19 @@
 <?php
 
-use backend\models\Bagian;
+use backend\models\Perusahaan;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var backend\models\BagianSearch $searchModel */
+/** @var backend\models\PerusahaanSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'bagian';
+$this->title = 'perusahaan';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="bagian-index">
+<div class="perusahaan-index">
 
     <div class="costume-container">
         <p class="">
@@ -38,25 +38,23 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class='table-container'>
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
+
             'columns' => [
                 [
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                'nama_bagian',
-                [
-                    'label' => 'id_perusahaan',
-                    'value' => function ($model) {
-                        return $model->perusahaan->nama_perusahaan;
-                    }
-                ],
+
+                'id_perusahaan',
+                'nama_perusahaan',
+                'status_perusahaan',
                 [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, Bagian $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id_bagian' => $model->id_bagian]);
+                    'urlCreator' => function ($action, Perusahaan $model, $key, $index, $column) {
+                        return Url::toRoute([$action, 'id_perusahaan' => $model->id_perusahaan]);
                     }
                 ],
             ],

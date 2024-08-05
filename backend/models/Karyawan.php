@@ -47,8 +47,7 @@ class Karyawan extends \yii\db\ActiveRecord
             [['tanggal_lahir'], 'safe'],
             [['alamat'], 'string'],
             [['kode_jenis_kelamin'], 'integer'],
-            [['kode_karyawan', 'nama', 'nomer_identitas', 'jenis_identitas', 'kode_provinsi', 'kode_kabupaten_kota', 'kode_kecamatan', 'email'], 'string', 'max' => 255],
-            [['kode_negara'], 'string', 'max' => 3],
+            [['kode_karyawan', 'nama', 'nomer_identitas', 'jenis_identitas', 'kode_negara', 'kode_provinsi', 'kode_kabupaten_kota', 'kode_kecamatan', 'email'], 'string', 'max' => 255],
         ];
     }
 

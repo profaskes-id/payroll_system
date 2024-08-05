@@ -8,8 +8,10 @@ use Yii;
  * This is the model class for table "master_kode".
  *
  * @property string $nama_group
- * @property string $kode
+ * @property int $kode
  * @property string $nama_kode
+ * @property int $status
+ * @property int $urutan
  */
 class MasterKode extends \yii\db\ActiveRecord
 {
@@ -27,8 +29,9 @@ class MasterKode extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nama_group', 'kode', 'nama_kode'], 'required'],
-            [['nama_group', 'kode', 'nama_kode'], 'string', 'max' => 255],
+            [['nama_group', 'kode', 'nama_kode', 'status', 'urutan'], 'required'],
+            [['kode', 'status', 'urutan'], 'integer'],
+            [['nama_group', 'nama_kode'], 'string', 'max' => 255],
             [['nama_group', 'kode'], 'unique', 'targetAttribute' => ['nama_group', 'kode']],
         ];
     }
@@ -42,6 +45,8 @@ class MasterKode extends \yii\db\ActiveRecord
             'nama_group' => 'Nama Group',
             'kode' => 'Kode',
             'nama_kode' => 'Nama Kode',
+            'status' => 'Status',
+            'urutan' => 'Urutan',
         ];
     }
 }

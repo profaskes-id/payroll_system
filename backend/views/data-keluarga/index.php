@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var backend\models\DataKeluargaSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Data Keluargas';
+$this->title = 'Data keluarga';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="data-keluarga-index">
@@ -44,8 +44,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-
-                'id_data_keluarga',
                 'id_karyawan',
                 'nama_anggota_keluarga',
                 'hubungan',

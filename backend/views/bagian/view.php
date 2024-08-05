@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /** @var backend\models\Bagian $model */
 
 $this->title = $model->id_bagian;
-$this->params['breadcrumbs'][] = ['label' => 'Bagians', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'bagian', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -38,6 +38,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'attributes' => [
                 'id_bagian',
                 'nama_bagian',
+                [
+                    'label' => 'id_perusahaan',
+                    'value' => function ($model) {
+                        return $model->perusahaan->nama_perusahaan;
+                    }
+                ],
             ],
         ]) ?>
     </div>

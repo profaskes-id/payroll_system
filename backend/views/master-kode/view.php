@@ -39,6 +39,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'nama_group',
                 'kode',
                 'nama_kode',
+                'urutan',
+                [
+                    'attribute' => 'status',
+                    'value' => function ($model) {
+                        return $model->status == 1 ? 'Aktif' : 'Tidak Aktif';
+                    }
+                ]
             ],
         ]) ?>
     </div>

@@ -5,8 +5,8 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\RiwayatPendidikan $model */
 
-$this->title = 'Create Riwayat Pendidikan';
-$this->params['breadcrumbs'][] = ['label' => 'Riwayat Pendidikans', 'url' => ['index']];
+$this->title = 'Tambah Riwayat Pendidikan';
+$this->params['breadcrumbs'][] = ['label' => 'Riwayat pendidikan', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="riwayat-pendidikan-create">

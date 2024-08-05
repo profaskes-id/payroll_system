@@ -5,8 +5,8 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\Bagian $model */
 
-$this->title = 'Create Bagian';
-$this->params['breadcrumbs'][] = ['label' => 'Bagians', 'url' => ['index']];
+$this->title = 'Tabmah Bagian';
+$this->params['breadcrumbs'][] = ['label' => 'bagian', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="bagian-create">

@@ -4,15 +4,14 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var backend\models\JadwalKerja $model */
+/** @var backend\models\Perusahaan $model */
 
-$this->title = $model->id_jadwal_kerja;
-$this->params['breadcrumbs'][] = ['label' => 'Jadwal kerja', 'url' => ['index']];
+$this->title = $model->id_perusahaan;
+$this->params['breadcrumbs'][] = ['label' => 'perusahaan', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="jadwal-kerja-view">
-
+<div class="perusahaan-view">
 
     <div class="costume-container">
         <p class="">
@@ -20,12 +19,11 @@ $this->params['breadcrumbs'][] = $this->title;
         </p>
     </div>
 
+    <div class='table-container'>
 
-
-    <div class="table-container">
         <p class="d-flex justify-content-start " style="gap: 10px;">
-            <?= Html::a('Update', ['update', 'id_jadwal_kerja' => $model->id_jadwal_kerja], ['class' => 'add-button']) ?>
-            <?= Html::a('Delete', ['delete', 'id_jadwal_kerja' => $model->id_jadwal_kerja], [
+            <?= Html::a('Update', ['update', 'id_perusahaan' => $model->id_perusahaan], ['class' => 'add-button']) ?>
+            <?= Html::a('Delete', ['delete', 'id_perusahaan' => $model->id_perusahaan], [
                 'class' => 'reset-button',
                 'data' => [
                     'confirm' => 'Are you sure you want to delete this item?',
@@ -37,13 +35,9 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= DetailView::widget([
             'model' => $model,
             'attributes' => [
-                'id_jadwal_kerja',
-                'id_jam_kerja',
-                'nama_hari',
-                'jam_masuk',
-                'jam_keluar',
-                'lama_istirahat',
-                'jumlah_jam',
+                'id_perusahaan',
+                'nama_perusahaan',
+                'status_perusahaan',
             ],
         ]) ?>
     </div>

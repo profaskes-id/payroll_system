@@ -4,12 +4,12 @@ namespace backend\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\MasterKode;
+use backend\models\Perusahaan;
 
 /**
- * MasterKodeSearch represents the model behind the search form of `backend\models\MasterKode`.
+ * PerusahaanSearch represents the model behind the search form of `backend\models\Perusahaan`.
  */
-class MasterKodeSearch extends MasterKode
+class PerusahaanSearch extends Perusahaan
 {
     /**
      * {@inheritdoc}
@@ -17,7 +17,8 @@ class MasterKodeSearch extends MasterKode
     public function rules()
     {
         return [
-            [['nama_group', 'kode', 'nama_kode'], 'safe'],
+            [['id_perusahaan', 'status_perusahaan'], 'integer'],
+            [['nama_perusahaan'], 'safe'],
         ];
     }
 
@@ -39,7 +40,7 @@ class MasterKodeSearch extends MasterKode
      */
     public function search($params)
     {
-        $query = MasterKode::find()->orderBy(['nama_group' => SORT_ASC, 'urutan' => SORT_ASC]);
+        $query = Perusahaan::find();
 
         // add conditions that should always apply here
 
@@ -56,9 +57,12 @@ class MasterKodeSearch extends MasterKode
         }
 
         // grid filtering conditions
-        $query->andFilterWhere(['like', 'nama_group', $this->nama_group])
-            ->andFilterWhere(['like', 'kode', $this->kode])
-            ->andFilterWhere(['like', 'nama_kode', $this->nama_kode]);
+        $query->andFilterWhere([
+            'id_perusahaan' => $this->id_perusahaan,
+            'status_perusahaan' => $this->status_perusahaan,
+        ]);
+
+        $query->andFilterWhere(['like', 'nama_perusahaan', $this->nama_perusahaan]);
 
         return $dataProvider;
     }

@@ -5,8 +5,8 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\PengalamanKerja $model */
 
-$this->title = 'Create Pengalaman Kerja';
-$this->params['breadcrumbs'][] = ['label' => 'Pengalaman Kerjas', 'url' => ['index']];
+$this->title = 'Tambah Pengalaman Kerja';
+$this->params['breadcrumbs'][] = ['label' => 'Pengalaman kerja', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pengalaman-kerja-create">

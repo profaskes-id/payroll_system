@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /** @var backend\models\PengalamanKerja $model */
 
 $this->title = $model->id_pengalaman_kerja;
-$this->params['breadcrumbs'][] = ['label' => 'Pengalaman Kerjas', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Pengalaman kerja', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -18,22 +18,11 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
-
-    <p class="d-flex justify-content-start " style="gap: 10px;">
-        <?= Html::a('Update', ['update', 'nama_group' => $model->nama_group, 'kode' => $model->kode], ['class' => 'add-button']) ?>
-        <?= Html::a('Delete', ['delete', 'nama_group' => $model->nama_group, 'kode' => $model->kode], [
-            'class' => 'reset-button',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
     <div class='table-container'>
+
         <p class="d-flex justify-content-start " style="gap: 10px;">
-            <?= Html::a('Update', ['update', 'nama_group' => $model->nama_group, 'kode' => $model->kode], ['class' => 'add-button']) ?>
-            <?= Html::a('Delete', ['delete', 'nama_group' => $model->nama_group, 'kode' => $model->kode], [
+            <?= Html::a('Update', ['update', 'id_pengalaman_kerja' => $model->id_pengalaman_kerja], ['class' => 'add-button']) ?>
+            <?= Html::a('Delete', ['delete', 'id_pengalaman_kerja' => $model->id_pengalaman_kerja], [
                 'class' => 'reset-button',
                 'data' => [
                     'confirm' => 'Are you sure you want to delete this item?',
@@ -41,6 +30,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ]) ?>
         </p>
+
+
 
 
         <?= DetailView::widget([

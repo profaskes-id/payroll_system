@@ -2,16 +2,16 @@
 
 namespace backend\controllers;
 
-use backend\models\MasterKode;
-use backend\models\MasterKodeSearch;
+use backend\models\Perusahaan;
+use backend\models\PerusahaanSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * MasterKodeController implements the CRUD actions for MasterKode model.
+ * PerusahaanController implements the CRUD actions for Perusahaan model.
  */
-class MasterKodeController extends Controller
+class PerusahaanController extends Controller
 {
     /**
      * @inheritDoc
@@ -32,15 +32,14 @@ class MasterKodeController extends Controller
     }
 
     /**
-     * Lists all MasterKode models.
+     * Lists all Perusahaan models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new MasterKodeSearch();
+        $searchModel = new PerusahaanSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -49,31 +48,30 @@ class MasterKodeController extends Controller
     }
 
     /**
-     * Displays a single MasterKode model.
-     * @param string $nama_group Nama Group
-     * @param string $kode Kode
+     * Displays a single Perusahaan model.
+     * @param int $id_perusahaan Id Perusahaan
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($nama_group, $kode)
+    public function actionView($id_perusahaan)
     {
         return $this->render('view', [
-            'model' => $this->findModel($nama_group, $kode),
+            'model' => $this->findModel($id_perusahaan),
         ]);
     }
 
     /**
-     * Creates a new MasterKode model.
+     * Creates a new Perusahaan model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new MasterKode();
+        $model = new Perusahaan();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'nama_group' => $model->nama_group, 'kode' => $model->kode]);
+                return $this->redirect(['view', 'id_perusahaan' => $model->id_perusahaan]);
             }
         } else {
             $model->loadDefaultValues();
@@ -85,19 +83,18 @@ class MasterKodeController extends Controller
     }
 
     /**
-     * Updates an existing MasterKode model.
+     * Updates an existing Perusahaan model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $nama_group Nama Group
-     * @param string $kode Kode
+     * @param int $id_perusahaan Id Perusahaan
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($nama_group, $kode)
+    public function actionUpdate($id_perusahaan)
     {
-        $model = $this->findModel($nama_group, $kode);
+        $model = $this->findModel($id_perusahaan);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'nama_group' => $model->nama_group, 'kode' => $model->kode]);
+            return $this->redirect(['view', 'id_perusahaan' => $model->id_perusahaan]);
         }
 
         return $this->render('update', [
@@ -106,31 +103,29 @@ class MasterKodeController extends Controller
     }
 
     /**
-     * Deletes an existing MasterKode model.
+     * Deletes an existing Perusahaan model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param string $nama_group Nama Group
-     * @param string $kode Kode
+     * @param int $id_perusahaan Id Perusahaan
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($nama_group, $kode)
+    public function actionDelete($id_perusahaan)
     {
-        $this->findModel($nama_group, $kode)->delete();
+        $this->findModel($id_perusahaan)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the MasterKode model based on its primary key value.
+     * Finds the Perusahaan model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $nama_group Nama Group
-     * @param string $kode Kode
-     * @return MasterKode the loaded model
+     * @param int $id_perusahaan Id Perusahaan
+     * @return Perusahaan the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($nama_group, $kode)
+    protected function findModel($id_perusahaan)
     {
-        if (($model = MasterKode::findOne(['nama_group' => $nama_group, 'kode' => $kode])) !== null) {
+        if (($model = Perusahaan::findOne(['id_perusahaan' => $id_perusahaan])) !== null) {
             return $model;
         }
 

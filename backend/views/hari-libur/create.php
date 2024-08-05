@@ -5,8 +5,8 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\HariLibur $model */
 
-$this->title = 'Create Hari Libur';
-$this->params['breadcrumbs'][] = ['label' => 'Hari Liburs', 'url' => ['index']];
+$this->title = 'Tambah Hari Libur';
+$this->params['breadcrumbs'][] = ['label' => 'Hari libur', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="hari-libur-create">

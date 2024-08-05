@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /** @var backend\models\JadwalKerja $model */
 
 $this->title = 'Update Jadwal Kerja: ' . $model->id_jadwal_kerja;
-$this->params['breadcrumbs'][] = ['label' => 'Jadwal Kerjas', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Jadwal kerja', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id_jadwal_kerja, 'url' => ['view', 'id_jadwal_kerja' => $model->id_jadwal_kerja]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>

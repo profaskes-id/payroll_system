@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /** @var backend\models\JamKerja $model */
 
 $this->title = $model->id_jam_kerja;
-$this->params['breadcrumbs'][] = ['label' => 'Jam Kerjas', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Jam kerja', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -22,8 +22,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class='table-container'>
         <p class="d-flex justify-content-start " style="gap: 10px;">
-            <?= Html::a('Update', ['update', 'nama_group' => $model->nama_group, 'kode' => $model->kode], ['class' => 'add-button']) ?>
-            <?= Html::a('Delete', ['delete', 'nama_group' => $model->nama_group, 'kode' => $model->kode], [
+            <?= Html::a('Update', ['update', 'id_jam_kerja' => $model->id_jam_kerja], ['class' => 'add-button']) ?>
+            <?= Html::a('Delete', ['delete', 'id_jam_kerja' => $model->id_jam_kerja], [
                 'class' => 'reset-button',
                 'data' => [
                     'confirm' => 'Are you sure you want to delete this item?',

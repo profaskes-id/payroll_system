@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var backend\models\PengalamanKerjaSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Pengalaman Kerjas';
+$this->title = 'Pengalaman kerja';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pengalaman-kerja-index">
@@ -45,7 +45,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                'id_pengalaman_kerja',
                 'id_karyawan',
                 'perusahaan',
                 'posisi',

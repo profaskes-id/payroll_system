@@ -11,10 +11,10 @@ use Yii;
  * @property int $id_karyawan
  * @property int $id_jam_kerja
  * @property string $tanggal
- * @property string $hari
+ * @property int $hari
  * @property string|null $jam_masuk
  * @property string|null $jam_pulang
- * @property string $kode_status_hadir
+ * @property int $kode_status_hadir
  *
  * @property JamKerja $jamKerja
  * @property Karyawan $karyawan
@@ -36,9 +36,8 @@ class Absensi extends \yii\db\ActiveRecord
     {
         return [
             [['id_karyawan', 'id_jam_kerja', 'tanggal', 'hari', 'kode_status_hadir'], 'required'],
-            [['id_karyawan', 'id_jam_kerja'], 'integer'],
+            [['id_karyawan', 'id_jam_kerja', 'hari', 'kode_status_hadir'], 'integer'],
             [['tanggal', 'jam_masuk', 'jam_pulang'], 'safe'],
-            [['hari', 'kode_status_hadir'], 'string', 'max' => 255],
             [['id_jam_kerja'], 'exist', 'skipOnError' => true, 'targetClass' => JamKerja::class, 'targetAttribute' => ['id_jam_kerja' => 'id_jam_kerja']],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
         ];

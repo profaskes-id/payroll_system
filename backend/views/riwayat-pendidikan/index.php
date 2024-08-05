@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var backend\models\RiwayatPendidikanSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Riwayat Pendidikans';
+$this->title = 'Riwayat pendidikan';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="riwayat-pendidikan-index">
@@ -39,19 +39,19 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
-            'filterModel' => $searchModel,
+
             'columns' => [
                 [
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                'id_riwayat_pendidikan',
+                // 'id_riwayat_pendidikan',
                 'id_karyawan',
                 'jenjang_pendidikan',
                 'institusi',
-                'tahun_masuk',
-                //'tahun_keluar',
+                // 'tahun_masuk',
+                // 'tahun_keluar',
                 [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],

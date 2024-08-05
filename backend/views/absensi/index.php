@@ -48,14 +48,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                'id_absensi',
                 'id_karyawan',
                 'id_jam_kerja',
                 'tanggal',
-                'hari',
+                // 'hari',
                 //'jam_masuk',
                 //'jam_pulang',
-                //'kode_status_hadir',
+                'kode_status_hadir',
                 [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],

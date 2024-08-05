@@ -4,20 +4,22 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var backend\models\JamKerjaSearch $model */
+/** @var backend\models\PerusahaanSearch $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="jam-kerja-search">
+<div class="perusahaan-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'id_jam_kerja') ?>
+    <?= $form->field($model, 'id_perusahaan') ?>
 
-    <?= $form->field($model, 'nama_jam_kerja') ?>
+    <?= $form->field($model, 'nama_perusahaan') ?>
+
+    <?= $form->field($model, 'status_perusahaan') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

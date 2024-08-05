@@ -1,5 +1,7 @@
 <?php
 
+use backend\models\MasterKode;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -44,7 +46,9 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'alamat')->textarea(['rows' => 6]) ?>
         </div>
         <div class="com-sm-12 col-6">
-            <?= $form->field($model, 'kode_jenis_kelamin')->textInput() ?>
+            <?= $form->field($model, 'kode_jenis_kelamin')->radioList(
+                ArrayHelper::map(MasterKode::find()->where(['nama_group' => 'jenis-kelamin'])->all(), 'kode', 'nama_kode')
+            ) ?>
         </div>
         <div class="com-sm-12 col-6">
             <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>

@@ -1,5 +1,6 @@
 <?php
 
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -8,15 +9,24 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="pengalaman-kerja-form tabel-container">
+<div class="pengalaman-kerja-form table-container">
 
     <?php $form = ActiveForm::begin(); ?>
 
     <div class="row">
         <div class="col-md-6">
-            <?= $form->field($model, 'id_karyawan')->textInput() ?>
+            <?php
+            $data = \yii\helpers\ArrayHelper::map(\backend\models\Karyawan::find()->all(), 'id_karyawan', 'nama');
+            echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
+                'data' => $data,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Pilih Karyawan ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+            ?>
         </div>
-
         <div class="col-md-6">
             <?= $form->field($model, 'perusahaan')->textInput(['maxlength' => true]) ?>
         </div>
@@ -26,11 +36,11 @@ use yii\widgets\ActiveForm;
         </div>
 
         <div class="col-md-6">
-            <?= $form->field($model, 'masuk_pada')->textInput() ?>
+            <?= $form->field($model, 'masuk_pada')->textInput(["min" => "1900-01-01", "max" => "2100-12-31", "step" => "year", 'type' => 'date']) ?>
         </div>
 
         <div class="col-md-6">
-            <?= $form->field($model, 'keluar_pada')->textInput() ?>
+            <?= $form->field($model, 'keluar_pada')->textInput(["min" => "1900-01-01", "max" => "2100-12-31", "step" => "year", 'type' => 'date']) ?>
         </div>
     </div>
 
