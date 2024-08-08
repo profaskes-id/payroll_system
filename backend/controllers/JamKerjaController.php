@@ -2,6 +2,8 @@
 
 namespace backend\controllers;
 
+use backend\models\HariLiburSearch;
+use backend\models\JadwalKerjaSearch;
 use backend\models\JamKerja;
 use backend\models\JamKerjaSearch;
 use yii\web\Controller;
@@ -55,7 +57,21 @@ class JamKerjaController extends Controller
      */
     public function actionView($id_jam_kerja)
     {
+
+        $jadwalKerjaSearch = new JadwalKerjaSearch();
+        $jadwalKerjaSearch->id_jam_kerja = $id_jam_kerja;
+        $jadwalKerjaProvider = $jadwalKerjaSearch->search($this->request->queryParams);
+
+        // $hariLiburSearchModel = new HariLiburSearch();
+        // $hariLiburSearchModel->id_jam_kerja = $id_jam_kerja;
+        // $hariLiburdataProvider = $hariLiburSearchModel->search($this->request->queryParams);
+
+
         return $this->render('view', [
+            // 'hariLiburSearchModel' => $hariLiburSearchModel,
+            // 'hariLiburdataProvider' => $hariLiburdataProvider,
+            'jadwalKerjaSearch' => $jadwalKerjaSearch,
+            'jadwalKerjaProvider' => $jadwalKerjaProvider,
             'model' => $this->findModel($id_jam_kerja),
         ]);
     }

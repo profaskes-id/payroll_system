@@ -36,26 +36,37 @@
                     // ['label' => 'Yii2 PROVIDED', 'header' => true],
                     // ['label' => 'Gii',  'icon' => 'file-code', 'url' => ['/gii'], 'target' => '_blank'],
 
-                    // [
-                    // 'label' => 'Pengaturan Halaman',
-                    // 'icon' => 'th',
-                    // 'items' => [
-                    // ['label' => 'Menu Settings', 'url' => ['/absensi/index'], 'iconStyle' => 'far'],
-                    // ],
-                    // ],
-                    ['label' => 'Master Kode',  'icon' => 'file-code', 'url' => ['/master-kode/index'],],
-                    ['label' => 'Karyawan',  'icon' => 'file-code', 'url' => ['/karyawan/index'],],
-                    ['label' => 'Perusahaan',  'icon' => 'file-code', 'url' => ['/perusahaan/index'],],
-                    ['label' => 'Bagian',  'icon' => 'file-code', 'url' => ['/bagian/index'],],
-                    ['label' => 'Jam Kerja',  'icon' => 'file-code', 'url' => ['/jam-kerja/index'],],
+                    [
+                        'label' => 'Pengaturan System',
+                        'icon' => 'th',
+                        'items' => [
+                            ['label' => 'Master Kode',  'icon' => 'file-code', 'url' => ['/master-kode/index'],],
+                        ],
+                    ],
+                    [
+                        'label' => 'Pengaturan Data',
+                        'icon' => 'th',
+                        'items' => [
+                            ['label' => 'Perusahaan',  'icon' => 'file-code', 'url' => ['/perusahaan/index'],],
+                            ['label' => 'Karyawan',  'icon' => 'file-code', 'url' => ['/karyawan/index'],],
+                        ],
+                    ],
+                    [
+                        'label' => 'Pengaturan Jam',
+                        'icon' => 'th',
+                        'items' => [
+                            ['label' => 'Jam Kerja',  'icon' => 'file-code', 'url' => ['/jam-kerja/index'],],
+                            ['label' => 'Jam Kerja Karyawan',  'icon' => 'file-code', 'url' => ['/jam-kerja-karyawan/index'],],
+                            ['label' => 'Hari Libur',  'icon' => 'file-code', 'url' => ['/hari-libur/index'],],
+                        ],
+                    ],
+                    // ['label' => 'Bagian',  'icon' => 'file-code', 'url' => ['/bagian/index'],],
                     ['label' => 'Absensi',  'icon' => 'file-code', 'url' => ['/absensi/index'],],
-                    ['label' => 'Data Keluarga',  'icon' => 'file-code', 'url' => ['/data-keluarga/index'],],
-                    ['label' => 'Data Pekerjaan',  'icon' => 'file-code', 'url' => ['/data-pekerjaan/index'],],
-                    ['label' => 'Hari Libur',  'icon' => 'file-code', 'url' => ['/hari-libur/index'],],
-                    ['label' => 'Jadwal Kerja',  'icon' => 'file-code', 'url' => ['/jadwal-kerja/index'],],
-                    ['label' => 'Jam Kerja Karyawan',  'icon' => 'file-code', 'url' => ['/jam-kerja-karyawan/index'],],
-                    ['label' => 'Pengalaman Kerja',  'icon' => 'file-code', 'url' => ['/pengalaman-kerja/index'],],
-                    ['label' => 'riwayat pendidikan',  'icon' => 'file-code', 'url' => ['/riwayat-pendidikan/index'],],
+                    // ['label' => 'Data Keluarga',  'icon' => 'file-code', 'url' => ['/data-keluarga/index'],],
+                    // ['label' => 'Data Pekerjaan',  'icon' => 'file-code', 'url' => ['/data-pekerjaan/index'],],
+                    // ['label' => 'Jadwal Kerja',  'icon' => 'file-code', 'url' => ['/jadwal-kerja/index'],],
+                    // ['label' => 'Pengalaman Kerja',  'icon' => 'file-code', 'url' => ['/pengalaman-kerja/index'],],
+                    // ['label' => 'riwayat pendidikan',  'icon' => 'file-code', 'url' => ['/riwayat-pendidikan/index'],],
 
 
                     // ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => Yii::$app->user->isGuest],

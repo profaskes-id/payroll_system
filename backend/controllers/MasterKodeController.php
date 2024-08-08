@@ -40,6 +40,7 @@ class MasterKodeController extends Controller
     {
         $searchModel = new MasterKodeSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+        // $dataProvider->pagination->pageSize = 100;
 
 
         return $this->render('index', [

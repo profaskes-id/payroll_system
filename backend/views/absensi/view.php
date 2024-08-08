@@ -6,8 +6,8 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var backend\models\Absensi $model */
 
-$this->title = $model->id_absensi;
-$this->params['breadcrumbs'][] = ['label' => 'Absensis', 'url' => ['index']];
+$this->title = 'Absensi ' .  $model->karyawan->nama;
+$this->params['breadcrumbs'][] = ['label' => 'Absensi', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -35,13 +35,28 @@ $this->params['breadcrumbs'][] = $this->title;
             'model' => $model,
             'attributes' => [
                 'id_absensi',
-                'id_karyawan',
-                'id_jam_kerja',
+                [
+                    'attribute' => 'karyawan',
+                    'value' => function ($model) {
+                        return $model->karyawan->nama;
+                    }
+                ],
+                [
+                    'attribute' => 'jam kerja',
+                    'value' => function ($model) {
+                        return $model->jamKerja->nama_jam_kerja;
+                    }
+                ],
                 'tanggal',
                 'hari',
                 'jam_masuk',
                 'jam_pulang',
-                'kode_status_hadir',
+                [
+                    'label' => 'Status Hadir',
+                    'value' => function ($model) {
+                        return $model->statusHadir->nama_kode;
+                    }
+                ],
             ],
         ]) ?>
     </div>

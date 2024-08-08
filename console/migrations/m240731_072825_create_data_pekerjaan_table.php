@@ -20,6 +20,7 @@ class m240731_072825_create_data_pekerjaan_table extends Migration
             'sampai' => $this->date(), // End date (nullable)
             'status' => $this->integer()->notNull(), // Status (e.g., aktif, non-aktif)
             'jabatan' => $this->string()->notNull(), // Position
+            'is_aktif' => $this->integer()->notNull(),
         ]);
 
         // Create index for foreign key to karyawan

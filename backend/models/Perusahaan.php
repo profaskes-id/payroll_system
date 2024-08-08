@@ -56,4 +56,9 @@ class Perusahaan extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Bagian::class, ['id_perusahaan' => 'id_perusahaan']);
     }
+
+    public function getStatusPerusahaan()
+    {
+        return $this->hasOne(MasterKode::class, ['kode' => 'status_perusahaan'])->onCondition(['nama_group' => 'status-perusahaan']);
+    }
 }

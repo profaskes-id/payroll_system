@@ -49,17 +49,24 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'nama_group',
                 ],
+                'nama_kode',
                 [
                     'attribute' => 'kode',
                     'headerOptions' => ['style' => ' width: 10%; text-align: center; '],
                     'contentOptions' => ['style' => ' text-align: center;'],
                 ],
-                'nama_kode',
-                'urutan',
                 [
+                    'attribute' => 'urutan',
+                    'headerOptions' => ['style' => ' width: 10%; text-align: center; '],
+                    'contentOptions' => ['style' => ' text-align: center;'],
+                ],
+                [
+                    'headerOptions' => ['style' => ' width: 15%; text-align: center; '],
+                    'contentOptions' => ['style' => ' text-align: center;'],
                     'attribute' => 'status',
+                    'format' => 'raw',
                     'value' => function ($model) {
-                        return $model->status == 1 ? 'Aktif' : 'Tidak Aktif';
+                        return $model->status == 1 ? '<p class="text-success">Aktif</p>' : '<p class="text-danger">Tidak Aktif  </p>';
                     }
                 ],
                 [

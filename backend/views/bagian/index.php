@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class='table-container'>
         <?= GridView::widget([
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $perusahaanProvider,
             'columns' => [
                 [
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
@@ -46,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 'nama_bagian',
                 [
-                    'label' => 'id_perusahaan',
+                    'label' => 'Perusahaan',
                     'value' => function ($model) {
                         return $model->perusahaan->nama_perusahaan;
                     }

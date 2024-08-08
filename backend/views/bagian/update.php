@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /** @var backend\models\Bagian $model */
 
 $this->title = 'Update Bagian: ' . $model->id_bagian;
-$this->params['breadcrumbs'][] = ['label' => 'bagian', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'bagian', 'url' => ['/perusahaan/view', 'id_perusahaan' => $model->perusahaan->id_perusahaan]];
 $this->params['breadcrumbs'][] = ['label' => $model->id_bagian, 'url' => ['view', 'id_bagian' => $model->id_bagian]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = 'Update';
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['/perusahaan/view', 'id_perusahaan' => $model->perusahaan->id_perusahaan], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 

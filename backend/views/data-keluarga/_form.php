@@ -24,7 +24,7 @@ use yii\widgets\ActiveForm;
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
-            ]);
+            ])->label("Karyawan");
             ?>
         </div>
 

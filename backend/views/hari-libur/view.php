@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var backend\models\HariLibur $model */
 
-$this->title = $model->id_hari_libur;
+$this->title = $model->nama_hari_libur;
 $this->params['breadcrumbs'][] = ['label' => 'Hari libur', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);

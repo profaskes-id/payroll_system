@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\MasterKode;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -24,13 +25,14 @@ use yii\widgets\ActiveForm;
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
-            ]);
+            ])->label('Karyawan');
             ?>
         </div>
-        <div class="col-md-6">
-            <?= $form->field($model, 'perusahaan')->textInput(['maxlength' => true]) ?>
-        </div>
 
+
+        <div class="col-md-6">
+            <?= $form->field($model, 'perusahaan')->textInput(['maxlength' => true])->label('Nama Perusahaan') ?>
+        </div>
         <div class="col-md-6">
             <?= $form->field($model, 'posisi')->textInput(['maxlength' => true]) ?>
         </div>

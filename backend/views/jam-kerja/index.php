@@ -49,6 +49,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 'nama_jam_kerja',
                 [
+                    'label' => 'Jenis Shift',
+                    'value' => function ($model) {
+                        return $model->jenisShift->nama_kode;
+                    }
+                ],
+                [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => ActionColumn::className(),

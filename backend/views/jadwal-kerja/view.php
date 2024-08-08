@@ -6,8 +6,8 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var backend\models\JadwalKerja $model */
 
-$this->title = $model->id_jadwal_kerja;
-$this->params['breadcrumbs'][] = ['label' => 'Jadwal kerja', 'url' => ['index']];
+$this->title = $model->jamKerja->nama_jam_kerja . ' - ' . $model->getNamaHari($model->nama_hari);
+$this->params['breadcrumbs'][] = ['label' => 'Jadwal kerja', 'url' => ['jam-kerja/view', 'id_jam_kerja' => $model->id_jam_kerja]];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['jam-kerja/view', 'id_jam_kerja' => $model->id_jam_kerja], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 
@@ -38,11 +38,21 @@ $this->params['breadcrumbs'][] = $this->title;
             'model' => $model,
             'attributes' => [
                 'id_jadwal_kerja',
-                'id_jam_kerja',
-                'nama_hari',
+                [
+                    'attribute' => 'jam_kerja',
+                    'value' => function ($model) {
+                        return $model->jamKerja->nama_jam_kerja;
+                    }
+                ],
+                [
+                    'label' => 'nama_hari',
+                    'value' => function ($model) {
+                        return $model->getNamaHari($model->nama_hari);
+                    },
+                ],
                 'jam_masuk',
                 'jam_keluar',
-                'lama_istirahat',
+
                 'jumlah_jam',
             ],
         ]) ?>

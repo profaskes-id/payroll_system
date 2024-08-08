@@ -6,8 +6,8 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var backend\models\DataKeluarga $model */
 
-$this->title = $model->id_data_keluarga;
-$this->params['breadcrumbs'][] = ['label' => 'Data keluarga', 'url' => ['index']];
+$this->title = "Data Keluarga: " . $model->karyawan->nama;
+$this->params['breadcrumbs'][] = ['label' => 'Data keluarga', 'url' => ['/karyawan/view', 'id_karyawan' => $model->id_karyawan]];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['/karyawan/view', 'id_karyawan' => $model->id_karyawan], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 
@@ -36,7 +36,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'model' => $model,
             'attributes' => [
                 'id_data_keluarga',
-                'id_karyawan',
+                [
+                    'attribute' => 'id_karyawan',
+                    'value' => function ($model) {
+                        return $model->karyawan->nama;
+                    }
+                ],
                 'nama_anggota_keluarga',
                 'hubungan',
                 'pekerjaan',

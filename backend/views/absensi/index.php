@@ -1,10 +1,14 @@
 <?php
 
 use backend\models\Absensi;
+use backend\models\Karyawan;
+use kartik\select2\Select2;
+use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\widgets\Pjax;
 
 /** @var yii\web\View $this */
 /** @var backend\models\AbsensiSearch $searchModel */
@@ -12,35 +16,52 @@ use yii\grid\GridView;
 
 $this->title = 'Absensi';
 $this->params['breadcrumbs'][] = $this->title;
+
+$today = date('Y-m-d');
 ?>
+
+<?php Pjax::begin(); ?>
 <div class="absensi-index position-relative">
 
+    <?php $form = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',   'action' => ['absensi/index']]); ?>
+    <div class='table-container'>
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <?= $form->field($absensi, 'tanggal')->textInput([
+                    'class' => 'form-control',
+                    'value' => Yii::$app->request->post('Absensi')['tanggal'] ?? $today,
+                    'type' => 'date',
+                    'id' => 'tanggal-input' // Tambahkan ID
+                ])->label(false) ?>
+            </div>
 
 
-    <div class="costume-container">
-        <p class="">
-            <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) ?>
-        </p>
-    </div>
+            <div class="col-12 col-md-5">
+                <?php
+                $idBagian = Yii::$app->request->post('Bagian')['id_bagian'] ?? 0;
+                $data = \yii\helpers\ArrayHelper::map(\backend\models\Bagian::find()->all(), 'id_bagian', 'nama_bagian');
+                echo $form->field($bagian, 'id_bagian')->widget(Select2::classname(), [
+                    'data' => $data,
+                    'options' => ['placeholder' => 'Pilih Divisi ...'],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ]
+                ])->label(false);
+                ?>
 
-    <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
-        <i class="fas fa-search"></i>
-        <span>
-            Search
-        </span>
-    </button>
-    <div style="margin-top: 10px;">
-        <div class="collapse width" id="collapseWidthExample">
-            <div class="" style="width: 100%;">
-                <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+            </div>
+            <div class="col-12 col-md-1">
+                <button class="add-button" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
         </div>
-    </div>
+        <?php ActiveForm::end(); ?>
 
-
-
-    <div class="table-container">
         <?= GridView::widget([
+            'id' => 'grid-view',
+            'summary' => false,
+            'tableOptions' => ['class' => 'table table-striped table-bordered table-hover'],
             'dataProvider' => $dataProvider,
             'columns' => [
                 [
@@ -48,25 +69,86 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                'id_karyawan',
-                'id_jam_kerja',
-                'tanggal',
-                // 'hari',
-                //'jam_masuk',
-                //'jam_pulang',
-                'kode_status_hadir',
+                'karyawan.nama',
+                [
+                    'headerOptions' => ['style' => 'width: 20%; text-align: center;'],
+                    'label' => 'tanggal',
+                    'value' => function () {
+                        return Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d');
+                    }
+                ],
+                [
+                    'label' => 'Kehadiran',
+                    'value' => function ($model) {
+                        return $model['absensi']['kode_status_hadir'] ?? 'Belum Di Set';
+                    },
+                ],
+                [
+                    'label' => 'Keterangan',
+                    'value' => function ($model) {
+                        return $model['absensi']['keterangan'] ?? 'Belum Di Set';
+                    },
+                ],
                 [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                    'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, Absensi $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id_absensi' => $model->id_absensi]);
-                    }
+                    'class' => 'yii\grid\ActionColumn',
+                    'template' => '{view}',
+                    'buttons' => [
+                        'view' => function ($url, $model) {
+                            $tanggal = Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d');
+                            $absensiArray = $model['absensi'];
+                            $found = false;
+
+                            foreach ($absensiArray as $absensi) {
+                                if ($absensi['tanggal_absensi'] == $tanggal) {
+                                    $found = true;
+                                    break;
+                                }
+                            }
+
+                            if ($found) {
+                                return Html::a('<i class="svgIcon fa fa-regular fa-eye"></i>', ['update', 'id_absensi' => $model['absensi'][0]['id_absensi']], ['class' => 'tambah-button']);
+                            } else {
+                                return Html::a('<i class="svgIcon fa fa-regular fa-plus"></i>', ['create', 'tanggal' => Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d'), 'id_karyawan' => $model['karyawan']['id_karyawan']], ['class' => 'add-button']);
+                            }
+                        },
+                    ],
+
                 ],
             ],
         ]); ?>
     </div>
 
-
-
 </div>
+<?php Pjax::end(); ?>
+
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ambil elemen input dengan ID tanggal-input
+        var tanggalInput = document.getElementById('tanggal-input');
+        var bagian = document.getElementById('bagian-input');
+
+        // Tambahkan event listener untuk perubahan
+
+        function autosubmit() {
+
+
+            var form = tanggalInput.closest('form');
+
+            // Kirim form menggunakan metode GET
+            if (form) {
+                setTimeout(function() {
+                    form.submit();
+                }, 1500);
+            }
+        }
+
+        // tanggalInput.addEventListener('input', autosubmit);
+        // bagian.addEventListener('input', autosubmit);
+    });
+</script>

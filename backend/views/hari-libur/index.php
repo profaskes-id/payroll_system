@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var backend\models\HariLiburSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Hari libur';
+$this->title = 'Hari Libur & Hari Besar';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="hari-libur-index">

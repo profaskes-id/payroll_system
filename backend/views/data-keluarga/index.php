@@ -44,7 +44,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                'id_karyawan',
+                [
+                    'attribute' => 'Karyawan',
+                    'value' => function ($model) {
+                        return $model->karyawan->nama;
+                    }
+                ],
                 'nama_anggota_keluarga',
                 'hubungan',
                 'pekerjaan',

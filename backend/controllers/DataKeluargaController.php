@@ -71,7 +71,7 @@ class DataKeluargaController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_data_keluarga' => $model->id_data_keluarga]);
+                return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
             }
         } else {
             $model->loadDefaultValues();
@@ -94,7 +94,7 @@ class DataKeluargaController extends Controller
         $model = $this->findModel($id_data_keluarga);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_data_keluarga' => $model->id_data_keluarga]);
+            return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
         }
 
         return $this->render('update', [
@@ -111,9 +111,10 @@ class DataKeluargaController extends Controller
      */
     public function actionDelete($id_data_keluarga)
     {
-        $this->findModel($id_data_keluarga)->delete();
+        $model = $this->findModel($id_data_keluarga);
+        $model->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
     }
 
     /**

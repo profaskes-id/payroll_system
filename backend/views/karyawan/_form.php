@@ -47,7 +47,7 @@ use yii\widgets\ActiveForm;
         </div>
         <div class="com-sm-12 col-6">
             <?= $form->field($model, 'kode_jenis_kelamin')->radioList(
-                ArrayHelper::map(MasterKode::find()->where(['nama_group' => 'jenis-kelamin'])->all(), 'kode', 'nama_kode')
+                ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['jenis-kelamin']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode')
             ) ?>
         </div>
         <div class="com-sm-12 col-6">

@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var backend\models\PengalamanKerja $model */
 
-$this->title = $model->id_pengalaman_kerja;
+$this->title = $model->karyawan->nama . ' (' . $model->perusahaan . ')';
 $this->params['breadcrumbs'][] = ['label' => 'Pengalaman kerja', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['karyawan/view', 'id_karyawan' => $model->id_karyawan], ['class' => 'costume-btn']) ?>
         </p>
     </div>
     <div class='table-container'>
@@ -38,7 +38,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'model' => $model,
             'attributes' => [
                 'id_pengalaman_kerja',
-                'id_karyawan',
+                [
+                    'label' => 'Karyawan',
+                    'value' => $model->karyawan->nama
+                ],
                 'perusahaan',
                 'posisi',
                 'masuk_pada',

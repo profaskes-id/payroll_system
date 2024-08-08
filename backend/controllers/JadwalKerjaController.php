@@ -65,19 +65,20 @@ class JadwalKerjaController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate($id_jam_kerja = null)
     {
         $model = new JadwalKerja();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_jadwal_kerja' => $model->id_jadwal_kerja]);
+                return $this->redirect(['/jam-kerja/view', 'id_jam_kerja' => $model->id_jam_kerja]);
             }
         } else {
             $model->loadDefaultValues();
         }
 
         return $this->render('create', [
+            'id_jam_kerja' => $id_jam_kerja,
             'model' => $model,
         ]);
     }
@@ -94,7 +95,7 @@ class JadwalKerjaController extends Controller
         $model = $this->findModel($id_jadwal_kerja);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_jadwal_kerja' => $model->id_jadwal_kerja]);
+            return $this->redirect(['/jam-kerja/view', 'id_jam_kerja' => $model->id_jam_kerja]);
         }
 
         return $this->render('update', [
@@ -111,9 +112,10 @@ class JadwalKerjaController extends Controller
      */
     public function actionDelete($id_jadwal_kerja)
     {
-        $this->findModel($id_jadwal_kerja)->delete();
+        $model = $this->findModel($id_jadwal_kerja);
+        $model->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['/jam-kerja/view', 'id_jam_kerja' => $model->id_jam_kerja]);
     }
 
     /**

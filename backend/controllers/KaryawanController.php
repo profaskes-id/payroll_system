@@ -2,8 +2,12 @@
 
 namespace backend\controllers;
 
+use backend\models\DataKeluargaSearch;
+use backend\models\DataPekerjaanSearch;
 use backend\models\Karyawan;
 use backend\models\KaryawanSearch;
+use backend\models\PengalamanKerjaSearch;
+use backend\models\RiwayatPendidikanSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -55,7 +59,38 @@ class KaryawanController extends Controller
      */
     public function actionView($id_karyawan)
     {
+
+        $PengalamanKerjasearchModel = new PengalamanKerjaSearch();
+        $PengalamanKerjasearchModel->id_karyawan = $id_karyawan;
+        $pengalamankerjaProvider = $PengalamanKerjasearchModel->search($this->request->queryParams);
+
+        $riwayatSearch = new RiwayatPendidikanSearch();
+        $riwayatSearch->id_karyawan = $id_karyawan;
+        $riwayarProvider = $riwayatSearch->search($this->request->queryParams);
+
+
+        $keluargasearchModel = new DataKeluargaSearch();
+        $keluargasearchModel->id_karyawan = $id_karyawan;
+        $dataKeluargaProvider = $keluargasearchModel->search($this->request->queryParams);
+
+
+        $PekerjaansearchModel = new DataPekerjaanSearch();
+        $PekerjaansearchModel->id_karyawan = $id_karyawan;
+        $pekrjaandataProvider = $PekerjaansearchModel->search($this->request->queryParams);
+
+
+
+
+
         return $this->render('view', [
+            'PekerjaansearchModel' => $PekerjaansearchModel,
+            'pekrjaandataProvider' => $pekrjaandataProvider,
+            'keluargasearchModel' => $keluargasearchModel,
+            'dataKeluargaProvider' => $dataKeluargaProvider,
+            'riwayatSearch' => $riwayatSearch,
+            'riwayarProvider' => $riwayarProvider,
+            'PengalamanKerjasearchModel' => $PengalamanKerjasearchModel,
+            'pengalamankerjaProvider' => $pengalamankerjaProvider,
             'model' => $this->findModel($id_karyawan),
         ]);
     }

@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var backend\models\DataPekerjaan $model */
 
-$this->title = $model->id_data_pekerjaan;
+$this->title = $model->karyawan->nama . ' (' . $model->bagian->nama_bagian . ')';
 $this->params['breadcrumbs'][] = ['label' => 'Data pekerjaan', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -37,11 +37,22 @@ $this->params['breadcrumbs'][] = $this->title;
             'model' => $model,
             'attributes' => [
                 'id_data_pekerjaan',
-                'id_karyawan',
-                'id_bagian',
+                [
+                    'label' => 'Karyawan',
+                    'value' => $model->karyawan->nama
+                ],
+                [
+                    'label' => 'Bagian',
+                    'value' => $model->bagian->nama_bagian
+                ],
                 'dari',
                 'sampai',
-                'status',
+                [
+                    'attribute' => 'status',
+                    'value' => function ($model) {
+                        return $model->statusPekerjaan->nama_kode;
+                    }
+                ],
                 'jabatan',
             ],
         ]) ?>

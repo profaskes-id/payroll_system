@@ -71,7 +71,8 @@ class PengalamanKerjaController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_pengalaman_kerja' => $model->id_pengalaman_kerja]);
+                // dd($model);
+                return $this->redirect('/panel/karyawan/view?id_karyawan=' . $model->id_karyawan);
             }
         } else {
             $model->loadDefaultValues();
@@ -94,7 +95,7 @@ class PengalamanKerjaController extends Controller
         $model = $this->findModel($id_pengalaman_kerja);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_pengalaman_kerja' => $model->id_pengalaman_kerja]);
+            return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
         }
 
         return $this->render('update', [
@@ -111,9 +112,10 @@ class PengalamanKerjaController extends Controller
      */
     public function actionDelete($id_pengalaman_kerja)
     {
-        $this->findModel($id_pengalaman_kerja)->delete();
+        $data = $this->findModel($id_pengalaman_kerja);
+        $data->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['/karyawan/view', 'id_karyawan' => $data->id_karyawan]);
     }
 
     /**

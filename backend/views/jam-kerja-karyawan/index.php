@@ -45,9 +45,24 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                'id_jam_kerja_karyawan',
-                'id_jam_kerja',
-                'jenis_shift',
+                [
+                    'attribute' => 'Karyawan',
+                    'value' => function ($model) {
+                        return $model->karyawan->nama;
+                    }
+                ],
+                [
+                    'attribute' => 'Jam Kerja',
+                    'value' => function ($model) {
+                        return $model->jamKerja->nama_jam_kerja;
+                    }
+                ],
+                [
+                    'attribute' => 'Jenis Shift',
+                    'value' => function ($model) {
+                        return strtoupper($model->jenisShift->nama_kode);
+                    }
+                ],
                 [
 
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),

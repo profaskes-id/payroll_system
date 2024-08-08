@@ -12,7 +12,8 @@ use Yii;
  * @property string $nama_hari
  * @property string $jam_masuk
  * @property string $jam_keluar
- * @property int $lama_istirahat
+ * @property string $mulai_istirahat
+ * @property string $berakhir_istirahat
  * @property int $jumlah_jam
  *
  * @property JamKerja $jamKerja
@@ -33,9 +34,10 @@ class JadwalKerja extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_jam_kerja', 'nama_hari', 'jam_masuk', 'jam_keluar', 'lama_istirahat', 'jumlah_jam'], 'required'],
-            [['id_jam_kerja', 'lama_istirahat', 'jumlah_jam'], 'integer'],
-            [['jam_masuk', 'jam_keluar'], 'safe'],
+            [['id_jam_kerja', 'nama_hari', 'jam_masuk', 'jam_keluar', 'mulai_istirahat', 'berakhir_istirahat', 'jumlah_jam'], 'required'],
+            [['id_jam_kerja'], 'integer'],
+            [['jumlah_jam'], 'number'],
+            [['jam_masuk', 'jam_keluar', 'mulai_istirahat', 'berakhir_istirahat'], 'safe'],
             [['nama_hari'], 'string', 'max' => 255],
             [['id_jam_kerja'], 'exist', 'skipOnError' => true, 'targetClass' => JamKerja::class, 'targetAttribute' => ['id_jam_kerja' => 'id_jam_kerja']],
         ];
@@ -52,7 +54,8 @@ class JadwalKerja extends \yii\db\ActiveRecord
             'nama_hari' => 'Nama Hari',
             'jam_masuk' => 'Jam Masuk',
             'jam_keluar' => 'Jam Keluar',
-            'lama_istirahat' => 'Lama Istirahat',
+            'mulai_istirahat' => 'Mulai Istirahat',
+            'berakhir_istirahat' => 'Berakhir Istirahat',
             'jumlah_jam' => 'Jumlah Jam',
         ];
     }
@@ -65,5 +68,20 @@ class JadwalKerja extends \yii\db\ActiveRecord
     public function getJamKerja()
     {
         return $this->hasOne(JamKerja::class, ['id_jam_kerja' => 'id_jam_kerja']);
+    }
+
+
+    public function getNamaHari($params)
+    {
+        $hari = [
+            0 => 'Minggu',
+            1 => 'Senin',
+            2 => 'Selasa',
+            3 => 'Rabu',
+            4 => 'Kamis',
+            5 => 'Jumat',
+            6 => 'Sabtu',
+        ];
+        return $hari[$params];
     }
 }

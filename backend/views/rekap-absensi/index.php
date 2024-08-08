@@ -1,19 +1,20 @@
 <?php
 
-use backend\models\Karyawan;
+use backend\models\Absensi;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var backend\models\KaryawanSearch $searchModel */
+/** @var backend\models\AbsensiSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Karyawan';
+$this->title = 'Absensi';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="karyawan-index">
+<div class="absensi-index position-relative">
+
 
 
     <div class="costume-container">
@@ -36,6 +37,8 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
+
+
     <div class="table-container">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
@@ -45,27 +48,31 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                'nama',
-                'kode_karyawan',
                 [
-                    'label' => 'Jenis Kelamin',
+                    'attribute' => 'Karyawan',
                     'value' => function ($model) {
-                        return $model->kode_jenis_kelamin == 1 ? 'Laki-laki' : 'Perempuan';
+                        return $model->karyawan->nama;
                     }
                 ],
-
+                'tanggal',
+                [
+                    'label' => 'Status Hadir',
+                    'value' => function ($model) {
+                        return $model->statusHadir->nama_kode;
+                    }
+                ],
                 [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, Karyawan $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id_karyawan' => $model->id_karyawan]);
+                    'urlCreator' => function ($action, Absensi $model, $key, $index, $column) {
+                        return Url::toRoute([$action, 'id_absensi' => $model->id_absensi]);
                     }
                 ],
-
             ],
         ]); ?>
     </div>
+
 
 
 </div>

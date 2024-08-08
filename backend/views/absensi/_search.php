@@ -15,27 +15,31 @@ use yii\widgets\ActiveForm;
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'id_absensi') ?>
 
-    <?= $form->field($model, 'id_karyawan') ?>
+    <!-- <?php // $form->field($model, 'id_karyawan') 
+            ?> -->
 
-    <?= $form->field($model, 'id_jam_kerja') ?>
 
-    <?= $form->field($model, 'tanggal') ?>
+    <!-- <?php // $form->field($model, 'tanggal') 
+            ?> -->
 
-    <?= $form->field($model, 'hari') ?>
 
-    <?php // echo $form->field($model, 'jam_masuk') ?>
+    <?php // echo $form->field($model, 'jam_masuk') 
+    ?>
 
-    <?php // echo $form->field($model, 'jam_pulang') ?>
+    <?php // echo $form->field($model, 'jam_pulang') 
+    ?>
 
-    <?php // echo $form->field($model, 'kode_status_hadir') ?>
+    <?php // echo $form->field($model, 'kode_status_hadir') 
+    ?>
 
-    <div class="form-group">
-        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
-    </div>
+    <!-- <div classphp //"form-group"> -->
+    <!-- <?php // Html::submitButton('Search', ['class' php //> 'btn btn-primary']) 
+            ?> -->
+    <!--  <?php // Html::resetButton('Reset', ['class' php //> 'btn btn-outline-secondary']) 
+            ?> -->
+</div>
 
-    <?php ActiveForm::end(); ?>
+<?php ActiveForm::end(); ?>
 
 </div>

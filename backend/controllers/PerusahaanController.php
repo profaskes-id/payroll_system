@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\BagianSearch;
 use backend\models\Perusahaan;
 use backend\models\PerusahaanSearch;
 use yii\web\Controller;
@@ -55,7 +56,16 @@ class PerusahaanController extends Controller
      */
     public function actionView($id_perusahaan)
     {
+
+        $perusahaanSearch = new BagianSearch();
+        $perusahaanSearch->id_perusahaan = $id_perusahaan;
+        $perusahaanProvider = $perusahaanSearch->search($this->request->queryParams);
+
+
+
         return $this->render('view', [
+            'perusahaanSearch' => $perusahaanSearch,
+            'perusahaanProvider' => $perusahaanProvider,
             'model' => $this->findModel($id_perusahaan),
         ]);
     }

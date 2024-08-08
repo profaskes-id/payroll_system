@@ -44,13 +44,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-
-                'id_jam_kerja',
                 'nama_hari',
                 'jam_masuk',
                 'jam_keluar',
-                //'lama_istirahat',
-                //'jumlah_jam',
                 [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],

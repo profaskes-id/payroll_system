@@ -17,8 +17,9 @@ class JadwalKerjaSearch extends JadwalKerja
     public function rules()
     {
         return [
-            [['id_jadwal_kerja', 'id_jam_kerja', 'lama_istirahat', 'jumlah_jam'], 'integer'],
-            [['nama_hari', 'jam_masuk', 'jam_keluar'], 'safe'],
+            [['id_jadwal_kerja', 'id_jam_kerja'], 'integer'],
+            [['nama_hari', 'jam_masuk', 'jam_keluar', 'mulai_istirahat', 'berakhir_istirahat'], 'safe'],
+            [['jumlah_jam'], 'number'],
         ];
     }
 
@@ -62,7 +63,8 @@ class JadwalKerjaSearch extends JadwalKerja
             'id_jam_kerja' => $this->id_jam_kerja,
             'jam_masuk' => $this->jam_masuk,
             'jam_keluar' => $this->jam_keluar,
-            'lama_istirahat' => $this->lama_istirahat,
+            'mulai_istirahat' => $this->mulai_istirahat,
+            'berakhir_istirahat' => $this->berakhir_istirahat,
             'jumlah_jam' => $this->jumlah_jam,
         ]);
 

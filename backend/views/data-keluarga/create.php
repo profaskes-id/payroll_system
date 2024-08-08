@@ -6,14 +6,14 @@ use yii\helpers\Html;
 /** @var backend\models\DataKeluarga $model */
 
 $this->title = 'Tambah Data Keluarga';
-$this->params['breadcrumbs'][] = ['label' => 'Data keluarga', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Data keluarga', 'url' => ['karyawan/index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="data-keluarga-create">
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['karyawan/index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 

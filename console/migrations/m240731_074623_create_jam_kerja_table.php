@@ -13,8 +13,9 @@ class m240731_074623_create_jam_kerja_table extends Migration
     public function safeUp()
     {
         $this->createTable('{{%jam_kerja}}', [
-            'id_jam_kerja' => $this->primaryKey(), // Primary key with auto-increment
-            'nama_jam_kerja' => $this->string()->notNull(), // Name of the work schedule
+            'id_jam_kerja' => $this->primaryKey(),
+            'nama_jam_kerja' => $this->string()->notNull(),
+            'jenis_shift' => $this->integer()->notNull(),
         ]);
     }
 

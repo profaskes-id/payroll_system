@@ -16,54 +16,25 @@ use yii\widgets\ActiveForm;
     <div class="row">
 
 
+        <?php $id_karyawan = Yii::$app->request->get('id_karyawan'); ?>
+        <?php $tanggal = Yii::$app->request->get('tanggal'); ?>
+
+        <?= $form->field($model, 'id_karyawan')->hiddenInput(['value' => $id_karyawan ?? $model->id_karyawan])->label(false) ?>
+
+
+        <?= $form->field($model, 'tanggal')->hiddenInput(['value' => $tanggal])->label(false) ?>
+
+
+        <div class="col-md-6">
+            <?= $form->field($model, 'jam_masuk')->textInput(['type' => 'time', 'value' => '08:00']) ?>
+        </div>
+
+        <div class="col-md-6">
+            <?= $form->field($model, 'jam_pulang')->textInput(['type' => 'time', 'value' => '17:00']) ?>
+        </div>
         <div class="col-md-6">
             <?php
-            $data = \yii\helpers\ArrayHelper::map(\backend\models\Karyawan::find()->all(), 'id_karyawan', 'nama');
-            echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
-                'data' => $data,
-                'language' => 'id',
-                'options' => ['placeholder' => 'Pilih Karyawan ...'],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]);
-            ?>
-        </div>
-
-        <div class="col-md-6">
-            <?php
-            $data = \yii\helpers\ArrayHelper::map(\backend\models\JamKerja::find()->all(), 'id_jam_kerja', 'nama_jam_kerja');
-            echo $form->field($model, 'id_jam_kerja')->widget(Select2::classname(), [
-                'data' => $data,
-                'language' => 'id',
-                'options' => ['placeholder' => 'Pilih Jam Kerja ...'],
-                'pluginOptions' => [
-                    // 'tags' => true,
-                    'allowClear' => true
-                ],
-            ]);
-            ?>
-        </div>
-
-        <div class="col-md-6">
-            <?= $form->field($model, 'tanggal')->textInput(['type' => 'date']) ?>
-        </div>
-
-        <div class="col-md-6">
-            <?= $form->field($model, 'hari')->textInput(['maxlength' => true]) ?>
-        </div>
-
-        <div class="col-md-6">
-            <?= $form->field($model, 'jam_masuk')->textInput(['type' => 'time']) ?>
-        </div>
-
-        <div class="col-md-6">
-            <?= $form->field($model, 'jam_pulang')->textInput(['type' => 'time']) ?>
-        </div>
-
-        <div class="col-md-6">
-            <?php
-            $data = \yii\helpers\ArrayHelper::map(\backend\models\MasterKode::find()->where(['nama_group' => 'status-hadir'])->all(), 'kode', 'nama_kode');
+            $data = \yii\helpers\ArrayHelper::map(\backend\models\MasterKode::find()->where(['nama_group' => Yii::$app->params['status-hadir']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
             echo $form->field($model, 'kode_status_hadir')->widget(Select2::classname(), [
                 'data' => $data,
                 'language' => 'id',
@@ -71,9 +42,18 @@ use yii\widgets\ActiveForm;
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
-            ]);
+            ])->label('Status Hadir');
             ?>
         </div>
+        <div class="col-md-6">
+            <?= $form->field($model, 'keterangan')->textarea(['rows' => 1]) ?>
+        </div>
+        <div class="col-md-6">
+            <?= $form->field($model, 'lampiran')->textInput(["placeholder" => "Lampiran", "class" => "form-control", 'type' => 'file'])->label('Lampiran') ?>
+            <!-- <p style="margin-top: -15px; font-size: 14.5px;" class="text-capitalize  text-muted"> Dokumen ini dibutuhkan untuk verifikasi data klinik</p> -->
+        </div>
+
+
     </div>
 
 

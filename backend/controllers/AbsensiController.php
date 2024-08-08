@@ -3,7 +3,12 @@
 namespace backend\controllers;
 
 use backend\models\Absensi;
-use backend\models\AbsensiSearch;
+use backend\models\Bagian;
+use backend\models\DataPekerjaan;
+use backend\models\KaryawanSearch;
+use Yii;
+use yii\data\ArrayDataProvider;
+use yii\db\Query;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -38,14 +43,34 @@ class AbsensiController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new AbsensiSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $searchModel = new KaryawanSearch();
+        $dataProvider = $searchModel->searchAbsensi(Yii::$app->request->queryParams);
+        $absensi = new Absensi();
+        $bagian = new Bagian();
+
+
+        if (\Yii::$app->request->isPost) {
+            // echo "kode jika request adalah POST";
+            $param_bagian = Yii::$app->request->post('Bagian')['id_bagian'];
+            if ($param_bagian) {
+                $filteredModels = [];
+                foreach ($dataProvider->models as $model) {
+                    if (isset($model['data_pekerjaan']) && $model['data_pekerjaan']['id_bagian'] == intval($param_bagian)) {
+                        $filteredModels[] = $model;
+                    }
+                }
+                $dataProvider->setModels($filteredModels);
+            }
+        }
 
         return $this->render('index', [
+            'absensi' => $absensi,
+            'bagian' => $bagian,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
+
 
     /**
      * Displays a single Absensi model.
@@ -71,7 +96,7 @@ class AbsensiController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_absensi' => $model->id_absensi]);
+                return $this->redirect(['index']);
             }
         } else {
             $model->loadDefaultValues();

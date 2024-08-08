@@ -34,8 +34,8 @@ class DataPekerjaan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_karyawan', 'id_bagian', 'dari', 'status', 'jabatan'], 'required'],
-            [['id_karyawan', 'id_bagian', 'status'], 'integer'],
+            [['id_karyawan', 'id_bagian', 'dari', 'status', 'jabatan', 'is_aktif'], 'required'],
+            [['id_karyawan', 'id_bagian', 'status', 'is_aktif'], 'integer'],
             [['dari', 'sampai'], 'safe'],
             [['jabatan'], 'string', 'max' => 255],
             [['id_bagian'], 'exist', 'skipOnError' => true, 'targetClass' => Bagian::class, 'targetAttribute' => ['id_bagian' => 'id_bagian']],
@@ -56,6 +56,7 @@ class DataPekerjaan extends \yii\db\ActiveRecord
             'sampai' => 'Sampai',
             'status' => 'Status',
             'jabatan' => 'Jabatan',
+            'is_aktif' => 'Is Aktif',
         ];
     }
 
@@ -77,5 +78,10 @@ class DataPekerjaan extends \yii\db\ActiveRecord
     public function getKaryawan()
     {
         return $this->hasOne(Karyawan::class, ['id_karyawan' => 'id_karyawan']);
+    }
+
+    public function getStatusPekerjaan()
+    {
+        return $this->hasOne(MasterKode::class, ['kode' => 'status'])->onCondition(['nama_group' => 'status-pekerjaan']);
     }
 }

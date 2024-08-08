@@ -17,8 +17,8 @@ class AbsensiSearch extends Absensi
     public function rules()
     {
         return [
-            [['id_absensi', 'id_karyawan', 'id_jam_kerja'], 'integer'],
-            [['tanggal', 'hari', 'jam_masuk', 'jam_pulang', 'kode_status_hadir'], 'safe'],
+            [['id_absensi', 'id_karyawan',], 'integer'],
+            [['tanggal', 'lampiran', 'keterangan', 'jam_masuk', 'jam_pulang', 'kode_status_hadir'], 'safe'],
         ];
     }
 
@@ -60,14 +60,12 @@ class AbsensiSearch extends Absensi
         $query->andFilterWhere([
             'id_absensi' => $this->id_absensi,
             'id_karyawan' => $this->id_karyawan,
-            'id_jam_kerja' => $this->id_jam_kerja,
             'tanggal' => $this->tanggal,
             'jam_masuk' => $this->jam_masuk,
             'jam_pulang' => $this->jam_pulang,
         ]);
 
-        $query->andFilterWhere(['like', 'hari', $this->hari])
-            ->andFilterWhere(['like', 'kode_status_hadir', $this->kode_status_hadir]);
+        $query->andFilterWhere(['like', 'kode_status_hadir', $this->kode_status_hadir]);
 
         return $dataProvider;
     }

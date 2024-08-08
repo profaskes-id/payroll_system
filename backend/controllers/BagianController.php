@@ -71,7 +71,7 @@ class BagianController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_bagian' => $model->id_bagian]);
+                return $this->redirect(['/perusahaan/view', 'id_perusahaan' => $model->id_perusahaan]);
             }
         } else {
             $model->loadDefaultValues();
@@ -94,7 +94,7 @@ class BagianController extends Controller
         $model = $this->findModel($id_bagian);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_bagian' => $model->id_bagian]);
+            return $this->redirect(['/perusahaan/view', 'id_perusahaan' => $model->id_perusahaan]);
         }
 
         return $this->render('update', [
@@ -111,9 +111,10 @@ class BagianController extends Controller
      */
     public function actionDelete($id_bagian)
     {
-        $this->findModel($id_bagian)->delete();
+        $model = $this->findModel($id_bagian);
+        $model->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['/perusahaan/view', 'id_perusahaan' => $model->id_perusahaan]);
     }
 
     /**

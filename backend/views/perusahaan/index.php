@@ -45,10 +45,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-
-                'id_perusahaan',
                 'nama_perusahaan',
-                'status_perusahaan',
+                [
+                    'label' => 'Status Perusahaan',
+                    'value' => function ($model) {
+                        return $model->statusPerusahaan->nama_kode;
+                    }
+                ],
                 [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],

@@ -63,4 +63,9 @@ class RiwayatPendidikan extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Karyawan::class, ['id_karyawan' => 'id_karyawan']);
     }
+
+    public function getJenjangPendidikan()
+    {
+        return $this->hasOne(MasterKode::class, ['kode' => 'jenjang_pendidikan'])->onCondition(['nama_group' => 'jenjang-pendidikan']);
+    }
 }

@@ -6,8 +6,8 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var backend\models\Bagian $model */
 
-$this->title = $model->id_bagian;
-$this->params['breadcrumbs'][] = ['label' => 'bagian', 'url' => ['index']];
+$this->title = $model->nama_bagian;
+$this->params['breadcrumbs'][] = ['label' => 'bagian', 'url' => ['/perusahaan/view', 'id_perusahaan' => $model->perusahaan->id_perusahaan]];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['/perusahaan/view', 'id_perusahaan' => $model->perusahaan->id_perusahaan], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 

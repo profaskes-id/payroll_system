@@ -14,7 +14,8 @@ class m240731_074752_create_jam_kerja_karyawan_table extends Migration
     {
         $this->createTable('{{%jam_kerja_karyawan}}', [
             'id_jam_kerja_karyawan' => $this->primaryKey(), // Primary key with auto-increment
-            'id_jam_kerja' => $this->integer()->notNull(), // Foreign key to jam_kerja table
+            'id_karyawan' => $this->integer()->notNull(),
+            'id_jam_kerja' => $this->integer()->notNull(),
             'jenis_shift' => $this->integer()->notNull(), // Shift type (integer)
         ]);
 
@@ -35,6 +36,24 @@ class m240731_074752_create_jam_kerja_karyawan_table extends Migration
             'CASCADE',
             'CASCADE'
         );
+
+        // Create index for foreign key to karyawan
+        $this->createIndex(
+            'idx-jam_kerja_karyawan-id_karyawan',
+            '{{%jam_kerja_karyawan}}',
+            'id_karyawan'
+        );
+
+        // Add foreign key constraint to karyawan
+        $this->addForeignKey(
+            'fk-jam_kerja_karyawan-id_karyawan',
+            '{{%jam_kerja_karyawan}}',
+            'id_karyawan',
+            '{{%karyawan}}',
+            'id_karyawan',
+            'CASCADE',
+            'CASCADE'
+        );
     }
 
     /**
@@ -44,10 +63,18 @@ class m240731_074752_create_jam_kerja_karyawan_table extends Migration
     {
         // Drop foreign key and index before dropping the table
         $this->dropForeignKey(
-            'fk-jam_kerja_karyawan-id_jam_kerja',
+            'fk-jam_kerja_karyawan-id_karyawan',
+            '{{%jam_kerja_karyawan}}'
+        );
+        $this->dropIndex(
+            'idx-jam_kerja_karyawan-id_karyawan',
             '{{%jam_kerja_karyawan}}'
         );
 
+        $this->dropForeignKey(
+            'fk-jam_kerja_karyawan-id_jam_kerja',
+            '{{%jam_kerja_karyawan}}'
+        );
         $this->dropIndex(
             'idx-jam_kerja_karyawan-id_jam_kerja',
             '{{%jam_kerja_karyawan}}'

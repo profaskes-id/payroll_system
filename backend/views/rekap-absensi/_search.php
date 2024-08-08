@@ -4,30 +4,32 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var backend\models\JadwalKerjaSearch $model */
+/** @var backend\models\AbsensiSearch $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="jadwal-kerja-search">
+<div class="absensi-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'id_jadwal_kerja') ?>
+    <?= $form->field($model, 'id_absensi') ?>
 
-    <?= $form->field($model, 'id_jam_kerja') ?>
+    <?= $form->field($model, 'id_karyawan') ?>
 
-    <?= $form->field($model, 'nama_hari') ?>
+    <?= $form->field($model, 'tanggal') ?>
 
     <?= $form->field($model, 'jam_masuk') ?>
 
-    <?= $form->field($model, 'jam_keluar') ?>
+    <?= $form->field($model, 'jam_pulang') ?>
 
+    <?php // echo $form->field($model, 'kode_status_hadir') ?>
 
-    <?php // echo $form->field($model, 'jumlah_jam') 
-    ?>
+    <?php // echo $form->field($model, 'keterangan') ?>
+
+    <?php // echo $form->field($model, 'lampiran') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

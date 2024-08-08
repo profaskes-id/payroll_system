@@ -9,6 +9,7 @@ use Yii;
  *
  * @property int $id_jam_kerja
  * @property string $nama_jam_kerja
+ * @property int $jenis_shift
  *
  * @property Absensi[] $absensis
  * @property JadwalKerja[] $jadwalKerjas
@@ -30,7 +31,8 @@ class JamKerja extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nama_jam_kerja'], 'required'],
+            [['nama_jam_kerja', 'jenis_shift'], 'required'],
+            [['jenis_shift'], 'integer'],
             [['nama_jam_kerja'], 'string', 'max' => 255],
         ];
     }
@@ -43,6 +45,7 @@ class JamKerja extends \yii\db\ActiveRecord
         return [
             'id_jam_kerja' => 'Id Jam Kerja',
             'nama_jam_kerja' => 'Nama Jam Kerja',
+            'jenis_shift' => 'Jenis Shift',
         ];
     }
 
@@ -74,5 +77,10 @@ class JamKerja extends \yii\db\ActiveRecord
     public function getJamKerjaKaryawans()
     {
         return $this->hasMany(JamKerjaKaryawan::class, ['id_jam_kerja' => 'id_jam_kerja']);
+    }
+
+    public function getJenisShift()
+    {
+        return $this->hasOne(MasterKode::class, ['kode' => 'jenis_shift'])->onCondition(['nama_group' => 'jenis-shift']);
     }
 }

@@ -27,7 +27,7 @@ use yii\widgets\ActiveForm;
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
-            ]);
+            ])->label('Perusahaan');
             ?>
         </div>
     </div>

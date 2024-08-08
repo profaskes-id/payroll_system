@@ -54,6 +54,26 @@ $this->registerJsFile($publishedRes[1] . '/control_sidebar.js', ['depends' => '\
             transition: all .6s ease;
         }
 
+        .tambah-button {
+            border: none;
+            display: flex;
+            padding: 0.75rem 1.5rem;
+            background-color: #63ec48;
+            color: #ffffff;
+            font-size: 0.75rem;
+            line-height: 1rem;
+            font-weight: 700;
+            text-align: center;
+            text-transform: uppercase;
+            vertical-align: middle;
+            align-items: center;
+            border-radius: 0.5rem;
+            user-select: none;
+            gap: 0.65rem;
+            box-shadow: 0 4px 6px -1px #488aec31, 0 2px 4px -1px #488aec17;
+            transition: all .6s ease;
+        }
+
         .reset-button {
             border: none;
             display: flex;
@@ -74,7 +94,9 @@ $this->registerJsFile($publishedRes[1] . '/control_sidebar.js', ['depends' => '\
             transition: all .6s ease;
         }
 
-        .reset-button:hover {
+        .reset-button:hover,
+        .tambah-button:hover,
+        .add-button:hover {
             color: white;
         }
 
@@ -402,6 +424,26 @@ $this->registerJsFile($publishedRes[1] . '/control_sidebar.js', ['depends' => '\
             transform: scale(var(--nav-active-scale));
             visibility: visible;
             opacity: 1;
+        }
+
+        .pagination {
+            min-width: 200px;
+            display: flex !important;
+            justify-content: space-around !important;
+            align-items: center !important;
+            padding: 3px;
+        }
+
+
+
+        .pagination .prev>*,
+        .pagination .next>* {
+            border: 1px solid #488aec;
+            padding: 5px 15px;
+            border-radius: 100px;
+            font-size: 1.2rem;
+            color: #488aec;
+            cursor: pointer;
         }
     </style>
     <?php $this->head() ?>

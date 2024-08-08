@@ -2,16 +2,16 @@
 
 namespace backend\controllers;
 
-use backend\models\RiwayatPendidikan;
-use backend\models\RiwayatPendidikanSearch;
+use backend\models\Absensi;
+use backend\models\AbsensiSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * RiwayatPendidikanController implements the CRUD actions for RiwayatPendidikan model.
+ * RekapAbsensiController implements the CRUD actions for Absensi model.
  */
-class RiwayatPendidikanController extends Controller
+class RekapAbsensiController extends Controller
 {
     /**
      * @inheritDoc
@@ -32,13 +32,13 @@ class RiwayatPendidikanController extends Controller
     }
 
     /**
-     * Lists all RiwayatPendidikan models.
+     * Lists all Absensi models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new RiwayatPendidikanSearch();
+        $searchModel = new AbsensiSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -48,30 +48,30 @@ class RiwayatPendidikanController extends Controller
     }
 
     /**
-     * Displays a single RiwayatPendidikan model.
-     * @param int $id_riwayat_pendidikan Id Riwayat Pendidikan
+     * Displays a single Absensi model.
+     * @param int $id_absensi Id Absensi
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id_riwayat_pendidikan)
+    public function actionView($id_absensi)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id_riwayat_pendidikan),
+            'model' => $this->findModel($id_absensi),
         ]);
     }
 
     /**
-     * Creates a new RiwayatPendidikan model.
+     * Creates a new Absensi model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new RiwayatPendidikan();
+        $model = new Absensi();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
+                return $this->redirect(['view', 'id_absensi' => $model->id_absensi]);
             }
         } else {
             $model->loadDefaultValues();
@@ -83,18 +83,18 @@ class RiwayatPendidikanController extends Controller
     }
 
     /**
-     * Updates an existing RiwayatPendidikan model.
+     * Updates an existing Absensi model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id_riwayat_pendidikan Id Riwayat Pendidikan
+     * @param int $id_absensi Id Absensi
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id_riwayat_pendidikan)
+    public function actionUpdate($id_absensi)
     {
-        $model = $this->findModel($id_riwayat_pendidikan);
+        $model = $this->findModel($id_absensi);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
+            return $this->redirect(['view', 'id_absensi' => $model->id_absensi]);
         }
 
         return $this->render('update', [
@@ -103,30 +103,29 @@ class RiwayatPendidikanController extends Controller
     }
 
     /**
-     * Deletes an existing RiwayatPendidikan model.
+     * Deletes an existing Absensi model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id_riwayat_pendidikan Id Riwayat Pendidikan
+     * @param int $id_absensi Id Absensi
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id_riwayat_pendidikan)
+    public function actionDelete($id_absensi)
     {
-        $model  =  $this->findModel($id_riwayat_pendidikan);
-        $model->delete();
+        $this->findModel($id_absensi)->delete();
 
-        return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
+        return $this->redirect(['index']);
     }
 
     /**
-     * Finds the RiwayatPendidikan model based on its primary key value.
+     * Finds the Absensi model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id_riwayat_pendidikan Id Riwayat Pendidikan
-     * @return RiwayatPendidikan the loaded model
+     * @param int $id_absensi Id Absensi
+     * @return Absensi the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id_riwayat_pendidikan)
+    protected function findModel($id_absensi)
     {
-        if (($model = RiwayatPendidikan::findOne(['id_riwayat_pendidikan' => $id_riwayat_pendidikan])) !== null) {
+        if (($model = Absensi::findOne(['id_absensi' => $id_absensi])) !== null) {
             return $model;
         }
 

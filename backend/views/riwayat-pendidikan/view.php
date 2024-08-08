@@ -6,8 +6,8 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var backend\models\RiwayatPendidikan $model */
 
-$this->title = $model->id_riwayat_pendidikan;
-$this->params['breadcrumbs'][] = ['label' => 'Riwayat pendidikan', 'url' => ['index']];
+$this->title = $model->karyawan->nama . ' (' . $model->institusi . ')';
+$this->params['breadcrumbs'][] = ['label' => 'Riwayat pendidikan', 'url' => ['karyawan/view', 'id_karyawan' => $model->id_karyawan]];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['karyawan/view', 'id_karyawan' => $model->id_karyawan], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 
@@ -35,8 +35,18 @@ $this->params['breadcrumbs'][] = $this->title;
             'model' => $model,
             'attributes' => [
                 'id_riwayat_pendidikan',
-                'id_karyawan',
-                'jenjang_pendidikan',
+                [
+                    'attribute' => 'karyawan',
+                    'value' => function ($model) {
+                        return $model->karyawan->nama;
+                    }
+                ],
+                [
+                    'label' => 'Jenjang Pendidikan',
+                    'value' => function ($model) {
+                        return $model->jenjangPendidikan->nama_kode;
+                    }
+                ],
                 'institusi',
                 'tahun_masuk',
                 'tahun_keluar',
