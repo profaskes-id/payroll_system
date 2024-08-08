@@ -8,23 +8,40 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="absensi-form">
+<div class="absensi-form table-container">
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'id_karyawan')->textInput() ?>
 
-    <?= $form->field($model, 'tanggal')->textInput() ?>
+    <div class="row">
+        <div class="col-md-6">
+            <?= $form->field($model, 'id_karyawan')->textInput() ?>
+        </div>
 
-    <?= $form->field($model, 'jam_masuk')->textInput() ?>
+        <div class="col-md-6">
+            <?= $form->field($model, 'tanggal')->textInput() ?>
+        </div>
 
-    <?= $form->field($model, 'jam_pulang')->textInput() ?>
+        <div class="col-md-6">
+            <?= $form->field($model, 'jam_masuk')->textInput() ?>
+        </div>
 
-    <?= $form->field($model, 'kode_status_hadir')->textInput() ?>
+        <div class="col-md-6">
+            <?= $form->field($model, 'jam_pulang')->textInput() ?>
+        </div>
 
-    <?= $form->field($model, 'keterangan')->textarea(['rows' => 6]) ?>
+        <div class="col-md-6">
+            <?= $form->field($model, 'kode_status_hadir')->textInput() ?>
+        </div>
 
-    <?= $form->field($model, 'lampiran')->textInput(['maxlength' => true]) ?>
+        <div class="col-md-6">
+            <?= $form->field($model, 'keterangan')->textarea(['rows' => 1]) ?>
+        </div>
+
+        <div class="col-md-6">
+            <?= $form->field($model, 'lampiran')->textInput(['maxlength' => true]) ?>
+        </div>
+    </div>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

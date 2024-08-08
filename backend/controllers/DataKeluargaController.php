@@ -17,19 +17,28 @@ class DataKeluargaController extends Controller
      * @inheritDoc
      */
     public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
+{
+    return array_merge(
+        parent::behaviors(),
+        [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
                     ],
                 ],
-            ]
-        );
-    }
+            ],
+        ]
+    );
+}
 
     /**
      * Lists all DataKeluarga models.

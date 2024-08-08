@@ -19,17 +19,20 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'id_karyawan') ?>
 
-    <?= $form->field($model, 'tanggal') ?>
+    <?= $form->field($model, 'tanggal')->textInput(['type' => 'date']) ?>
 
     <?= $form->field($model, 'jam_masuk') ?>
 
     <?= $form->field($model, 'jam_pulang') ?>
 
-    <?php // echo $form->field($model, 'kode_status_hadir') ?>
+    <?php // echo $form->field($model, 'kode_status_hadir') 
+    ?>
 
-    <?php // echo $form->field($model, 'keterangan') ?>
+    <?php // echo $form->field($model, 'keterangan') 
+    ?>
 
-    <?php // echo $form->field($model, 'lampiran') ?>
+    <?php // echo $form->field($model, 'lampiran') 
+    ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

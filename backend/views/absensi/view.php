@@ -41,14 +41,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->karyawan->nama;
                     }
                 ],
-                [
-                    'attribute' => 'jam kerja',
-                    'value' => function ($model) {
-                        return $model->jamKerja->nama_jam_kerja;
-                    }
-                ],
+
                 'tanggal',
-                'hari',
                 'jam_masuk',
                 'jam_pulang',
                 [

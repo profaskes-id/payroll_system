@@ -32,6 +32,15 @@ class AbsensiController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => AccessControl::className(),
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
             ]
         );
     }
@@ -119,7 +128,7 @@ class AbsensiController extends Controller
         $model = $this->findModel($id_absensi);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_absensi' => $model->id_absensi]);
+            return $this->redirect(['index']);
         }
 
         return $this->render('update', [

@@ -63,34 +63,56 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ],
                                 ]) ?>
                             </p>
-                            <?= DetailView::widget([
-                                'model' => $model,
-                                'attributes' => [
-                                    'id_karyawan',
-                                    'kode_karyawan',
-                                    'nama',
-                                    'nomer_identitas',
-                                    'jenis_identitas',
-                                    'tanggal_lahir',
-                                    'kode_negara',
-                                    'kode_provinsi',
-                                    'kode_kabupaten_kota',
-                                    'kode_kecamatan',
-                                    [
-                                        'label' => 'Jenis Kelamin',
-                                        'value' => function ($model) {
-                                            return $model->kode_jenis_kelamin == 1 ? 'Laki-laki' : 'Perempuan';
-                                        }
-                                    ],
-                                    'email:email',
-                                ],
-                            ]) ?>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <?= DetailView::widget([
+                                        'model' => $model,
+                                        'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                                        'attributes' => [
+                                            'kode_karyawan',
+                                            'nama',
+                                            'nomer_identitas',
+                                            'jenis_identitas',
+                                            // ...
+                                            [
+                                                'attribute' => 'kode_jenis_kelamin',
+                                                'label' => 'Jenis Kelamin',
+                                                'value' => function ($model) {
+                                                    return $model->kode_jenis_kelamin == 1 ? 'Laki-laki' : 'Perempuan';
+                                                }
+                                            ],
+                                            [
+                                                'attribute' => 'email',
+                                                'label' => 'Email',
+                                                'format' => 'email',
+                                            ],
+                                        ],
+                                    ]) ?>
+                                </div>
+                                <div class="col-md-6">
+                                    <?= DetailView::widget([
+                                        'model' => $model,
+                                        'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                                        'attributes' => [
+                                            // Last 4 attributes
+
+                                            'tanggal_lahir',
+
+                                            'kode_negara',
+                                            'kode_provinsi',
+                                            'kode_kabupaten_kota',
+                                            'kode_kecamatan',
+                                            'alamat',
+                                        ],
+                                    ]) ?>
+                                </div>
+                            </div>
 
                         </div>
                         <div class="tab-pane fade" id="custom-tabs-one-profile" role="tabpanel" aria-labelledby="custom-tabs-one-profile-tab">
 
                             <p class="d-flex justify-content-end " style="gap: 10px;">
-                                <?= Html::a('Add new', ['/pengalaman-kerja/create'], ['class' => 'tambah-button']) ?>
+                                <?= Html::a('Add new', ['/pengalaman-kerja/create', 'id_karyawan' => $model->id_karyawan], ['class' => 'tambah-button']) ?>
                             </p>
 
                             <?= GridView::widget([
@@ -120,7 +142,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <div class="tab-pane fade" id="custom-tabs-one-messages" role="tabpanel" aria-labelledby="custom-tabs-one-messages-tab">
 
                             <p class="d-flex justify-content-end " style="gap: 10px;">
-                                <?= Html::a('Add new', ['/riwayat-pendidikan/create'], ['class' => 'tambah-button']) ?>
+                                <?= Html::a('Add new', ['/riwayat-pendidikan/create', 'id_karyawan' => $model->id_karyawan], ['class' => 'tambah-button']) ?>
                             </p>
 
 
@@ -158,7 +180,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <div class="tab-pane fade" id="custom-tabs-one-settings" role="tabpanel" aria-labelledby="custom-tabs-one-settings-tab">
 
                             <p class="d-flex justify-content-end " style="gap: 10px;">
-                                <?= Html::a('Add new', ['/data-keluarga/create'], ['class' => 'tambah-button']) ?>
+                                <?= Html::a('Add new', ['/data-keluarga/create', 'id_karyawan' => $model->id_karyawan], ['class' => 'tambah-button']) ?>
                             </p>
 
 
@@ -202,21 +224,20 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ],
 
                                     [
-                                        'attribute' => 'Karyawan',
+                                        'label' => 'Bagian',
                                         'value' => function ($model) {
-                                            return $model->karyawan->nama;
+                                            return $model->bagian->nama_bagian;
                                         }
                                     ],
-
-                                    // 'dari',
-                                    // 'sampai',
+                                    'dari',
+                                    'sampai',
                                     [
                                         'attribute' => 'status',
                                         'value' => function ($model) {
                                             return $model->statusPekerjaan->nama_kode;
                                         }
                                     ],
-                                    'jabatan',
+                                    // 'jabatan',
                                     [
                                         'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                                         'headerOptions' => ['style' => 'width: 5%; text-align: center;'],

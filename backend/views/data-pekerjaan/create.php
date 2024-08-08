@@ -13,7 +13,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?php
+            $id_karyawan = Yii::$app->request->get('id_karyawan');
+            ?>
+            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['karyawan/view?id_karyawan=' . $id_karyawan], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 

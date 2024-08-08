@@ -25,7 +25,7 @@ $today = date('Y-m-d');
 
     <?php $form = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',   'action' => ['absensi/index']]); ?>
     <div class='table-container'>
-        <div class="row">
+        <div class="row mb-2">
             <div class="col-12 col-md-6">
                 <?= $form->field($absensi, 'tanggal')->textInput([
                     'class' => 'form-control',
@@ -71,51 +71,108 @@ $today = date('Y-m-d');
                 ],
                 'karyawan.nama',
                 [
-                    'headerOptions' => ['style' => 'width: 20%; text-align: center;'],
-                    'label' => 'tanggal',
+                    'headerOptions' => ['style' => 'width: 200px; text-align: center;'],
+                    'contentOptions' => ['style' => 'text-align: center;'],
+                    'label' => 'Tanggal',
                     'value' => function () {
-                        return Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d');
+                        $tanggal = Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d');
+                        $formattedTanggal = date('d-m-Y', strtotime($tanggal));
+
+                        return $formattedTanggal;
                     }
                 ],
+
                 [
+                    'headerOptions' => ['style' => 'width: 15%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 15%; text-align: center;'],
+                    'label' => 'Jam Masuk',
+                    'value' => function ($model) {
+                        $item = Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d');
+
+                        $result = array_filter($model['absensi'], function ($value) use ($item) {
+                            return $value['tanggal_absensi'] == $item;
+                        });
+                        if (!empty($result)) {
+                            $var = [...$result];
+                            return    $var[0]['jam_masuk'] ?? '-';
+                        } else {
+                            return '-';
+                        }
+                    },
+                ],
+                [
+                    'headerOptions' => ['style' => 'width: 15%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 15%; text-align: center;'],
+                    'label' => 'Jam Masuk',
+                    'value' => function ($model) {
+                        $item = Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d');
+
+                        $result = array_filter($model['absensi'], function ($value) use ($item) {
+                            return $value['tanggal_absensi'] == $item;
+                        });
+                        if (!empty($result)) {
+                            $var = [...$result];
+                            return  $var[0]['jam_pulang'] ?? '-';
+                        } else {
+                            return '-';
+                        }
+                    },
+                ],
+                [
+                    'headerOptions' => ['style' => 'width: 15%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 15%; text-align: center;'],
+
                     'label' => 'Kehadiran',
                     'value' => function ($model) {
-                        return $model['absensi']['kode_status_hadir'] ?? 'Belum Di Set';
-                    },
-                ],
-                [
-                    'label' => 'Keterangan',
-                    'value' => function ($model) {
-                        return $model['absensi']['keterangan'] ?? 'Belum Di Set';
-                    },
-                ],
-                [
-                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                    'class' => 'yii\grid\ActionColumn',
-                    'template' => '{view}',
-                    'buttons' => [
-                        'view' => function ($url, $model) {
-                            $tanggal = Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d');
-                            $absensiArray = $model['absensi'];
-                            $found = false;
+                        $item = Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d');
 
-                            foreach ($absensiArray as $absensi) {
-                                if ($absensi['tanggal_absensi'] == $tanggal) {
-                                    $found = true;
-                                    break;
-                                }
-                            }
+                        $result = array_filter($model['absensi'], function ($value) use ($item) {
+                            return $value['tanggal_absensi'] == $item;
+                        });
+                        if (!empty($result)) {
 
-                            if ($found) {
-                                return Html::a('<i class="svgIcon fa fa-regular fa-eye"></i>', ['update', 'id_absensi' => $model['absensi'][0]['id_absensi']], ['class' => 'tambah-button']);
+                            $val = [...$result];
+                            if ($val[0]['kode_status_hadir'] == 1) {
+                                return Html::a("<span class='text-success'>Hadir</span>", ['update', 'id_absensi' => $model['absensi'][0]['id_absensi']],);;
+                            } else if ($val[0]['kode_status_hadir'] == 2) {
+                                return Html::a("<span class='text-black'>IZIN</span>", ['update', 'id_absensi' => $model['absensi'][0]['id_absensi']],);;
+                            } else if ($val[0]['kode_status_hadir'] == 3) {
+                                return Html::a("<span class='  text-white'>Sakit</span>", ['update', 'id_absensi' => $model['absensi'][0]['id_absensi']],);;
                             } else {
-                                return Html::a('<i class="svgIcon fa fa-regular fa-plus"></i>', ['create', 'tanggal' => Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d'), 'id_karyawan' => $model['karyawan']['id_karyawan']], ['class' => 'add-button']);
+                                return Html::a("<span class='text-warnging'>Belum di set</span>", ['create', 'tanggal' => Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d'), 'id_karyawan' => $model['karyawan']['id_karyawan']]);
                             }
-                        },
-                    ],
-
+                        } else {
+                            return Html::a("<span class='text-warnging'>Belum di set</span>", ['create', 'tanggal' => Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d'), 'id_karyawan' => $model['karyawan']['id_karyawan']]);
+                        }
+                    },
+                    'format' => 'raw',
                 ],
+                // [
+                //     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                //     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                //     'class' => 'yii\grid\ActionColumn',
+                //     'template' => '{view}',
+                //     'buttons' => [
+                //         'view' => function ($url, $model) {
+                //             $tanggal = Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d');
+                //             $absensiArray = $model['absensi'];
+                //             $found = false;
+
+                //             foreach ($absensiArray as $absensi) {
+                //                 if ($absensi['tanggal_absensi'] == $tanggal) {
+                //                     $found = true;
+                //                     break;
+                //                 }
+                //             }
+
+                //             if ($found) {
+                //                 return Html::a('<i class="svgIcon fa fa-regular fa-eye"></i>', ['update', 'id_absensi' => $model['absensi'][0]['id_absensi']], ['class' => 'tambah-button']);
+                //             } else {
+                //             }
+                //         },
+                //     ],
+
+                // ],
             ],
         ]); ?>
     </div>

@@ -13,9 +13,8 @@ $this->params['breadcrumbs'][] = 'Update';
 <div class="riwayat-pendidikan-update">
 
     <div class="costume-container">
-        <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['karyawan/view', 'id_karyawan' => $model->id_karyawan], ['class' => 'costume-btn']) ?>
-        </p>
+
+        <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['karyawan/view?id_karyawan=' . $model->id_karyawan], ['class' => 'costume-btn']) ?>
     </div>
     <?= $this->render('_form', [
         'model' => $model,

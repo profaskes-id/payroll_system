@@ -5,9 +5,10 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\Absensi $model */
 
-$this->title = 'Tambah Absensi';
+$this->title = 'Absensi Masuk';
 $this->params['breadcrumbs'][] = ['label' => 'Absensis', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = ['label' => 'Absensis Masuk',];
+
 ?>
 <div class="absensi-create">
 

@@ -17,7 +17,7 @@ class m240731_075545_create_absensi_table extends Migration
             'id_karyawan' => $this->integer()->notNull(), // Foreign key to karyawan table
             'tanggal' => $this->date()->notNull(), // Date of attendance
             'jam_masuk' => $this->time(), // Time of arrival (nullable)
-            'jam_pulang' => $this->time(), // Time of departure (nullable)
+            'jam_pulang' => $this->time()->defaultValue(null), // Time of departure (nullable)
             'kode_status_hadir' => $this->integer()->notNull(), // Status code (e.g., present, absent)
             'keterangan' => $this->text()->defaultValue(null), // Status code (e.g., present, absent)
             'lampiran' => $this->string()->defaultValue(null),

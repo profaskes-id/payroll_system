@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['karyawan/view?id_karyawan=' . $model->id_karyawan], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 

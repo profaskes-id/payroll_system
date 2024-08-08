@@ -13,31 +13,40 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="absensi-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="costume-container">
+        <p class="">
+            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+        </p>
+    </div>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id_absensi' => $model->id_absensi], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id_absensi' => $model->id_absensi], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
+
+    <div class='table-container'>
+        <p class="d-flex justify-content-end " style="gap: 10px;">
+            <?= Html::a('Update', ['update', 'id_absensi' => $model->id_absensi], ['class' => 'add-button']) ?>
+            <?= Html::a('Delete', ['delete', 'id_absensi' => $model->id_absensi], [
+                'class' => 'reset-button',
+                'data' => [
+                    'confirm' => 'Are you sure you want to delete this item?',
+                    'method' => 'post',
+                ],
+            ]) ?>
+        </p>
+
+        <?= DetailView::widget([
+            'model' => $model,
+            'attributes' => [
+                'id_absensi',
+                'id_karyawan',
+                'tanggal',
+                'jam_masuk',
+                'jam_pulang',
+                'kode_status_hadir',
+                'keterangan:ntext',
+                'lampiran',
             ],
         ]) ?>
-    </p>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id_absensi',
-            'id_karyawan',
-            'tanggal',
-            'jam_masuk',
-            'jam_pulang',
-            'kode_status_hadir',
-            'keterangan:ntext',
-            'lampiran',
-        ],
-    ]) ?>
+    </div>
+
 
 </div>
