@@ -79,8 +79,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                                         'class' => 'yii\grid\SerialColumn'
                                     ],
-                                    'nama_bagian',
-
                                     [
                                         'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                                         'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
@@ -89,6 +87,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                             return Url::toRoute(['/bagian/view', 'id_bagian' => $model->id_bagian]);
                                         }
                                     ],
+                                    'nama_bagian',
+
+                             
                                 ],
                             ]); ?>
                         </div>

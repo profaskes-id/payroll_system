@@ -44,9 +44,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-
-                'tanggal',
-                'nama_hari_libur',
                 [
 
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
@@ -56,6 +53,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         return Url::toRoute([$action, 'id_hari_libur' => $model->id_hari_libur]);
                     }
                 ],
+
+                'tanggal',
+                'nama_hari_libur',
+
             ],
         ]); ?>
     </div>

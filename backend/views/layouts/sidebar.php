@@ -32,9 +32,9 @@
             echo \hail812\adminlte\widgets\Menu::widget([
                 'items' => [
 
-                    // ['label' => 'Simple Link', 'icon' => 'th', 'badge' => '<span class="right badge badge-danger">New</span>'],
+                    // ['label' => 'Simple ', 'icon' => 'th', 'badge' => '<span class="right badge badge-danger">New</span>'],
                     // ['label' => 'Yii2 PROVIDED', 'header' => true],
-                    // ['label' => 'Gii',  'icon' => 'file-code', 'url' => ['/gii'], 'target' => '_blank'],
+                    ['label' => 'Dashboard',  'icon' => 'home', 'url' => ['/']],
 
                     [
                         'label' => 'Pengaturan System',

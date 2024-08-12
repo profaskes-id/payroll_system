@@ -44,7 +44,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                'nama_bagian',
                 [
                     'label' => 'Perusahaan',
                     'value' => function ($model) {
@@ -59,6 +58,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         return Url::toRoute([$action, 'id_bagian' => $model->id_bagian]);
                     }
                 ],
+                'nama_bagian',
+            
+
             ],
         ]); ?>
     </div>

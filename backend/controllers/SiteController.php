@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use common\models\LoginForm;
+use Symfony\Component\CssSelector\Parser\Shortcut\ElementParser;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -62,7 +63,16 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['user/login']);
+        } elseif (Yii::$app->user->can('admin')) {
+            return $this->redirect('index');
+        } elseif (!Yii::$app->user->can('admin')) {
+
+            return $this->redirect(['home/index']);
+        } else {
+            return $this->redirect(['user/login']);
+        }
     }
 
     /**

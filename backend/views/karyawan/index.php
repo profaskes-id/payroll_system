@@ -36,6 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
+    
     <div class="table-container">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
@@ -45,15 +46,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                'nama',
-                'kode_karyawan',
-                [
-                    'label' => 'Jenis Kelamin',
-                    'value' => function ($model) {
-                        return $model->kode_jenis_kelamin == 1 ? 'Laki-laki' : 'Perempuan';
-                    }
-                ],
-
                 [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
@@ -62,7 +54,35 @@ $this->params['breadcrumbs'][] = $this->title;
                         return Url::toRoute([$action, 'id_karyawan' => $model->id_karyawan]);
                     }
                 ],
+                'nama',
+                [
+                    'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 10%; text-align: center;'],
+                    'label' => 'KODE',
+                    'value' => 'kode_karyawan',
+                ],
+                [
+                    'label' => 'Jenis Kelamin',
+                    'value' => function ($model) {
+                        return $model->kode_jenis_kelamin == 1 ? 'Laki-laki' : 'Perempuan';
+                    }
+                ],
+                [
+                    'label' => 'Divisi',
+                    'value' => function ($model) {
+                        $divisiAktif = [];
+                        // return $model->data->nama_kode;
+                        $filteredData = array_filter($model->dataPekerjaans, function($item) {
+                            return $item->is_aktif == 1;
+                        });
+                        foreach ($filteredData as $key => $value) {
+                            $divisiAktif[] = $value->bagian->nama_bagian;
+                        }
+                        // return implode(', ', $divisiAktif);
+                        return implode(', ', $divisiAktif);
 
+                    }
+                ]
             ],
         ]); ?>
     </div>

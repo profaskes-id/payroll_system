@@ -58,11 +58,15 @@ use yii\widgets\ActiveForm;
         </div>
 
         <div class="col-md-6">
-            <?= $form->field($model, 'jabatan')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'jabatan')->textInput(['maxlength' => true, 'placeholder' => 'Jabatan']) ?>
         </div>
 
-        <div class="col-md-6">
-            <?= $form->field($model, 'is_aktif')->textInput(['maxlength' => true]) ?>
+
+        <div class="col-6">
+            <?= $form->field($model, 'is_aktif')->dropDownList([
+                0 => 'Inactive',
+                1 => 'Active',
+            ], ['prompt' => 'Select Visibility'])->label('Aktif') ?>
         </div>
     </div>
 

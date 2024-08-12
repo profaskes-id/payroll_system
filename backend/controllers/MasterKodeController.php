@@ -21,19 +21,19 @@ class MasterKodeController extends Controller
         return array_merge(
             parent::behaviors(),
             [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
                 'access' => [
-                    'class' => AccessControl::className(),
+                    'class' => \yii\filters\AccessControl::className(),
                     'rules' => [
                         [
                             'allow' => true,
                             'roles' => ['@'],
+                        ]
+                    ]
                         ],
+                'verbs' => [
+                    'class' => VerbFilter::className(),
+                    'actions' => [
+                        'delete' => ['POST'],
                     ],
                 ],
             ]

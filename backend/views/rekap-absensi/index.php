@@ -44,6 +44,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => 'yii\grid\SerialColumn'
                 ],
                 [
+                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'class' => ActionColumn::className(),
+                    'urlCreator' => function ($action, Absensi $model, $key, $index, $column) {
+                        return Url::toRoute([$action, 'id_absensi' => $model->id_absensi]);
+                    }
+                ],
+                [
                     'attribute' => 'Karyawan',
                     'value' => function ($model) {
                         return $model->karyawan->nama;
@@ -56,14 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->statusHadir->nama_kode;
                     }
                 ],
-                [
-                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                    'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, Absensi $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id_absensi' => $model->id_absensi]);
-                    }
-                ],
+                
             ],
         ]); ?>
     </div>

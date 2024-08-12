@@ -28,7 +28,7 @@ class PengalamanKerjaController extends Controller
                     ],
                 ],
                 'access' => [
-                    'class' => AccessControl::className(),
+                    'class' => \yii\filters\AccessControl::className(),
                     'rules' => [
                         [
                             'allow' => true,

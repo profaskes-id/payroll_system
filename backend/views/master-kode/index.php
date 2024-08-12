@@ -45,6 +45,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
+                [
+                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'class' => ActionColumn::className(),
+                    'urlCreator' => function ($action, MasterKode $model, $key, $index, $column) {
+                        return Url::toRoute([$action, 'nama_group' => $model->nama_group, 'kode' => $model->kode]);
+                    }
+                ],
 
                 [
                     'attribute' => 'nama_group',
@@ -69,14 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->status == 1 ? '<p class="text-success">Aktif</p>' : '<p class="text-danger">Tidak Aktif  </p>';
                     }
                 ],
-                [
-                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                    'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, MasterKode $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'nama_group' => $model->nama_group, 'kode' => $model->kode]);
-                    }
-                ],
+
             ],
         ]); ?>
 

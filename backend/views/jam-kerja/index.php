@@ -46,14 +46,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-
-                'nama_jam_kerja',
-                [
-                    'label' => 'Jenis Shift',
-                    'value' => function ($model) {
-                        return $model->jenisShift->nama_kode;
-                    }
-                ],
                 [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
@@ -62,6 +54,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         return Url::toRoute([$action, 'id_jam_kerja' => $model->id_jam_kerja]);
                     }
                 ],
+                'nama_jam_kerja',
+                [
+                    'label' => 'Jenis Shift',
+                    'value' => function ($model) {
+                        return $model->jenisShift->nama_kode;
+                    }
+                ],
+
             ],
         ]); ?>
     </div>

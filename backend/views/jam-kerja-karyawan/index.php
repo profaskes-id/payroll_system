@@ -46,6 +46,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => 'yii\grid\SerialColumn'
                 ],
                 [
+
+                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'class' => ActionColumn::className(),
+                    'urlCreator' => function ($action, JamKerjaKaryawan $model, $key, $index, $column) {
+                        return Url::toRoute([$action, 'id_jam_kerja_karyawan' => $model->id_jam_kerja_karyawan]);
+                    }
+                ],
+                [
                     'attribute' => 'Karyawan',
                     'value' => function ($model) {
                         return $model->karyawan->nama;
@@ -63,15 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         return strtoupper($model->jenisShift->nama_kode);
                     }
                 ],
-                [
 
-                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                    'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, JamKerjaKaryawan $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id_jam_kerja_karyawan' => $model->id_jam_kerja_karyawan]);
-                    }
-                ],
             ],
         ]); ?>
     </div>

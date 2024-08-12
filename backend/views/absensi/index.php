@@ -94,7 +94,7 @@ $today = date('Y-m-d');
                         });
                         if (!empty($result)) {
                             $var = [...$result];
-                            return    $var[0]['jam_masuk'] ?? '-';
+                            return    date('H:i', strtotime($var[0]['jam_masuk']))  ?? '-';
                         } else {
                             return '-';
                         }
@@ -112,7 +112,7 @@ $today = date('Y-m-d');
                         });
                         if (!empty($result)) {
                             $var = [...$result];
-                            return  $var[0]['jam_pulang'] ?? '-';
+                            return date('H:i', strtotime($var[0]['jam_pulang']))?? '-';
                         } else {
                             return '-';
                         }
@@ -147,32 +147,7 @@ $today = date('Y-m-d');
                     },
                     'format' => 'raw',
                 ],
-                // [
-                //     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                //     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                //     'class' => 'yii\grid\ActionColumn',
-                //     'template' => '{view}',
-                //     'buttons' => [
-                //         'view' => function ($url, $model) {
-                //             $tanggal = Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d');
-                //             $absensiArray = $model['absensi'];
-                //             $found = false;
-
-                //             foreach ($absensiArray as $absensi) {
-                //                 if ($absensi['tanggal_absensi'] == $tanggal) {
-                //                     $found = true;
-                //                     break;
-                //                 }
-                //             }
-
-                //             if ($found) {
-                //                 return Html::a('<i class="svgIcon fa fa-regular fa-eye"></i>', ['update', 'id_absensi' => $model['absensi'][0]['id_absensi']], ['class' => 'tambah-button']);
-                //             } else {
-                //             }
-                //         },
-                //     ],
-
-                // ],
+        
             ],
         ]); ?>
     </div>
