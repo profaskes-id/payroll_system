@@ -2,16 +2,20 @@
 
 namespace backend\controllers;
 
+use amnah\yii2\user\models\User;
 use backend\models\Absensi;
+use backend\models\DataPekerjaan;
 use backend\models\Karyawan;
+use backend\models\PengalamanKerja;
+use backend\models\RiwayatPendidikan;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\i18n\Formatter;
+use yii\web\UploadedFile;
 
-/**
- * HomeController implements the CRUD actions for Absensi model.
- */
 class HomeController extends Controller
 {
     /**
@@ -32,78 +36,136 @@ class HomeController extends Controller
         );
     }
 
-    /**
-     * Lists all Absensi models.
-     *
-     * @return string
-     */
+    public function beforeAction($action)
+    {
+        if ($action->id == 'view') {
+            // Menonaktifkan CSRF verification untuk aksi 'view'
+            $this->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
+    }
+
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Absensi::find(),
-            /*
-            'pagination' => [
-                'pageSize' => 50
-            ],
-            'sort' => [
-                'defaultOrder' => [
-                    'id_absensi' => SORT_DESC,
-                ]
-            ],
-            */
         ]);
         $model = new Absensi();
-
-        return $this->renderPartial('index', [
+        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+        $absensiToday = Absensi::find()->where(['tanggal' => date('Y-m-d'), 'id_karyawan' => $karyawan->id_karyawan])->all();
+        $this->layout = 'mobile-main';
+        return $this->render('index', [
             'model' => $model,
+            'absensiToday' => $absensiToday,
             'dataProvider' => $dataProvider,
         ]);
     }
 
-    /**
-     * Displays a single Absensi model.
-     * @param int $id_absensi Id Absensi
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+
+    public function actionProfile() {}
+
     public function actionView($id_user)
     {
-        $karaywan = Karyawan::find()->where(['id_karyawan' => $id_user])->one();
-        dd($karaywan);
+
+        $this->layout = 'mobile-main';
+
+        if ($this->request->isPost) {
+            $tanggal_searh = Yii::$app->request->post('tanggal_searh');
+            $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+            $formaterTanggal = date('Y-m-d', strtotime($tanggal_searh));
+            $absensiSearh = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => $formaterTanggal])->all();
+
+            return $this->render('view', [
+                'absensi' => $absensiSearh,
+            ]);
+        }
+
+        $user = User::find()->where(['id' => $id_user])->one();
+        if (!$user) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        $karyawan = Karyawan::find()->where(['email' => $user->email])->one();
+        $absensi = $karyawan->absensis;
         return $this->render('view', [
-            'model' => $this->findModel($id_user),
+            'absensi' => $absensi,
         ]);
     }
 
-    /**
-     * Creates a new Absensi model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
-    public function actionCreate()
+
+    public function actionAbsenMasuk()
     {
         $model = new Absensi();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_absensi' => $model->id_absensi]);
+            $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+            $model->id_karyawan = $karyawan->id_karyawan;
+            $model->tanggal = date('Y-m-d');
+            $model->kode_status_hadir = 1;
+            $model->jam_masuk = date('H:i:s');
+
+
+            if ($model->save()) {
+                return $this->redirect(['index']);
             }
         } else {
             $model->loadDefaultValues();
         }
 
+        return $this->redirect(['index']);
+    }
+
+
+    public function actionAbsenPulang()
+    {
+
+
+        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+        $model = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
+        if ($this->request->isPost) {
+            $model->jam_pulang = date('H:i:s');
+
+
+            if ($model->save()) {
+                return $this->redirect(['index']);
+            }
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->redirect(['index']);
+    }
+
+    public function actionCreate()
+    {
+        $model = new Absensi();
+
+        if ($this->request->isPost) {
+            $lampiranFile = UploadedFile::getInstance($model, 'lampiran');
+            Yii::$app->request->post('keterangan');
+
+            if ($model->load($this->request->post())) {
+                $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+                $model->id_karyawan = $karyawan->id_karyawan;
+                $model->tanggal = date('Y-m-d');
+                $model->jam_masuk = date('H:i:s');
+                $model->jam_pulang = date('H:i:s');
+                $model->kode_status_hadir = Yii::$app->request->post('statusHadir');
+                $this->saveImage($model, $lampiranFile);
+
+                $model->save();
+                return $this->redirect(['index']);
+            }
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        $this->layout = 'mobile-main';
         return $this->render('create', [
             'model' => $model,
         ]);
     }
 
-    /**
-     * Updates an existing Absensi model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id_absensi Id Absensi
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+
     public function actionUpdate($id_absensi)
     {
         $model = $this->findModel($id_absensi);
@@ -117,13 +179,6 @@ class HomeController extends Controller
         ]);
     }
 
-    /**
-     * Deletes an existing Absensi model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id_absensi Id Absensi
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionDelete($id_absensi)
     {
         $this->findModel($id_absensi)->delete();
@@ -131,13 +186,52 @@ class HomeController extends Controller
         return $this->redirect(['index']);
     }
 
-    /**
-     * Finds the Absensi model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id_absensi Id Absensi
-     * @return Absensi the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+
+
+    public function actionExpirience()
+    {
+        $this->layout = 'mobile-main';
+
+
+        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+        $pengalamanKerja = PengalamanKerja::find()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
+        $riwayatPendidikan = RiwayatPendidikan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
+
+
+        return $this->renderPartial('expirience/index', compact('pengalamanKerja', 'riwayatPendidikan'));
+    }
+
+    public function actionExpiriencePekerjaanCreate()
+    {
+        $this->layout = 'mobile-main';
+
+        $model = new PengalamanKerja();
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+                $model->id_karyawan = $karyawan->id_karyawan;
+
+                if ($model->save()) {
+                    return $this->redirect(['expirience']);
+                }
+            }
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('expirience/data-pekerjaan/create', [
+            'model' => $model,
+        ]);
+    }
+
+
+
+
+
+
+
+
     protected function findModel($id_absensi)
     {
         if (($model = Absensi::findOne(['id_absensi' => $id_absensi])) !== null) {
@@ -145,5 +239,24 @@ class HomeController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+
+    public function saveImage($model, $uploadedFile,)
+    {
+        $uploadsDir =  Yii::getAlias('@webroot/panel/uploads/lampiran/');
+        if ($uploadedFile) {
+            if (!is_dir($uploadsDir)) {
+                mkdir($uploadsDir, 0777, true);
+            }
+            $fileName = $uploadsDir . '/' . uniqid() . '.' . $uploadedFile->extension;
+
+            if ($uploadedFile->saveAs($fileName)) {
+                $model->lampiran = 'uploads/lampiran/' . basename($fileName);
+            } else {
+                Yii::$app->session->setFlash('error', 'Failed to save the uploaded file.');
+            }
+        }
     }
 }

@@ -9,6 +9,13 @@ use yii\bootstrap4\Breadcrumbs;
 
 <div class="content-wrapper  p-3" style="border-top-left-radius: 20px; border-top-right-radius: 20px; background-color: #f8f9fb !important">
     <!-- Content Header (Page header) -->
+    <?php
+
+    use common\widgets\Alert;
+
+    echo  Alert::widget();
+    ?>
+
     <div class="content-header">
         <div class="container-fluid">
             <div class="row justify-content-center  align-items-center">
@@ -22,7 +29,7 @@ use yii\bootstrap4\Breadcrumbs;
                         }
                         ?>
                     </h2>
-                    <p style="margin-top: -20px;">
+                    <p style="margin-top: 0px;">
                         <?php
                         echo Breadcrumbs::widget([
                             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
@@ -42,6 +49,7 @@ use yii\bootstrap4\Breadcrumbs;
 
     <!-- Main content -->
     <div class="content">
+
         <?= $content ?><!-- /.container-fluid -->
     </div>
     <!-- /.content -->

@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\Karyawan;
+use common\models\User;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -36,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
-    
+
     <div class="table-container">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
@@ -72,7 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($model) {
                         $divisiAktif = [];
                         // return $model->data->nama_kode;
-                        $filteredData = array_filter($model->dataPekerjaans, function($item) {
+                        $filteredData = array_filter($model->dataPekerjaans, function ($item) {
                             return $item->is_aktif == 1;
                         });
                         foreach ($filteredData as $key => $value) {
@@ -80,9 +81,25 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                         // return implode(', ', $divisiAktif);
                         return implode(', ', $divisiAktif);
-
                     }
-                ]
+                ],
+                [
+                    'header' => 'Invite',
+                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'value' => function ($model) {
+                        $isUser = User::find()->where(['email' => $model->email]);
+                        if (!$isUser->exists()) {
+                            return Html::a('<i class="fas fa-user-plus"></i>', ['invite', 'id_karyawan' => $model->id_karyawan], [
+                                'title' => 'Invite',
+                                'data-pjax' => '0',
+                            ]);
+                        } else {
+                            return "<p>{$isUser->one()->email}</p>";
+                        }
+                    },
+                    'format' => 'raw',
+                ],
             ],
         ]); ?>
     </div>

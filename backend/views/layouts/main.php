@@ -45,6 +45,10 @@ if (
                 font-family: "Poppins", sans-serif;
             }
 
+            a {
+                text-decoration: none !important;
+            }
+
 
 
             .add-button {
@@ -458,37 +462,59 @@ if (
                 color: #488aec;
                 cursor: pointer;
             }
+
+            @media screen and (min-width: 768px) {
+                .respon {
+                    margin-left: -250px !important;
+                }
+            }
         </style>
         <?php $this->head() ?>
 
     </head>
 
-    <body class="hold-transition sidebar-mini">
+    <body class="hold-transition sidebar-mini relative">
         <?php $this->beginBody() ?>
 
-        <div class="wrapper">
+        <div class="wrapper relative">
             <!-- Navbar -->
 
-            <?php echo
-            $this->render('navbar', ['assetDir' => $assetDir])
+
+            <?php
+
+            if (!Yii::$app->request->getPathInfo() ==  "user/account" && !Yii::$app->user->can('admin')) {
+                echo $this->render('navbar', ['assetDir' => $assetDir]);
+                echo $this->render('sidebar', ['assetDir' => $assetDir]);
+            }
             ?>
-            <!-- /.navbar -->
 
-            <!-- Main Sidebar Container -->
-            <?= $this->render('sidebar', ['assetDir' => $assetDir]) ?>
+            <?php if (Yii::$app->user->can('admin')) : ?>
+                <?= $this->render('navbar', ['assetDir' => $assetDir]); ?>
+                <?= $this->render('sidebar', ['assetDir' => $assetDir]); ?>
+                <!-- Content Wrapper. Contains page content -->
+                <main class="pt-3  " style=" background-color: #000000 ;">
+                    <?= $this->render('content', ['content' => $content, 'assetDir' => $assetDir]) ?>
+                </main>
+            <?php else : ?>
+                <main class="pt-3  respon" style=" background-color: #000000 ;">
+                    <?= $this->render('content', ['content' => $content, 'assetDir' => $assetDir]) ?>
+                </main>
+            <?php endif; ?>
 
-            <!-- Content Wrapper. Contains page content -->
-            <main class="pt-3  " style=" background-color: #000000">
-                <?= $this->render('content', ['content' => $content, 'assetDir' => $assetDir]) ?>
-            </main>
-            <!-- /.content-wrapper -->
 
-            <!-- Control Sidebar -->
-            <?= $this->render('control-sidebar') ?>
-            <!-- /.control-sidebar -->
+            <?php
+            if (Yii::$app->request->getPathInfo() ==  "user/account" && !Yii::$app->user->can('admin')) {
+                echo $this->render('@backend/views/components/_footer');
+            }
+            ?>
 
-            <!-- Main Footer -->
-            <?= $this->render('footer') ?>
+            <?php
+            if (Yii::$app->user->can('admin')) {
+                $this->render('footer');
+            }
+            ?>
+
+
         </div>
 
         <?php $this->endBody() ?>

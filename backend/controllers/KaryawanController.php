@@ -2,12 +2,15 @@
 
 namespace backend\controllers;
 
+use amnah\yii2\user\models\Profile;
+use amnah\yii2\user\models\User;
 use backend\models\DataKeluargaSearch;
 use backend\models\DataPekerjaanSearch;
 use backend\models\Karyawan;
 use backend\models\KaryawanSearch;
 use backend\models\PengalamanKerjaSearch;
 use backend\models\RiwayatPendidikanSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -19,29 +22,29 @@ class KaryawanController extends Controller
 {
     /**
      * @inheritDoc
-     */public function behaviors()
-{
-    return array_merge(
-        parent::behaviors(),
-        [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-            'access' => [
-                'class' => \yii\filters\AccessControl::className(),
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
+     */ public function behaviors()
+    {
+        return array_merge(
+            parent::behaviors(),
+            [
+                'verbs' => [
+                    'class' => VerbFilter::className(),
+                    'actions' => [
+                        'delete' => ['POST'],
                     ],
                 ],
-            ],
-        ]
-    );
-}
+                'access' => [
+                    'class' => \yii\filters\AccessControl::className(),
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
+            ]
+        );
+    }
 
     /**
      * Lists all Karyawan models.
@@ -88,8 +91,6 @@ class KaryawanController extends Controller
 
 
 
-
-
         return $this->render('view', [
             'PekerjaansearchModel' => $PekerjaansearchModel,
             'pekrjaandataProvider' => $pekrjaandataProvider,
@@ -108,6 +109,54 @@ class KaryawanController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
+
+
+
+    public function actionInvite($id_karyawan)
+    {
+
+        $model = $this->findModel($id_karyawan);
+        $user = new User();
+        $user->email = $model->email;
+
+        $user->newPassword = $model->nomer_identitas;
+        $user->setRegisterAttributes(2, 0);
+
+        // dd($user);
+        if ($user->save()) {
+            Yii::$app->session->setFlash('success', 'Berhasil Membuat Data');
+            $profil = new Profile();
+            $profil->user_id = $user->id;
+            $profil->full_name = $model->nama;
+            if ($profil->save()) {
+
+
+                // $msgToCheck = $this->renderPartial('@backend/views/karyawan/email_verif', compact('model'));
+
+                // $sendMsgToCheck = Yii::$app->mailer->compose()
+                //     ->setTo($user->email)
+                //     ->setSubject('Akses Akun Trial profaskes')
+                //     ->setHtmlBody($msgToCheck);
+                // if ($sendMsgToCheck->send()) {
+                //     Yii::$app->session->setFlash(
+                //         'success',
+                //         'Email Telah Berhasil Terkirim kepada ' . $user->email
+                //     );
+                // }
+
+                return $this->redirect(['index']);
+            } else {
+                Yii::$app->session->setFlash('error', 'Terjadi kesalahan saat menyimpan data.');
+                return $this->redirect(['index']);
+            }
+        } else {
+            Yii::$app->session->setFlash('error', 'Terjadi kesalahan saat menyimpan data.');
+            return $this->redirect(['index']);
+        }
+    }
+
+
+
     public function actionCreate()
     {
         $model = new Karyawan();

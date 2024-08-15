@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-default-account">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+
 
     <?php if ($flash = Yii::$app->session->getFlash("Account-success")): ?>
 
@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= $form->field($user, 'currentPassword')->passwordInput() ?>
     <?php endif ?>
 
-    <hr/>
+    <hr />
 
     <?php if ($module->useEmail): ?>
         <?= $form->field($user, 'email') ?>
