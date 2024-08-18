@@ -19,8 +19,10 @@ class m240731_075545_create_absensi_table extends Migration
             'jam_masuk' => $this->time(), // Time of arrival (nullable)
             'jam_pulang' => $this->time()->defaultValue(null), // Time of departure (nullable)
             'kode_status_hadir' => $this->integer()->notNull(), // Status code (e.g., present, absent)
-            'keterangan' => $this->text()->defaultValue(null), // Status code (e.g., present, absent)
-            'lampiran' => $this->string()->defaultValue(null),
+            'keterangan' => $this->text()->defaultValue(null), // Status description (nullable)
+            'lampiran' => $this->string()->defaultValue(null), // Attachment (nullable)
+            'latitude' => $this->decimal(9, 6)->defaultValue(null), // Latitude with decimal precision
+            'longitude' => $this->decimal(9, 6)->defaultValue(null), // Longitude with decimal precision
         ]);
 
         // Create index for foreign key to karyawan

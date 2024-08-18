@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Absensis', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 
-$izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->all();
+$izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['!=', 'nama_kode', 'Hadir'])->orderBy(['urutan' => SORT_ASC])->all();
 
 ?>
 
@@ -53,40 +53,27 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->all();
                 <div class="col-span-12">
                     <fieldset class="grid grid-cols-2 gap-4">
                         <legend class="col-span-12 block mb-2 text-sm font-medium text-gray-900 ">Status</legend>
-                        <div>
-                            <label
-                                for="DeliveryStandard"
-                                class="block cursor-pointer rounded-lg border border-gray-100 bg-white p-4 text-sm font-medium shadow-sm hover:border-gray-200 has-[:checked]:border-blue-500 has-[:checked]:ring-1 has-[:checked]:ring-blue-500">
-                                <div>
 
-                                    <p class="mt-1 text-gray-900"><?php echo $izin[1]->nama_kode ?></p>
-                                </div>
+                        <?php foreach ($izin as $key => $value) : ?>
+                            <div>
+                                <label
+                                    for="<?= $value->nama_kode ?>"
+                                    class="block cursor-pointer rounded-lg border border-gray-100 bg-white p-4 text-sm font-medium shadow-sm hover:border-gray-200 has-[:checked]:border-blue-500 has-[:checked]:ring-1 has-[:checked]:ring-blue-500">
+                                    <div>
 
-                                <input
-                                    type="radio"
-                                    name="statusHadir"
-                                    id="DeliveryStandard"
-                                    value="<?php echo $izin[1]->kode ?>"
-                                    class="sr-only" />
-                            </label>
-                        </div>
+                                        <p class="mt-1 text-gray-900"><?= $value->nama_kode ?></p>
+                                    </div>
 
-                        <div>
-                            <label
-                                for="DeliveryPriority"
-                                class="block cursor-pointer rounded-lg border border-gray-100 bg-white p-4 text-sm font-medium shadow-sm hover:border-gray-200 has-[:checked]:border-blue-500 has-[:checked]:ring-1 has-[:checked]:ring-blue-500">
-                                <div>
-                                    <p class="mt-1 text-gray-900"><?php echo $izin[2]->nama_kode ?></p>
-                                </div>
+                                    <input
+                                        type="radio"
+                                        name="statusHadir"
+                                        id="<?= $value->nama_kode ?>"
+                                        value="<?= $value->kode ?>"
+                                        class="sr-only" />
+                                </label>
+                            </div>
+                        <?php endforeach ?>
 
-                                <input
-                                    type="radio"
-                                    name="statusHadir"
-                                    id="DeliveryPriority"
-                                    value="<?php echo $izin[2]->nama_kode ?>"
-                                    class="sr-only" />
-                            </label>
-                        </div>
                     </fieldset>
                 </div>
 
@@ -97,14 +84,14 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->all();
 
                 <label class="col-span-12 block mb-2 text-sm font-medium text-gray-900 " for="file_input">
                     <span class="block pb-2">Upload Lampiran</span>
-                    <?= $form->field($model, 'lampiran')->fileInput(['class' => 'block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50  py-2  file:py-1 file:mx-2 file:bg-white file:border-0 file:text-sm file:font-semibold file:cursor-pointer file:text-gray-700 hover:file:bg-gray-100 focus:outline-none   '])->label(false) ?>
+                    <?= $form->field($model, 'lampiran')->fileInput(['class' => 'block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer  bg-gray-50  py-2  file:py-1 file:mx-0 file:bg-white file:border-0 file:text-sm file:font-semibold file:cursor-pointer file:text-gray-700 hover:file:bg-gray-100 focus:outline-none   '])->label(false) ?>
                 </label>
 
 
 
 
                 <div class="form-group col-span-12">
-                    <?= Html::submitButton('Kirim', ['class' => 'add-button']) ?>
+                    <?= Html::submitButton('Kirim', ['class' => 'px-5 py-2 bg-blue-500 rounded text-white']) ?>
                 </div>
 
             </div>

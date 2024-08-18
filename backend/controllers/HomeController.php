@@ -47,18 +47,10 @@ class HomeController extends Controller
 
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Absensi::find(),
-        ]);
-        $model = new Absensi();
-        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
-        $absensiToday = Absensi::find()->where(['tanggal' => date('Y-m-d'), 'id_karyawan' => $karyawan->id_karyawan])->all();
+
+
         $this->layout = 'mobile-main';
-        return $this->render('index', [
-            'model' => $model,
-            'absensiToday' => $absensiToday,
-            'dataProvider' => $dataProvider,
-        ]);
+        return $this->render('index');
     }
 
 
@@ -97,21 +89,35 @@ class HomeController extends Controller
         $model = new Absensi();
 
         if ($this->request->isPost) {
+
             $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
             $model->id_karyawan = $karyawan->id_karyawan;
             $model->tanggal = date('Y-m-d');
             $model->kode_status_hadir = 1;
             $model->jam_masuk = date('H:i:s');
+            $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
+            $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
 
 
             if ($model->save()) {
-                return $this->redirect(['index']);
+                return $this->redirect(['absen-masuk']);
             }
-        } else {
-            $model->loadDefaultValues();
         }
+        $dataProvider = new ActiveDataProvider([
+            'query' => Absensi::find(),
+        ]);
+        $model = new Absensi();
+        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+        $absensiToday = Absensi::find()->where(['tanggal' => date('Y-m-d'), 'id_karyawan' => $karyawan->id_karyawan])->all();
+        $this->layout = 'mobile-main';
+        return $this->render('absen-masuk', [
+            'model' => $model,
+            'absensiToday' => $absensiToday,
+            'dataProvider' => $dataProvider,
+        ]);
 
-        return $this->redirect(['index']);
+
+        return $this->redirect(['absen-masuk']);
     }
 
 
@@ -126,13 +132,13 @@ class HomeController extends Controller
 
 
             if ($model->save()) {
-                return $this->redirect(['index']);
+                return $this->redirect(['absen-masuk']);
             }
         } else {
             $model->loadDefaultValues();
         }
 
-        return $this->redirect(['index']);
+        return $this->redirect(['absen-masuk']);
     }
 
     public function actionCreate()
@@ -142,6 +148,7 @@ class HomeController extends Controller
         if ($this->request->isPost) {
             $lampiranFile = UploadedFile::getInstance($model, 'lampiran');
             Yii::$app->request->post('keterangan');
+
 
             if ($model->load($this->request->post())) {
                 $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
@@ -222,6 +229,69 @@ class HomeController extends Controller
 
         return $this->render('expirience/data-pekerjaan/create', [
             'model' => $model,
+        ]);
+    }
+
+    public function actionExpiriencePekerjaanView($id)
+    {
+        $this->layout = 'mobile-main';
+
+
+        $model = PengalamanKerja::findOne($id);
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+
+                $model->save();
+                return $this->redirect(['expirience']);
+            }
+        }
+        return $this->render('expirience/data-pekerjaan/update', [
+            'model' => $model
+        ]);
+    }
+
+
+    public function actionExpiriencePendidikanCreate()
+    {
+
+        $this->layout = 'mobile-main';
+        $model = new RiwayatPendidikan();
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+                $model->id_karyawan = $karyawan->id_karyawan;
+                if ($model->save()) {
+                    return $this->redirect(['expirience']);
+                }
+            }
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('expirience/data-pendidikan/create', [
+            'model' => $model,
+        ]);
+    }
+
+
+    public function actionExpiriencePendidikanView($id)
+    {
+        $this->layout = 'mobile-main';
+
+
+        $model = RiwayatPendidikan::findOne($id);
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+
+                $model->save();
+                return $this->redirect(['expirience']);
+            }
+        }
+
+        return $this->render('expirience/data-pendidikan/update', [
+            'model' => $model
         ]);
     }
 

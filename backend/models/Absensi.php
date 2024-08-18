@@ -15,6 +15,8 @@ use Yii;
  * @property int $kode_status_hadir
  * @property string|null $keterangan
  * @property string|null $lampiran
+ * @property float|null $latitude
+ * @property float|null $longitude
  *
  * @property Karyawan $karyawan
  */
@@ -36,8 +38,9 @@ class Absensi extends \yii\db\ActiveRecord
         return [
             [['id_karyawan', 'tanggal', 'kode_status_hadir'], 'required'],
             [['id_karyawan', 'kode_status_hadir'], 'integer'],
-            [['tanggal', 'jam_masuk', 'jam_pulang', 'lampiran', 'keterangan'], 'safe'],
+            [['tanggal', 'jam_masuk', 'jam_pulang'], 'safe'],
             [['keterangan'], 'string'],
+            [['latitude', 'longitude'], 'number'],
             [['lampiran'], 'string', 'max' => 255],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
             [['lampiran'], 'file', 'extensions' => 'png, jpg, jpeg, pdf, webp, avif', 'maxSize' => 1024 * 1024 * 2],
@@ -59,6 +62,8 @@ class Absensi extends \yii\db\ActiveRecord
             'kode_status_hadir' => 'Kode Status Hadir',
             'keterangan' => 'Keterangan',
             'lampiran' => 'Lampiran',
+            'latitude' => 'Latitude',
+            'longitude' => 'Longitude',
         ];
     }
 

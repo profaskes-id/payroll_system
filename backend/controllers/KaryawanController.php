@@ -130,6 +130,7 @@ class KaryawanController extends Controller
             $profil->full_name = $model->nama;
             if ($profil->save()) {
 
+                dd(Yii::$app->security->decrypt($user->password));
 
                 // $msgToCheck = $this->renderPartial('@backend/views/karyawan/email_verif', compact('model'));
 
