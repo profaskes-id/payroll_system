@@ -97,21 +97,20 @@ $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:
                             <tr>
                                 <td><strong>Username</strong></td>
                                 <td><strong> : </strong></td>
-                                <td><?= $model['username'] ?? '' ?></td>
+                                <td><?= $model['nama'] ?? '' ?></td>
                             </tr>
                             <tr>
                                 <td><strong>Password</strong></td>
                                 <td><strong> : </strong></td>
-                                <td><code style="font-size: 16px"><mark style="padding: 1px 3px;"><?= $model["jenis_identitas"] ?></mark></code></td>
+                                <td><code style="font-size: 16px"><mark style="padding: 1px 3px;"><?= $model["nomer_identitas"] ?></mark></code></td>
                             </tr>
                             <tr>
                                 <td><strong>Halaman Login</strong></td>
                                 <td><strong> : </strong></td>
-                                <td><?= yii\helpers\Html::a($model['url_akses'], $model['url_akses'], ['target' => '_blank']) ?></td>
+                                <td><?= yii\helpers\Html::a('Login Disini', 'http://localhost:8080/panel/', ['target' => '_blank']) ?></td>
                             </tr>
                         </table>
                         </p>
-                        Jika Anda mengalami kesulitan atau memiliki pertanyaan, jangan ragu untuk menghubungi tim dukungan kami di <?php echo $emailAdmin; ?> atau <?php echo $whatsappAdmin; ?>
                         <br>
                         <br>
 

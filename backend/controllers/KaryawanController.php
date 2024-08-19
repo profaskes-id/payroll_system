@@ -120,7 +120,7 @@ class KaryawanController extends Controller
         $user->email = $model->email;
 
         $user->newPassword = $model->nomer_identitas;
-        $user->setRegisterAttributes(2, 0);
+        $user->setRegisterAttributes(2, 1);
 
         // dd($user);
         if ($user->save()) {
@@ -130,20 +130,18 @@ class KaryawanController extends Controller
             $profil->full_name = $model->nama;
             if ($profil->save()) {
 
-                dd(Yii::$app->security->decrypt($user->password));
+                $msgToCheck = $this->renderPartial('@backend/views/karyawan/email_verif', compact('model'));
 
-                // $msgToCheck = $this->renderPartial('@backend/views/karyawan/email_verif', compact('model'));
-
-                // $sendMsgToCheck = Yii::$app->mailer->compose()
-                //     ->setTo($user->email)
-                //     ->setSubject('Akses Akun Trial profaskes')
-                //     ->setHtmlBody($msgToCheck);
-                // if ($sendMsgToCheck->send()) {
-                //     Yii::$app->session->setFlash(
-                //         'success',
-                //         'Email Telah Berhasil Terkirim kepada ' . $user->email
-                //     );
-                // }
+                $sendMsgToCheck = Yii::$app->mailer->compose()
+                    ->setTo($user->email)
+                    ->setSubject('Akses Akun Trial profaskes')
+                    ->setHtmlBody($msgToCheck);
+                if ($sendMsgToCheck->send()) {
+                    Yii::$app->session->setFlash(
+                        'success',
+                        'Email Telah Berhasil Terkirim kepada ' . $user->email
+                    );
+                }
 
                 return $this->redirect(['index']);
             } else {

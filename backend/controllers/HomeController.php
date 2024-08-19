@@ -6,6 +6,7 @@ use amnah\yii2\user\models\User;
 use backend\models\Absensi;
 use backend\models\DataPekerjaan;
 use backend\models\Karyawan;
+use backend\models\PengajuanCuti;
 use backend\models\PengalamanKerja;
 use backend\models\RiwayatPendidikan;
 use Yii;
@@ -18,9 +19,7 @@ use yii\web\UploadedFile;
 
 class HomeController extends Controller
 {
-    /**
-     * @inheritDoc
-     */
+    // ?behaviors
     public function behaviors()
     {
         return array_merge(
@@ -45,6 +44,10 @@ class HomeController extends Controller
         return parent::beforeAction($action);
     }
 
+
+
+    // ?========================Base
+
     public function actionIndex()
     {
 
@@ -52,8 +55,6 @@ class HomeController extends Controller
         $this->layout = 'mobile-main';
         return $this->render('index');
     }
-
-
     public function actionProfile() {}
 
     public function actionView($id_user)
@@ -83,7 +84,25 @@ class HomeController extends Controller
         ]);
     }
 
+    public function actionUpdate($id_absensi)
+    {
+        $model = $this->findModel($id_absensi);
 
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id_absensi' => $model->id_absensi]);
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionDelete($id_absensi)
+    {
+        $this->findModel($id_absensi)->delete();
+
+        return $this->redirect(['index']);
+    }
     public function actionAbsenMasuk()
     {
         $model = new Absensi();
@@ -173,28 +192,10 @@ class HomeController extends Controller
     }
 
 
-    public function actionUpdate($id_absensi)
-    {
-        $model = $this->findModel($id_absensi);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_absensi' => $model->id_absensi]);
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }
-
-    public function actionDelete($id_absensi)
-    {
-        $this->findModel($id_absensi)->delete();
-
-        return $this->redirect(['index']);
-    }
 
 
 
+    // ?================================Expirience`
     public function actionExpirience()
     {
         $this->layout = 'mobile-main';
@@ -298,10 +299,41 @@ class HomeController extends Controller
 
 
 
+    // ?=================================Pengajuan cuti
+    public function actionPengajuanCuti()
+    {
+
+        $this->layout = 'mobile-main';
+        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+        $pengajuanCuti = PengajuanCuti::find()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
+
+        return $this->render('pengajuan-cuti/index', compact('pengajuanCuti'));
+    }
+
+    public function actionPengajuanCutiCreate()
+    {
+
+        $model = new PengajuanCuti();
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+
+                $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+                $model->id_karyawan = $karyawan->id_karyawan;
+                if ($model->save()) {
+                    return $this->redirect(['expirience']);
+                }
+            }
+        }
+        $this->layout = 'mobile-main';
+
+        return $this->render('pengajuan-cuti/create', compact('model'));
+    }
 
 
 
 
+    // ?==============helper
     protected function findModel($id_absensi)
     {
         if (($model = Absensi::findOne(['id_absensi' => $id_absensi])) !== null) {
@@ -310,8 +342,6 @@ class HomeController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-
-
 
     public function saveImage($model, $uploadedFile,)
     {

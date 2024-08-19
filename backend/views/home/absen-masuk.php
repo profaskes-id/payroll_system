@@ -19,6 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
 
 <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
@@ -118,7 +119,14 @@ $this->params['breadcrumbs'][] = $this->title;
             <h1>latitude : <span id="latitude"></span></h1>
             <h1>longitude : <span id="longitude"></span></h1>
         </div>
+        <div class="flex justify-around items-center mt-10 overflow-hidden  mx-auto border">
+
+            <div id="map" style="width: 90dvw !important; height: 300px !important; "></div>
+        </div>
     </div>
+
+
+
 
 
 
@@ -163,14 +171,26 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>Copyright &copy; 2024 Profaskes</p>
 </footer>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
     window.addEventListener('load', function() {
 
         navigator.geolocation.getCurrentPosition(function(position) {
-            document.querySelector('.latitude').value = position.coords.latitude;
-            document.querySelector('.longitude').value = position.coords.longitude;
-            document.getElementById('latitude').textContent = position.coords.latitude;
-            document.getElementById('longitude').textContent = position.coords.longitude;
+            document.querySelector('.latitude').value = position.coords.latitude.toFixed(10);
+            document.querySelector('.longitude').value = position.coords.longitude.toFixed(10);
+            document.getElementById('latitude').textContent = position.coords.latitude.toFixed(10);
+            document.getElementById('longitude').textContent = position.coords.longitude.toFixed(10);
+
+            let map = L.map('map').setView([position.coords.latitude.toFixed(10), position.coords.longitude.toFixed(10)], 15); // set initial view to the specified location
+
+            // Add a tile layer (e.g. OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
+                subdomains: ['a', 'b', 'c']
+            }).addTo(map);
+
+            // Add a marker at the specified location
+            let marker = L.marker([position.coords.latitude.toFixed(10), position.coords.longitude.toFixed(10)]).addTo(map);
         });
 
 

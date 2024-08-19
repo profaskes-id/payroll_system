@@ -63,6 +63,7 @@
                     // ['label' => 'Bagian',  'icon' => 'file-code', 'url' => ['/bagian/index'],],
                     ['label' => 'Absensi',  'icon' => 'file-code', 'url' => ['/absensi/index'],],
                     ['label' => 'Rekap Absensi',  'icon' => 'file-code', 'url' => ['/rekap-absensi/index'],],
+                    ['label' => 'Pengajuan cuti',  'icon' => 'file-code', 'url' => ['/pengajuan-cuti/index'],],
                     // ['label' => 'Data Keluarga',  'icon' => 'file-code', 'url' => ['/data-keluarga/index'],],
                     // ['label' => 'Data Pekerjaan',  'icon' => 'file-code', 'url' => ['/data-pekerjaan/index'],],
                     // ['label' => 'Jadwal Kerja',  'icon' => 'file-code', 'url' => ['/jadwal-kerja/index'],],
