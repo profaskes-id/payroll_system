@@ -19,8 +19,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-
 
 <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
@@ -46,8 +44,6 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 
-
-
 <section class="grid grid-cols-10  relative overflow-x-hidden min-h-[90dvh]">
 
 
@@ -56,15 +52,22 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
 
-    <div class="col-span-12 w-full   px-5 pt-5 ">
+    <!-- content -->
+    <div class="col-span-12 w-full  px-5 pt-5 ">
 
-        <?= $this->render('@backend/views/components/_header'); ?>
 
         <div class=" grid grid-cols-12 place-items-center">
-            <div class="col-span-12   w-full">
+            <div class="col-span-12  w-full">
 
                 <?= $this->render('@backend/views/components/fragment/_time'); ?>
 
+                <a href="/panel/home/your-location">
+
+                    <div class="flex justify-around items-center bg-sky-500/10 p-1 text-[13px] w-[80%] mx-auto mt-3 rounded-full">
+                        <span id="latitude"></span>
+                        <span id="longitude"></span>
+                    </div>
+                </a>
                 <div class="mt-10 grid place-items-center">
 
 
@@ -73,19 +76,20 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php if (count($absensiToday) > 0) : ?>
                         <?php if (empty($absensiToday[0]->jam_pulang)) : ?>
                             <?php $formAbsen = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',  'action' => ['home/absen-pulang']]); ?>
-
-                            <button class="all-none" data-modal-target="popup-modal" data-modal-toggle="popup-modal" type="button">
-                                <div class="flex flex-col -space-y-10 w-[225px] h-[225px] bg-gradient-to-r from-[#CE1705] to-[#EF0802] shadow-2xl shadow-[#D51405] rounded-full lg:rounded-3xl ">
-                                    <?= Html::img('@root/images/icons/click.svg', ['alt' => 'absen', 'class' => '-mt-4 w-full scale-[0.6] h-full object-cover ']) ?>
-                                    <p class="font-bold text-white m-0">Absen Keluar</p>
-                                </div>
-                            </button>
+                            <div class="grid place-items-center border border-[#D51405]/10 p-3 rounded-full">
+                                <button class="all-none border border-[#D51405]/50 p-3 rounded-full" data-modal-target="popup-modal" data-modal-toggle="popup-modal" type="button">
+                                    <div class=" flex w-[225px] h-[225px] bg-gradient-to-r from-[#CE1705] to-[#EF0802] shadow-2xl shadow-[#D51405] rounded-full  ">
+                                        <?= Html::img('@root/images/icons/click.svg', ['alt' => 'absen', 'class' => ' w-full  h-full object-cover scale-[0.7] ']) ?>
+                                        <!-- <p class="font-bold text-white m-0">Absen Keluar</p> -->
+                                    </div>
+                                </button>
+                            </div>
                             <?php ActiveForm::end(); ?>
                         <?php else : ?>
                             <button class="all-none" type="button" disabled>
-                                <div class="flex flex-col -space-y-10 w-[225px] h-[225px] bg-gradient-to-r from-[#686161] to-[#2b2b2b] shadow-2xl shadow-[#9b9b9b] rounded-full lg:rounded-3xl ">
-                                    <?= Html::img('@root/images/icons/click.svg', ['alt' => 'absen', 'class' => '-mt-4 w-full scale-[0.6] h-full object-cover ']) ?>
-                                    <p class="font-bold text-white m-0">Selsai</p>
+                                <div class="flex w-[225px] h-[225px] bg-gradient-to-r from-[#686161] to-[#2b2b2b] shadow-2xl shadow-[#9b9b9b] rounded-full  ">
+                                    <?= Html::img('@root/images/icons/click.svg', ['alt' => 'absen', 'class' => ' w-full  h-full object-cover scale-[0.7] ']) ?>
+                                    <!-- <p class="font-bold text-white m-0">Selsai</p> -->
                                 </div>
                             </button>
                         <?php endif ?>
@@ -95,110 +99,88 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?php $formAbsen = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',  'action' => ['home/absen-masuk']]); ?>
                         <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'latitude'])->label(false) ?>
                         <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'longitude'])->label(false) ?>
-                        <button class="all-none" data-modal-target="popup-modal" data-modal-toggle="popup-modal" type="button">
-                            <div class=" flex flex-col -space-y-10 w-[225px] h-[225px] bg-gradient-to-r from-[#EB5A2B] to-[#EA792B] shadow-xl shadow-[#EB5A2B] rounded-full lg:rounded-3xl ">
-                                <?= Html::img('@root/images/icons/click.svg', ['alt' => 'absen', 'class' => '-mt-4 w-full scale-[0.6] h-full object-cover ']) ?>
-                                <p class=" font-bold text-white m-0">Absen Masuk</p>
-                            </div>
-                        </button>
+
+                        <div class="grid place-items-center border border-[#EB5A2B]/10 p-4 rounded-full">
+                            <button class="all-none border border-[#EB5A2B]/50 p-4 rounded-full" data-modal-target="popup-modal" data-modal-toggle="popup-modal" type="button">
+                                <div class=" flex w-[225px] h-[225px] bg-gradient-to-r from-[#EB5A2B] to-[#EA792B] shadow-2xl shadow-[#EB5A2B] rounded-full  ">
+                                    <?= Html::img('@root/images/icons/click.svg', ['alt' => 'absen', 'class' => ' w-full  h-full object-cover scale-[0.7] ']) ?>
+                                    <!-- <p class=" font-bold text-white m-0">Absen Masuk</p> -->
+                                </div>
+                            </button>
+                        </div>
+
 
                         <?php ActiveForm::end(); ?>
                     <?php endif ?>
 
                 </div>
-
-
-
             </div>
-
-
-
         </div>
 
-        <div class="flex justify-around items-center mt-10">
-            <h1>latitude : <span id="latitude"></span></h1>
-            <h1>longitude : <span id="longitude"></span></h1>
-        </div>
-        <div class="flex justify-around items-center mt-10 overflow-hidden  mx-auto border">
+        <!-- ? mobile izin -->
+        <div class="flex justify-between  items-center  \">
+            <div class="grid place-items-center mt-5">
+                <a href="/panel/home/create">
 
-            <div id="map" style="width: 90dvw !important; height: 300px !important; "></div>
+                    <div class="grid place-items-center">
+                        <div class="w-[60px] h-[60px]  border bg-red-50 border-gray rounded-full grid place-items-center">
+                            <div class="font-black text-white w-8 h-8 text-center grid place-items-center rounded-full bg-rose-500">
+                                <span class="w-5 h-1 bg-white rounded-xl"></span>
+                            </div>
+                        </div>
+                        <p class="mt-2 font-medium capitalize">Izin Tidak hadir</p>
+                    </div>
+                </a>
+            </div>
+            <div class="grid place-items-center mt-5">
+
+                <?= Html::a('
+              <div class="grid place-items-center">
+              <div class="w-[60px] h-[60px] bg-orange-50 border border-gray rounded-full grid place-items-center">
+              <div class="font-black text-white w-8 h-8 text-center flex justify-center ps-1.5 items-start flex-col space-y-1 rounded-sm bg-orange-500">
+              <span class="w-5 h-1 bg-white rounded-xl"></span>
+              <span class="w-5 h-1 bg-white rounded-xl"></span>
+              <span class="w-2 h-1 bg-white rounded-xl"></span>
+              </div>
+              </div>
+              <p class="mt-2 font-medium capitalize">Lihat History</p>
+              </div>
+              ', ['/home/view', 'id_user' => Yii::$app->user->identity->id]) ?>
+            </div>
         </div>
     </div>
 
 
-
-
-
-
-    <!-- ? mobile izin -->
-    <div class="flex   justify-around my-10 w-screen relative ">
-        <a href="/panel/home/create">
-
-            <div class="grid place-items-center">
-                <div class="w-[60px] h-[60px]  border border-gray rounded-full grid place-items-center">
-                    <div class="font-black text-white w-8 h-8 text-center grid place-items-center rounded-full bg-rose-500">
-                        <span class="w-5 h-1 bg-white rounded-xl"></span>
-                    </div>
-                </div>
-                <p class="mt-2 font-medium capitalize">Izin Tidak hadir</p>
-            </div>
-        </a>
-        <?= Html::a('
-          <div class="grid place-items-center">
-                <div class="w-[60px] h-[60px]  border border-gray rounded-full grid place-items-center">
-                    <div class="font-black text-white w-8 h-8 text-center flex justify-center ps-1.5 items-start flex-col space-y-1 rounded-sm bg-orange-500">
-                        <span class="w-5 h-1 bg-white rounded-xl"></span>
-                        <span class="w-5 h-1 bg-white rounded-xl"></span>
-                        <span class="w-2 h-1 bg-white rounded-xl"></span>
-                    </div>
-                </div>
-                <p class="mt-2 font-medium capitalize">Lihat History</p>
-            </div>
-        ', ['/home/view', 'id_user' => Yii::$app->user->identity->id]) ?>
-    </div>
 
 
 
 </section>
 
-<div class="lg:hidden">
+<div class="lg:hidden fixed bottom-0 left-0 right-0 z-50">
 
     <?= $this->render('@backend/views/components/_footer'); ?>
 </div>
 
 
-<footer class="hidden lg:block text-center text-black my-20">
-    <p>Copyright &copy; 2024 Profaskes</p>
-</footer>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
 <script>
     window.addEventListener('load', function() {
 
-        navigator.geolocation.getCurrentPosition(function(position) {
-            document.querySelector('.latitude').value = position.coords.latitude.toFixed(10);
-            document.querySelector('.longitude').value = position.coords.longitude.toFixed(10);
-            document.getElementById('latitude').textContent = position.coords.latitude.toFixed(10);
-            document.getElementById('longitude').textContent = position.coords.longitude.toFixed(10);
+        navigator.geolocation.watchPosition(function(position) {
+                console.log(position);
+                document.getElementById('latitude').textContent = position.coords.latitude.toFixed(10);
+                document.getElementById('longitude').textContent = position.coords.longitude.toFixed(10);
+                document.querySelector('.latitude').value = position.coords.latitude.toFixed(10);
+                document.querySelector('.longitude').value = position.coords.longitude.toFixed(10);
+            },
+            function(error) {
+                console.log("Error: " + error.message);
+            }, {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            });
 
-            let map = L.map('map').setView([position.coords.latitude.toFixed(10), position.coords.longitude.toFixed(10)], 15); // set initial view to the specified location
-
-            // Add a tile layer (e.g. OpenStreetMap)
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
-                subdomains: ['a', 'b', 'c']
-            }).addTo(map);
-
-            // Add a marker at the specified location
-            let marker = L.marker([position.coords.latitude.toFixed(10), position.coords.longitude.toFixed(10)]).addTo(map);
-        });
-
-
-
-
-        let submitButton = document.getElementById('submitButton');
-        submitButton.addEventListener('click', function() {
-            document.getElementById('my-form').submit();
-        });
     });
 </script>

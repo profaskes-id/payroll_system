@@ -1,5 +1,5 @@
-<div class="mt-20">
-    <div class=" flex justify-center align-center">
+<div class="mt-8 ">
+    <div class=" flex justify-center align-center ">
         <h1 id="clock" class="text-6xl md:text-8xl font-bold flex justify-end items-end">
             <span id="hours">00</span>:<span id="minutes">00</span><span class="text-[22px] lg:text-[50px]">:</span><span class="text-[22px] lg:text-[50px]" id="seconds">00</span>
         </h1>

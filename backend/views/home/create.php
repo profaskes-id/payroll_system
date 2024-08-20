@@ -22,18 +22,9 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
 
 
+    <?= $this->render('@backend/views/components/_header', ['title' => 'Absensi']); ?>
     <section class="grid grid-cols-12 justify-center p-5 gap-y-10">
-        <div class="col-span-12  w-full   px-5 pt-5  ">
-            <div class="flex justify-between items-center">
-                <div class="flex items-start justify-center flex-col text-2xl">
-                    <?= $this->render('@backend/views/components/fragment/_back-button'); ?>
-                </div>
-                <div>
-                    <div class="w-[50px] h-[50px] rounded-full bg-[url(https://plus.unsplash.com/premium_photo-1664870883044-0d82e3d63d99?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)] bg-cover bg-center">
-                    </div>
-                </div>
-            </div>
-        </div>
+
 
 
         <div class="col-span-12">
@@ -89,15 +80,20 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
 
 
-
                 <div class="form-group col-span-12">
-                    <?= Html::submitButton('Kirim', ['class' => 'px-5 py-2 bg-blue-500 rounded text-white']) ?>
+                    <button type="submit" class="block py-2.5 text-sm font-medium text-white w-full items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center">
+
+                        <div class="flex items-center justify-center space-x-5">
+
+                            <p class="font-semibold">
+                                Submit
+                            </p>
+                        </div>
+                    </button>
                 </div>
+                <?php ActiveForm::end(); ?>
 
             </div>
-            <?php ActiveForm::end(); ?>
-
-        </div>
     </section>
 
 

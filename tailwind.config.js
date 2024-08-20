@@ -1,15 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: "class", // Mengaktifkan mode gelap berbasis kelas
+  darkMode: "class",
   content: [
-    "./src/**/*.{html,php}", // Atur jalur konten sesuai dengan struktur proyekmu
+    "./backend/views/**/*.{html,php}",
+    "./node_modules/flowbite/**/*.js",
   ],
   theme: {
-    extend: {
-      colors: {
-        // Tambahkan warna khusus di sini jika diperlukan
-      },
-    },
+    extend: {},
   },
-  plugins: [],
+  plugins: [require("flowbite/plugin")],
 };

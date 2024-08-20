@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use amnah\yii2\user\models\User;
 use backend\models\Absensi;
+use backend\models\DataKeluarga;
 use backend\models\DataPekerjaan;
 use backend\models\Karyawan;
 use backend\models\PengajuanCuti;
@@ -78,7 +79,7 @@ class HomeController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
         $karyawan = Karyawan::find()->where(['email' => $user->email])->one();
-        $absensi = $karyawan->absensis;
+        $absensi = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal' => SORT_DESC])->all();
         return $this->render('view', [
             'absensi' => $absensi,
         ]);
@@ -199,14 +200,12 @@ class HomeController extends Controller
     public function actionExpirience()
     {
         $this->layout = 'mobile-main';
-
-
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
         $pengalamanKerja = PengalamanKerja::find()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
         $riwayatPendidikan = RiwayatPendidikan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
+        $keluarga = DataKeluarga::find()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
 
-
-        return $this->renderPartial('expirience/index', compact('pengalamanKerja', 'riwayatPendidikan'));
+        return $this->render('expirience/index', compact('pengalamanKerja', 'riwayatPendidikan', 'keluarga'));
     }
 
     public function actionExpiriencePekerjaanCreate()
@@ -330,6 +329,14 @@ class HomeController extends Controller
         return $this->render('pengajuan-cuti/create', compact('model'));
     }
 
+
+    //?========YOUR LOCATIONS
+    public function actionYourLocation()
+    {
+
+        $this->layout = 'mobile-main';
+        return $this->render('lokasi/index');
+    }
 
 
 

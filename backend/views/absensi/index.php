@@ -94,7 +94,7 @@ $today = date('Y-m-d');
                         });
                         if (!empty($result)) {
                             $var = [...$result];
-                            return    date('H:i', strtotime($var[0]['jam_masuk']))  ?? '-';
+                            return  date('H:i', strtotime($var[0]['jam_masuk'] ?? '00:00:00')) ?? '-';
                         } else {
                             return '-';
                         }
@@ -103,7 +103,7 @@ $today = date('Y-m-d');
                 [
                     'headerOptions' => ['style' => 'width: 15%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 15%; text-align: center;'],
-                    'label' => 'Jam Masuk',
+                    'label' => 'Jam Pulang',
                     'value' => function ($model) {
                         $item = Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d');
 
@@ -112,7 +112,7 @@ $today = date('Y-m-d');
                         });
                         if (!empty($result)) {
                             $var = [...$result];
-                            return date('H:i', strtotime($var[0]['jam_pulang']))?? '-';
+                            return date('H:i', strtotime($var[0]['jam_pulang'] ?? '00:00:00')) ?? '-';
                         } else {
                             return '-';
                         }
@@ -147,7 +147,7 @@ $today = date('Y-m-d');
                     },
                     'format' => 'raw',
                 ],
-        
+
             ],
         ]); ?>
     </div>
