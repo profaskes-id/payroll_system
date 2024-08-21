@@ -38,7 +38,7 @@ class HomeController extends Controller
 
     public function beforeAction($action)
     {
-        if ($action->id == 'view') {
+        if ($action->id == 'view' || $action->id == 'expirience-pekerjaan-delete' || $action->id == 'expirience-pendidikan-delete' || $action->id == 'data-keluarga-delete') {
             // Menonaktifkan CSRF verification untuk aksi 'view'
             $this->enableCsrfValidation = false;
         }
@@ -208,6 +208,7 @@ class HomeController extends Controller
         return $this->render('expirience/index', compact('pengalamanKerja', 'riwayatPendidikan', 'keluarga'));
     }
 
+    // ! pekerjaan
     public function actionExpiriencePekerjaanCreate()
     {
         $this->layout = 'mobile-main';
@@ -220,6 +221,10 @@ class HomeController extends Controller
                 $model->id_karyawan = $karyawan->id_karyawan;
 
                 if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Menyimpa Data Pengalaman Kerja');
+                    return $this->redirect(['expirience']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal Menyimpa Data Pengalaman Kerja');
                     return $this->redirect(['expirience']);
                 }
             }
@@ -232,25 +237,34 @@ class HomeController extends Controller
         ]);
     }
 
-    public function actionExpiriencePekerjaanView($id)
+    public function actionExpiriencePekerjaanUpdate($id)
     {
         $this->layout = 'mobile-main';
-
-
         $model = PengalamanKerja::findOne($id);
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-
                 $model->save();
                 return $this->redirect(['expirience']);
             }
         }
+
         return $this->render('expirience/data-pekerjaan/update', [
             'model' => $model
         ]);
     }
 
+    public function actionExpiriencePekerjaanDelete()
+    {
 
+        $this->layout = 'mobile-main';
+        $id = Yii::$app->request->post('id');
+        $model = PengalamanKerja::findOne($id);
+        $model->delete();
+        Yii::$app->session->setFlash('success', 'Berhasil Menghapus Data Pengalaman Kerja');
+        return $this->redirect(['expirience']);
+    }
+
+    // !pendidikan
     public function actionExpiriencePendidikanCreate()
     {
 
@@ -275,18 +289,20 @@ class HomeController extends Controller
     }
 
 
-    public function actionExpiriencePendidikanView($id)
+    public function actionExpiriencePendidikanUpdate($id)
     {
         $this->layout = 'mobile-main';
-
-
         $model = RiwayatPendidikan::findOne($id);
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-
-                $model->save();
-                return $this->redirect(['expirience']);
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Mengubah Data Pendidikan');
+                    return $this->redirect(['expirience']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal Mengubah Data Pendidikan');
+                    return $this->redirect(['expirience']);
+                }
             }
         }
 
@@ -295,7 +311,82 @@ class HomeController extends Controller
         ]);
     }
 
+    public function actionExpiriencePendidikanDelete()
+    {
 
+        $this->layout = 'mobile-main';
+        $id = Yii::$app->request->post('id');
+        $model = RiwayatPendidikan::findOne($id);
+        $model->delete();
+        Yii::$app->session->setFlash('success', 'Berhasil Menghapus Data Pendidikan');
+        return $this->redirect(['expirience']);
+    }
+
+
+
+
+    // data keluarga
+
+    public function actionDataKeluargaCreate()
+    {
+
+        $this->layout = 'mobile-main';
+        $model = new DataKeluarga();
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+                $model->id_karyawan = $karyawan->id_karyawan;
+
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Menyimpa Data Pengalaman Kerja');
+                    return $this->redirect(['expirience']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal Menyimpa Data Pengalaman Kerja');
+                    return $this->redirect(['expirience']);
+                }
+            }
+        } else {
+            $model->loadDefaultValues();
+        }
+
+
+        return $this->render('expirience/data-keluarga/create', compact('model'));
+    }
+
+
+    public function actionDataKeluargaUpdate($id)
+    {
+        $this->layout = 'mobile-main';
+
+        $model = DataKeluarga::findOne($id);
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Mengubah Data Pendidikan');
+                    return $this->redirect(['expirience']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal Mengubah Data Pendidikan');
+                    return $this->redirect(['expirience']);
+                }
+            }
+        }
+
+        return $this->render('expirience/data-keluarga/update', [
+            'model' => $model
+        ]);
+    }
+    public function actionDataKeluargaDelete()
+    {
+
+        $this->layout = 'mobile-main';
+        $id = Yii::$app->request->post('id');
+        $model = DataKeluarga::findOne($id);
+        $model->delete();
+        Yii::$app->session->setFlash('success', 'Berhasil Menghapus Data Keluarga');
+        return $this->redirect(['expirience']);
+    }
 
 
     // ?=================================Pengajuan cuti

@@ -53,7 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
     <!-- content -->
-    <div class="col-span-12 w-full  px-5 pt-5 ">
+    <div class="col-span-12 w-full  px-5 pt-5  ">
 
 
         <div class=" grid grid-cols-12 place-items-center">
@@ -118,7 +118,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
         <!-- ? mobile izin -->
-        <div class="flex justify-between  items-center  \">
+        <div class="flex justify-between  items-center pb-32">
             <div class="grid place-items-center mt-5">
                 <a href="/panel/home/create">
 

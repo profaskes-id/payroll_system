@@ -64,19 +64,20 @@ $this->params['breadcrumbs'][] = $this->title;
                     <p class="text-3xl font-bold">K001</p>
                     <p class="text-gray-500 text-sm">Syaid Alfarishi</p>
                 </div>
-                <div>
+                <div class="flex gap-3 items-center">
 
 
                     <?= Html::a('
           <div class="w-11 h-11 rounded-full border grid place-items-center   border-gray-300">
-            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
-                 <path fill="#9e9e9e" d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89l.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7s-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.95 8.95 0 0 0 13 21a9 9 0 0 0 0-18m-1 5v5l4.25 2.52l.77-1.28l-3.52-2.09V8z" />
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
+          <path fill="#9e9e9e" d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89l.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7s-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.95 8.95 0 0 0 13 21a9 9 0 0 0 0-18m-1 5v5l4.25 2.52l.77-1.28l-3.52-2.09V8z" />
           </svg>
           </div>
-            
-            ', ['/home/view', 'id_user' => Yii::$app->user->identity->id]) ?>
+          
+          ', ['/home/view', 'id_user' => Yii::$app->user->identity->id]) ?>
 
 
+                    <div class="w-8 h-8 bg-orange-500 rounded-full"></div>
                 </div>
             </div>
 
@@ -87,10 +88,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="swiper mySwiper border rounded-xl overflow-hidden">
                     <div class="swiper-wrapper">
                         <div class="swiper-slide ">
-                            <div class="bg-blue-500 w-full h-screen"></div>
+                            <div class="bg-blue-500 w-full h-screen overflow-hidden ">
+                                <div class="pattern-1 opacity-30"></div>
+                            </div>
                         </div>
                         <div class="swiper-slide">
-                            <div class="bg-blue-200 w-full h-screen"></div>
+                            <div class="bg-blue-200 w-full h-screen">
+
+                                <div class="pattern-2 opacity-30">
+                                </div>
+                            </div>
                         </div>
                         <div class="swiper-slide">
                             <div class="bg-rose-500 w-full h-screen"></div>

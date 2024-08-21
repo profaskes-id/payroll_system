@@ -80,16 +80,10 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
 
 
-                <div class="form-group col-span-12">
-                    <button type="submit" class="block py-2.5 text-sm font-medium text-white w-full items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center">
-
-                        <div class="flex items-center justify-center space-x-5">
-
-                            <p class="font-semibold">
-                                Submit
-                            </p>
-                        </div>
-                    </button>
+                <div class="col-span-12">
+                    <div class="">
+                        <?= $this->render('@backend/views/components/element/_submit-button', ['text' => 'Submit']); ?>
+                    </div>
                 </div>
                 <?php ActiveForm::end(); ?>
 
