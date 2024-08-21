@@ -192,10 +192,6 @@ class HomeController extends Controller
         ]);
     }
 
-
-
-
-
     // ?================================Expirience`
     public function actionExpirience()
     {
@@ -288,7 +284,6 @@ class HomeController extends Controller
         ]);
     }
 
-
     public function actionExpiriencePendidikanUpdate($id)
     {
         $this->layout = 'mobile-main';
@@ -322,11 +317,7 @@ class HomeController extends Controller
         return $this->redirect(['expirience']);
     }
 
-
-
-
-    // data keluarga
-
+    //! data keluarga
     public function actionDataKeluargaCreate()
     {
 
@@ -389,36 +380,6 @@ class HomeController extends Controller
     }
 
 
-    // ?=================================Pengajuan cuti
-    public function actionPengajuanCuti()
-    {
-
-        $this->layout = 'mobile-main';
-        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
-        $pengajuanCuti = PengajuanCuti::find()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
-
-        return $this->render('pengajuan-cuti/index', compact('pengajuanCuti'));
-    }
-
-    public function actionPengajuanCutiCreate()
-    {
-
-        $model = new PengajuanCuti();
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-
-                $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
-                $model->id_karyawan = $karyawan->id_karyawan;
-                if ($model->save()) {
-                    return $this->redirect(['expirience']);
-                }
-            }
-        }
-        $this->layout = 'mobile-main';
-
-        return $this->render('pengajuan-cuti/create', compact('model'));
-    }
 
 
     //?========YOUR LOCATIONS
@@ -428,7 +389,6 @@ class HomeController extends Controller
         $this->layout = 'mobile-main';
         return $this->render('lokasi/index');
     }
-
 
 
     // ?==============helper

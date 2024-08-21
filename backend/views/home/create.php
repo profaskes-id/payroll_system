@@ -34,13 +34,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                 'options' => ['enctype' => 'multipart/form-data'],
             ]); ?>
 
-
-
-
-
             <div class="grid grid-cols-12 gap-y-6">
-
-
                 <div class="col-span-12">
                     <fieldset class="grid grid-cols-2 gap-4">
                         <legend class="col-span-12 block mb-2 text-sm font-medium text-gray-900 ">Status</legend>

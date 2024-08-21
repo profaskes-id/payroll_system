@@ -88,14 +88,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="swiper mySwiper border rounded-xl overflow-hidden">
                     <div class="swiper-wrapper">
                         <div class="swiper-slide ">
-                            <div class="bg-blue-500 w-full h-screen overflow-hidden ">
-                                <div class="pattern-1 opacity-30"></div>
+                            <div class="bg-blue-200 w-full h-screen">
+                                <div class="pattern-2 opacity-30">
+                                </div>
                             </div>
                         </div>
                         <div class="swiper-slide">
                             <div class="bg-blue-200 w-full h-screen">
-
-                                <div class="pattern-2 opacity-30">
+                                <div class="bg-blue-500 w-full h-screen overflow-hidden ">
+                                    <div class="pattern-1 opacity-30"></div>
                                 </div>
                             </div>
                         </div>
@@ -135,13 +136,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
                 <p>Lembur</p>
             </div>
-            <div class="col-span-4 grid place-items-center gap-y-2">
-                <div class="w-[70px] rounded-md bg-blue-400 h-[70px] grid place-items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
-                        <path fill="#fff" d="M4 19h16v2H4zM20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2a2 2 0 0 0 2-2V5c0-1.11-.89-2-2-2m-4 10c0 1.1-.9 2-2 2H8c-1.1 0-2-.9-2-2V5h10zm4-5h-2V5h2z" />
-                    </svg>
-                </div>
-                <p>Cuti</p>
+            <div class="col-span-4">
+                <a class=" grid place-items-center gap-y-2" href="/panel/pengajuan/cuti">
+                    <div class="w-[70px] rounded-md bg-blue-400 h-[70px] grid place-items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+                            <path fill="#fff" d="M4 19h16v2H4zM20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2a2 2 0 0 0 2-2V5c0-1.11-.89-2-2-2m-4 10c0 1.1-.9 2-2 2H8c-1.1 0-2-.9-2-2V5h10zm4-5h-2V5h2z" />
+                        </svg>
+                    </div>
+                    <p>Cuti</p>
+                </a>
             </div>
             <div class="col-span-4 grid place-items-center gap-y-2 ">
                 <div class="w-[70px] rounded-md bg-blue-400 h-[70px] grid place-items-center">
