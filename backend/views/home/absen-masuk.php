@@ -165,6 +165,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 <script>
+    let submitButton = document.getElementById('submitButton');
+    console.info(submitButton);
+    submitButton.addEventListener('click', function() {
+        let form = document.getElementById('my-form');
+        form.submit();
+    });
+
     window.addEventListener('load', function() {
 
         navigator.geolocation.watchPosition(function(position) {
@@ -181,6 +188,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 timeout: 5000,
                 maximumAge: 0
             });
+
 
     });
 </script>
