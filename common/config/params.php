@@ -15,6 +15,7 @@ return [
     'status-pekerjaan' => 'status-pekerjaan',
     'jenjang-pendidikan' => 'jenjang-pendidikan',
     'status-perusahaan' => 'status-perusahaan',
-    'jenis-shift' => 'jenis-shift'
+    'jenis-shift' => 'jenis-shift',
+    "status-pengajuan" => "status-pengajuan"
 
 ];

@@ -4,14 +4,14 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var backend\models\PengajuanCuti $model */
+/** @var backend\models\PengajuanLembur $model */
 
-$this->title = $model->karyawan->nama;
-$this->params['breadcrumbs'][] = ['label' => 'Pengajuan Cutis', 'url' => ['index']];
+$this->title = "Pengajuan Lembur";
+$this->params['breadcrumbs'][] = ['label' => 'Pengajuan Lemburs', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="pengajuan-cuti-view">
+<div class="pengajuan-lembur-view">
 
     <div class="costume-container">
         <p class="">
@@ -21,8 +21,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class='table-container'>
         <p class="d-flex justify-content-start " style="gap: 10px;">
-            <?= Html::a('Update', ['update', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti], ['class' => 'add-button']) ?>
-            <?= Html::a('Delete', ['delete', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti], [
+            <?= Html::a('Update', ['update', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur], ['class' => 'add-button']) ?>
+            <?= Html::a('Delete', ['delete', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur], [
                 'class' => 'reset-button',
                 'data' => [
                     'confirm' => 'Are you sure you want to delete this item?',
@@ -30,21 +30,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ]) ?>
         </p>
-
         <?= DetailView::widget([
             'model' => $model,
             'attributes' => [
-                'id_pengajuan_cuti',
+                'id_pengajuan_lembur',
                 [
-                    'label' => 'Karyawan',
+                    'label' => 'karyawan',
                     'value' => function ($model) {
                         return $model->karyawan->nama;
                     }
                 ],
-                'tanggal_pengajuan',
-                'tanggal_mulai',
-                'tanggal_selesai',
-                'alasan_cuti:ntext',
+                'pekerjaan:ntext',
                 [
                     'format' => 'raw',
                     'attribute' => 'status',
@@ -52,7 +48,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->statusPengajuan->nama_kode ?? "<span class='text-danger'>master kode tidak aktif</span>";
                     },
                 ],
-                'catatan_admin:ntext',
+                'jam_mulai',
+                'jam_selesai',
+                'tanggal',
+                'disetujui_oleh',
             ],
         ]) ?>
 

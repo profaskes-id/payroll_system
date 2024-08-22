@@ -37,9 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <li class="nav-item">
                         <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill" href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile" aria-selected="false">Jadwal Kerja</a>
                     </li>
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" id="custom-tabs-one-harilibur-tab" data-toggle="pill" href="#custom-tabs-one-harilibur" role="tab" aria-controls="custom-tabs-one-harilibur" aria-selected="false">Hari Libur</a>
-                    </li> -->
+
 
                 </ul>
             </div>

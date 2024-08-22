@@ -56,11 +56,33 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $model->karyawan->nama;
                 }
             ],
-            'tanggal_pengajuan',
-            'tanggal_mulai',
-            'tanggal_selesai',
-            //'alasan_cuti:ntext',
-            //'status',
+            [
+                'attribute' => 'tanggal_mulai',
+                'headerOptions' => ['style' => 'width: 20%; text-align: center;'],
+                'contentOptions' => ['style' => 'width: 20%; text-align: center;'],
+            ],
+            // 'tanggal_pengajuan',
+            [
+                'headerOptions' => ['style' => 'width: 30%; text-align: center;'],
+                'attribute' => 'alasan_cuti',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $words = explode(' ', $model->alasan_cuti);
+                    $limitedWords = array_slice($words, 0, 5);
+                    $truncatedText = implode(' ', $limitedWords);
+                    return Html::encode($truncatedText) . '...';
+                },
+            ],
+            // 'tanggal_selesai',
+            [
+                'headerOptions' => ['style' => 'text-align: center;'],
+                'contentOptions' => ['style' => 'text-align: center;'],
+                'format' => 'raw',
+                'attribute' => 'status',
+                'value' => function ($model) {
+                    return $model->statusPengajuan->nama_kode ?? "<span class='text-danger'>master kode tidak aktif</span>";
+                },
+            ],
         ],
     ]); ?>
 </div>
