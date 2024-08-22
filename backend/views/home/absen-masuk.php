@@ -151,9 +151,6 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
 
-
-
-
 </section>
 
 <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50">
