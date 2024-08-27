@@ -9,6 +9,7 @@ use backend\models\DataPekerjaan;
 use backend\models\Karyawan;
 use backend\models\PengajuanCuti;
 use backend\models\PengalamanKerja;
+use backend\models\Pengumuman;
 use backend\models\RiwayatPendidikan;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -71,9 +72,29 @@ class HomeController extends Controller
 
         $this->layout = 'mobile-main';
         $karyawan = Karyawan::findOne(['email' => Yii::$app->user->identity->email]);
-        return $this->render('index', compact('karyawan'));
+        $pengumuman = Pengumuman::find()->orderBy(['dibuat_pada' => SORT_DESC])->limit(5)->all();
+        $absensi = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
+
+
+        $lama_kerja = null;
+        if ($absensi != null && $absensi->jam_pulang != null) {
+
+            $masuk_timestamp = strtotime($absensi->jam_masuk);
+            $keluar_timestamp = strtotime($absensi->jam_pulang);
+
+            $duration = $keluar_timestamp - $masuk_timestamp;
+
+            // convert duration to hours and minutes
+            $hours = floor($duration / 3600);
+            $minutes = floor(($duration % 3600) / 60);
+
+            $lama_kerja = sprintf('%02d:%02d', $hours, $minutes);
+        }
+
+
+
+        return $this->render('index', compact('karyawan', 'pengumuman', 'absensi', 'lama_kerja'));
     }
-    public function actionProfile() {}
 
     public function actionView($id_user)
     {
@@ -396,15 +417,20 @@ class HomeController extends Controller
         return $this->redirect(['expirience']);
     }
 
-
-
-
     //?========YOUR LOCATIONS
     public function actionYourLocation()
     {
 
         $this->layout = 'mobile-main';
         return $this->render('lokasi/index');
+    }
+
+    // ?========pengumuman
+    public function actionPengumuman($id_pengumuman)
+    {
+        $pengumuman = Pengumuman::findOne($id_pengumuman);
+        $this->layout = 'mobile-main';
+        return $this->render('pengumuman/index', compact('pengumuman'));
     }
 
 
