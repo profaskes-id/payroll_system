@@ -5,15 +5,17 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var backend\models\PengajuanLembur $model */
+/** @var backend\models\PengajuanDinas $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="pengajuan-lembur-form table-container">
+<div class="pengajuan-dinas-form table-container">
 
     <?php $form = ActiveForm::begin(); ?>
 
+
     <div class="row">
+
         <div class="col-md-6">
             <?php
             $data = \yii\helpers\ArrayHelper::map(\backend\models\Karyawan::find()->all(), 'id_karyawan', 'nama');
@@ -24,56 +26,49 @@ use yii\widgets\ActiveForm;
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
-            ])->label('Karyawan');
+            ])->label('Nama');
             ?>
         </div>
 
-
-
-
         <div class="col-md-6">
-            <?= $form->field($model, 'tanggal')->textInput(['type' => 'date']) ?>
+            <?= $form->field($model, 'tanggal_mulai')->textInput(['type' => 'date']) ?>
+        </div>
+        <div class="col-md-6">
+            <?= $form->field($model, 'tanggal_selesai')->textInput(['type' => 'date']) ?>
+        </div>
+        <div class="col-12">
+            <?= $form->field($model, 'keterangan_perjalanan')->textarea(['rows' => 3]) ?>
         </div>
 
 
         <div class="col-md-6">
-            <?= $form->field($model, 'jam_mulai')->textInput(['type' => 'time']) ?>
-        </div>
-
-
-        <div class="col-md-6">
-            <?= $form->field($model, 'jam_selesai')->textInput(['type' => 'time']) ?>
+            <?= $form->field($model, 'estimasi_biaya')->textInput(['maxlength' => true, "type" => "number", "step" => "0.01", "min" => "0", "placeholder" => "0.00"]) ?>
         </div>
 
         <div class="col-md-6">
-            <?= $form->field($model, 'pekerjaan')->textarea(['rows' => 1]) ?>
+            <?= $form->field($model, 'biaya_yang_disetujui')->textInput(['maxlength' => true, "type" => "number", "step" => "0.01", "min" => "0", "placeholder" => "0.00",]) ?>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-12">
             <?php
             $data = \yii\helpers\ArrayHelper::map(\backend\models\MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
             echo $form->field($model, 'status')->widget(Select2::classname(), [
                 'data' => $data,
                 'language' => 'id',
-                'options' => ['placeholder' => 'Pilih Pengajuan ...'],
+                'options' => ['placeholder' => 'Pilih Status Kehadiran ...'],
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
-            ])->label('Statu Pengajuan');
+            ])->label('Status Hadir');
             ?>
         </div>
 
-
-        <div class="col-md-6">
-
-            <div class="form-group">
-                <button class="add-button" type="submit">
-                    <span>
-                        Submit
-                    </span>
-                </button>
-            </div>
-
+        <div class="form-group">
+            <button class="add-button" type="submit">
+                <span>
+                    Submit
+                </span>
+            </button>
         </div>
     </div>
 

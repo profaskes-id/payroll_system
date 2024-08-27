@@ -2,16 +2,17 @@
 
 namespace backend\controllers;
 
-use backend\models\PengajuanCuti;
-use backend\models\PengajuanCutiSearch;
+use backend\models\PengajuanDinas;
+use backend\models\PengajuanDinasSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * PengajuanCutiController implements the CRUD actions for PengajuanCuti model.
+ * PengajuanDinasController implements the CRUD actions for PengajuanDinas model.
  */
-class PengajuanCutiController extends Controller
+class PengajuanDinasController extends Controller
 {
     /**
      * @inheritDoc
@@ -32,14 +33,15 @@ class PengajuanCutiController extends Controller
     }
 
     /**
-     * Lists all PengajuanCuti models.
+     * Lists all PengajuanDinas models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new PengajuanCutiSearch();
+        $searchModel = new PengajuanDinasSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -47,30 +49,30 @@ class PengajuanCutiController extends Controller
     }
 
     /**
-     * Displays a single PengajuanCuti model.
-     * @param int $id_pengajuan_cuti Id Pengajuan Cuti
+     * Displays a single PengajuanDinas model.
+     * @param int $id_pengajuan_dinas Id Pengajuan Dinas
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id_pengajuan_cuti)
+    public function actionView($id_pengajuan_dinas)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id_pengajuan_cuti),
+            'model' => $this->findModel($id_pengajuan_dinas),
         ]);
     }
 
     /**
-     * Creates a new PengajuanCuti model.
+     * Creates a new PengajuanDinas model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new PengajuanCuti();
+        $model = new PengajuanDinas();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]);
+                return $this->redirect(['view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]);
             }
         } else {
             $model->loadDefaultValues();
@@ -82,51 +84,51 @@ class PengajuanCutiController extends Controller
     }
 
     /**
-     * Updates an existing PengajuanCuti model.
+     * Updates an existing PengajuanDinas model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id_pengajuan_cuti Id Pengajuan Cuti
+     * @param int $id_pengajuan_dinas Id Pengajuan Dinas
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id_pengajuan_cuti)
+    public function actionUpdate($id_pengajuan_dinas)
     {
-        $model = $this->findModel($id_pengajuan_cuti);
+        $model = $this->findModel($id_pengajuan_dinas);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->disetujui_oleh = Yii::$app->user->identity->id;
+            $model->disetujui_pada = date('Y-m-d H:i:s');
+            $model->save();
+            return $this->redirect(['view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]);
         }
-
         return $this->render('update', [
             'model' => $model,
         ]);
     }
 
     /**
-     * Deletes an existing PengajuanCuti model.
+     * Deletes an existing PengajuanDinas model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id_pengajuan_cuti Id Pengajuan Cuti
+     * @param int $id_pengajuan_dinas Id Pengajuan Dinas
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id_pengajuan_cuti)
+    public function actionDelete($id_pengajuan_dinas)
     {
-        $this->findModel($id_pengajuan_cuti)->delete();
+        $this->findModel($id_pengajuan_dinas)->delete();
 
         return $this->redirect(['index']);
     }
 
-
-
     /**
-     * Finds the PengajuanCuti model based on its primary key value.
+     * Finds the PengajuanDinas model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id_pengajuan_cuti Id Pengajuan Cuti
-     * @return PengajuanCuti the loaded model
+     * @param int $id_pengajuan_dinas Id Pengajuan Dinas
+     * @return PengajuanDinas the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id_pengajuan_cuti)
+    protected function findModel($id_pengajuan_dinas)
     {
-        if (($model = PengajuanCuti::findOne(['id_pengajuan_cuti' => $id_pengajuan_cuti])) !== null) {
+        if (($model = PengajuanDinas::findOne(['id_pengajuan_dinas' => $id_pengajuan_dinas])) !== null) {
             return $model;
         }
 

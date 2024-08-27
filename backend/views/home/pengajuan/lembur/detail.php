@@ -11,11 +11,20 @@ use amnah\yii2\user\models\User;
 
         <div class="bg-white w-full  rounded-md p-3">
             <p class="text-sm">Dikerjaan Pada : <?= $model['tanggal'] ?></p>
-            <p class="text-sm fw-bold">Status : <?= $model['status'] == '0' ? '<span class="text-yellow-500">Pending</span>' : ($model['status'] == '1' ? '<span class="text-green-500">Disetujui</span>' : '<span class="text-rose-500">Ditolak</span>')  ?></p>
+            <p class="text-sm font-bold">Status : <?= $model['status'] == '0' ? '<span class="text-yellow-500">Pending</span>' : ($model['status'] == '1' ? '<span class="text-green-500">Disetujui</span>' : '<span class="text-rose-500">Ditolak</span>')  ?></p>
         </div>
         <div class="bg-white text-black  w-full  rounded-md p-2 mt-2">
-            <p class="capitalize  text-gray-500 text-sm">List Pekerjaan</p>
-            <p><?= $model['pekerjaan'] ?></p>
+            <p class="capitalize  text-gray-500 ">List Pekerjaan</p>
+            <ul class="list-disc list-inside px-2 my-2">
+
+                <?php if (!empty($poinArray)) : ?>
+                    <?php foreach ($poinArray as $item) : ?>
+                        <li><?= $item ?></li>
+                    <?php endforeach ?>
+                <?php else : ?>
+                    <li>Tidak Ada List Pekerjaan Yang Tercantum</li>
+                <?php endif ?>
+            </ul>
             <hr class="my-2">
             <p class="capitalize  text-gray-500 text-sm">Jam Lembur</p>
             <div class="flex space-x-3 text-gray-500 text-sm">

@@ -77,3 +77,13 @@
             </span>
         </button>
     </div>
+
+///cek error
+try {
+if (!$model->save()) {
+                        print_r($model->getErrors());
+}
+} catch (\Exception $e) {
+echo 'Error: ' . $e->getMessage();
+}
+die;

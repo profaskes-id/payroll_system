@@ -6,8 +6,8 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var backend\models\PengajuanCuti $model */
 
-$this->title = $model->karyawan->nama;
-$this->params['breadcrumbs'][] = ['label' => 'Pengajuan Cutis', 'url' => ['index']];
+$this->title = 'Cengajuan Cuti : ' . $model->karyawan->nama;
+$this->params['breadcrumbs'][] = ['label' => 'Pengajuan Cuti', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class='table-container'>
         <p class="d-flex justify-content-start " style="gap: 10px;">
-            <?= Html::a('Update', ['update', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti], ['class' => 'add-button']) ?>
+            <?= Html::a('Tanggapi', ['update', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti], ['class' => 'add-button']) ?>
             <?= Html::a('Delete', ['delete', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti], [
                 'class' => 'reset-button',
                 'data' => [
@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'attributes' => [
                 'id_pengajuan_cuti',
                 [
-                    'label' => 'Karyawan',
+                    'label' => 'Nama',
                     'value' => function ($model) {
                         return $model->karyawan->nama;
                     }
@@ -52,9 +52,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->statusPengajuan->nama_kode ?? "<span class='text-danger'>master kode tidak aktif</span>";
                     },
                 ],
-                'catatan_admin:ntext',
+                [
+                    'label' => 'Tanggapan Admin',
+                    'value' => function ($model) {
+                        return $model->catatan_admin ?? '-';
+                    }
+                ],
             ],
-        ]) ?>
+        ]); ?>
 
     </div>
 </div>

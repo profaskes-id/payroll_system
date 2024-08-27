@@ -33,11 +33,17 @@ class HomeController extends Controller
                     ],
                 ],
                 'access' => [
-                    'class' => \yii\filters\AccessControl::className(),
+                    'class' => \yii\filters\AccessControl::class,
                     'rules' => [
+
                         [
                             'allow' => true,
-                            'roles' => ['@'],
+                            'roles' => ['@'], // Allow authenticated users
+                            'matchCallback' => function ($rule, $action) {
+                                $user = Yii::$app->user;
+                                // Check if the user does not have the 'admin' or 'super admin' role
+                                return !$user->can('admin') && !$user->can('super_admin');
+                            },
                         ],
                     ],
                 ],
@@ -62,8 +68,10 @@ class HomeController extends Controller
     {
 
 
+
         $this->layout = 'mobile-main';
-        return $this->render('index');
+        $karyawan = Karyawan::findOne(['email' => Yii::$app->user->identity->email]);
+        return $this->render('index', compact('karyawan'));
     }
     public function actionProfile() {}
 

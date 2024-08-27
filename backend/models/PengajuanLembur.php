@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use amnah\yii2\user\models\User;
 use Yii;
 
 /**
@@ -72,5 +73,10 @@ class PengajuanLembur extends \yii\db\ActiveRecord
     public function getStatusPengajuan()
     {
         return $this->hasOne(MasterKode::class, ['kode' => 'status'])->onCondition(['nama_group' => 'status-pengajuan', 'status' => '1']);
+    }
+
+    public function getDisetujuiOleh()
+    {
+        return $this->hasOne(User::class, ['id' => 'disetujui_oleh']);
     }
 }

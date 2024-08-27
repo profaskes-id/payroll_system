@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /** @var backend\models\PengajuanLembur $model */
 
 $this->title = "Pengajuan Lembur";
-$this->params['breadcrumbs'][] = ['label' => 'Pengajuan Lemburs', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Pengajuan Lembur', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -19,41 +19,62 @@ $this->params['breadcrumbs'][] = $this->title;
         </p>
     </div>
 
-    <div class='table-container'>
-        <p class="d-flex justify-content-start " style="gap: 10px;">
-            <?= Html::a('Update', ['update', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur], ['class' => 'add-button']) ?>
-            <?= Html::a('Delete', ['delete', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur], [
-                'class' => 'reset-button',
-                'data' => [
-                    'confirm' => 'Are you sure you want to delete this item?',
-                    'method' => 'post',
+    <ol style="margin: 0 !important; padding: 0 !important">
+        <div class='table-container'>
+            <p class="d-flex justify-content-start " style="gap: 10px;">
+                <?= Html::a('Tanggapi', ['update', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur], ['class' => 'add-button']) ?>
+                <?= Html::a('Delete', ['delete', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur], [
+                    'class' => 'reset-button',
+                    'data' => [
+                        'confirm' => 'Are you sure you want to delete this item?',
+                        'method' => 'post',
+                    ],
+                ]) ?>
+            </p>
+
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'id_pengajuan_lembur',
+                    [
+                        'label' => 'karyawan',
+                        'value' => function ($model) {
+                            return $model->karyawan->nama;
+                        }
+                    ],
+                    [
+                        'label' => 'Pekerjaan',
+                        'format' => 'raw',
+                        'value' => function ($model) {
+                            $poinArray = json_decode($model->pekerjaan);
+                            $finalValue = [];
+                            foreach ($poinArray as $item) {
+                                $finalValue[] = "<li style='margin-left: 20px'>$item</li>";
+                            }
+                            return implode('', $finalValue);
+                        }
+                    ],
+
+                    'jam_mulai',
+                    'jam_selesai',
+                    'tanggal',
+                    [
+                        'label' => "Ditanggapi Oleh",
+                        'value' => function ($model) {
+                            return $model->disetujuiOleh->username ?? "-";
+                        }
+
+                    ],
+                    [
+                        'format' => 'raw',
+                        'attribute' => 'status',
+                        'value' => function ($model) {
+                            return $model->statusPengajuan->nama_kode ?? "<span class='text-danger'>master kode tidak aktif</span>";
+                        },
+                    ],
                 ],
             ]) ?>
-        </p>
-        <?= DetailView::widget([
-            'model' => $model,
-            'attributes' => [
-                'id_pengajuan_lembur',
-                [
-                    'label' => 'karyawan',
-                    'value' => function ($model) {
-                        return $model->karyawan->nama;
-                    }
-                ],
-                'pekerjaan:ntext',
-                [
-                    'format' => 'raw',
-                    'attribute' => 'status',
-                    'value' => function ($model) {
-                        return $model->statusPengajuan->nama_kode ?? "<span class='text-danger'>master kode tidak aktif</span>";
-                    },
-                ],
-                'jam_mulai',
-                'jam_selesai',
-                'tanggal',
-                'disetujui_oleh',
-            ],
-        ]) ?>
 
-    </div>
+        </div>
+    </ol>
 </div>

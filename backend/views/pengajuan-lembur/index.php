@@ -59,33 +59,53 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-                "label" => "Karyawan",
+                "label" => "Nama",
                 "value" => "karyawan.nama"
             ],
             [
                 'label' => 'Jam Mulai',
-                'value' => 'jam_mulai',
+                'value' => function ($model) {
+                    return date('H:i', strtotime($model->jam_mulai));
+                },
+                'headerOptions' => ['style' => 'text-align: center;'],
+                'contentOptions' => ['style' => 'text-align: center;'],
+            ],
+            [
+                'label' => 'Jam Selesai',
+                'value' => function ($model) {
+                    return date('H:i', strtotime($model->jam_selesai));
+                },
                 'headerOptions' => ['style' => 'text-align: center;'],
                 'contentOptions' => ['style' => 'text-align: center;'],
             ],
             [
                 'label' => 'Tanggal',
-                'value' => 'tanggal',
+                'value' => function ($model) {
+                    return date('d-M-Y', strtotime($model->tanggal));
+                },
                 'headerOptions' => ['style' => 'text-align: center;'],
                 'contentOptions' => ['style' => 'text-align: center;'],
             ],
 
             [
-
-                'contentOptions' => ['style' => 'text-align: center;'],
                 'headerOptions' => ['style' => 'text-align: center;'],
+                'contentOptions' => ['style' => 'text-align: center;'],
                 'format' => 'raw',
                 'attribute' => 'status',
                 'value' => function ($model) {
-                    return $model->statusPengajuan->nama_kode ?? "<span class='text-danger'>master kode tidak aktif</span>";
+                    if ($model->statusPengajuan->nama_kode !== null) {
+                        if (strtolower($model->statusPengajuan->nama_kode) == "pending") {
+                            return "<span class='text-capitalize btn btn-outline-warning '>Pending</span>";
+                        } elseif (strtolower($model->statusPengajuan->nama_kode) == "diterima") {
+                            return "<span class='text-capitalize btn btn-outline-success '>diterima</span>";
+                        } elseif (strtolower($model->statusPengajuan->nama_kode) == "ditolak") {
+                            return "<span class='text-capitalize btn btn-outline-danger '>ditolak</span>";
+                        }
+                    } else {
+                        return "<span class='text-danger'>master kode tidak aktif</span>";
+                    }
                 },
-            ],            //'jam_selesai',
-            //'disetujui_oleh',
+            ],
         ],
     ]); ?>
 

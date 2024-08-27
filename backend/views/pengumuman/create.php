@@ -3,13 +3,13 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var backend\models\PengajuanLembur $model */
+/** @var backend\models\Pengumuman $model */
 
-$this->title = 'Tambah Pengajuan Lembur';
-$this->params['breadcrumbs'][] = ['label' => 'Pengajuan Lembur', 'url' => ['index']];
+$this->title = 'Tambah Pengumuman';
+$this->params['breadcrumbs'][] = ['label' => 'Pengumuman', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="pengajuan-lembur-create">
+<div class="pengumuman-create">
 
     <div class="costume-container">
         <p class="">
@@ -18,7 +18,6 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <?= $this->render('_form', [
         'model' => $model,
-        'poinArray' => $poinArray,
     ]) ?>
 
 </div>

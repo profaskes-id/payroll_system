@@ -56,8 +56,9 @@ class PengajuanLemburController extends Controller
      */
     public function actionView($id_pengajuan_lembur)
     {
+        $model = $this->findModel($id_pengajuan_lembur);
         return $this->render('view', [
-            'model' => $this->findModel($id_pengajuan_lembur),
+            'model' => $model,
         ]);
     }
 
@@ -70,8 +71,10 @@ class PengajuanLemburController extends Controller
     {
         $model = new PengajuanLembur();
 
+        $poinArray = [];
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
+                $model->pekerjaan = json_encode(Yii::$app->request->post('pekerjaan'));
                 $model->disetujui_oleh = Yii::$app->user->identity->id;
                 $model->save();
                 return $this->redirect(['view', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur]);
@@ -82,6 +85,7 @@ class PengajuanLemburController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'poinArray' => $poinArray,
         ]);
     }
 
@@ -95,13 +99,17 @@ class PengajuanLemburController extends Controller
     public function actionUpdate($id_pengajuan_lembur)
     {
         $model = $this->findModel($id_pengajuan_lembur);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur]);
+        $poinArray = json_decode($model->poin);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->poin = json_encode(Yii::$app->request->post('poin'));
+            if ($model->save()) {
+                return $this->redirect(['view', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur]);
+            }
         }
 
         return $this->render('update', [
             'model' => $model,
+            'poinArray' => $poinArray
         ]);
     }
 

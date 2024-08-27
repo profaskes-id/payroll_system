@@ -93,7 +93,6 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                     <?php endforeach; ?>
                 </div>
             <?php else : ?>
-                <div class="w-full  "></div>
                 <div class="p-2 text-sm   bg-white rounded-md w-full">
                     <p class="text-center">Tidak ada data</p>
                 </div>
@@ -103,70 +102,82 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
     <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800 mb-20" id="settings" role="tabpanel" aria-labelledby="settings-tab">
         <div class="w-full grid grid-cols-1 gap-y-4 ">
-            <?php foreach ($pengajuanCuti as $key => $value) : ?>
-                <?php if ($value['status'] == '1') : ?>
+            <?php if (!empty($pengajuanCuti)) : ?>
+                <?php foreach ($pengajuanCuti as $key => $value) : ?>
+                    <?php if ($value['status'] == '1') : ?>
 
-                    <a href="<?php echo \yii\helpers\Url::to(['/pengajuan/cuti-detail/', 'id' => $value['id_pengajuan_cuti']]) ?>">
-                        <div class="grid grid-cols-12 gap-5 ">
-                            <div class="p-2 text-sm col-span-12  bg-white rounded-md w-full">
+                        <a href="<?php echo \yii\helpers\Url::to(['/pengajuan/cuti-detail/', 'id' => $value['id_pengajuan_cuti']]) ?>">
+                            <div class="grid grid-cols-12 gap-5 ">
+                                <div class="p-2 text-sm col-span-12  bg-white rounded-md w-full">
 
-                                <?php
-                                $teks = $value['alasan_cuti'];
-                                $kata = explode(' ', $teks);
-                                $kataTerbatas = array_slice($kata, 0, 10); // Ubah 10 menjadi jumlah kata yang diinginkan
-                                $teksTerbatas = implode(' ', $kataTerbatas);
-                                ?>
-                                <p><?= $teksTerbatas ?>...</p>
+                                    <?php
+                                    $teks = $value['alasan_cuti'];
+                                    $kata = explode(' ', $teks);
+                                    $kataTerbatas = array_slice($kata, 0, 10); // Ubah 10 menjadi jumlah kata yang diinginkan
+                                    $teksTerbatas = implode(' ', $kataTerbatas);
+                                    ?>
+                                    <p><?= $teksTerbatas ?>...</p>
 
 
-                                <hr class="w-1/3 my-2">
-                                <div class="flex space-x-3 text-gray-500">
-                                    <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
-                                    <span>&nbsp;~&nbsp;&nbsp;</span>
-                                    <p><?= date('d-m-Y', strtotime($value['tanggal_selesai'])) ?></p>
+                                    <hr class="w-1/3 my-2">
+                                    <div class="flex space-x-3 text-gray-500">
+                                        <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
+                                        <span>&nbsp;~&nbsp;&nbsp;</span>
+                                        <p><?= date('d-m-Y', strtotime($value['tanggal_selesai'])) ?></p>
+                                    </div>
+                                    <hr class="my-2">
+                                    <p class="text-[12px] capitalize text-end text-gray-500">diajukan pada :<?= $value['tanggal_pengajuan'] ?></p>
+
                                 </div>
-                                <hr class="my-2">
-                                <p class="text-[12px] capitalize text-end text-gray-500">diajukan pada :<?= $value['tanggal_pengajuan'] ?></p>
-
                             </div>
-                        </div>
-                    </a>
-                <?php endif ?>
-            <?php endforeach; ?>
+                        </a>
+                    <?php endif ?>
+                <?php endforeach; ?>
+            <?php else : ?>
+                <div class="p-2 text-sm   bg-white rounded-md w-full">
+                    <p class="text-center">Tidak ada data</p>
+                </div>
+            <?php endif ?>
         </div>
     </div>
     <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
         <div class="w-full grid grid-cols-1 gap-y-4 ">
-            <?php foreach ($pengajuanCuti as $key => $value) : ?>
-                <?php if ($value['status'] == '2') : ?>
+            <?php if (!empty($pengajuanCuti)) : ?>
+                <?php foreach ($pengajuanCuti as $key => $value) : ?>
+                    <?php if ($value['status'] == '2') : ?>
 
-                    <a href="<?php echo \yii\helpers\Url::to(['/pengajuan/cuti-detail/', 'id' => $value['id_pengajuan_cuti']]) ?>">
-                        <div class="grid grid-cols-12 gap-5 ">
-                            <div class="p-2 text-sm col-span-12  bg-white rounded-md w-full">
+                        <a href="<?php echo \yii\helpers\Url::to(['/pengajuan/cuti-detail/', 'id' => $value['id_pengajuan_cuti']]) ?>">
+                            <div class="grid grid-cols-12 gap-5 ">
+                                <div class="p-2 text-sm col-span-12  bg-white rounded-md w-full">
 
-                                <?php
-                                $teks = $value['alasan_cuti'];
-                                $kata = explode(' ', $teks);
-                                $kataTerbatas = array_slice($kata, 0, 10); // Ubah 10 menjadi jumlah kata yang diinginkan
-                                $teksTerbatas = implode(' ', $kataTerbatas);
-                                ?>
-                                <p><?= $teksTerbatas ?>...</p>
+                                    <?php
+                                    $teks = $value['alasan_cuti'];
+                                    $kata = explode(' ', $teks);
+                                    $kataTerbatas = array_slice($kata, 0, 10); // Ubah 10 menjadi jumlah kata yang diinginkan
+                                    $teksTerbatas = implode(' ', $kataTerbatas);
+                                    ?>
+                                    <p><?= $teksTerbatas ?>...</p>
 
 
-                                <hr class="w-1/3 my-2">
-                                <div class="flex space-x-3 text-gray-500">
-                                    <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
-                                    <span>&nbsp;~&nbsp;&nbsp;</span>
-                                    <p><?= date('d-m-Y', strtotime($value['tanggal_selesai'])) ?></p>
+                                    <hr class="w-1/3 my-2">
+                                    <div class="flex space-x-3 text-gray-500">
+                                        <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
+                                        <span>&nbsp;~&nbsp;&nbsp;</span>
+                                        <p><?= date('d-m-Y', strtotime($value['tanggal_selesai'])) ?></p>
+                                    </div>
+                                    <hr class="my-2">
+                                    <p class="text-[12px] capitalize text-end text-gray-500">diajukan pada :<?= $value['tanggal_pengajuan'] ?></p>
+
                                 </div>
-                                <hr class="my-2">
-                                <p class="text-[12px] capitalize text-end text-gray-500">diajukan pada :<?= $value['tanggal_pengajuan'] ?></p>
-
                             </div>
-                        </div>
-                    </a>
-                <?php endif ?>
-            <?php endforeach; ?>
+                        </a>
+                    <?php endif ?>
+                <?php endforeach; ?>
+            <?php else : ?>
+                <div class="p-2 text-sm   bg-white rounded-md w-full">
+                    <p class="text-center">Tidak ada data</p>
+                </div>
+            <?php endif ?>
         </div>
     </div>
 </div>

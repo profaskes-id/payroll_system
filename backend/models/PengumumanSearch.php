@@ -4,12 +4,12 @@ namespace backend\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\PengajuanCuti;
+use backend\models\Pengumuman;
 
 /**
- * PengajuanCutiSearch represents the model behind the search form of `backend\models\PengajuanCuti`.
+ * PengumumanSearch represents the model behind the search form of `backend\models\Pengumuman`.
  */
-class PengajuanCutiSearch extends PengajuanCuti
+class PengumumanSearch extends Pengumuman
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class PengajuanCutiSearch extends PengajuanCuti
     public function rules()
     {
         return [
-            [['id_pengajuan_cuti', 'id_karyawan', 'status'], 'integer'],
-            [['tanggal_pengajuan', 'tanggal_mulai', 'tanggal_selesai', 'alasan_cuti', 'catatan_admin'], 'safe'],
+            [['id_pengumuman', 'dibuat_pada', 'update_pada', 'dibuat_oleh'], 'integer'],
+            [['judul', 'deskripsi'], 'safe'],
         ];
     }
 
@@ -40,17 +40,12 @@ class PengajuanCutiSearch extends PengajuanCuti
      */
     public function search($params)
     {
-        $query = PengajuanCuti::find();
+        $query = Pengumuman::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => [
-                'defaultOrder' => [
-                    'status' => SORT_ASC, // Mengurutkan berdasarkan status secara ascending
-                ],
-            ],
         ]);
 
         $this->load($params);
@@ -63,16 +58,14 @@ class PengajuanCutiSearch extends PengajuanCuti
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id_pengajuan_cuti' => $this->id_pengajuan_cuti,
-            'id_karyawan' => $this->id_karyawan,
-            'tanggal_pengajuan' => $this->tanggal_pengajuan,
-            'tanggal_mulai' => $this->tanggal_mulai,
-            'tanggal_selesai' => $this->tanggal_selesai,
-            'status' => $this->status,
+            'id_pengumuman' => $this->id_pengumuman,
+            'dibuat_pada' => $this->dibuat_pada,
+            'update_pada' => $this->update_pada,
+            'dibuat_oleh' => $this->dibuat_oleh,
         ]);
 
-        $query->andFilterWhere(['like', 'alasan_cuti', $this->alasan_cuti])
-            ->andFilterWhere(['like', 'catatan_admin', $this->catatan_admin]);
+        $query->andFilterWhere(['like', 'judul', $this->judul])
+            ->andFilterWhere(['like', 'deskripsi', $this->deskripsi]);
 
         return $dataProvider;
     }

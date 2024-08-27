@@ -19,6 +19,8 @@ $this->params['breadcrumbs'][] = 'Update';
     </div>
     <?= $this->render('_form', [
         'model' => $model,
+        'poinArray' => $poinArray
+
     ]) ?>
 
 </div>

@@ -489,7 +489,8 @@ if (
             ?>
 
             <?php if (Yii::$app->user->can('admin')) : ?>
-                <?= $this->render('navbar', ['assetDir' => $assetDir]); ?>
+                <?php //$this->render('navbar', ['assetDir' => $assetDir]); 
+                ?>
                 <?= $this->render('sidebar', ['assetDir' => $assetDir]); ?>
                 <!-- Content Wrapper. Contains page content -->
                 <main class="pt-3  " style=" background-color: #000000 ;">

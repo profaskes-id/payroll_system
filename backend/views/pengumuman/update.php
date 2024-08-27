@@ -3,14 +3,14 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var backend\models\PengajuanCuti $model */
+/** @var backend\models\Pengumuman $model */
 
-$this->title = 'Update Pengajuan Cuti: ' . $model->karyawan->nama;
-$this->params['breadcrumbs'][] = ['label' => 'Pengajuan Cuti', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->karyawan->nama, 'url' => ['view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]];
+$this->title = 'Update Pengumuman: ' . $model->id_pengumuman;
+$this->params['breadcrumbs'][] = ['label' => 'Pengumuman', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => $model->id_pengumuman, 'url' => ['view', 'id_pengumuman' => $model->id_pengumuman]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="pengajuan-cuti-update">
+<div class="pengumuman-update">
 
     <div class="costume-container">
         <p class="">

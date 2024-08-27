@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\Karyawan;
 use backend\models\PengajuanCuti;
+use backend\models\PengajuanDinas;
 use backend\models\PengajuanLembur;
 use Yii;
 use yii\filters\VerbFilter;
@@ -23,11 +24,20 @@ class PengajuanController extends \yii\web\Controller
                     ],
                 ],
                 'access' => [
-                    'class' => \yii\filters\AccessControl::className(),
+                    'class' => \yii\filters\AccessControl::class,
                     'rules' => [
                         [
                             'allow' => true,
-                            'roles' => ['@'],
+                            'roles' => ['?'], // Allow guests (unauthenticated users)
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Allow authenticated users
+                            'matchCallback' => function ($rule, $action) {
+                                $user = Yii::$app->user;
+                                // Check if the user does not have the 'admin' or 'super admin' role
+                                return !$user->can('admin') && !$user->can('super_admin');
+                            },
                         ],
                     ],
                 ],
@@ -93,8 +103,7 @@ class PengajuanController extends \yii\web\Controller
     {
         $this->layout = 'mobile-main';
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
-        $pengajuanLembur = PengajuanLembur::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['status' => SORT_ASC, 'tanggal' => SORT_DESC])->all();
-
+        $pengajuanLembur = PengajuanLembur::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal' => SORT_DESC, 'status' => SORT_ASC,])->all();
         return $this->render('/home/pengajuan/lembur/index', compact('pengajuanLembur'));
     }
 
@@ -105,12 +114,14 @@ class PengajuanController extends \yii\web\Controller
         $this->layout = 'mobile-main';
         $model = new PengajuanLembur();
 
+        $poinArray = [];
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
 
                 $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
                 $model->id_karyawan = $karyawan->id_karyawan;
-                $model->tanggal = date('Y-m-d');
+                $model->pekerjaan = json_encode(Yii::$app->request->post('pekerjaan'));
+                $model->status = 0;
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
                     return $this->redirect(['/pengajuan/lembur']);
@@ -121,13 +132,59 @@ class PengajuanController extends \yii\web\Controller
             }
         }
 
-        return $this->render('home/pengajuan/lembur/create', compact('model'));
+        return $this->render('home/pengajuan/lembur/create', compact('model', 'poinArray'));
     }
 
     public function actionLemburDetail($id)
     {
         $this->layout = 'mobile-main';
         $model = PengajuanLembur::find()->where(['id_pengajuan_lembur' => $id])->one();
-        return $this->render('home/pengajuan/lembur/detail', compact('model'));
+        $poinArray = json_decode($model->pekerjaan);
+        return $this->render('home/pengajuan/lembur/detail', compact('model', 'poinArray'));
+    }
+
+
+    //pengajuan dinas
+    public function actionDinas()
+    {
+        $this->layout = 'mobile-main';
+        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+        $pengajuanDinas = PengajuanDinas::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal_mulai' => SORT_DESC, 'status' => SORT_ASC,])->all();
+        return $this->render('/home/pengajuan/dinas/index', compact('pengajuanDinas'));
+    }
+
+
+    public function actionDinasCreate()
+    {
+
+        $this->layout = 'mobile-main';
+        $model = new PengajuanDinas();
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+
+                $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+                $model->id_karyawan = $karyawan->id_karyawan;
+                $model->disetujui_pada = date('Y-m-d');
+                $model->status = 0;
+
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
+                    return $this->redirect(['/pengajuan/dinas']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal Membuat Pengajuan');
+                    return $this->redirect(['/pengajuan/dinas']);
+                }
+            }
+        }
+
+        return $this->render('home/pengajuan/dinas/create', compact('model'));
+    }
+
+    public function actionDinasDetail($id)
+    {
+        $this->layout = 'mobile-main';
+        $model = PengajuanDinas::find()->where(['id_pengajuan_dinas' => $id])->one();
+        return $this->render('home/pengajuan/dinas/detail', compact('model'));
     }
 }

@@ -27,57 +27,62 @@
         </div>
 
         <!-- Sidebar Menu -->
-        <nav class="mt-2">
-            <?php
-            echo \hail812\adminlte\widgets\Menu::widget([
-                'items' => [
+        <div class="mt-2 d-flex justify-center items-end flex-column ">
+            <nav class="">
+                <?php
 
-                    // ['label' => 'Simple ', 'icon' => 'th', 'badge' => '<span class="right badge badge-danger">New</span>'],
-                    // ['label' => 'Yii2 PROVIDED', 'header' => true],
-                    ['label' => 'Dashboard',  'icon' => 'home', 'url' => ['/']],
+                use yii\helpers\Html;
 
-                    [
-                        'label' => 'Pengaturan System',
-                        'icon' => 'th',
-                        'items' => [
-                            ['label' => 'Master Kode',  'icon' => 'file-code', 'url' => ['/master-kode/index'],],
+                echo \hail812\adminlte\widgets\Menu::widget([
+                    'items' => [
+
+                        // ['label' => 'Simple ', 'icon' => 'th', 'badge' => '<span class="right badge badge-danger">New</span>'],
+                        // ['label' => 'Yii2 PROVIDED', 'header' => true],
+                        ['label' => 'Dashboard',  'icon' => 'home', 'url' => ['/']],
+
+                        [
+                            'label' => 'Pengaturan System',
+                            'icon' => 'th',
+                            'items' => [
+                                ['label' => 'Master Kode',  'icon' => 'file-code', 'url' => ['/master-kode/index'],],
+                            ],
                         ],
-                    ],
-                    [
-                        'label' => 'Pengaturan Data',
-                        'icon' => 'th',
-                        'items' => [
-                            ['label' => 'Perusahaan',  'icon' => 'file-code', 'url' => ['/perusahaan/index'],],
-                            ['label' => 'Karyawan',  'icon' => 'file-code', 'url' => ['/karyawan/index'],],
+                        [
+                            'label' => 'Pengaturan Data',
+                            'icon' => 'th',
+                            'items' => [
+                                ['label' => 'Perusahaan',  'icon' => 'file-code', 'url' => ['/perusahaan/index'],],
+                                ['label' => 'Karyawan',  'icon' => 'file-code', 'url' => ['/karyawan/index'],],
+                            ],
                         ],
-                    ],
-                    [
-                        'label' => 'Pengaturan Jam',
-                        'icon' => 'th',
-                        'items' => [
-                            ['label' => 'Jam Kerja',  'icon' => 'file-code', 'url' => ['/jam-kerja/index'],],
-                            ['label' => 'Jam Kerja Karyawan',  'icon' => 'file-code', 'url' => ['/jam-kerja-karyawan/index'],],
-                            ['label' => 'Hari Libur',  'icon' => 'file-code', 'url' => ['/hari-libur/index'],],
+                        [
+                            'label' => 'Pengaturan Jam',
+                            'icon' => 'th',
+                            'items' => [
+                                ['label' => 'Jam Kerja',  'icon' => 'file-code', 'url' => ['/jam-kerja/index'],],
+                                ['label' => 'Jam Kerja Karyawan',  'icon' => 'file-code', 'url' => ['/jam-kerja-karyawan/index'],],
+                                ['label' => 'Hari Libur',  'icon' => 'file-code', 'url' => ['/hari-libur/index'],],
+                            ],
                         ],
+                        // ['label' => 'Bagian',  'icon' => 'file-code', 'url' => ['/bagian/index'],],
+                        ['label' => 'Absensi',  'icon' => 'file-code', 'url' => ['/absensi/index'],],
+                        ['label' => 'Rekap Absensi',  'icon' => 'file-code', 'url' => ['/rekap-absensi/index'],],
+                        ['label' => 'Pengajuan cuti',  'icon' => 'file-code', 'url' => ['/pengajuan-cuti/index'],],
+                        ['label' => 'Pengajuan lembur',  'icon' => 'file-code', 'url' => ['/pengajuan-lembur/index'],],
+                        ['label' => 'Pengajuan Dinas',  'icon' => 'file-code', 'url' => ['/pengajuan-dinas/index'],],
+                        ['label' => 'Pengumuman',  'icon' => 'file-code', 'url' => ['/pengumuman/index'],],
+
+
                     ],
-                    // ['label' => 'Bagian',  'icon' => 'file-code', 'url' => ['/bagian/index'],],
-                    ['label' => 'Absensi',  'icon' => 'file-code', 'url' => ['/absensi/index'],],
-                    ['label' => 'Rekap Absensi',  'icon' => 'file-code', 'url' => ['/rekap-absensi/index'],],
-                    ['label' => 'Pengajuan cuti',  'icon' => 'file-code', 'url' => ['/pengajuan-cuti/index'],],
-                    ['label' => 'Pengajuan lembur',  'icon' => 'file-code', 'url' => ['/pengajuan-lembur/index'],],
-                    // ['label' => 'Data Keluarga',  'icon' => 'file-code', 'url' => ['/data-keluarga/index'],],
-                    // ['label' => 'Data Pekerjaan',  'icon' => 'file-code', 'url' => ['/data-pekerjaan/index'],],
-                    // ['label' => 'Jadwal Kerja',  'icon' => 'file-code', 'url' => ['/jadwal-kerja/index'],],
-                    // ['label' => 'Pengalaman Kerja',  'icon' => 'file-code', 'url' => ['/pengalaman-kerja/index'],],
-                    // ['label' => 'riwayat pendidikan',  'icon' => 'file-code', 'url' => ['/riwayat-pendidikan/index'],],
+                ]);
+                ?>
+            </nav>
+            <div class="">
+                <h3> <?= Html::a('<i class="fas fa-sign-out-alt"></i>', ['/user/logout'], ['data-method' => 'post', 'class' => 'nav-link']) ?>
+                </h3>
+            </div>
+        </div>
 
-
-                    // ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => Yii::$app->user->isGuest],
-
-                ],
-            ]);
-            ?>
-        </nav>
         <!-- /.sidebar-menu -->
     </div>
     <!-- /.sidebar -->

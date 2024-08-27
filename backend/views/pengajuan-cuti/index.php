@@ -11,12 +11,17 @@ use yii\widgets\Pjax;
 /** @var backend\models\PengajuanCutiSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Pengajuan Cuti Karyawan';
+$this->title = 'Pengajuan Cuti';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <?php Pjax::begin(); ?>
 
+<div class="costume-container">
+    <p class="">
+        <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) ?>
+    </p>
+</div>
 
 
 <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
@@ -51,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-                'label' => 'Karyawan',
+                'label' => 'Nama',
                 'value' => function ($model) {
                     return $model->karyawan->nama;
                 }
@@ -80,7 +85,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'attribute' => 'status',
                 'value' => function ($model) {
-                    return $model->statusPengajuan->nama_kode ?? "<span class='text-danger'>master kode tidak aktif</span>";
+                    if ($model->statusPengajuan->nama_kode !== null) {
+                        if (strtolower($model->statusPengajuan->nama_kode) == "pending") {
+                            return "<span class='text-capitalize btn btn-outline-warning '>Pending</span>";
+                        } elseif (strtolower($model->statusPengajuan->nama_kode) == "diterima") {
+                            return "<span class='text-capitalize btn btn-outline-success '>diterima</span>";
+                        } elseif (strtolower($model->statusPengajuan->nama_kode) == "ditolak") {
+                            return "<span class='text-capitalize btn btn-outline-danger '>ditolak</span>";
+                        }
+                    } else {
+                        return "<span class='text-danger'>master kode tidak aktif</span>";
+                    }
                 },
             ],
         ],
