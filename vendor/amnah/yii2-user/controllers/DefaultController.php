@@ -378,6 +378,9 @@ class DefaultController extends Controller
             return $this->refresh();
         }
 
+        $this->layout = 'mobile-main';
+
+
         return $this->render("profile", compact("profile"));
     }
 

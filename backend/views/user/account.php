@@ -42,6 +42,15 @@ $this->params['breadcrumbs'][] = $this->title;
         box-shadow: 0 4px 6px -1px #488aec31, 0 2px 4px -1px #488aec17;
         transition: all .6s ease;
     }
+
+    .help-block {
+        color: red;
+    }
+
+    .small {
+        font-size: 12px;
+        color: gray;
+    }
 </style>
 
 
@@ -51,63 +60,19 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="mb-4 border-b border-gray-200 dark:border-gray-700 ">
         <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="default-tab" data-tabs-toggle="#default-tab-content" role="tablist">
             <li class="me-2" role="presentation">
-                <button class="inline-block p-4 border-b-2 rounded-t-lg" id="profile-tab" data-tabs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
+                <a href="/panel/user/profile">
+                    <button class="inline-block p-4 border-b-2 rounded-t-lg">Profile</button>
+                </a>
             </li>
             <li class="me-2" role="presentation">
                 <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="dashboard-tab" data-tabs-target="#dashboard" type="button" role="tab" aria-controls="dashboard" aria-selected="false">Akun</button>
-                <!-- </li>
-            <li class="me-2" role="presentation">
-                <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="settings-tab" data-tabs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Settings</button>
             </li>
-            <li role="presentation">
-                <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="contacts-tab" data-tabs-target="#contacts" type="button" role="tab" aria-controls="contacts" aria-selected="false">Contacts</button>
-            </li> -->
+
         </ul>
     </div>
     <div id="default-tab-content">
         <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-            <div class="user-default-profile">
 
-                <h1><?= Html::encode($this->title) ?></h1>
-
-                <?php if ($flash = Yii::$app->session->getFlash("Profile-success")): ?>
-
-                    <div class="alert alert-success">
-                        <p><?= $flash ?></p>
-                    </div>
-
-                <?php endif; ?>
-
-                <?php $form = ActiveForm::begin([
-                    'id' => 'profile-form',
-                    'options' => ['class' => 'form-horizontal'],
-                    'fieldConfig' => [
-                        'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-7\">{error}</div>",
-                        'labelOptions' => ['class' => 'col-lg-2 control-label'],
-                    ],
-                    'enableAjaxValidation' => true,
-                ]); ?>
-
-                <?= $form->field($profile, 'full_name') ?>
-
-                <?php
-                // by default, this contains the entire php timezone list of 400+ entries
-                // so you may want to set up a fancy jquery select plugin for this, eg, select2 or chosen
-                // alternatively, you could use your own filtered list
-                // a good example is twitter's timezone choices, which contains ~143  entries
-                // @link https://twitter.com/settings/account
-                ?>
-                <?= $form->field($profile, 'timezone')->dropDownList(ArrayHelper::map(Timezone::getAll(), 'identifier', 'name')); ?>
-
-                <div class="form-group">
-                    <div class="col-lg-offset-2 col-lg-10">
-                        <?= Html::submitButton(Yii::t('user', 'Update'), ['class' => 'btn btn-primary']) ?>
-                    </div>
-                </div>
-
-                <?php ActiveForm::end(); ?>
-
-            </div>
 
         </div>
         <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
@@ -116,19 +81,19 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 <?php if ($flash = Yii::$app->session->getFlash("Account-success")): ?>
 
-                    <div class="alert alert-success">
+                    <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
                         <p><?= $flash ?></p>
                     </div>
 
                 <?php elseif ($flash = Yii::$app->session->getFlash("Resend-success")): ?>
 
-                    <div class="alert alert-success">
+                    <div class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-400" role="alert">
                         <p><?= $flash ?></p>
                     </div>
 
                 <?php elseif ($flash = Yii::$app->session->getFlash("Cancel-success")): ?>
 
-                    <div class="alert alert-success">
+                    <div class="p-4 mb-4 text-sm text-rose-800 rounded-lg bg-rose-50 dark:bg-gray-800 dark:text-rose-400" role="alert">
                         <p><?= $flash ?></p>
                     </div>
 
@@ -144,16 +109,24 @@ $this->params['breadcrumbs'][] = $this->title;
                     'enableAjaxValidation' => true,
                 ]); ?>
 
-                <?php if ($user->password): ?>
-                    <?= $form->field($user, 'currentPassword')->passwordInput(['class' => ' my-2 rounded-md border-gray-300   ']) ?>
-                <?php endif ?>
+
+                <div class="grid grid-cols-1 gap-6 mt-5">
+
+                    <div>
+                        <?php if ($user->password): ?>
+                            <?= $form->field($user, 'currentPassword')->passwordInput(['class' => ' rounded-md border-gray-300 w-full  '])->label('Password Saat Ini') ?>
+                        <?php endif ?>
+                    </div>
+                </div>
 
 
                 <!-- <hr /> -->
 
-                <?php if ($module->useEmail): ?>
-                    <?= $form->field($user, 'email') ?>
-                <?php endif; ?>
+                <div class="mt-4">
+                    <?php if ($module->useEmail): ?>
+                        <?= $form->field($user, 'email')->textInput(['type' => 'email', 'class' => ' rounded-md border-gray-300 w-full ']) ?>
+                    <?php endif; ?>
+                </div>
 
                 <div class="form-group">
                     <div class="col-lg-offset-2 col-lg-10">
@@ -174,11 +147,16 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                 </div>
 
-                <?php if ($module->useUsername): ?>
-                    <?= $form->field($user, 'username') ?>
-                <?php endif; ?>
 
-                <?= $form->field($user, 'newPassword')->passwordInput() ?>
+                <div class="mt-4">
+                    <?php if ($module->useUsername): ?>
+                        <?= $form->field($user, 'username')->textInput(['class' => ' rounded-md border-gray-300 w-full ']) ?>
+                    <?php endif; ?>
+                </div>
+
+                <div class="mt-4">
+                    <?= $form->field($user, 'newPassword')->passwordInput(['class' => ' rounded-md border-gray-300 w-full ']) ?>
+                </div>
 
                 <div class="form-group">
                     <div class="col-lg-offset-2 col-lg-10">
@@ -204,5 +182,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
             <p class="text-sm text-gray-500 dark:text-gray-400">This is some placeholder content the <strong class="font-medium text-gray-800 dark:text-white">Contacts tab's associated content</strong>. Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling.</p>
         </div>
+    </div>
+    <div class="fixed bottom-0 left-0 right-0 z-50">
+        <?= $this->render('@backend/views/components/_footer'); ?>
     </div>
 </section>
