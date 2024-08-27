@@ -19,7 +19,7 @@ class m240731_070402_create_karyawan_table extends Migration
             'nomer_identitas' => $this->string()->notNull(),
             'jenis_identitas' => $this->string()->notNull(),
             'tanggal_lahir' => $this->date()->notNull(),
-            'kode_negara' => $this->string(3)->notNull(), // Adjust length if needed
+            'kode_negara' => $this->string()->notNull(), // Adjust length if needed
             'kode_provinsi' => $this->string()->notNull(),
             'kode_kabupaten_kota' => $this->string()->notNull(),
             'kode_kecamatan' => $this->string()->notNull(),

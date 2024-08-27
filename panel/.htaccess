@@ -10,6 +10,7 @@ RewriteRule . index.php
 php_value max_input_vars 16000
 
 
+
 #redirect http to https
 #RewriteEngine On
 #RewriteCond %{HTTPS} off

@@ -7,6 +7,9 @@ $params = array_merge(
 );
 
 return [
+    'name' => 'Admin Panel',
+    'timeZone' => 'Asia/Jakarta',
+    'language' => 'id_ID',
     'id' => 'app-backend',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
@@ -21,7 +24,7 @@ return [
         'request' => [
             'csrfParam' => '_csrf-backend',
         ],
-     'user' => [
+        'user' => [
             'class' => 'amnah\yii2\user\components\User',
         ],
         'session' => [
@@ -52,6 +55,7 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
         ],
+
     ],
     'params' => $params,
 ];

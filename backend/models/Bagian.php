@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace backend\models;
 
 use Yii;
 
@@ -9,8 +9,10 @@ use Yii;
  *
  * @property int $id_bagian
  * @property string $nama_bagian
+ * @property int $id_perusahaan
  *
  * @property DataPekerjaan[] $dataPekerjaans
+ * @property Perusahaan $perusahaan
  */
 class Bagian extends \yii\db\ActiveRecord
 {
@@ -28,8 +30,10 @@ class Bagian extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nama_bagian'], 'required'],
+            [['nama_bagian', 'id_perusahaan'], 'required'],
+            [['id_perusahaan'], 'integer'],
             [['nama_bagian'], 'string', 'max' => 255],
+            [['id_perusahaan'], 'exist', 'skipOnError' => true, 'targetClass' => Perusahaan::class, 'targetAttribute' => ['id_perusahaan' => 'id_perusahaan']],
         ];
     }
 
@@ -41,6 +45,7 @@ class Bagian extends \yii\db\ActiveRecord
         return [
             'id_bagian' => 'Id Bagian',
             'nama_bagian' => 'Nama Bagian',
+            'id_perusahaan' => 'Id Perusahaan',
         ];
     }
 
@@ -52,5 +57,15 @@ class Bagian extends \yii\db\ActiveRecord
     public function getDataPekerjaans()
     {
         return $this->hasMany(DataPekerjaan::class, ['id_bagian' => 'id_bagian']);
+    }
+
+    /**
+     * Gets query for [[Perusahaan]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPerusahaan()
+    {
+        return $this->hasOne(Perusahaan::class, ['id_perusahaan' => 'id_perusahaan']);
     }
 }

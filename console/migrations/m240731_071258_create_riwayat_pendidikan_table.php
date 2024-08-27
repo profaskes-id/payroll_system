@@ -15,7 +15,7 @@ class m240731_071258_create_riwayat_pendidikan_table extends Migration
         $this->createTable('{{%riwayat_pendidikan}}', [
             'id_riwayat_pendidikan' => $this->primaryKey(), // Primary key with auto-increment
             'id_karyawan' => $this->integer()->notNull(), // Foreign key to karyawan table
-            'jenjang_pendidikan' => $this->string()->notNull(),
+            'jenjang_pendidikan' => $this->integer()->notNull(),
             'institusi' => $this->string()->notNull(),
             'tahun_masuk' => $this->integer()->notNull(),
             'tahun_keluar' => $this->integer()->notNull(),

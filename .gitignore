@@ -19,6 +19,8 @@ Thumbs.db
 
 # composer vendor dir
 
+/node_modules
+
 /vendor/*
 !/vendor/amnah/
 !/vendor/yiisoft/yii2/grid/

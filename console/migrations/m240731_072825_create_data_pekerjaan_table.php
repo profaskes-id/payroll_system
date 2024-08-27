@@ -18,8 +18,9 @@ class m240731_072825_create_data_pekerjaan_table extends Migration
             'id_bagian' => $this->integer()->notNull(), // Foreign key to bagian table
             'dari' => $this->date()->notNull(), // Start date
             'sampai' => $this->date(), // End date (nullable)
-            'status' => $this->string()->notNull(), // Status (e.g., aktif, non-aktif)
+            'status' => $this->integer()->notNull(), // Status (e.g., aktif, non-aktif)
             'jabatan' => $this->string()->notNull(), // Position
+            'is_aktif' => $this->integer()->notNull(),
         ]);
 
         // Create index for foreign key to karyawan

@@ -24,10 +24,10 @@ class DefaultController extends Controller
      * @inheritdoc
      */
 
-     public function getViewPath()
-     {
-         return Yii::getAlias('@backend/views/user');
-     }
+    public function getViewPath()
+    {
+        return Yii::getAlias('@backend/views/user');
+    }
     public function behaviors()
     {
         return [
@@ -349,6 +349,8 @@ class DefaultController extends Controller
             $userToken = $userToken::findByUser($user->id, $userToken::TYPE_EMAIL_CHANGE);
         }
 
+
+        $this->layout = 'mobile-main';
         return $this->render("account", compact("user", "userToken"));
     }
 
@@ -375,6 +377,9 @@ class DefaultController extends Controller
             Yii::$app->session->setFlash("Profile-success", Yii::t("user", "Profile updated"));
             return $this->refresh();
         }
+
+        $this->layout = 'mobile-main';
+
 
         return $this->render("profile", compact("profile"));
     }

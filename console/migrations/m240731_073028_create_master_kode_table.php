@@ -14,8 +14,10 @@ class m240731_073028_create_master_kode_table extends Migration
     {
         $this->createTable('{{%master_kode}}', [
             'nama_group' => $this->string()->notNull(),
-            'kode' => $this->string()->notNull(),
+            'kode' => $this->integer()->notNull(),
             'nama_kode' => $this->string()->notNull(),
+            'status' => $this->integer()->notNull(),
+            'urutan' => $this->integer()->notNull(),
 
             // Define composite primary key
             'PRIMARY KEY (nama_group, kode)',

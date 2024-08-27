@@ -1,61 +1,51 @@
 <?php
 
+use Codeception\Lib\Interfaces\Web;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-/**
- * @var yii\web\View $this
- * @var yii\widgets\ActiveForm $form
- * @var amnah\yii2\user\models\forms\LoginForm $model
- */
-
 $this->title = Yii::t('user', 'Login');
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
-<div class="user-default-login">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<?php $this->head(); ?>
+<link rel="stylesheet" href="<?= Yii::getAlias('@root') . '/css/login.css' ?>">
+<section class="ftco-section">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-12">
+            <div class="wrap">
+                <?= Html::img('@root/images/banner/banner-image-2.jpg', ['class' => 'img', 'style' => 'position:relative; left:-200px']) ?>
+                <div class="login-wrap p-4 px-md-5 pt-md-4">
 
-    <?php $form = ActiveForm::begin([
-        'id' => 'login-form',
-        'options' => ['class' => 'form-horizontal'],
-        'fieldConfig' => [
-            'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-7\">{error}</div>",
-            'labelOptions' => ['class' => 'col-lg-2 control-label'],
-        ],
 
-    ]); ?>
-
-    <?= $form->field($model, 'email') ?>
-    <?= $form->field($model, 'password')->passwordInput() ?>
-    <?= $form->field($model, 'rememberMe', [
-        'template' => "{label}<div class=\"col-lg-offset-2 col-lg-3\">{input}</div>\n<div class=\"col-lg-7\">{error}</div>",
-    ])->checkbox() ?>
-
-    <div class="form-group">
-        <div class="col-lg-offset-2 col-lg-10">
-            <?= Html::submitButton(Yii::t('user', 'Login'), ['class' => 'btn btn-primary']) ?>
-
-            <br/><br/>
-            <?= Html::a(Yii::t("user", "Register"), ["/user/register"]) ?> /
-            <?= Html::a(Yii::t("user", "Forgot password") . "?", ["/user/forgot"]) ?> /
-            <?= Html::a(Yii::t("user", "Resend confirmation email"), ["/user/resend"]) ?>
+                    <?php $form = ActiveForm::begin([
+                        'id' => 'login-form',
+                        'fieldConfig' => [
+                            // 'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-7\">{error}</div>",
+                            // 'labelOptions' => ['class' => 'col-lg-2 control-label'],
+                        ],
+                    ]); ?>
+                    <div class="form-group ">
+                        <?= $form->field($model, 'email')->textInput(['class' => 'form-control w-100']) ?>
+                    </div>
+                    <div class="form-group">
+                        <?= $form->field($model, 'password')->passwordInput(['class' => 'form-control w-100']) ?>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="form-control btn  rounded submit px-3" style="background-color: #1e70b8; color: white; font-weight: 800; font-size: 18px;">Masuk</button>
+                    </div>
+                    <div class="form-group ">
+                        <div class="text-left">
+                            <div class=" text-md-right">
+                                <a href="/panel/user/forgot">Lupa Password</a>
+                            </div>
+                        </div>
+                        <?php ActiveForm::end(); ?>
+                        <!-- <p class="text-center">Belum Punya Akun ? <a data-toggle="tab" href="/klinik-member" style="color: #1e70b8; text-decoration: underline;">Daftar Sekarang</a></p> -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <?php ActiveForm::end(); ?>
-
-    <?php if (Yii::$app->get("authClientCollection", false)): ?>
-        <div class="col-lg-offset-2 col-lg-10">
-            <?= yii\authclient\widgets\AuthChoice::widget([
-                'baseAuthUrl' => ['/user/auth/login']
-            ]) ?>
-        </div>
-    <?php endif; ?>
-
-    <div class="col-lg-offset-2" style="color:#999;">
-        You may login with <strong>neo/neo</strong>.<br>
-        To modify the username/password, log in first and then <?= HTML::a("update your account", ["/user/account"]) ?>.
-    </div>
-
-</div>
+</section>

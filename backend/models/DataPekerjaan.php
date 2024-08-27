@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace backend\models;
 
 use Yii;
 
@@ -12,7 +12,7 @@ use Yii;
  * @property int $id_bagian
  * @property string $dari
  * @property string|null $sampai
- * @property string $status
+ * @property int $status
  * @property string $jabatan
  *
  * @property Bagian $bagian
@@ -34,10 +34,10 @@ class DataPekerjaan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_karyawan', 'id_bagian', 'dari', 'status', 'jabatan'], 'required'],
-            [['id_karyawan', 'id_bagian'], 'integer'],
+            [['id_karyawan', 'id_bagian', 'dari', 'status', 'jabatan', 'is_aktif'], 'required'],
+            [['id_karyawan', 'id_bagian', 'status', 'is_aktif'], 'integer'],
             [['dari', 'sampai'], 'safe'],
-            [['status', 'jabatan'], 'string', 'max' => 255],
+            [['jabatan'], 'string', 'max' => 255],
             [['id_bagian'], 'exist', 'skipOnError' => true, 'targetClass' => Bagian::class, 'targetAttribute' => ['id_bagian' => 'id_bagian']],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
         ];
@@ -56,6 +56,7 @@ class DataPekerjaan extends \yii\db\ActiveRecord
             'sampai' => 'Sampai',
             'status' => 'Status',
             'jabatan' => 'Jabatan',
+            'is_aktif' => 'Is Aktif',
         ];
     }
 
@@ -77,5 +78,10 @@ class DataPekerjaan extends \yii\db\ActiveRecord
     public function getKaryawan()
     {
         return $this->hasOne(Karyawan::class, ['id_karyawan' => 'id_karyawan']);
+    }
+
+    public function getStatusPekerjaan()
+    {
+        return $this->hasOne(MasterKode::class, ['kode' => 'status'])->onCondition(['nama_group' => 'status-pekerjaan']);
     }
 }

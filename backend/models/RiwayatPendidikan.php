@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace backend\models;
 
 use Yii;
 
@@ -9,7 +9,7 @@ use Yii;
  *
  * @property int $id_riwayat_pendidikan
  * @property int $id_karyawan
- * @property string $jenjang_pendidikan
+ * @property int $jenjang_pendidikan
  * @property string $institusi
  * @property int $tahun_masuk
  * @property int $tahun_keluar
@@ -33,8 +33,8 @@ class RiwayatPendidikan extends \yii\db\ActiveRecord
     {
         return [
             [['id_karyawan', 'jenjang_pendidikan', 'institusi', 'tahun_masuk', 'tahun_keluar'], 'required'],
-            [['id_karyawan', 'tahun_masuk', 'tahun_keluar'], 'integer'],
-            [['jenjang_pendidikan', 'institusi'], 'string', 'max' => 255],
+            [['id_karyawan', 'jenjang_pendidikan', 'tahun_masuk', 'tahun_keluar'], 'integer'],
+            [['institusi'], 'string', 'max' => 255],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
         ];
     }
@@ -62,5 +62,10 @@ class RiwayatPendidikan extends \yii\db\ActiveRecord
     public function getKaryawan()
     {
         return $this->hasOne(Karyawan::class, ['id_karyawan' => 'id_karyawan']);
+    }
+
+    public function getJenjangPendidikan()
+    {
+        return $this->hasOne(MasterKode::class, ['kode' => 'jenjang_pendidikan'])->onCondition(['nama_group' => 'jenjang-pendidikan']);
     }
 }

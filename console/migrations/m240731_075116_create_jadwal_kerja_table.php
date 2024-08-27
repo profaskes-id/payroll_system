@@ -18,8 +18,9 @@ class m240731_075116_create_jadwal_kerja_table extends Migration
             'nama_hari' => $this->string()->notNull(), // Day of the week (e.g., Monday)
             'jam_masuk' => $this->time()->notNull(), // Time when work starts
             'jam_keluar' => $this->time()->notNull(), // Time when work ends
-            'lama_istirahat' => $this->integer()->notNull(), // Duration of break in minutes
-            'jumlah_jam' => $this->integer()->notNull(), // Total hours worked
+            'mulai_istirahat' => $this->time()->notNull(), // Time when work starts
+            'berakhir_istirahat' => $this->time()->notNull(), // Time when work starts
+            'jumlah_jam' => $this->float()->notNull(), // Total hours worked
         ]);
 
         // Create index for foreign key to jam_kerja

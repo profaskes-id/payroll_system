@@ -15,12 +15,14 @@ class m240731_075545_create_absensi_table extends Migration
         $this->createTable('{{%absensi}}', [
             'id_absensi' => $this->primaryKey(), // Primary key with auto-increment
             'id_karyawan' => $this->integer()->notNull(), // Foreign key to karyawan table
-            'id_jam_kerja' => $this->integer()->notNull(), // Foreign key to jam_kerja table
             'tanggal' => $this->date()->notNull(), // Date of attendance
-            'hari' => $this->string()->notNull(), // Day of the week (e.g., Monday)
             'jam_masuk' => $this->time(), // Time of arrival (nullable)
-            'jam_pulang' => $this->time(), // Time of departure (nullable)
-            'kode_status_hadir' => $this->string()->notNull(), // Status code (e.g., present, absent)
+            'jam_pulang' => $this->time()->defaultValue(null), // Time of departure (nullable)
+            'kode_status_hadir' => $this->integer()->notNull(), // Status code (e.g., present, absent)
+            'keterangan' => $this->text()->defaultValue(null), // Status description (nullable)
+            'lampiran' => $this->string()->defaultValue(null), // Attachment (nullable)
+            'latitude' => $this->decimal(9, 6)->defaultValue(null), // Latitude with decimal precision
+            'longitude' => $this->decimal(9, 6)->defaultValue(null), // Longitude with decimal precision
         ]);
 
         // Create index for foreign key to karyawan
@@ -37,24 +39,6 @@ class m240731_075545_create_absensi_table extends Migration
             'id_karyawan',
             '{{%karyawan}}',
             'id_karyawan',
-            'CASCADE',
-            'CASCADE'
-        );
-
-        // Create index for foreign key to jam_kerja
-        $this->createIndex(
-            'idx-absensi-id_jam_kerja',
-            '{{%absensi}}',
-            'id_jam_kerja'
-        );
-
-        // Add foreign key constraint to jam_kerja
-        $this->addForeignKey(
-            'fk-absensi-id_jam_kerja',
-            '{{%absensi}}',
-            'id_jam_kerja',
-            '{{%jam_kerja}}',
-            'id_jam_kerja',
             'CASCADE',
             'CASCADE'
         );
@@ -76,16 +60,6 @@ class m240731_075545_create_absensi_table extends Migration
             '{{%absensi}}'
         );
 
-        // Drop foreign key and index for id_jam_kerja
-        $this->dropForeignKey(
-            'fk-absensi-id_jam_kerja',
-            '{{%absensi}}'
-        );
-
-        $this->dropIndex(
-            'idx-absensi-id_jam_kerja',
-            '{{%absensi}}'
-        );
 
         // Drop the table
         $this->dropTable('{{%absensi}}');

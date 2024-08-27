@@ -4,10 +4,19 @@
   "description": "<p align=\"center\">     <a href=\"https://github.com/yiisoft\" target=\"_blank\">         <img src=\"https://avatars0.githubusercontent.com/u/993323\" height=\"100px\">     </a>     <h1 align=\"center\">Yii 2 Advanced Project Template</h1>     <br> </p>",
   "main": "index.js",
   "scripts": {
+    "start": "tailwindcss -i ./css/tailwind.css -o ./css/tailwind_output.css --watch",
     "dev": "php yii serve --docroot=\".\"",
-    "gb" : "git branch",
+    "gb": "git branch",
     "migrate-amnah": "php yii migrate --migrationPath=@vendor/amnah/yii2-user/migrations"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.10"
+  },
+  "dependencies": {
+    "flowbite": "^2.5.1"
+  }
 }

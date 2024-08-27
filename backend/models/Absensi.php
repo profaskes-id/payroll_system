@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace backend\models;
 
 use Yii;
 
@@ -9,14 +9,15 @@ use Yii;
  *
  * @property int $id_absensi
  * @property int $id_karyawan
- * @property int $id_jam_kerja
  * @property string $tanggal
- * @property string $hari
  * @property string|null $jam_masuk
  * @property string|null $jam_pulang
- * @property string $kode_status_hadir
+ * @property int $kode_status_hadir
+ * @property string|null $keterangan
+ * @property string|null $lampiran
+ * @property float|null $latitude
+ * @property float|null $longitude
  *
- * @property JamKerja $jamKerja
  * @property Karyawan $karyawan
  */
 class Absensi extends \yii\db\ActiveRecord
@@ -35,12 +36,15 @@ class Absensi extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_karyawan', 'id_jam_kerja', 'tanggal', 'hari', 'kode_status_hadir'], 'required'],
-            [['id_karyawan', 'id_jam_kerja'], 'integer'],
+            [['id_karyawan', 'tanggal', 'kode_status_hadir'], 'required'],
+            [['id_karyawan', 'kode_status_hadir'], 'integer'],
             [['tanggal', 'jam_masuk', 'jam_pulang'], 'safe'],
-            [['hari', 'kode_status_hadir'], 'string', 'max' => 255],
-            [['id_jam_kerja'], 'exist', 'skipOnError' => true, 'targetClass' => JamKerja::class, 'targetAttribute' => ['id_jam_kerja' => 'id_jam_kerja']],
+            [['keterangan'], 'string'],
+            [['latitude', 'longitude'], 'number'],
+            [['lampiran'], 'string', 'max' => 255],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
+            [['lampiran'], 'file', 'extensions' => 'png, jpg, jpeg, pdf, webp, avif', 'maxSize' => 1024 * 1024 * 2],
+
         ];
     }
 
@@ -52,23 +56,15 @@ class Absensi extends \yii\db\ActiveRecord
         return [
             'id_absensi' => 'Id Absensi',
             'id_karyawan' => 'Id Karyawan',
-            'id_jam_kerja' => 'Id Jam Kerja',
             'tanggal' => 'Tanggal',
-            'hari' => 'Hari',
             'jam_masuk' => 'Jam Masuk',
             'jam_pulang' => 'Jam Pulang',
             'kode_status_hadir' => 'Kode Status Hadir',
+            'keterangan' => 'Keterangan',
+            'lampiran' => 'Lampiran',
+            'latitude' => 'Latitude',
+            'longitude' => 'Longitude',
         ];
-    }
-
-    /**
-     * Gets query for [[JamKerja]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getJamKerja()
-    {
-        return $this->hasOne(JamKerja::class, ['id_jam_kerja' => 'id_jam_kerja']);
     }
 
     /**
@@ -79,5 +75,10 @@ class Absensi extends \yii\db\ActiveRecord
     public function getKaryawan()
     {
         return $this->hasOne(Karyawan::class, ['id_karyawan' => 'id_karyawan']);
+    }
+
+    public function getStatusHadir()
+    {
+        return $this->hasOne(MasterKode::class, ['kode' => 'kode_status_hadir'])->onCondition(['nama_group' => 'status-hadir']);
     }
 }
