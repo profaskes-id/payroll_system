@@ -2,7 +2,15 @@
 
 namespace backend\controllers;
 
+use backend\models\Absensi;
+use backend\models\Karyawan;
+use backend\models\MasterKode;
+use backend\models\PengajuanCuti;
+use backend\models\PengajuanDinas;
+use backend\models\PengajuanLembur;
+use backend\models\Pengumuman;
 use common\models\LoginForm;
+use common\models\User;
 use Symfony\Component\CssSelector\Parser\Shortcut\ElementParser;
 use Yii;
 use yii\filters\VerbFilter;
@@ -66,8 +74,29 @@ class SiteController extends Controller
         if (Yii::$app->user->isGuest) {
             return $this->redirect(['user/login']);
         } elseif (Yii::$app->user->can('admin')) {
-            // return $this->redirect(['site/index']);
-            return $this->render('index');
+
+            //1.total karyawan
+            $TotalKaryawan = User::find()->where(['role_id' => '2'])->count();
+            // 2. total data yang isi absen hari ini
+            $TotalData = Absensi::find()->where(['tanggal' => date('Y-m-d')])->count();
+            // 3. total yang belum isi absen
+            $TotalDataBelum = $TotalKaryawan - $TotalData;
+            // dd($TotalDataBelum);
+            // 4. total izin
+            $izin = MasterKode::find()->where(['nama_group' => 'status-hadir', 'nama_kode' => 'Izin'])->one();
+            $TotalIzin = Absensi::find()->where(['kode_status_hadir' => $izin->kode, 'tanggal' => date('Y-m-d')])->count();
+            // 3 total pegumuman
+            $totalPengumuman = Pengumuman::find()->count();
+
+            $pengajuanLembur = PengajuanLembur::find()->where(['status' => '0'])->count();
+            $pengajuanCuti = PengajuanCuti::find()->where(['status' => '0'])->count();
+            $pengajuanDinas = PengajuanDinas::find()->where(['status' => '0'])->count();
+
+
+
+
+
+            return $this->render('index', compact('TotalKaryawan', 'TotalData', 'TotalDataBelum', 'TotalIzin', 'totalPengumuman', 'pengajuanLembur', 'pengajuanCuti', 'pengajuanDinas'));
         } elseif (!Yii::$app->user->can('admin')) {
 
             return $this->redirect(['home/index']);
