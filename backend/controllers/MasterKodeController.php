@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\MasterKode;
 use backend\models\MasterKodeSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -26,10 +27,13 @@ class MasterKodeController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'roles' => ['@'],
+                            'roles' => ['super_admin'], // Pastikan peran ini ada dalam RBAC Anda
+                            'matchCallback' => function ($rule, $action) {
+                                return Yii::$app->user->can('super_admin'); // Pastikan Anda sudah mengonfigurasi permission ini di RBAC
+                            },
                         ]
                     ]
-                        ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [

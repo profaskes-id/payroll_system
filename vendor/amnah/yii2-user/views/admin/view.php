@@ -8,45 +8,52 @@ use yii\widgets\DetailView;
  * @var amnah\yii2\user\models\User $user
  */
 
-$this->title = $user->id;
+$this->title = $user->username ?? 'User';
 $this->params['breadcrumbs'][] = ['label' => Yii::t('user', 'Users'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class='table-container'>
 
-    <p>
-        <?= Html::a(Yii::t('user', 'Update'), ['update', 'id' => $user->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('user', 'Delete'), ['delete', 'id' => $user->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('user', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
+        <div class="costume-container">
+            <p class="">
+                <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            </p>
+        </div>
+
+        <p class="d-flex justify-content-start " style="gap: 10px;">
+            <?= Html::a(Yii::t('user', 'Update'), ['update', 'id' => $user->id], ['class' => 'add-button']) ?>
+            <?= Html::a(Yii::t('user', 'Delete'), ['delete', 'id' => $user->id], [
+                'class' => 'reset-button',
+                'data' => [
+                    'confirm' => Yii::t('user', 'Are you sure you want to delete this item?'),
+                    'method' => 'post',
+                ],
+            ]) ?>
+        </p>
+
+        <?= DetailView::widget([
+            'model' => $user,
+            'attributes' => [
+                'id',
+                'role_id',
+                'status',
+                'email:email',
+                'username',
+                'profile.full_name',
+                'password',
+                'auth_key',
+                'access_token',
+                'logged_in_ip',
+                'logged_in_at',
+                'created_ip',
+                'created_at',
+                'updated_at',
+                'banned_at',
+                'banned_reason',
             ],
         ]) ?>
-    </p>
-
-    <?= DetailView::widget([
-        'model' => $user,
-        'attributes' => [
-            'id',
-            'role_id',
-            'status',
-            'email:email',
-            'username',
-            'profile.full_name',
-            'password',
-            'auth_key',
-            'access_token',
-            'logged_in_ip',
-            'logged_in_at',
-            'created_ip',
-            'created_at',
-            'updated_at',
-            'banned_at',
-            'banned_reason',
-        ],
-    ]) ?>
+    </div>
 
 </div>
