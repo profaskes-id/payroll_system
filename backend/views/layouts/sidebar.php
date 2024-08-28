@@ -1,3 +1,7 @@
+<?php
+
+use yii\helpers\Html;
+?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #131133 !important;">
 
     <!-- Sidebar -->
@@ -13,6 +17,16 @@
             </div>
         </div>
 
+        <div class="d-flex justify-content-center align-items-center w-100 mx-auto px-5">
+            <?= Html::a('<i class="fa fa-solid fa-user"></i>', ['/user/profile'], ['class' => 'nav-link']) ?>
+            <?= Html::a('<i class="fa fa-solid fa-cog"></i>', ['/user/account'], ['class' => 'nav-link']) ?>
+            <?php if (Yii::$app->user->can('super_admin')) : ?>
+                <?= Html::a('<i class="fa fa-solid fa-users"></i>', ['/user/admin'], ['class' => 'nav-link']) ?>
+            <?php endif; ?>
+            <?= Html::a('<i class="fas fa-sign-out-alt"></i>', ['/user/logout'], ['data-method' => 'post', 'class' => 'nav-link']) ?>
+
+        </div>
+        <hr style="background-color: white; margin: 0; padding: 0;">
         <!-- SidebarSearch Form -->
         <!-- href be escaped -->
         <div class="form-inline">
@@ -28,59 +42,96 @@
 
         <!-- Sidebar Menu -->
         <div class="mt-2 d-flex justify-center items-end flex-column ">
-            <nav class="">
-                <?php
+            <?php if (Yii::$app->user->can('super_admin')) : ?>
+                <nav class="">
+                    <?php
+                    echo \hail812\adminlte\widgets\Menu::widget([
+                        'items' => [
+                            ['label' => 'Dashboard',  'icon' => 'home', 'url' => ['/']],
 
-                use yii\helpers\Html;
-
-                echo \hail812\adminlte\widgets\Menu::widget([
-                    'items' => [
-
-                        // ['label' => 'Simple ', 'icon' => 'th', 'badge' => '<span class="right badge badge-danger">New</span>'],
-                        // ['label' => 'Yii2 PROVIDED', 'header' => true],
-                        ['label' => 'Dashboard',  'icon' => 'home', 'url' => ['/']],
-
-                        [
-                            'label' => 'Pengaturan System',
-                            'icon' => 'th',
-                            'items' => [
-                                ['label' => 'Master Kode',  'icon' => 'file-code', 'url' => ['/master-kode/index'],],
+                            [
+                                'label' => 'Pengaturan System',
+                                'icon' => 'th',
+                                'items' => [
+                                    ['label' => 'Master Kode',  'icon' => 'file-code', 'url' => ['/master-kode/index'],],
+                                ],
                             ],
-                        ],
-                        [
-                            'label' => 'Pengaturan Data',
-                            'icon' => 'th',
-                            'items' => [
-                                ['label' => 'Perusahaan',  'icon' => 'file-code', 'url' => ['/perusahaan/index'],],
-                                ['label' => 'Karyawan',  'icon' => 'file-code', 'url' => ['/karyawan/index'],],
+                            [
+                                'label' => 'Pengaturan Data',
+                                'icon' => 'th',
+                                'items' => [
+                                    ['label' => 'Perusahaan',  'icon' => 'file-code', 'url' => ['/perusahaan/index'],],
+                                    ['label' => 'Karyawan',  'icon' => 'file-code', 'url' => ['/karyawan/index'],],
+                                ],
                             ],
-                        ],
-                        [
-                            'label' => 'Pengaturan Jam',
-                            'icon' => 'th',
-                            'items' => [
-                                ['label' => 'Jam Kerja',  'icon' => 'file-code', 'url' => ['/jam-kerja/index'],],
-                                ['label' => 'Jam Kerja Karyawan',  'icon' => 'file-code', 'url' => ['/jam-kerja-karyawan/index'],],
-                                ['label' => 'Hari Libur',  'icon' => 'file-code', 'url' => ['/hari-libur/index'],],
+                            [
+                                'label' => 'Pengaturan Jam',
+                                'icon' => 'th',
+                                'items' => [
+                                    ['label' => 'Jam Kerja',  'icon' => 'file-code', 'url' => ['/jam-kerja/index'],],
+                                    ['label' => 'Jam Kerja Karyawan',  'icon' => 'file-code', 'url' => ['/jam-kerja-karyawan/index'],],
+                                    ['label' => 'Hari Libur',  'icon' => 'file-code', 'url' => ['/hari-libur/index'],],
+                                ],
                             ],
+                            [
+                                'label' => 'Pengajuan',
+                                'icon' => 'th',
+                                'items' => [
+                                    ['label' => 'Pengajuan cuti',  'icon' => 'file-code', 'url' => ['/pengajuan-cuti/index'],],
+                                    ['label' => 'Pengajuan lembur',  'icon' => 'file-code', 'url' => ['/pengajuan-lembur/index'],],
+                                    ['label' => 'Pengajuan Dinas',  'icon' => 'file-code', 'url' => ['/pengajuan-dinas/index'],],
+                                ],
+                            ],
+                            ['label' => 'Absensi',  'icon' => 'file-code', 'url' => ['/absensi/index'],],
+                            ['label' => 'Rekap Absensi',  'icon' => 'file-code', 'url' => ['/rekap-absensi/index'],],
+                            ['label' => 'Pengumuman',  'icon' => 'file-code', 'url' => ['/pengumuman/index'],],
                         ],
-                        // ['label' => 'Bagian',  'icon' => 'file-code', 'url' => ['/bagian/index'],],
-                        ['label' => 'Absensi',  'icon' => 'file-code', 'url' => ['/absensi/index'],],
-                        ['label' => 'Rekap Absensi',  'icon' => 'file-code', 'url' => ['/rekap-absensi/index'],],
-                        ['label' => 'Pengajuan cuti',  'icon' => 'file-code', 'url' => ['/pengajuan-cuti/index'],],
-                        ['label' => 'Pengajuan lembur',  'icon' => 'file-code', 'url' => ['/pengajuan-lembur/index'],],
-                        ['label' => 'Pengajuan Dinas',  'icon' => 'file-code', 'url' => ['/pengajuan-dinas/index'],],
-                        ['label' => 'Pengumuman',  'icon' => 'file-code', 'url' => ['/pengumuman/index'],],
+                    ]);
+                    ?>
+                </nav>
+            <?php else : ?>
+                <nav class="">
+                    <?php
+                    echo \hail812\adminlte\widgets\Menu::widget([
+                        'items' => [
+                            ['label' => 'Dashboard',  'icon' => 'home', 'url' => ['/']],
+                            [
+                                'label' => 'Pengaturan Data',
+                                'icon' => 'th',
+                                'items' => [
+                                    ['label' => 'Perusahaan',  'icon' => 'file-code', 'url' => ['/perusahaan/index'],],
+                                    ['label' => 'Karyawan',  'icon' => 'file-code', 'url' => ['/karyawan/index'],],
+                                ],
+                            ],
+                            [
+                                'label' => 'Pengaturan Jam',
+                                'icon' => 'th',
+                                'items' => [
+                                    ['label' => 'Jam Kerja',  'icon' => 'file-code', 'url' => ['/jam-kerja/index'],],
+                                    ['label' => 'Jam Kerja Karyawan',  'icon' => 'file-code', 'url' => ['/jam-kerja-karyawan/index'],],
+                                    ['label' => 'Hari Libur',  'icon' => 'file-code', 'url' => ['/hari-libur/index'],],
+                                ],
+                            ],
+                            [
+                                'label' => 'Pengajuan',
+                                'icon' => 'th',
+                                'items' => [
+                                    ['label' => 'Pengajuan cuti',  'icon' => 'file-code', 'url' => ['/pengajuan-cuti/index'],],
+                                    ['label' => 'Pengajuan lembur',  'icon' => 'file-code', 'url' => ['/pengajuan-lembur/index'],],
+                                    ['label' => 'Pengajuan Dinas',  'icon' => 'file-code', 'url' => ['/pengajuan-dinas/index'],],
+                                ],
+                            ],
+                            ['label' => 'Absensi',  'icon' => 'file-code', 'url' => ['/absensi/index'],],
+                            ['label' => 'Rekap Absensi',  'icon' => 'file-code', 'url' => ['/rekap-absensi/index'],],
+                            ['label' => 'Pengumuman',  'icon' => 'file-code', 'url' => ['/pengumuman/index'],],
+                        ],
+                    ]);
+                    ?>
+                </nav>
+            <?php endif; ?>
 
 
-                    ],
-                ]);
-                ?>
-            </nav>
-            <div class="">
-                <h3> <?= Html::a('<i class="fas fa-sign-out-alt"></i>', ['/user/logout'], ['data-method' => 'post', 'class' => 'nav-link']) ?>
-                </h3>
-            </div>
+
         </div>
 
         <!-- /.sidebar-menu -->

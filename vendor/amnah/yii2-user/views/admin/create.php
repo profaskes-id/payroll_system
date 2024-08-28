@@ -16,11 +16,15 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
-    <?= $this->render('_form', [
-        'user' => $user,
-        'profile' => $profile,
-    ]) ?>
+  <div class="costume-container">
+    <p class="">
+      <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+    </p>
+  </div>
+  <?= $this->render('_form', [
+    'user' => $user,
+    'profile' => $profile,
+  ]) ?>
 
 </div>
