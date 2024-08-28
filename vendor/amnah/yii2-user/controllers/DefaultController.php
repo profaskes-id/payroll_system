@@ -60,6 +60,14 @@ class DefaultController extends Controller
         ];
     }
 
+
+    public function beforeAction($action)
+    {
+        if ($action->id == 'logout') {
+            $this->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
+    }
     /**
      * Display index - debug page, login page, or account page
      */

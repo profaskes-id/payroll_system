@@ -58,10 +58,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 'judul',
-                'deskripsi:ntext',
+                [
+                    'label' => 'Deskripsi',
+                    'value' => function ($model) {
+                        return substr($model->deskripsi, 0, 50) . '...';
+                    }
+                ],
                 'dibuat_pada',
                 'update_pada',
-                //'dibuat_oleh',
             ],
         ]); ?>
 

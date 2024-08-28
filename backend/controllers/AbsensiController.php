@@ -18,9 +18,6 @@ use yii\filters\VerbFilter;
  */
 class AbsensiController extends Controller
 {
-    /**
-     * @inheritDoc
-     */
     public function behaviors()
     {
         return array_merge(
@@ -44,6 +41,7 @@ class AbsensiController extends Controller
             ]
         );
     }
+
 
     /**
      * Lists all Absensi models.
