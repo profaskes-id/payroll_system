@@ -4,11 +4,8 @@ namespace backend\controllers;
 
 use backend\models\Absensi;
 use backend\models\Bagian;
-use backend\models\DataPekerjaan;
 use backend\models\KaryawanSearch;
 use Yii;
-use yii\data\ArrayDataProvider;
-use yii\db\Query;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;

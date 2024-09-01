@@ -119,19 +119,37 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <!-- ? mobile izin -->
         <div class="flex justify-between  items-center pb-32">
-            <div class="grid place-items-center mt-5">
-                <a href="/panel/home/create">
 
-                    <div class="grid place-items-center">
-                        <div class="w-[60px] h-[60px]  border bg-red-50 border-gray rounded-full grid place-items-center">
-                            <div class="font-black text-white w-8 h-8 text-center grid place-items-center rounded-full bg-rose-500">
-                                <span class="w-5 h-1 bg-white rounded-xl"></span>
+            <?php if (count($absensiToday) > 0 && $absensiToday[0]->jam_pulang) : ?>
+
+                <div class="grid place-items-center mt-5">
+                    <a href="/panel/home/tidak-hadir?id_karyawan=<?= $absensiToday[0]->id_karyawan ?>">
+
+                        <div class="grid place-items-center">
+                            <div class="w-[60px] h-[60px]  border bg-red-50 border-gray rounded-full grid place-items-center">
+                                <div class="font-black text-white w-8 h-8 text-center grid place-items-center rounded-full bg-stone-500">
+                                    <span class="w-5 h-1 bg-white rounded-xl"></span>
+                                </div>
                             </div>
+                            <p class="mt-2 font-medium capitalize">Izin Tidak hadir</p>
                         </div>
-                        <p class="mt-2 font-medium capitalize">Izin Tidak hadir</p>
-                    </div>
-                </a>
-            </div>
+                    </a>
+                </div>
+            <?php else : ?>
+                <div class="grid place-items-center mt-5">
+                    <a href="/panel/home/create">
+
+                        <div class="grid place-items-center">
+                            <div class="w-[60px] h-[60px]  border bg-red-50 border-gray rounded-full grid place-items-center">
+                                <div class="font-black text-white w-8 h-8 text-center grid place-items-center rounded-full bg-rose-500">
+                                    <span class="w-5 h-1 bg-white rounded-xl"></span>
+                                </div>
+                            </div>
+                            <p class="mt-2 font-medium capitalize">Izin Tidak hadir</p>
+                        </div>
+                    </a>
+                </div>
+            <?php endif ?>
             <div class="grid place-items-center mt-5">
 
                 <?= Html::a('
@@ -160,6 +178,32 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 
+
+<?php
+$redirectUrl = Yii::getAlias('@web'); // Atau ganti dengan alias yang sesuai
+?>
+<script>
+    function checkLocationAccess() {
+        // Memeriksa apakah browser mendukung Geolocation API
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    // Jika posisi berhasil didapat, tidak melakukan apa-apa
+                },
+                function(error) {
+                    // Jika gagal mendapatkan posisi, redirect ke halaman lain
+                    alert('Izinkan Browser Untuk Mengakses Lokasi Anda');
+                }
+            );
+        } else {
+            // Jika browser tidak mendukung Geolocation API, redirect ke halaman lain
+            alert('Izinkan Browser Untuk Mengakses Lokasi Anda');
+        }
+    }
+
+    // Menjalankan fungsi untuk memeriksa akses lokasi
+    checkLocationAccess();
+</script>
 
 <script>
     let submitButton = document.getElementById('submitButton');

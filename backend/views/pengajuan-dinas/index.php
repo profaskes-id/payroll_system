@@ -74,7 +74,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                     'label' => 'status',
                     'value' => function ($model) {
-                        // dd($model);
                         if ($model->statusPengajuan->nama_kode !== null) {
                             if (strtolower($model->statusPengajuan->nama_kode) == "pending") {
                                 return "<span class='text-capitalize btn btn-outline-warning '>Pending</span>";

@@ -13,14 +13,17 @@ class m240731_072825_create_data_pekerjaan_table extends Migration
     public function safeUp()
     {
         $this->createTable('{{%data_pekerjaan}}', [
-            'id_data_pekerjaan' => $this->primaryKey(), // Primary key with auto-increment
-            'id_karyawan' => $this->integer()->notNull(), // Foreign key to karyawan table
-            'id_bagian' => $this->integer()->notNull(), // Foreign key to bagian table
-            'dari' => $this->date()->notNull(), // Start date
-            'sampai' => $this->date(), // End date (nullable)
-            'status' => $this->integer()->notNull(), // Status (e.g., aktif, non-aktif)
+            'id_data_pekerjaan' => $this->primaryKey(),
+            'id_karyawan' => $this->integer()->notNull(),
+            'id_bagian' => $this->integer()->notNull(),
+            'dari' => $this->date()->notNull(),
+            'sampai' => $this->date(),
+            'status' => $this->integer()->notNull(),
             'jabatan' => $this->string()->notNull(), // Position
             'is_aktif' => $this->integer()->notNull(),
+            'is_currenty' => $this->smallInteger()->notNull()->defaultValue(0),
+            'surat_lamaran_pekerjaan' => $this->string()->null(),
+
         ]);
 
         // Create index for foreign key to karyawan

@@ -16,6 +16,10 @@ return [
     'jenjang-pendidikan' => 'jenjang-pendidikan',
     'status-perusahaan' => 'status-perusahaan',
     'jenis-shift' => 'jenis-shift',
-    "status-pengajuan" => "status-pengajuan"
+    "status-pengajuan" => "status-pengajuan",
+    "status-pernikahan" => "status-pernikahan",
+    "agama" => "agama",
+    "jenis-identitas" => "jenis-identitas",
+    "jenis-cuti" => "jenis-cuti",
 
 ];

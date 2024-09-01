@@ -12,14 +12,17 @@ class m150214_044831_init_user extends Migration
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
 
-        // create tables. note the specific order
+
+
         $this->createTable('{{%role}}', [
             'id' => Schema::TYPE_PK,
             'name' => Schema::TYPE_STRING . ' not null',
             'created_at' => Schema::TYPE_TIMESTAMP . ' null',
             'updated_at' => Schema::TYPE_TIMESTAMP . ' null',
             'can_admin' => Schema::TYPE_SMALLINT . ' not null default 0',
+            'can_super_admin' => Schema::TYPE_SMALLINT . ' not null default 0',
         ], $tableOptions);
+
         $this->createTable('{{%user}}', [
             'id' => Schema::TYPE_PK,
             'role_id' => Schema::TYPE_INTEGER . ' not null',
@@ -77,10 +80,11 @@ class m150214_044831_init_user extends Migration
         $this->addForeignKey('{{%user_auth_user_id}}', '{{%user_auth}}', 'user_id', '{{%user}}', 'id');
 
         // insert role data
-        $columns = ['name', 'can_admin', 'created_at'];
+        $columns = ['name', 'can_admin', 'can_super_admin', 'created_at'];
         $this->batchInsert('{{%role}}', $columns, [
-            ['Admin', 1, gmdate('Y-m-d H:i:s')],
-            ['User', 0, gmdate('Y-m-d H:i:s')],
+            ['Admin', 1,  0, gmdate('Y-m-d H:i:s')],
+            ['User', 0, 0, gmdate('Y-m-d H:i:s')],
+            ['Super_Admin', 1, 1, gmdate('Y-m-d H:i:s')],
         ]);
 
         // insert admin user: neo/neo

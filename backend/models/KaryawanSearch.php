@@ -19,8 +19,8 @@ class KaryawanSearch extends Karyawan
     public function rules()
     {
         return [
-            [['id_karyawan', 'kode_jenis_kelamin'], 'integer'],
-            [['kode_karyawan', 'nama', 'nomer_identitas', 'jenis_identitas', 'tanggal_lahir', 'kode_negara', 'kode_provinsi', 'kode_kabupaten_kota', 'kode_kecamatan', 'alamat', 'email'], 'safe'],
+            [['id_karyawan', 'jenis_identitas', 'kode_jenis_kelamin', 'status_nikah', 'is_current_domisili'], 'integer'],
+            [['kode_karyawan', 'nama', 'nomer_identitas', 'tempat_lahir', 'tanggal_lahir', 'agama', 'suku', 'email', 'nomer_telepon', 'foto', 'ktp', 'cv', 'ijazah_terakhir', 'kode_negara', 'kode_provinsi_identitas', 'kode_kabupaten_kota_identitas', 'kode_kecamatan_identitas', 'desa_lurah_identitas', 'alamat_identitas', 'rt_identitas', 'rw_identitas', 'kode_post_identitas', 'kode_provinsi_domisili', 'kode_kabupaten_kota_domisili', 'kode_kecamatan_domisili', 'desa_lurah_domisili', 'alamat_domisili', 'rt_domisili', 'rw_domisili', 'kode_post_domisili', 'informasi_lain'], 'safe'],
         ];
     }
 
@@ -61,20 +61,43 @@ class KaryawanSearch extends Karyawan
         // grid filtering conditions
         $query->andFilterWhere([
             'id_karyawan' => $this->id_karyawan,
-            'tanggal_lahir' => $this->tanggal_lahir,
+            'jenis_identitas' => $this->jenis_identitas,
             'kode_jenis_kelamin' => $this->kode_jenis_kelamin,
+            'tanggal_lahir' => $this->tanggal_lahir,
+            'status_nikah' => $this->status_nikah,
+            'is_current_domisili' => $this->is_current_domisili,
         ]);
 
         $query->andFilterWhere(['like', 'kode_karyawan', $this->kode_karyawan])
             ->andFilterWhere(['like', 'nama', $this->nama])
             ->andFilterWhere(['like', 'nomer_identitas', $this->nomer_identitas])
-            ->andFilterWhere(['like', 'jenis_identitas', $this->jenis_identitas])
+            ->andFilterWhere(['like', 'tempat_lahir', $this->tempat_lahir])
+            ->andFilterWhere(['like', 'agama', $this->agama])
+            ->andFilterWhere(['like', 'suku', $this->suku])
+            ->andFilterWhere(['like', 'email', $this->email])
+            ->andFilterWhere(['like', 'nomer_telepon', $this->nomer_telepon])
+            ->andFilterWhere(['like', 'foto', $this->foto])
+            ->andFilterWhere(['like', 'ktp', $this->ktp])
+            ->andFilterWhere(['like', 'cv', $this->cv])
+            ->andFilterWhere(['like', 'ijazah_terakhir', $this->ijazah_terakhir])
             ->andFilterWhere(['like', 'kode_negara', $this->kode_negara])
-            ->andFilterWhere(['like', 'kode_provinsi', $this->kode_provinsi])
-            ->andFilterWhere(['like', 'kode_kabupaten_kota', $this->kode_kabupaten_kota])
-            ->andFilterWhere(['like', 'kode_kecamatan', $this->kode_kecamatan])
-            ->andFilterWhere(['like', 'alamat', $this->alamat])
-            ->andFilterWhere(['like', 'email', $this->email]);
+            ->andFilterWhere(['like', 'kode_provinsi_identitas', $this->kode_provinsi_identitas])
+            ->andFilterWhere(['like', 'kode_kabupaten_kota_identitas', $this->kode_kabupaten_kota_identitas])
+            ->andFilterWhere(['like', 'kode_kecamatan_identitas', $this->kode_kecamatan_identitas])
+            ->andFilterWhere(['like', 'desa_lurah_identitas', $this->desa_lurah_identitas])
+            ->andFilterWhere(['like', 'alamat_identitas', $this->alamat_identitas])
+            ->andFilterWhere(['like', 'rt_identitas', $this->rt_identitas])
+            ->andFilterWhere(['like', 'rw_identitas', $this->rw_identitas])
+            ->andFilterWhere(['like', 'kode_post_identitas', $this->kode_post_identitas])
+            ->andFilterWhere(['like', 'kode_provinsi_domisili', $this->kode_provinsi_domisili])
+            ->andFilterWhere(['like', 'kode_kabupaten_kota_domisili', $this->kode_kabupaten_kota_domisili])
+            ->andFilterWhere(['like', 'kode_kecamatan_domisili', $this->kode_kecamatan_domisili])
+            ->andFilterWhere(['like', 'desa_lurah_domisili', $this->desa_lurah_domisili])
+            ->andFilterWhere(['like', 'alamat_domisili', $this->alamat_domisili])
+            ->andFilterWhere(['like', 'rt_domisili', $this->rt_domisili])
+            ->andFilterWhere(['like', 'rw_domisili', $this->rw_domisili])
+            ->andFilterWhere(['like', 'kode_post_domisili', $this->kode_post_domisili])
+            ->andFilterWhere(['like', 'informasi_lain', $this->informasi_lain]);
 
         return $dataProvider;
     }

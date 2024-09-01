@@ -54,6 +54,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 'jabatan',
+                [
+                    'label' => 'Surat Lamaran Pekerjaan',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        return Html::img(Yii::getAlias('@root') . '/panel/' . $model->surat_lamaran_pekerjaan, ['width' => '100px', 'alt' => 'surat_lamaran_pekerjaan']);
+                    }
+                ]
             ],
         ]) ?>
     </div>
