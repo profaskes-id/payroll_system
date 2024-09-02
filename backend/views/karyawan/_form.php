@@ -33,7 +33,7 @@ use function PHPSTORM_META\type;
             <?= $form->field($model, 'nama')->textInput([])->label('Nama Lengkap') ?>
         </div>
         <div class="col-12 col-md-3">
-            <?= $form->field($model, 'nomer_identitas')->textInput([])->label('Nomer Identitas') ?>
+            <?= $form->field($model, 'nomer_identitas')->textInput(['type' => 'number'])->label('Nomer Identitas') ?>
         </div>
         <div class="col-12 col-md-3">
             <?php

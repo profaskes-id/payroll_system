@@ -45,9 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <li class="nav-item">
                             <a class="nav-link" id="custom-tabs-one-settings-tab" data-toggle="pill" href="#custom-tabs-one-settings" role="tab" aria-controls="custom-tabs-one-settings" aria-selected="false">Data Keluarga</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="custom-tabs-one-pekerjaan-tab" data-toggle="pill" href="#custom-tabs-one-pekerjaan" role="tab" aria-controls="custom-tabs-one-pekerjaan" aria-selected="false">Data Pekerjaan</a>
-                        </li>
+
                     </ul>
                 </div>
                 <div class="card-body">
@@ -166,6 +164,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ]) ?>
                                 </div>
                             </div>
+
+                            <p style="display: flex; align-items: center;" style="gap: 10px;">
+                            <p>Data Pekerjaan</p>
+                            <?= Html::a('Add new', ['/data-pekerjaan/create', 'id_karyawan' => $model->id_karyawan], ['class' => 'tambah-button']) ?>
+                            </p>
+
                             <?= GridView::widget([
                                 'dataProvider' => $pekrjaandataProvider,
                                 'columns' => [
@@ -334,77 +338,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                             ]); ?>
                         </div>
-                        <div class="tab-pane fade" id="custom-tabs-one-pekerjaan" role="tabpanel" aria-labelledby="custom-tabs-one-pekerjaan-tab">
 
-                            <p class="d-flex justify-content-end " style="gap: 10px;">
-                                <?= Html::a('Add new', ['/data-pekerjaan/create', 'id_karyawan' => $model->id_karyawan], ['class' => 'tambah-button']) ?>
-                            </p>
-
-
-                            <?= GridView::widget([
-                                'dataProvider' => $pekrjaandataProvider,
-                                'columns' => [
-                                    [
-                                        'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                        'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                        'class' => 'yii\grid\SerialColumn'
-                                    ],
-                                    [
-                                        'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                                        'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                        'class' => ActionColumn::className(),
-                                        'urlCreator' => function ($action, DataPekerjaan $model, $key, $index, $column) {
-                                            return Url::toRoute(['data-pekerjaan/view/', 'id_data_pekerjaan' => $model->id_data_pekerjaan]);
-                                        }
-                                    ],
-
-                                    [
-                                        'label' => 'Bagian',
-                                        'value' => function ($model) {
-                                            return $model->bagian->nama_bagian;
-                                        }
-                                    ],
-
-                                    [
-                                        'headerOptions' => ['style' => 'text-align: center;'],
-                                        'contentOptions' => ['style' => 'text-align: center;'],
-                                        'label' => 'Dari',
-                                        'value' => function ($model) {
-                                            return date('d-m-Y', strtotime($model->dari));
-                                        }
-                                    ],
-                                    // [
-                                    //     'headerOptions' => ['style' => 'text-align: center;'],
-                                    //     'contentOptions' => ['style' => 'text-align: center;'],
-                                    //     'label' => 'Sampai',
-                                    //     'value' => function ($model) {
-                                    //         return date('d-m-Y', strtotime($model->sampai));
-                                    //     }
-                                    // ],
-
-                                    [
-                                        'headerOptions' => ['style' => 'text-align: center;'],
-                                        'contentOptions' => ['style' => 'text-align: center;'],
-                                        'attribute' => 'status',
-                                        'value' => function ($model) {
-                                            return $model->statusPekerjaan->nama_kode;
-                                        }
-                                    ],
-                                    // 'jabatan',
-                                    [
-                                        'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
-                                        'contentOptions' => ['style' => 'width: 10%; text-align: center;'],
-                                        'label' => 'Aktif',
-                                        'format' => 'html',
-                                        'value' => function ($model) {
-                                            return $model->is_aktif ? '<span class="text-success">YA</span>' : '<span class="text-danger">Tidak</span>';
-                                        }
-                                    ],
-
-
-                                ],
-                            ]); ?>
-                        </div>
                     </div>
                 </div>
 

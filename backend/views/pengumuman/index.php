@@ -64,8 +64,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         return substr($model->deskripsi, 0, 50) . '...';
                     }
                 ],
-                'dibuat_pada',
-                'update_pada',
+                [
+                    'attribute' => 'dibuat_pada',
+                    'format' => ['date', 'php:d M Y']
+                ],
+                [
+                    'attribute' => 'update_pada',
+                    'format' => ['date', 'php:d M Y']
+                ]
             ],
         ]); ?>
 

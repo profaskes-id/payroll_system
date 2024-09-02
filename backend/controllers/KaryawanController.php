@@ -158,6 +158,7 @@ class KaryawanController extends Controller
     public function actionCreate()
     {
         $model = new Karyawan();
+        $nextKode = $model->generateAutoCode();
 
         if ($this->request->isPost) {
             $lampiranFileKtp = UploadedFile::getInstance($model, 'ktp');
@@ -168,16 +169,20 @@ class KaryawanController extends Controller
                 $lampiranFileKtp != null ? $this->saveImage($model, $lampiranFileKtp, 'ktp') : $model->ktp = null;
                 $lampiranFileCv != null ? $this->saveImage($model, $lampiranFileCv, 'cv') : $model->cv = null;
                 $foto != null ? $this->saveImage($model, $foto, 'foto') : $model->foto = null;
-                $lampiranFileIjazah != null ? $this->saveImage($model, $lampiranFileIjazah, 'ijazah_terakhir') : $model->ijazah_terakhir = null;
-                $model->save();
+                $model->kode_karyawan = $nextKode;
+                ///
 
-                return $this->redirect(['view', 'id_karyawan' => $model->id_karyawan]);
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Membuat Data');
+                    return $this->redirect(['index']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Terjadi Kesalahan saat menyimpan data');
+                }
             }
         } else {
             $model->loadDefaultValues();
         }
 
-        $nextKode = $model->generateAutoCode();
 
         return $this->render('create', [
             'model' => $model,

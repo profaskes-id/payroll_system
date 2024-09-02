@@ -209,9 +209,9 @@ class HomeController extends Controller
                 $model->jam_pulang = date('H:i:s');
                 $model->kode_status_hadir = Yii::$app->request->post('statusHadir');
                 $this->saveImage($model, $lampiranFile);
-
-                $model->save();
-                return $this->redirect(['index']);
+                if ($model->save()) {
+                    return $this->redirect(['index']);
+                }
             }
         } else {
             $model->loadDefaultValues();

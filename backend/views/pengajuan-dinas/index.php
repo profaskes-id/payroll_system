@@ -62,17 +62,43 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->karyawan->nama;
                     }
                 ],
-                'keterangan_perjalanan:ntext',
-                'tanggal',
-                'estimasi_biaya',
-                //'biaya_yang_disetujui',
-                //'disetujui_oleh',
-                //'disetujui_pada',
+                [
+                    'label' => 'Keterangan Perjalanan',
+                    'value' => function ($model) {
+                        $text = $model->keterangan_perjalanan;
+                        $words = explode(' ', $text);
+                        if (count($words) > 8) {
+                            $text = implode(' ', array_slice($words, 0, 8)) . '...';
+                        }
+
+                        return $text;
+                    }
+                ],
+
+
+                [
+                    'headerOptions' => ['style' => 'text-align: center;'],
+                    'contentOptions' => ['style' => 'text-align: center;'],
+                    'label' => 'Tanggal Mulai',
+                    'format' => 'date',
+                    'value' => function ($model) {
+                        return $model->tanggal_mulai;
+                    }
+                ],
+                [
+                    'headerOptions' => ['style' => 'text-align: center;'],
+                    'contentOptions' => ['style' => 'text-align: center;'],
+                    'label' => 'Estimasi Biaya',
+                    'value' => function ($model) {
+                        return $model->estimasi_biaya;
+                    }
+                ],
+
                 [
                     'headerOptions' => ['style' => 'text-align: center;'],
                     'contentOptions' => ['style' => 'text-align: center;'],
                     'format' => 'raw',
-                    'label' => 'status',
+                    'label' => 'Status',
                     'value' => function ($model) {
                         if ($model->statusPengajuan->nama_kode !== null) {
                             if (strtolower($model->statusPengajuan->nama_kode) == "pending") {

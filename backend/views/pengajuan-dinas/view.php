@@ -46,7 +46,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'Disetujui Oleh',
                     'value' => function ($model) {
-                        return $model->user->username;
+                        if ($model->status == 0) {
+                            return '<span class="text-warning">Menuggu Persetujuan</span>';
+                        }
+                        return $model->user->username ?? '<span class="text-danger">User Tidak Terdaftar</span>';
                     },
                     "format" => 'raw',
                 ],

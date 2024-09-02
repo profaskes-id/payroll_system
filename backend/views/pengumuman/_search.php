@@ -10,31 +10,51 @@ use yii\widgets\ActiveForm;
 
 <div class="pengumuman-search">
 
-    <?php $form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-        'options' => [
-            'data-pjax' => 1
-        ],
-    ]); ?>
+    <div class="karyawan-search">
 
-    <?= $form->field($model, 'id_pengumuman') ?>
+        <?php $form = ActiveForm::begin([
+            'action' => ['index'],
+            'method' => 'get',
+        ]); ?>
 
-    <?= $form->field($model, 'judul') ?>
+        <div class="row">
+            <div class="col-5">
+                <?php $nama_group = \yii\helpers\ArrayHelper::map(\backend\models\Pengumuman::find()->all(), 'judul', 'judul');
+                echo $form->field($model, 'judul')->widget(kartik\select2\Select2::classname(), [
+                    'data' => $nama_group,
+                    'language' => 'id',
+                    'options' => ['placeholder' => 'Cari id Jam kerja ...'],
+                    'pluginOptions' => [
+                        'tags' => true,
+                        'allowClear' => true
+                    ],
+                ])->label(false);
+                ?>
+            </div>
+            <div class="col-4">
 
-    <?= $form->field($model, 'deskripsi') ?>
+                <?= $form->field($model, 'dibuat_pada')->textInput(['type' => 'date'])->label(false); ?>
 
-    <?= $form->field($model, 'dibuat_pada') ?>
+            </div>
 
-    <?= $form->field($model, 'update_pada') ?>
+            <div class="col-3">
+                <div class="form-group d-flex items-center w-100  justify-content-around">
+                    <button class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+                        <i class="fas fa-search"></i>
+                        <span>
+                            Search
+                        </span>
+                    </button>
 
-    <?php // echo $form->field($model, 'dibuat_oleh') ?>
-
-    <div class="form-group">
-        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
+                    <a class="reset-button" href="<?= \yii\helpers\Url::to(['index']) ?>">
+                        <i class="fas fa-undo"></i>
+                        <span>
+                            Reset
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <?php ActiveForm::end(); ?>
     </div>
-
-    <?php ActiveForm::end(); ?>
-
 </div>
