@@ -66,33 +66,29 @@ use yii\widgets\ActiveForm;
             ])->label('Status Karyawan');
             ?>
         </div>
-        <div class="col-md-6">
-            <?= $form->field($model, 'jabatan')->textInput(['placeholder' => 'Masukan Jabatan'])->label('Jabatan') ?>
-        </div>
-        <!-- <div class="col-md-6">
+        <div class="col-12 col-md-4">
             <?php
-            // $data = \yii\helpers\ArrayHelper::map(\backend\models\Bagian::find()->all(), 'id_bagian', 'nama_bagian');
-            // echo $form->field($model, 'jabatan')->widget(Select2::classname(), [
-            //     'data' => $data,
-            //     'language' => 'id',
-            //     'options' => ['placeholder' => 'Pilih Jenis Pekerjaan ...'],
-            //     'pluginOptions' => [
-            //         'allowClear' => true
-            //     ],
-            // ]);
+            $data = \yii\helpers\ArrayHelper::map(\backend\models\MasterKode::find()->where(['nama_group' => Yii::$app->params['jabatan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
+            echo $form->field($model, 'jabatan')->widget(Select2::classname(), [
+                'data' => $data,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Pilih Jabatan ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
             ?>
-        </div> -->
+        </div>
 
 
 
-
-        <div class="col-6">
+        <div class="col-4">
             <?= $form->field($model, 'is_aktif')->dropDownList([
                 0 => 'Inactive',
                 1 => 'Active',
             ], ['prompt' => 'Pilih Status Jabatan'])->label('Status Jabatan') ?>
         </div>
-        <div class="col-6">
+        <div class="col-4">
             <?= $form->field($model, 'surat_lamaran_pekerjaan')->fileInput(['class' => 'form-control'])->label('Surat Lamaran Pekerjaan') ?>
 
         </div>

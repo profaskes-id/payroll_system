@@ -75,6 +75,8 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                                     $kataTerbatas = array_slice($kata, 0, 10); // Ubah 10 menjadi jumlah kata yang diinginkan
                                     $teksTerbatas = implode(' ', $kataTerbatas);
                                     ?>
+
+                                    <p class="capitalize font-bold"><?= $value->jenisCuti->jenis_cuti ?> </p>
                                     <p><?= $teksTerbatas ?>...</p>
 
 
@@ -116,6 +118,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                                     $kataTerbatas = array_slice($kata, 0, 10); // Ubah 10 menjadi jumlah kata yang diinginkan
                                     $teksTerbatas = implode(' ', $kataTerbatas);
                                     ?>
+                                    <p class="capitalize font-bold"><?= $value->jenisCuti->jenis_cuti ?> </p>
                                     <p><?= $teksTerbatas ?>...</p>
 
 
@@ -156,6 +159,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                                     $kataTerbatas = array_slice($kata, 0, 10); // Ubah 10 menjadi jumlah kata yang diinginkan
                                     $teksTerbatas = implode(' ', $kataTerbatas);
                                     ?>
+                                    <p class="capitalize font-bold"><?= $value->jenisCuti->jenis_cuti ?> </p>
                                     <p><?= $teksTerbatas ?>...</p>
 
 

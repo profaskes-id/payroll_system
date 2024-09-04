@@ -64,7 +64,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
                 <label for="message" class="col-span-12 block mb-2 text-sm font-medium text-gray-900 ">
                     <span class="block pb-2">Keterangan</span>
-                    <?= $form->field($model, 'keterangan')->textarea(['rows' => 2, 'maxlength' => true, 'class' => 'block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 '])->label(false) ?>
+                    <?= $form->field($model, 'keterangan')->textarea(['rows' => 12, 'maxlength' => true, 'class' => 'block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 '])->label(false) ?>
                 </label>
 
                 <label class="col-span-12 block mb-2 text-sm font-medium text-gray-900 " for="file_input">

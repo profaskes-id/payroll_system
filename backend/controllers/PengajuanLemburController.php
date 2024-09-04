@@ -108,9 +108,9 @@ class PengajuanLemburController extends Controller
     public function actionUpdate($id_pengajuan_lembur)
     {
         $model = $this->findModel($id_pengajuan_lembur);
-        $poinArray = json_decode($model->poin);
+        $poinArray = json_decode($model->pekerjaan);
         if ($this->request->isPost && $model->load($this->request->post())) {
-            $model->poin = json_encode(Yii::$app->request->post('poin'));
+            $model->pekerjaan = json_encode(Yii::$app->request->post('pekerjaan'));
             if ($model->save()) {
                 return $this->redirect(['view', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur]);
             }

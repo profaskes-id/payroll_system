@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php
 // Fungsi untuk memotong deskripsi dan menambahkan link
-function getShortDescription($description, $wordLimit = 4)
+function getShortDescription($description, $wordLimit = 8)
 {
     $words = explode(' ', $description);
     if (count($words) > $wordLimit) {
@@ -106,11 +106,11 @@ function getShortDescription($description, $wordLimit = 4)
                                             <div class="col-span-4 h-full ">
                                                 <img src="<?= Yii::getAlias('@root') . "/images/icons/toa.jpg" ?>" class="object-cover scale-100" alt="toa">
                                             </div>
-                                            <div class="col-span-8 p-3 w-full flex flex-col justify-around items-start h-full">
+                                            <div class="col-span-8 relative   w-full flex flex-col justify-start items-start h-full p-3">
                                                 <h1 class="text-lg font-semibold text-black"><?= getShortDescription($value['judul']); ?></h1>
-                                                <div class="w-full ">
+                                                <div class="w-full mt-4">
                                                     <p class="pb-2 text-sm text-gray-500"><?= getShortDescription($value['deskripsi']); ?></p>
-                                                    <p class=" text-gray-500 text-sm text-end"><?= date('d-M-Y', strtotime($value['dibuat_pada'])) ?></p>
+                                                    <p class=" text-gray-500 text-sm text-end absolute right-2 bottom-12"><?= date('d-M-Y', strtotime($value['dibuat_pada'])) ?></p>
                                                 </div>
                                             </div>
                                         </div>

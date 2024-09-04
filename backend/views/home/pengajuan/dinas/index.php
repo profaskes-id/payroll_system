@@ -80,9 +80,9 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
                                     <hr class="w-1/3 my-2">
                                     <div class="flex space-x-3 text-gray-500">
-                                        <p><?= date('d-m-Y', strtotime($value['tanggal'])) ?></p>
+                                        <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
                                         <span>&nbsp;~&nbsp;&nbsp;</span>
-                                        <!-- <p><? // // date('d-m-Y', strtotime($value['tanggal_selesai'])) 
+                                        <!-- <p><? // // date('d-m-Y', strtotime($value['tanggal_mulai_selesai'])) 
                                                 ?></p> -->
                                     </div>
                                     <hr class="my-2">
@@ -134,9 +134,9 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
                                                     <hr class="w-1/3 my-2">
                                                     <div class="flex space-x-3 text-gray-500">
-                                                        <p><?= date('d-m-Y', strtotime($value['tanggal'])) ?></p>
+                                                        <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
                                                         <span>&nbsp;~&nbsp;&nbsp;</span>
-                                                        <!-- <p><? // // date('d-m-Y', strtotime($value['tanggal_selesai'])) 
+                                                        <!-- <p><? // // date('d-m-Y', strtotime($value['tanggal_mulai_selesai'])) 
                                                                 ?></p> -->
                                                     </div>
                                                     <hr class="my-2">
@@ -191,9 +191,9 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
                                                     <hr class="w-1/3 my-2">
                                                     <div class="flex space-x-3 text-gray-500">
-                                                        <p><?= date('d-m-Y', strtotime($value['tanggal'])) ?></p>
+                                                        <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
                                                         <span>&nbsp;~&nbsp;&nbsp;</span>
-                                                        <!-- <p><? // date('d-m-Y', strtotime($value['tanggal_selesai'])) 
+                                                        <!-- <p><? // date('d-m-Y', strtotime($value['tanggal_mulai_selesai'])) 
                                                                 ?></p> -->
                                                     </div>
                                                     <hr class="my-2">

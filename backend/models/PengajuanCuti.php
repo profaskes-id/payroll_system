@@ -27,6 +27,7 @@ class PengajuanCuti extends \yii\db\ActiveRecord
     {
         return 'pengajuan_cuti';
     }
+    public $sisa_hari;
 
     /**
      * {@inheritdoc}
@@ -34,8 +35,8 @@ class PengajuanCuti extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_karyawan', 'tanggal_pengajuan', 'tanggal_mulai', 'tanggal_selesai'], 'required'],
-            [['id_karyawan', 'status'], 'integer'],
+            [['id_karyawan', 'tanggal_pengajuan', 'tanggal_mulai', 'tanggal_selesai', 'jenis_cuti', 'sisa_hari'], 'required'],
+            [['id_karyawan', 'status', 'jenis_cuti', 'sisa_hari'], 'integer'],
             [['tanggal_pengajuan', 'tanggal_mulai', 'tanggal_selesai'], 'safe'],
             [['alasan_cuti', 'catatan_admin'], 'string'],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
@@ -56,6 +57,7 @@ class PengajuanCuti extends \yii\db\ActiveRecord
             'alasan_cuti' => 'Alasan Cuti',
             'status' => 'Status',
             'catatan_admin' => 'Catatan Admin',
+            'sisa_hari' => 'Sisa Hari',
         ];
     }
 
@@ -72,5 +74,9 @@ class PengajuanCuti extends \yii\db\ActiveRecord
     public function getStatusPengajuan()
     {
         return $this->hasOne(MasterKode::class, ['kode' => 'status'])->onCondition(['nama_group' => 'status-pengajuan', 'status' => '1']);
+    }
+    public function getJenisCuti()
+    {
+        return $this->hasOne(MasterCuti::class, ['id_master_cuti' => 'jenis_cuti'])->onCondition(['status' => '1']);
     }
 }

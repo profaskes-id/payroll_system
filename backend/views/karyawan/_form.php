@@ -1,6 +1,9 @@
 <?php
 
+use backend\models\MasterKab;
+use backend\models\MasterKec;
 use backend\models\MasterKode;
+use backend\models\MasterProp;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -11,6 +14,13 @@ use function PHPSTORM_META\type;
 /** @var yii\web\View $this */
 /** @var backend\models\Karyawan $model */
 /** @var yii\widgets\ActiveForm $form */
+
+$dataProvinsi = \yii\helpers\ArrayHelper::map(\backend\models\MasterProp::find()->orderBy(['nama_prop' => SORT_ASC])->all(), 'kode_prop', 'nama_prop');
+
+$dataKabupaten = \yii\helpers\ArrayHelper::map(\backend\models\MasterKab::find()->orderBy(['nama_kab' => SORT_ASC])->all(), 'kode_kab', 'nama_kab');
+
+$dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()->orderBy(['nama_kec' => SORT_ASC])->all(), 'kode_kec', 'nama_kec');
+
 ?>
 
 <div class="karyawan-form table-container">
@@ -97,26 +107,57 @@ use function PHPSTORM_META\type;
         <h1 class="col-12 fw-bold text-uppercase mt-5">Identitas</h1>
 
         <div class="col-12 col-md-3">
-            <?= $form->field($model, 'rt_identitas')->textInput([])->label('RT') ?>
+            <?= $form->field($model, 'rt_identitas')->textInput(['value' => '00'])->label('RT') ?>
         </div>
         <div class="col-12 col-md-3">
-            <?= $form->field($model, 'rw_identitas')->textInput([])->label('RW') ?>
+            <?= $form->field($model, 'rw_identitas')->textInput(['value' => '00'])->label('RW') ?>
         </div>
         <div class="col-12 col-md-3">
             <?= $form->field($model, 'kode_post_identitas')->textInput([])->label('Kode Pos') ?>
         </div>
         <div class="col-12 col-md-3">
-            <?= $form->field($model, 'kode_negara')->textInput([])->label('Negara') ?>
+            <?= $form->field($model, 'kode_negara')->textInput(['value' => 'indonesia'])->label('Negara') ?>
         </div>
-        <div class="col-12 col-md-3">
-            <?= $form->field($model, 'kode_provinsi_identitas')->textInput([])->label('Provinsi') ?>
+
+        <!-- !======================================== -->
+        <div class="col-md-3">
+            <?php
+            echo $form->field($model, 'kode_provinsi_identitas')->widget(Select2::classname(), [
+                'data' => $dataProvinsi,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Pilih Provinsi ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+            ?>
         </div>
-        <div class="col-12 col-md-3">
-            <?= $form->field($model, 'kode_kabupaten_kota_identitas')->textInput([])->label('Kabupaten/Kota') ?>
+        <div class="col-md-3">
+            <?php
+            echo $form->field($model, 'kode_kabupaten_kota_identitas')->widget(Select2::classname(), [
+                'data' => $dataKabupaten,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Pilih kabupaten/kota ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+            ?>
         </div>
-        <div class="col-12 col-md-3">
-            <?= $form->field($model, 'kode_kecamatan_identitas')->textInput([])->label('Kecamatan') ?>
+        <div class="col-md-3">
+            <?php
+            echo $form->field($model, 'kode_kecamatan_identitas')->widget(Select2::classname(), [
+                'data' => $dataKecamatan,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Pilih kabupaten/kota ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+            ?>
         </div>
+        <!-- !======================================== -->
+
         <div class="col-12 col-md-3">
             <?= $form->field($model, 'desa_lurah_identitas')->textInput([])->label('Desa/Lurah') ?>
         </div>
@@ -126,7 +167,7 @@ use function PHPSTORM_META\type;
     </div>
     <div class="row mt-5">
         <div class="col-12 col-md-3">
-            <?= $form->field($model, 'is_current_domisili')->checkbox(['id' => 'is_currnetly_domisili', 'checked' => false])->label('') ?>
+            <?= $form->field($model, 'is_current_domisili')->checkbox(['id' => 'is_currnetly_domisili'])->label('') ?>
         </div>
         <h1 class="col-12 fw-bold text-uppercase mt-5">domisili</h1>
         <div class="col-12 col-md-3">
@@ -138,15 +179,49 @@ use function PHPSTORM_META\type;
         <div class="col-12 col-md-3">
             <?= $form->field($model, 'kode_post_domisili')->textInput(['class' => 'domisili form-control'])->label('Kode Pos') ?>
         </div>
-        <div class="col-12 col-md-3">
-            <?= $form->field($model, 'kode_provinsi_domisili')->textInput(['class' => 'domisili form-control'])->label('Provinsi') ?>
+
+
+        <!-- !======================================== -->
+        <div class="col-md-3">
+            <?php
+            echo $form->field($model, 'kode_provinsi_domisili')->widget(Select2::classname(), [
+                'data' => $dataProvinsi,
+                'language' => 'id',
+                'options' => ['class' => 'domisili', 'placeholder' => 'Pilih Provinsi ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+            ?>
         </div>
-        <div class="col-12 col-md-3">
-            <?= $form->field($model, 'kode_kabupaten_kota_domisili')->textInput(['class' => 'domisili form-control'])->label('Kabupaten/Kota') ?>
+        <div class="col-md-3">
+            <?php
+            echo $form->field($model, 'kode_kabupaten_kota_domisili')->widget(Select2::classname(), [
+                'data' => $dataKabupaten,
+                'language' => 'id',
+                'options' => ['class' => 'domisili', 'placeholder' => 'Pilih kabupaten/kota ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+            ?>
         </div>
-        <div class="col-12 col-md-3">
-            <?= $form->field($model, 'kode_kecamatan_domisili')->textInput(['class' => 'domisili form-control'])->label('kecamatan') ?>
+        <div class="col-md-3">
+            <?php
+
+            echo $form->field($model, 'kode_kecamatan_domisili')->widget(Select2::classname(), [
+                'data' => $dataKecamatan,
+                'language' => 'id',
+                'options' => ['class' => 'domisili', 'placeholder' => 'Pilih kabupaten/kota ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+            ?>
         </div>
+        <!-- !======================================== -->
+
+
         <div class="col-12 col-md-3">
             <?= $form->field($model, 'desa_lurah_domisili')->textInput(['class' => 'domisili form-control'])->label('Desa/Lurah') ?>
         </div>
@@ -189,11 +264,16 @@ use function PHPSTORM_META\type;
 
 <?php ActiveForm::end(); ?>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+
 
 
 <script>
     const manual_kode = document.querySelector('#manual_kode');
     const kode_karyawan = document.querySelector('#kode_karyawan');
+
 
     manual_kode.addEventListener('click', () => {
         kode_karyawan.disabled = kode_karyawan.disabled ? false : true;
@@ -201,11 +281,20 @@ use function PHPSTORM_META\type;
 
     const is_currnetly_domisili = document.querySelector('#is_currnetly_domisili');
     const domisili = Array.from(document.querySelectorAll('.domisili'));
+    window.addEventListener('load', () => {
+        if (is_currnetly_domisili.checked) {
+            domisili.map((item) => {
+                item.disabled = true;
+                item.value = '';
+            })
+        }
+    })
     is_currnetly_domisili.addEventListener('click', (e) => {
         let statusCheck = e.target.checked;
         domisili.map((item) => {
+            item.value = '';
+            item.select = ''
             item.disabled = e.target.checked
         })
-
     })
 </script>

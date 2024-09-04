@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "karyawan".
@@ -72,9 +73,10 @@ class Karyawan extends \yii\db\ActiveRecord
         return [
             [['kode_karyawan', 'nama', 'nomer_identitas', 'jenis_identitas', 'kode_jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'status_nikah', 'agama', 'email', 'nomer_telepon', 'kode_negara', 'kode_provinsi_identitas', 'kode_kabupaten_kota_identitas', 'kode_kecamatan_identitas', 'desa_lurah_identitas', 'alamat_identitas'], 'required'],
             [['jenis_identitas', 'kode_jenis_kelamin', 'status_nikah', 'is_current_domisili',  'agama'], 'integer'],
-            [['tanggal_lahir'], 'safe'],
+            [['tanggal_lahir', 'kode_provinsi_domisili', 'kode_kabupaten_kota_domisili', 'kode_kecamatan_domisili', 'desa_lurah_domisili'], 'safe'],
             [['alamat_identitas', 'alamat_domisili', 'informasi_lain'], 'string'],
             [['kode_karyawan', 'nama', 'nomer_identitas', 'tempat_lahir', 'agama', 'suku', 'email', 'nomer_telepon', 'foto', 'ktp', 'cv', 'ijazah_terakhir', 'kode_negara', 'kode_provinsi_identitas', 'kode_kabupaten_kota_identitas', 'kode_kecamatan_identitas', 'desa_lurah_identitas', 'rt_identitas', 'rw_identitas', 'kode_post_identitas', 'kode_provinsi_domisili', 'kode_kabupaten_kota_domisili', 'kode_kecamatan_domisili', 'desa_lurah_domisili', 'rt_domisili', 'rw_domisili', 'kode_post_domisili'], 'string', 'max' => 255],
+            [['kode_karyawan'], 'unique'],
             [['nomer_identitas'], 'unique'],
             [['email'], 'unique'],
             [['ktp', 'cv', 'foto', 'ijazah_terakhir'], 'file', 'extensions' => 'png, jpg, jpeg, pdf', 'maxSize' => 1024 * 1024 * 2],
@@ -239,5 +241,34 @@ class Karyawan extends \yii\db\ActiveRecord
         if ($this->isNewRecord) {
             return $noTransaksi;
         }
+    }
+    public function getProvinsiidentitas()
+    {
+        return $this->hasOne(MasterProp::class, ['kode_prop'  => 'kode_provinsi_identitas']);
+    }
+    public function getProvinsidomisili()
+    {
+        return $this->hasOne(MasterProp::class, ['kode_prop'  => 'kode_provinsi_domisili']);
+    }
+    public function getKabupatenidentitas()
+    {
+        return $this->hasOne(MasterKab::class, ['kode_kab'  => 'kode_kabupaten_kota_identitas']);
+    }
+    public function getKabupatendomisili()
+    {
+        return $this->hasOne(MasterKab::class, ['kode_kab'  => 'kode_kabupaten_kota_domisili']);
+    }
+    public function getKecamatanidentitas()
+    {
+        return $this->hasOne(MasterKec::class, ['kode_kec'  => 'kode_kecamatan_identitas']);
+    }
+    public function getKecamatandomisili()
+    {
+        return $this->hasOne(MasterKec::class, ['kode_kec'  => 'kode_kecamatan_domisili']);
+    }
+
+    public function getJenisidentitas()
+    {
+        return $this->hasOne(MasterKode::class, ['kode' => 'jenis_identitas'])->onCondition(['nama_group' => 'jenis-identitas']);
     }
 }

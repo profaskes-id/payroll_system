@@ -3,6 +3,8 @@
 
     <?= $this->render('_form', [
         'model' => $model,
+        'jenisCuti' => $jenisCuti,
+        'rekapCuti' => $rekapCuti,
     ]) ?>
 
 </section>

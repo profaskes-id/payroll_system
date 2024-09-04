@@ -120,7 +120,7 @@ class KaryawanController extends Controller
         $user = new User();
         $user->email = $model->email;
 
-        $user->newPassword = $model->nomer_identitas;
+        $user->newPassword =  $id_karyawan . $model->kode_karyawan  . $model->jenis_identitas . $model->kode_jenis_kelamin;
         $user->setRegisterAttributes(2, 1);
         if ($user->save()) {
             Yii::$app->session->setFlash('success', 'Berhasil Membuat Data');

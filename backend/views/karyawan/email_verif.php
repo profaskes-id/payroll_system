@@ -102,7 +102,7 @@ $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:
                             <tr>
                                 <td><strong>Password</strong></td>
                                 <td><strong> : </strong></td>
-                                <td><code style="font-size: 16px"><mark style="padding: 1px 3px;"><?= $model["nomer_identitas"] ?></mark></code></td>
+                                <td><code style="font-size: 16px"><mark style="padding: 1px 3px;"><?= $model->id_karyawan . $model->kode_karyawan  . $model->jenis_identitas . $model->kode_jenis_kelamin ?></mark></code></td>
                             </tr>
                             <tr>
                                 <td><strong>Halaman Login</strong></td>
