@@ -8,6 +8,8 @@ use backend\models\DataKeluargaSearch;
 use backend\models\DataPekerjaanSearch;
 use backend\models\Karyawan;
 use backend\models\KaryawanSearch;
+use backend\models\MasterKab;
+use backend\models\MasterKec;
 use backend\models\PengalamanKerjaSearch;
 use backend\models\RiwayatPendidikanSearch;
 use Yii;
@@ -153,12 +155,9 @@ class KaryawanController extends Controller
         }
     }
 
-
-
     public function actionCreate()
     {
         $model = new Karyawan();
-        $nextKode = $model->generateAutoCode();
 
         if ($this->request->isPost) {
             $lampiranFileKtp = UploadedFile::getInstance($model, 'ktp');
@@ -169,8 +168,10 @@ class KaryawanController extends Controller
                 $lampiranFileKtp != null ? $this->saveImage($model, $lampiranFileKtp, 'ktp') : $model->ktp = null;
                 $lampiranFileCv != null ? $this->saveImage($model, $lampiranFileCv, 'cv') : $model->cv = null;
                 $foto != null ? $this->saveImage($model, $foto, 'foto') : $model->foto = null;
-                $model->kode_karyawan = $nextKode;
-                ///
+                $lampiranFileIjazah != null ? $this->saveImage($model, $lampiranFileIjazah, 'ijazah_terakhir') : $model->ijazah_terakhir = null;
+
+                $model->kode_karyawan = Yii::$app->request->post('Karyawan')['kode_karyawan'];
+
 
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Membuat Data');
@@ -184,6 +185,7 @@ class KaryawanController extends Controller
         }
 
 
+        $nextKode = $model->generateAutoCode();
         return $this->render('create', [
             'model' => $model,
             'nextKode' => $nextKode
@@ -337,5 +339,24 @@ class KaryawanController extends Controller
         } else {
             return false;
         }
+    }
+
+    public function actionKabupaten($id_prop)
+    {
+        $kabupaten = MasterKab::find()
+            ->where(['kode_prop' => $id_prop])
+            ->all();
+        $dataKabupaten = \yii\helpers\ArrayHelper::map($kabupaten, 'kode_kab', 'nama_kab');
+        return $this->asJson($dataKabupaten);
+    }
+
+    public function actionKecamatan($id_kabupaten)
+    {
+        $kecamatan = MasterKec::find()
+            ->where(['kode_kab' => $id_kabupaten])
+            ->all();
+
+        $dataKecamatan = \yii\helpers\ArrayHelper::map($kecamatan, 'kode_kec', 'nama_kec');
+        return $this->asJson($dataKecamatan);
     }
 }

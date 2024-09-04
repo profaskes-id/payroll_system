@@ -14,10 +14,6 @@ $this->title = 'Rekap Absensi';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="absensi-index position-relative">
-
-
-
-
     <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
         <i class="fas fa-search"></i>
         <span>
@@ -64,7 +60,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->statusHadir->nama_kode;
                     }
                 ],
-                
+
             ],
         ]); ?>
     </div>

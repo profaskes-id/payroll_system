@@ -125,11 +125,11 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
             echo $form->field($model, 'kode_provinsi_identitas')->widget(Select2::classname(), [
                 'data' => $dataProvinsi,
                 'language' => 'id',
-                'options' => ['placeholder' => 'Pilih Provinsi ...'],
+                'options' => ['placeholder' => 'Pilih Provinsi ...', 'id' => 'provinsi-identitas'],
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
-            ]);
+            ])->label('Provinsi');
             ?>
         </div>
         <div class="col-md-3">
@@ -137,25 +137,27 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
             echo $form->field($model, 'kode_kabupaten_kota_identitas')->widget(Select2::classname(), [
                 'data' => $dataKabupaten,
                 'language' => 'id',
-                'options' => ['placeholder' => 'Pilih kabupaten/kota ...'],
+                'options' => ['placeholder' => 'Pilih kabupaten/kota ...', 'id' => 'kode-kabupaten-kota-identitas'],
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
-            ]);
+            ])->label('Kabupaten/Kota');
             ?>
         </div>
+
         <div class="col-md-3">
             <?php
             echo $form->field($model, 'kode_kecamatan_identitas')->widget(Select2::classname(), [
                 'data' => $dataKecamatan,
                 'language' => 'id',
-                'options' => ['placeholder' => 'Pilih kabupaten/kota ...'],
+                'options' => ['id' => 'kode-kecamatan-domisili', 'placeholder' => 'Pilih kecamatan ...'],
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
-            ]);
+            ])->label('Kecamatan');
             ?>
         </div>
+
         <!-- !======================================== -->
 
         <div class="col-12 col-md-3">
@@ -212,7 +214,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
             echo $form->field($model, 'kode_kecamatan_domisili')->widget(Select2::classname(), [
                 'data' => $dataKecamatan,
                 'language' => 'id',
-                'options' => ['class' => 'domisili', 'placeholder' => 'Pilih kabupaten/kota ...'],
+                'options' => ['class' => 'domisili', 'placeholder' => 'Pilih Kecamatan ...'],
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
@@ -266,7 +268,62 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+<script>
+    $(document).ready(function() {
+        // Event handler untuk perubahan provinsi
+        $('#provinsi-identitas').change(function(e) {
+            $('#kode-kabupaten-kota-identitas').val();
+            $('#kode-kecamatan-identitas').val();
+            e.preventDefault();
+            let valueProp = this.value;
 
+            $.ajax({
+                url: '/panel/karyawan/kabupaten',
+                type: 'GET',
+                data: {
+                    id_prop: valueProp
+                },
+                success: function(data) {
+                    let kabupatenSelect = $('#kode-kabupaten-kota-identitas');
+                    kabupatenSelect.empty(); // Kosongkan pilihan yang ada
+                    kabupatenSelect.append('<option></option>'); // Tambahkan opsi kosong untuk allowClear
+
+                    $.each(data, function(key, value) {
+                        kabupatenSelect.append('<option value="' + key + '">' + value + '</option>');
+                    });
+
+                    kabupatenSelect.trigger('change'); // Trigger change untuk memperbarui Select2
+                }
+            });
+        });
+
+        // Event handler untuk perubahan kabupaten
+        $('#kode-kabupaten-kota-identitas').change(function(e) {
+            e.preventDefault();
+            $('#kode-kecamatan-identitas').val();
+            let valueKabupaten = this.value;
+
+            $.ajax({
+                url: '/panel/karyawan/kecamatan',
+                type: 'GET',
+                data: {
+                    id_kabupaten: valueKabupaten
+                },
+                success: function(data) {
+                    let kecamatanSelect = $('#kode-kecamatan-identitas');
+                    kecamatanSelect.empty(); // Kosongkan pilihan yang ada
+                    kecamatanSelect.append('<option></option>'); // Tambahkan opsi kosong untuk allowClear
+
+                    $.each(data, function(key, value) {
+                        kecamatanSelect.append('<option value="' + key + '">' + value + '</option>');
+                    });
+
+                    kecamatanSelect.trigger('change'); // Trigger change untuk memperbarui Select2
+                }
+            });
+        });
+    });
+</script>
 
 
 

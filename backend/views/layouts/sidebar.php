@@ -78,7 +78,7 @@ use yii\helpers\Html;
                                 'label' => 'Pengajuan',
                                 'icon' => 'th',
                                 'items' => [
-                                    ['label' => 'Pengajuan cuti',  'icon' => 'file-code', 'url' => ['/pengajuan-cuti/index'],],
+                                    ['label' => 'Pengajuan Cuti',  'icon' => 'file-code', 'url' => ['/pengajuan-cuti/index'],],
                                     ['label' => 'Pengajuan lembur',  'icon' => 'file-code', 'url' => ['/pengajuan-lembur/index'],],
                                     ['label' => 'Pengajuan Dinas',  'icon' => 'file-code', 'url' => ['/pengajuan-dinas/index'],],
                                     ['label' => 'Rekap Cuti',  'icon' => 'file-code', 'url' => ['/rekap-cuti/index'],],
