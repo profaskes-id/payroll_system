@@ -22,7 +22,8 @@ class m240819_021120_create_pengajuan_cuti_table extends Migration
             'alasan_cuti' => $this->text(),
             'status' => $this->integer()->defaultValue(0),
             'catatan_admin' => $this->text(),
-
+            'ditanggapi_pada' => $this->dateTime()->null(),
+            'ditanggapi_oleh' => $this->integer()->null(),
         ]);
 
         // Create index for `id_karyawan`

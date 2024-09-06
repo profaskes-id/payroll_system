@@ -1,5 +1,7 @@
 <?php
 
+use backend\models\MasterKode;
+use backend\models\Perusahaan;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -17,7 +19,7 @@ use yii\widgets\ActiveForm;
 
     <div class="row">
         <div class="col-5">
-            <?php $nama_group = \yii\helpers\ArrayHelper::map(\backend\models\Perusahaan::find()->all(), 'nama_perusahaan', 'nama_perusahaan');
+            <?php $nama_group = \yii\helpers\ArrayHelper::map(Perusahaan::find()->all(), 'nama_perusahaan', 'nama_perusahaan');
             echo $form->field($model, 'nama_perusahaan')->widget(Select2::classname(), [
                 'data' => $nama_group,
                 'language' => 'id',
@@ -30,7 +32,7 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
         <div class="col-4">
-            <?php $nama_kode = \yii\helpers\ArrayHelper::map(\backend\models\MasterKode::find()->where(['nama_group' => Yii::$app->params['status-perusahaan']])->all(), 'kode', 'nama_kode');
+            <?php $nama_kode = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-perusahaan']])->all(), 'kode', 'nama_kode');
             echo $form->field($model, 'status_perusahaan')->widget(Select2::classname(), [
                 'data' => $nama_kode,
                 'language' => 'id',

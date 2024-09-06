@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\Karyawan;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -18,9 +19,9 @@ use kartik\select2\Select2;
     ]); ?>
 
 
-<div class="row">
+    <div class="row">
         <div class="col-5">
-            <?php $id_karyawan = \yii\helpers\ArrayHelper::map(\backend\models\Karyawan::find()->all(), 'id_karyawan', 'nama');
+            <?php $id_karyawan = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
             echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
                 'data' => $id_karyawan,
                 'language' => 'id',
@@ -33,7 +34,7 @@ use kartik\select2\Select2;
             ?>
         </div>
         <div class="col-4">
-        <?= $form->field($model, 'tanggal')->textInput(['type' => 'date'])->label(false) ?>
+            <?= $form->field($model, 'tanggal')->textInput(['type' => 'date'])->label(false) ?>
         </div>
         <div class="col-3">
             <div class="form-group d-flex items-center w-100  justify-content-around">

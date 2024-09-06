@@ -10,16 +10,11 @@ use yii\grid\GridView;
 /** @var backend\models\RekapCutiSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Rekap Cutis';
+$this->title = 'Rekap Cuti';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="rekap-cuti-index">
 
-    <div class="costume-container">
-        <p class="">
-            <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) ?>
-        </p>
-    </div>
 
     <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
         <i class="fas fa-search"></i>

@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\MasterKode;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -18,7 +19,7 @@ use yii\widgets\ActiveForm;
 
     <div class="row">
         <div class="col-5">
-            <?php $nama_group = \yii\helpers\ArrayHelper::map(\backend\models\MasterKode::find()->all(), 'nama_group', 'nama_group');
+            <?php $nama_group = \yii\helpers\ArrayHelper::map(MasterKode::find()->all(), 'nama_group', 'nama_group');
             echo $form->field($model, 'nama_group')->widget(Select2::classname(), [
                 'data' => $nama_group,
                 'language' => 'id',
@@ -31,7 +32,7 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
         <div class="col-4">
-            <?php $nama_kode = \yii\helpers\ArrayHelper::map(\backend\models\MasterKode::find()->all(), 'nama_kode', 'nama_kode');
+            <?php $nama_kode = \yii\helpers\ArrayHelper::map(MasterKode::find()->all(), 'nama_kode', 'nama_kode');
             echo $form->field($model, 'nama_kode')->widget(Select2::classname(), [
                 'data' => $nama_kode,
                 'language' => 'id',

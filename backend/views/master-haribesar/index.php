@@ -1,23 +1,23 @@
 <?php
 
-use backend\models\MasterCuti;
+use backend\models\MasterHaribesar;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var backend\models\MasterCutiSearch $searchModel */
+/** @var backend\models\MasterHaribesarSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Master Cuti';
+$this->title = Yii::t('app', 'Master Hari Besars');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="master-cuti-index">
+<div class="master-haribesar-index">
 
 
     <div class="costume-container">
-        <p lass="">
+        <p class="">
             <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
@@ -35,10 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
     </div>
-
     <div class='table-container'>
-
-
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'columns' => [
@@ -47,25 +44,27 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-
                 [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, MasterCuti $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id_master_cuti' => $model->id_master_cuti]);
+                    'urlCreator' => function ($action, MasterHaribesar $model, $key, $index, $column) {
+                        return Url::toRoute([$action, 'kode' => $model->kode]);
                     }
                 ],
-                'jenis_cuti',
-                'deskripsi_singkat:ntext',
-                'total_hari_pertahun',
                 [
-                    'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
-                    'contentOptions' => ['style' => 'width: 10%; text-align: center;'],
-                    'format' => 'raw',
-                    'attribute' => 'status',
+                    'headerOptions' => ['text-align: center;'],
+                    'contentOptions' => ['text-align: center;'],
+                    'attribute' => 'Tanggal',
                     'value' => function ($model) {
-                        return $model->status == 1 ? '<p class="text-success">Aktif<p>' : '<p class="text-danger">Tidak Aktif<p>';
+                        return date('d-M-Y', strtotime($model->tanggal));
+                    }
+                ],
+                'nama_hari:ntext',
+                [
+                    'attribute' => 'libur_nasional',
+                    'value' => function ($model) {
+                        return $model->libur_nasional ? 'Yes' : 'No';
                     }
                 ]
             ],
@@ -73,4 +72,3 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
     </div>
-</div>

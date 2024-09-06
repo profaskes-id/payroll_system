@@ -1,5 +1,7 @@
 <?php
 
+use backend\models\JamKerja;
+use backend\models\MasterKode;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -18,7 +20,7 @@ use yii\widgets\ActiveForm;
 
         <div class="row">
             <div class="col-5">
-                <?php $nama_group = \yii\helpers\ArrayHelper::map(\backend\models\JamKerja::find()->all(), 'id_jam_kerja', 'nama_jam_kerja');
+                <?php $nama_group = \yii\helpers\ArrayHelper::map(JamKerja::find()->all(), 'id_jam_kerja', 'nama_jam_kerja');
                 echo $form->field($model, 'id_jam_kerja')->widget(kartik\select2\Select2::classname(), [
                     'data' => $nama_group,
                     'language' => 'id',
@@ -31,7 +33,7 @@ use yii\widgets\ActiveForm;
                 ?>
             </div>
             <div class="col-4">
-                <?php $nama_group = \yii\helpers\ArrayHelper::map(\backend\models\MasterKode::find()->where(['nama_group' => Yii::$app->params['jenis-shift']])->andWhere(['!=', 'status', 0])->all(), 'kode', 'nama_kode');
+                <?php $nama_group = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['jenis-shift']])->andWhere(['!=', 'status', 0])->all(), 'kode', 'nama_kode');
                 echo $form->field($model, 'jenis_shift')->widget(kartik\select2\Select2::classname(), [
                     'data' => $nama_group,
                     'language' => 'id',

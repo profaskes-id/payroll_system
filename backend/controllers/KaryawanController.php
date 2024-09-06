@@ -107,13 +107,6 @@ class KaryawanController extends Controller
         ]);
     }
 
-    /**
-     * Creates a new Karyawan model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
-
-
 
     public function actionInvite($id_karyawan)
     {
@@ -169,7 +162,7 @@ class KaryawanController extends Controller
                 $lampiranFileCv != null ? $this->saveImage($model, $lampiranFileCv, 'cv') : $model->cv = null;
                 $foto != null ? $this->saveImage($model, $foto, 'foto') : $model->foto = null;
                 $lampiranFileIjazah != null ? $this->saveImage($model, $lampiranFileIjazah, 'ijazah_terakhir') : $model->ijazah_terakhir = null;
-
+                $model->kode_negara = 'indonesia';
                 $model->kode_karyawan = Yii::$app->request->post('Karyawan')['kode_karyawan'];
 
 

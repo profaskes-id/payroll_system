@@ -20,9 +20,9 @@ class m240822_080624_create_pengajuan_dinas_table extends Migration
             'tanggal_selesai' => $this->date()->notNull(),
             'estimasi_biaya' => $this->decimal(10, 2)->notNull(),
             'biaya_yang_disetujui' => $this->decimal(10, 2),
-            'disetujui_oleh' => $this->integer(),
-            'disetujui_pada' => $this->dateTime(),
             'status' => $this->integer()->defaultValue(0),
+            'disetujui_pada' => $this->dateTime(),
+            'disetujui_oleh' => $this->integer(),
         ]);
 
         // Add foreign key constraints if necessary

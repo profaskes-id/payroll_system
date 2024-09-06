@@ -271,4 +271,12 @@ class Karyawan extends \yii\db\ActiveRecord
     {
         return $this->hasOne(MasterKode::class, ['kode' => 'jenis_identitas'])->onCondition(['nama_group' => 'jenis-identitas']);
     }
+    public function getMasterAgama()
+    {
+        return $this->hasOne(MasterKode::class, ['kode' => 'agama'])->onCondition(['nama_group' => 'agama']);
+    }
+    public function getStatusNikah()
+    {
+        return $this->hasOne(MasterKode::class, ['kode' => 'status_nikah'])->onCondition(['nama_group' => 'status-pernikahan']);
+    }
 }

@@ -8,10 +8,10 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\PengajuanCuti $model */
 
-$this->title = 'Tanggapi Pengajuan Cuti: ' . $model->karyawan->nama;
+$this->title = 'Pengajuan Cuti: ' . $model->karyawan->nama;
 $this->params['breadcrumbs'][] = ['label' => 'Pengajuan Cuti', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->karyawan->nama, 'url' => ['view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]];
-$this->params['breadcrumbs'][] = 'Tanggapan Admin';
+$this->params['breadcrumbs'][] = 'Tanggapan';
 ?>
 <div class="pengajuan-cuti-update">
 
@@ -58,7 +58,7 @@ $this->params['breadcrumbs'][] = 'Tanggapan Admin';
             </div>
             <div class="col-6">
                 <?php
-                $data = \yii\helpers\ArrayHelper::map(\backend\models\MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
+                $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
                 echo $form->field($model, 'status')->widget(Select2::classname(), [
                     'data' => $data,
                     'language' => 'id',

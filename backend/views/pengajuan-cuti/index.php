@@ -69,13 +69,10 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'tanggal_pengajuan',
             [
                 'headerOptions' => ['style' => 'width: 30%; text-align: center;'],
-                'attribute' => 'alasan_cuti',
+                'attribute' => 'jenis_cuti',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    $words = explode(' ', $model->alasan_cuti);
-                    $limitedWords = array_slice($words, 0, 5);
-                    $truncatedText = implode(' ', $limitedWords);
-                    return Html::encode($truncatedText) . '...';
+                    return $model->jenisCuti->jenis_cuti;
                 },
             ],
             // 'tanggal_selesai',

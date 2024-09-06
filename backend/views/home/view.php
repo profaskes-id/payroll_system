@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\MasterKode;
 use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -12,7 +13,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Absensis', 'url' => ['index']];
 // $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 
-$masterKode = \backend\models\MasterKode::find()->where(['nama_group' => Yii::$app->params['status-hadir']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all();
+$masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['status-hadir']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all();
 ?>
 <div class="absensi-view container mx-auto relative min-h-[90dvh] px-5 ">
 

@@ -1,5 +1,7 @@
 <?php
 
+use backend\models\Karyawan;
+use backend\models\MasterKode;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -16,7 +18,7 @@ use yii\widgets\ActiveForm;
     <div class="row">
         <div class="col-md-6">
             <?php
-            $data = \yii\helpers\ArrayHelper::map(\backend\models\Karyawan::find()->all(), 'id_karyawan', 'nama');
+            $data = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
             echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
                 'data' => $data,
                 'language' => 'id',
@@ -42,7 +44,7 @@ use yii\widgets\ActiveForm;
         </div>
         <div class="col-md-6">
             <?php
-            $data = \yii\helpers\ArrayHelper::map(\backend\models\MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
+            $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
             echo $form->field($model, 'status')->widget(Select2::classname(), [
                 'data' => $data,
                 'language' => 'id',

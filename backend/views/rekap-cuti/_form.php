@@ -1,5 +1,7 @@
 <?php
 
+use backend\models\Karyawan;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -8,18 +10,36 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="rekap-cuti-form">
+<div class="rekap-cuti-form table-container">
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'id_master_cuti')->textInput() ?>
+    <div class="row">
+        <div class="col-6">
+            <?php
+            $data = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
+            echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
+                'data' => $data,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Pilih Karyawan ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ])->label('Karyawan');
+            ?>
+        </div>
 
-    <?= $form->field($model, 'id_karyawan')->textInput() ?>
-
-    <?= $form->field($model, 'total_hari_terpakai')->textInput() ?>
+        <div class="col-6">
+            <?= $form->field($model, 'total_hari_terpakai')->textInput() ?>
+        </div>
+    </div>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <button class="add-button" type="submit">
+            <span>
+                Submit
+            </span>
+        </button>
     </div>
 
     <?php ActiveForm::end(); ?>

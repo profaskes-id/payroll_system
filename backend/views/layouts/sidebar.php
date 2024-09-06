@@ -55,6 +55,7 @@ use yii\helpers\Html;
                                 'items' => [
                                     ['label' => 'Master Kode',  'icon' => 'file-code', 'url' => ['/master-kode/index'],],
                                     ['label' => 'Master Cuti',  'icon' => 'file-code', 'url' => ['/master-cuti/index'],],
+                                    ['label' => 'Master Hari Besar',  'icon' => 'file-code', 'url' => ['/master-haribesar/index'],],
                                 ],
                             ],
                             [

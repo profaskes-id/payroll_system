@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php
 // Fungsi untuk memotong deskripsi dan menambahkan link
-function getShortDescription($description, $wordLimit = 8)
+function getShortDescription($description, $wordLimit = 5)
 {
     $words = explode(' ', $description);
     if (count($words) > $wordLimit) {
@@ -43,19 +43,13 @@ function getShortDescription($description, $wordLimit = 8)
         height: 100%;
     }
 
-
-
     .swiper {
         width: 100%;
         height: 200px;
     }
 
     .swiper-slide {
-        /* font-size: 18px; */
         background: #fff;
-        /* display: flex; */
-        /* justify-content: center; */
-        /* align-items: center; */
     }
 
     .swiper-slide img {
@@ -110,7 +104,7 @@ function getShortDescription($description, $wordLimit = 8)
                                                 <h1 class="text-lg font-semibold text-black"><?= getShortDescription($value['judul']); ?></h1>
                                                 <div class="w-full mt-4">
                                                     <p class="pb-2 text-sm text-gray-500"><?= getShortDescription($value['deskripsi']); ?></p>
-                                                    <p class=" text-gray-500 text-sm text-end absolute right-2 bottom-12"><?= date('d-M-Y', strtotime($value['dibuat_pada'])) ?></p>
+                                                    <p class="bg-white text-gray-500 text-sm text-end absolute right-2 bottom-2.5"><?= date('d-M-Y', strtotime($value['dibuat_pada'])) ?></p>
                                                 </div>
                                             </div>
                                         </div>

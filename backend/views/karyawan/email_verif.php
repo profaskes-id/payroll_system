@@ -75,13 +75,13 @@ $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:
 
                 <div class="content-card">
                     <div class="card-body">
-                        <h2 style="text-transform : capitalize;">akses akun trial profaskes </h2>
+                        <h2 style="text-transform : capitalize;">Akses Payroll Profaskes </h2>
 
                         <p>
                             Dear,
                             <br />
                             <br />
-                            Terima kasih telah mendaftar di Trial Profaskes . Berikut adalah informasi akun Anda:
+                            Anda telah di daftarkan dalan sistem payroll profasekes.id, berikut adalah akses masuk ke akun anda
                             <br />
                             <br />
                         </p>
@@ -107,7 +107,7 @@ $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:
                             <tr>
                                 <td><strong>Halaman Login</strong></td>
                                 <td><strong> : </strong></td>
-                                <td><?= yii\helpers\Html::a('Login Disini', 'http://localhost:8080/panel/', ['target' => '_blank']) ?></td>
+                                <td><?= yii\helpers\Html::a('Login Disini', Yii::getAlias('@root'), ['target' => '_blank']) ?></td>
                             </tr>
                         </table>
                         </p>

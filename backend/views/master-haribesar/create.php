@@ -3,13 +3,13 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var backend\models\RekapCuti $model */
+/** @var backend\models\MasterHaribesar $model */
 
-$this->title = 'Create Rekap Cuti';
-$this->params['breadcrumbs'][] = ['label' => 'Rekap Cutis', 'url' => ['index']];
+$this->title = Yii::t('app', 'Create Master Haribesar');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Master Haribesars'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="rekap-cuti-create">
+<div class="master-haribesar-create">
 
     <div class="costume-container">
         <p class="">

@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\HariLibur;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -22,7 +23,7 @@ use yii\widgets\ActiveForm;
         </div>
 
         <div class="col-4">
-            <?php $nama_group = \yii\helpers\ArrayHelper::map(\backend\models\HariLibur::find()->all(), 'nama_hari_libur', 'nama_hari_libur');
+            <?php $nama_group = \yii\helpers\ArrayHelper::map(HariLibur::find()->all(), 'nama_hari_libur', 'nama_hari_libur');
             echo $form->field($model, 'nama_hari_libur')->widget(kartik\select2\Select2::classname(), [
                 'data' => $nama_group,
                 'language' => 'id',

@@ -4,14 +4,15 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var backend\models\MasterCuti $model */
+/** @var backend\models\MasterHaribesar $model */
 
-$this->title = $model->jenis_cuti;
-$this->params['breadcrumbs'][] = ['label' => 'Master Cutis', 'url' => ['index']];
+$this->title = $model->nama_hari;
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Master Haribesars'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="master-cuti-view">
+<div class="master-haribesar-view">
+
 
     <div class="costume-container">
         <p class="">
@@ -19,10 +20,12 @@ $this->params['breadcrumbs'][] = $this->title;
         </p>
     </div>
 
-    <div class='table-container'>
+
+    <div class="table-container">
+
         <p class="d-flex justify-content-start " style="gap: 10px;">
-            <?= Html::a('Update', ['update', 'id_master_cuti' => $model->id_master_cuti], ['class' => 'add-button']) ?>
-            <?= Html::a('Delete', ['delete', 'id_master_cuti' => $model->id_master_cuti], [
+            <?= Html::a('Update', ['update', 'kode' => $model->kode], ['class' => 'add-button']) ?>
+            <?= Html::a('Delete', ['delete', 'kode' => $model->kode], [
                 'class' => 'reset-button',
                 'data' => [
                     'confirm' => 'Are you sure you want to delete this item?',
@@ -30,18 +33,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ]) ?>
         </p>
+
+
         <?= DetailView::widget([
             'model' => $model,
             'attributes' => [
-                'jenis_cuti',
-                'deskripsi_singkat:ntext',
-                'total_hari_pertahun',
-                [
-                    'attribute' => 'status',
-                    'value' => $model->status == 1 ? 'Aktif' : 'Tidak Aktif',
-                ]
+                'kode',
+                'tanggal',
+                'nama_hari:ntext',
+                'libur_nasional',
+                'pesan_default:ntext',
+                'lampiran:ntext',
             ],
         ]) ?>
 
     </div>
-</div>

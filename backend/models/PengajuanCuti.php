@@ -36,9 +36,9 @@ class PengajuanCuti extends \yii\db\ActiveRecord
     {
         return [
             [['id_karyawan', 'tanggal_pengajuan', 'tanggal_mulai', 'tanggal_selesai', 'jenis_cuti', 'sisa_hari'], 'required'],
-            [['id_karyawan', 'status', 'jenis_cuti', 'sisa_hari'], 'integer'],
-            [['tanggal_pengajuan', 'tanggal_mulai', 'tanggal_selesai'], 'safe'],
-            [['alasan_cuti', 'catatan_admin'], 'string'],
+            [['id_karyawan', 'status', 'jenis_cuti', 'sisa_hari', 'ditanggapi_oleh'], 'integer'],
+            [['tanggal_pengajuan', 'tanggal_mulai', 'tanggal_selesai', 'ditanggapi_pada', 'ditanggapi_oleh'], 'safe'],
+            [['alasan_cuti', 'catatan_admin', 'ditanggapi_pada'], 'string'],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
         ];
     }

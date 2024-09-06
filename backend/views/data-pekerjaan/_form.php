@@ -1,5 +1,7 @@
 <?php
 
+use backend\models\Bagian;
+use backend\models\MasterKode;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -24,7 +26,7 @@ use yii\widgets\ActiveForm;
 
         <div class="col-md-6">
             <?php
-            $data = \yii\helpers\ArrayHelper::map(\backend\models\Bagian::find()->all(), 'id_bagian', 'nama_bagian');
+            $data = \yii\helpers\ArrayHelper::map(Bagian::find()->all(), 'id_bagian', 'nama_bagian');
             echo $form->field($model, 'id_bagian')->widget(Select2::classname(), [
                 'data' => $data,
                 'language' => 'id',
@@ -55,7 +57,7 @@ use yii\widgets\ActiveForm;
 
         <div class="col-md-6">
             <?php
-            $data = \yii\helpers\ArrayHelper::map(\backend\models\MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pekerjaan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
+            $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pekerjaan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
             echo $form->field($model, 'status')->widget(Select2::classname(), [
                 'data' => $data,
                 'language' => 'id',
@@ -68,7 +70,7 @@ use yii\widgets\ActiveForm;
         </div>
         <div class="col-12 col-md-4">
             <?php
-            $data = \yii\helpers\ArrayHelper::map(\backend\models\MasterKode::find()->where(['nama_group' => Yii::$app->params['jabatan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
+            $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['jabatan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
             echo $form->field($model, 'jabatan')->widget(Select2::classname(), [
                 'data' => $data,
                 'language' => 'id',

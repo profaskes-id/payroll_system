@@ -94,26 +94,30 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 }
                                             ],
                                             [
-                                                'label' => 'Ktp',
-                                                'value' => function ($model) {
-                                                    if ($model->ktp != null) {
-                                                        return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->ktp, ['target' => '_blank']);
-                                                    }
-                                                    return '<p>Belum Di Set<p>';
-                                                },
-                                                'format' => 'raw',
+                                                'attribute' => 'nomer_telepon',
+                                                'label' => 'Nomer Telepon',
                                             ],
                                             [
-                                                'label' => 'cv',
-                                                'value' => function ($model) {
-                                                    if ($model->cv != null) {
-                                                        return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->cv, ['target' => '_blank']);
-                                                    }
-                                                    return '<p>Belum Di Set<p>';
-                                                },
-                                                'format' => 'raw',
+                                                'attribute' => 'email',
+                                                'label' => 'Email',
+                                                'format' => 'email',
                                             ],
-
+                                            [
+                                                'label' => 'Agama',
+                                                'value' => function ($model) {
+                                                    return $model->masterAgama->nama_kode;
+                                                }
+                                            ],
+                                            [
+                                                'attribute' => 'suku',
+                                                'label' => 'Suku',
+                                            ],
+                                            [
+                                                'label' => 'Status Nikah',
+                                                'value' => function ($model) {
+                                                    return $model->statusNikah->nama_kode;
+                                                }
+                                            ],
                                         ],
                                     ]) ?>
                                 </div>
@@ -174,13 +178,52 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     return $model->desa_lurah_identitas;
                                                 }
                                             ],
+
                                             [
-                                                'attribute' => 'email',
-                                                'label' => 'Email',
-                                                'format' => 'email',
+                                                'attribute' => 'RT',
+                                                'value' => function ($model) {
+                                                    if (!$model->is_current_domisili) {
+                                                        return $model->rt_domisili;
+                                                    }
+                                                    return $model->rt_identitas;
+                                                }
                                             ],
                                             [
-                                                'label' => 'foto',
+                                                'attribute' => 'RW',
+                                                'value' => function ($model) {
+                                                    if (!$model->is_current_domisili) {
+                                                        return $model->rw_domisili;
+                                                    }
+                                                    return $model->rw_identitas;
+                                                }
+                                            ],
+                                            [
+                                                'attribute' => 'Informasi Lain',
+                                                'value' => function ($model) {
+                                                    return $model->informasi_lain;
+                                                }
+                                            ]
+
+                                        ],
+                                    ]) ?>
+                                </div>
+                                <div class="col-md-6">
+                                    <?= DetailView::widget([
+                                        'model' => $model,
+                                        'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                                        'attributes' => [
+                                            [
+                                                'label' => 'CV',
+                                                'value' => function ($model) {
+                                                    if ($model->ijazah_terakhir != null) {
+                                                        return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->cv, ['target' => '_blank']);
+                                                    }
+                                                    return '<p>Belum Di Set<p>';
+                                                },
+                                                'format' => 'raw',
+                                            ],
+                                            [
+                                                'label' => 'Foto',
                                                 'value' => function ($model) {
                                                     if ($model->foto != null) {
                                                         return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->foto, ['target' => '_blank']);
@@ -190,7 +233,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 'format' => 'raw',
                                             ],
                                             [
-                                                'label' => 'ijazah_terakhir',
+                                                'label' => 'Ijazah Terakhir',
                                                 'value' => function ($model) {
                                                     if ($model->ijazah_terakhir != null) {
                                                         return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->ijazah_terakhir, ['target' => '_blank']);
@@ -199,12 +242,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 },
                                                 'format' => 'raw',
                                             ],
-                                            [
-                                                'attribute' => 'Informasi Lain',
-                                                'value' => function ($model) {
-                                                    return $model->informasi_lain;
-                                                }
-                                            ]
+
                                         ],
                                     ]) ?>
                                 </div>
@@ -231,7 +269,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                             return Url::toRoute(['data-pekerjaan/view/', 'id_data_pekerjaan' => $model->id_data_pekerjaan]);
                                         }
                                     ],
-
                                     [
                                         'label' => 'Bagian',
                                         'value' => function ($model) {
@@ -255,7 +292,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                             return $model->statusPekerjaan->nama_kode;
                                         }
                                     ],
-                                    // 'jabatan',
                                     [
                                         'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
                                         'contentOptions' => ['style' => 'width: 10%; text-align: center;'],
@@ -265,8 +301,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                             return $model->is_aktif ? '<span class="text-success">YA</span>' : '<span class="text-danger">Tidak</span>';
                                         }
                                     ],
-
-
                                 ],
                             ]); ?>
 

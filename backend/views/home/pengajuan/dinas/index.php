@@ -82,12 +82,8 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                                     <div class="flex space-x-3 text-gray-500">
                                         <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
                                         <span>&nbsp;~&nbsp;&nbsp;</span>
-                                        <!-- <p><? // // date('d-m-Y', strtotime($value['tanggal_mulai_selesai'])) 
-                                                ?></p> -->
                                     </div>
                                     <hr class="my-2">
-                                    <!-- <p class="text-[12px] capitalize text-end text-gray-500">diajukan pada :<?php //$value[''] 
-                                                                                                                    ?></p> -->
 
                                 </div>
                             </div>
@@ -102,51 +98,30 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
         </div>
     </div>
 
-    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800 mb-20" id="settings" role="tabpanel" aria-labelledby="settings-tab">
-        <div class="w-full grid grid-cols-1 gap-y-4 ">
+    <div class="hidden px-4 py-3 rounded-lg bg-gray-50  mb-20" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+        <div class="w-full grid grid-cols-1  gap-y-4">
             <?php if (!empty($pengajuanDinas)): ?>
                 <?php foreach ($pengajuanDinas as $key => $value) : ?>
                     <?php if ($value['status'] == '1') : ?>
-
                         <a href="<?php echo \yii\helpers\Url::to(['/pengajuan/dinas-detail/', 'id' => $value['id_pengajuan_dinas']]) ?>">
-                            <div class="grid grid-cols-12 gap-5 ">
-                                <div class="w-full grid grid-cols-1 gap-y-4 ">
-                                    <?php foreach ($pengajuanDinas as $key => $value) : ?>
-                                        <a href="<?php echo \yii\helpers\Url::to(['/pengajuan/dinas-detail/', 'id' => $value['id_pengajuan_dinas']]) ?>">
-                                            <div class="grid grid-cols-12 gap-5 ">
-                                                <?php if ($value['status'] == '0') : ?>
-                                                    <div class="col-span-1 h-full bg-yellow-200 rounded-full "></div>
-                                                <?php elseif ($value['status'] == '1') : ?>
-                                                    <div class="col-span-1 h-full bg-green-200 rounded-full "></div>
-                                                <?php elseif ($value['status'] == '2') : ?>
-                                                    <div class="col-span-1 h-full bg-red-200 rounded-full "></div>
-                                                <?php endif ?>
-                                                <div class="p-2 text-sm col-span-11  bg-white rounded-md w-full">
+                            <div class="grid grid-cols-1 w-full">
+                                <div class="w-full grid grid-cols-1 ">
+                                    <div class="p-2 text-sm col-span-11  bg-white rounded-md w-full">
+                                        <?php
+                                        $teks = $value['keterangan_perjalanan'];
+                                        $kata = explode(' ', $teks);
+                                        $kataTerbatas = array_slice($kata, 0, 10); // Ubah 10 menjadi jumlah kata yang diinginkan
+                                        $teksTerbatas = implode(' ', $kataTerbatas);
+                                        ?>
+                                        <p><?= $teksTerbatas ?>...</p>
+                                        <hr class="w-1/3 my-2">
+                                        <div class="flex space-x-3 text-gray-500">
+                                            <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
+                                            <span>&nbsp;~&nbsp;&nbsp;</span>
+                                        </div>
+                                        <hr class="my-2">
 
-                                                    <?php
-                                                    $teks = $value['keterangan_perjalanan'];
-                                                    $kata = explode(' ', $teks);
-                                                    $kataTerbatas = array_slice($kata, 0, 10); // Ubah 10 menjadi jumlah kata yang diinginkan
-                                                    $teksTerbatas = implode(' ', $kataTerbatas);
-                                                    ?>
-                                                    <p><?= $teksTerbatas ?>...</p>
-
-
-                                                    <hr class="w-1/3 my-2">
-                                                    <div class="flex space-x-3 text-gray-500">
-                                                        <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
-                                                        <span>&nbsp;~&nbsp;&nbsp;</span>
-                                                        <!-- <p><? // // date('d-m-Y', strtotime($value['tanggal_mulai_selesai'])) 
-                                                                ?></p> -->
-                                                    </div>
-                                                    <hr class="my-2">
-                                                    <!-- <p class="text-[12px] capitalize text-end text-gray-500">diajukan pada :<?php //$value[''] 
-                                                                                                                                    ?></p> -->
-
-                                                </div>
-                                            </div>
-                                        </a>
-                                    <?php endforeach; ?>
+                                    </div>
                                 </div>
                             </div>
                         </a>
@@ -159,51 +134,36 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
             <?php endif ?>
         </div>
     </div>
-    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
-        <div class="w-full grid grid-cols-1 gap-y-4 ">
+
+
+    <div class="hidden p-4 rounded-lg bg-gray-50 " id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
+        <div class="w-full grid grid-cols-1    gap-y-4">
             <?php if (!empty($pengajuanDinas)): ?>
                 <?php foreach ($pengajuanDinas as $key => $value) : ?>
                     <?php if ($value['status'] == '2') : ?>
-
                         <a href="<?php echo \yii\helpers\Url::to(['/pengajuan/dinas-detail/', 'id' => $value['id_pengajuan_dinas']]) ?>">
-                            <div class="grid grid-cols-12 gap-5 ">
-                                <div class="w-full grid grid-cols-1 gap-y-4 ">
-                                    <?php foreach ($pengajuanDinas as $key => $value) : ?>
-                                        <a href="<?php echo \yii\helpers\Url::to(['/pengajuan/dinas-detail/', 'id' => $value['id_pengajuan_dinas']]) ?>">
-                                            <div class="grid grid-cols-12 gap-5 ">
-                                                <?php if ($value['status'] == '0') : ?>
-                                                    <div class="col-span-1 h-full bg-yellow-200 rounded-full "></div>
-                                                <?php elseif ($value['status'] == '1') : ?>
-                                                    <div class="col-span-1 h-full bg-green-200 rounded-full "></div>
-                                                <?php elseif ($value['status'] == '2') : ?>
-                                                    <div class="col-span-1 h-full bg-red-200 rounded-full "></div>
-                                                <?php endif ?>
-                                                <div class="p-2 text-sm col-span-11  bg-white rounded-md w-full">
-
-                                                    <?php
-                                                    $teks = $value['keterangan_perjalanan'];
-                                                    $kata = explode(' ', $teks);
-                                                    $kataTerbatas = array_slice($kata, 0, 10); // Ubah 10 menjadi jumlah kata yang diinginkan
-                                                    $teksTerbatas = implode(' ', $kataTerbatas);
-                                                    ?>
-                                                    <p><?= $teksTerbatas ?>...</p>
+                            <div class="grid grid-cols-1 w-full">
+                                <div class="w-full grid grid-cols-1 ">
+                                    <div class="grid grid-cols-1">
+                                        <div class="p-2 text-sm col-span-11  bg-white rounded-md w-full">
+                                            <?php
+                                            $teks = $value['keterangan_perjalanan'];
+                                            $kata = explode(' ', $teks);
+                                            $kataTerbatas = array_slice($kata, 0, 10); // Ubah 10 menjadi jumlah kata yang diinginkan
+                                            $teksTerbatas = implode(' ', $kataTerbatas);
+                                            ?>
+                                            <p><?= $teksTerbatas ?>...</p>
 
 
-                                                    <hr class="w-1/3 my-2">
-                                                    <div class="flex space-x-3 text-gray-500">
-                                                        <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
-                                                        <span>&nbsp;~&nbsp;&nbsp;</span>
-                                                        <!-- <p><? // date('d-m-Y', strtotime($value['tanggal_mulai_selesai'])) 
-                                                                ?></p> -->
-                                                    </div>
-                                                    <hr class="my-2">
-                                                    <!-- <p class="text-[12px] capitalize text-end text-gray-500">diajukan pada :<?php //$value[''] 
-                                                                                                                                    ?></p> -->
-
-                                                </div>
+                                            <hr class="w-1/3 my-2">
+                                            <div class="flex space-x-3 text-gray-500">
+                                                <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
+                                                <span>&nbsp;~&nbsp;&nbsp;</span>
                                             </div>
-                                        </a>
-                                    <?php endforeach; ?>
+                                            <hr class="my-2">
+
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </a>

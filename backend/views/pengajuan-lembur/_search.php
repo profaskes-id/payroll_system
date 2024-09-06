@@ -1,5 +1,7 @@
 <?php
 
+use backend\models\Karyawan;
+use backend\models\MasterKode;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -20,7 +22,7 @@ use yii\widgets\ActiveForm;
     <div class="row">
 
         <div class="col-5">
-            <?php $nama_group = \yii\helpers\ArrayHelper::map(\backend\models\karyawan::find()->all(), 'id_karyawan', 'nama');
+            <?php $nama_group = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
             echo $form->field($model, 'id_karyawan')->widget(kartik\select2\Select2::classname(), [
                 'data' => $nama_group,
                 'language' => 'id',
@@ -33,7 +35,7 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
         <div class="col-4">
-            <?php $nama_kode = \yii\helpers\ArrayHelper::map(\backend\models\MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->all(), 'kode', 'nama_kode');
+            <?php $nama_kode = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->all(), 'kode', 'nama_kode');
             echo $form->field($model, 'status')->widget(\kartik\select2\Select2::classname(), [
                 'data' => $nama_kode,
                 'language' => 'id',

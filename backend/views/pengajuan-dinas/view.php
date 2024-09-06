@@ -1,5 +1,6 @@
 <?php
 
+use amnah\yii2\user\models\User;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -40,30 +41,57 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => $model->karyawan->nama
                 ],
                 'keterangan_perjalanan:ntext',
-                'tanggal',
+                [
+                    'label' => 'Mulai Perjalanan',
+                    'value' => function ($model) {
+                        return date('d-m-Y', strtotime($model->tanggal_mulai));
+                    }
+                ],
+                [
+                    'label' => 'Selesai Pada',
+                    'value' => function ($model) {
+                        return date('d-m-Y', strtotime($model->tanggal_selesai));
+                    }
+                ],
                 'estimasi_biaya',
                 'biaya_yang_disetujui',
                 [
-                    'attribute' => 'Disetujui Oleh',
+                    'attribute' => 'Ditanggapi Oleh',
                     'value' => function ($model) {
                         if ($model->status == 0) {
-                            return '<span class="text-warning">Menuggu Persetujuan</span>';
+                            return '<span class="text-warning">Menuggu Tanggapan</span>';
                         }
-                        return $model->user->username ?? '<span class="text-danger">User Tidak Terdaftar</span>';
+                        $username = User::findOne(['id' => $model->disetujui_oleh])->username;
+                        return  $username ?? '<span class="text-danger">User Tidak Terdaftar</span>';
                     },
                     "format" => 'raw',
                 ],
-                'disetujui_pada',
                 [
+                    'attribute' => 'Ditanggapi Pada',
+                    'value' => function ($model) {
+                        if ($model->status == 0) {
+                            return '<span class="text-warning">Menuggu Tanggapan</span>';
+                        }
+                        return date('d-m-Y', strtotime($model->disetujui_pada)) ?? '<span class="text-danger">-</span>';
+                    },
+                    "format" => 'raw',
+                ],
+                [
+                    'format' => 'raw',
                     'attribute' => 'status',
                     'value' => function ($model) {
-                        return $model->statusPengajuan->nama_kode ?? "<span class='text-danger'>master kode tidak aktif</span>";
+                        if ($model->status == 0) {
+                            return '<span class="text-warning">Menuggu Tanggapan</span>';
+                        } elseif ($model->status == 1) {
+                            return '<span class="text-success">Pengajuan Telah Disetujui</span>';
+                        } elseif ($model->status == 2) {
+                            return '<span class="text-danger">Pengajuan  Ditolak</span>';
+                        } else {
+                            return "<span class='text-danger'>master kode tidak aktif</span>";
+                        }
                     },
-                    "format" => 'raw',
                 ],
-
             ],
-
         ]) ?>
 
     </div>

@@ -31,8 +31,8 @@ class RekapCuti extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_master_cuti', 'id_karyawan', 'total_hari_terpakai'], 'required'],
-            [['id_master_cuti', 'id_karyawan', 'total_hari_terpakai'], 'integer'],
+            [['id_master_cuti', 'id_karyawan', 'tahun', 'total_hari_terpakai'], 'required'],
+            [['id_master_cuti', 'id_karyawan', 'tahun', 'total_hari_terpakai'], 'integer'],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
             [['id_master_cuti'], 'exist', 'skipOnError' => true, 'targetClass' => MasterCuti::class, 'targetAttribute' => ['id_master_cuti' => 'id_master_cuti']],
         ];
@@ -47,6 +47,7 @@ class RekapCuti extends \yii\db\ActiveRecord
             'id_rekap_cuti' => 'Id Rekap Cuti',
             'id_master_cuti' => 'Id Master Cuti',
             'id_karyawan' => 'Id Karyawan',
+            'tahun' => 'Tahun',
             'total_hari_terpakai' => 'Total Hari Terpakai',
         ];
     }

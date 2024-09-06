@@ -85,7 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'class' => 'yii\grid\SerialColumn'
                                 ],
                                 [
-                                    'label' => 'nama_hari',
+                                    'label' => 'Nama Hari',
                                     'value' => function ($model) {
                                         return $model->getNamaHari($model->nama_hari);
                                     },
@@ -102,41 +102,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                             ],
                         ]); ?>
+
+
+
                     </div>
-                    <!-- <div class="tab-pane fade" id="custom-tabs-one-harilibur" role="tabpanel" aria-labelledby="custom-tabs-one-harilibur-tab">
-                        <p class="d-flex justify-content-end " style="gap: 10px;">
-                            <?= Html::a('Add new', ['/jadwal-kerja/create', 'id_jam_kerja' => $model->id_jam_kerja], ['class' => 'tambah-button']) ?>
-                        </p>
-                        <?php
-                        // GridView::widget([
-                        //     'dataProvider' => $hariLiburdataProvider,
-                        //     'columns' => [
-                        //         [
-                        //             'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                        //             'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
-                        //             'class' => 'yii\grid\SerialColumn'
-                        //         ],
-
-                        //         'tanggal',
-                        //         'nama_hari_libur',
-                        //         [
-
-                        //             'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                        //             'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                        //             'class' => ActionColumn::className(),
-                        //             'urlCreator' => function ($action, HariLibur $model, $key, $index, $column) {
-                        //                 return Url::toRoute(['hari-libur/view  ', 'id_hari_libur' => $model->id_hari_libur]);
-                        //             }
-                        //         ],
-                        //     ],
-                        // ]); 
-                        ?>
-                    </div> -->
-
                 </div>
+
             </div>
-
         </div>
-    </div>
 
-</div>
+    </div>

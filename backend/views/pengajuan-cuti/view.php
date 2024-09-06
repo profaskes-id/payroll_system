@@ -1,5 +1,6 @@
 <?php
 
+use amnah\yii2\user\models\User;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -47,22 +48,65 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->jenisCuti->jenis_cuti;
                     }
                 ],
-                'tanggal_pengajuan',
-                'tanggal_mulai',
-                'tanggal_selesai',
+                [
+                    'label' => 'Diajukan Pada',
+                    'value' => function ($model) {
+                        return date('d-m-Y', strtotime($model->tanggal_pengajuan));
+                    }
+                ],
+                [
+                    'label' => 'Tanggal Mulai Cuti',
+                    'value' => function ($model) {
+                        return date('d-m-Y', strtotime($model->tanggal_mulai));
+                    }
+                ],
+                [
+                    'label' => 'Tanggal Selesai Cuti',
+                    'value' => function ($model) {
+                        return date('d-m-Y', strtotime($model->tanggal_selesai));
+                    }
+                ],
                 'alasan_cuti:ntext',
+                [
+                    'attribute' => 'Ditanggapi Oleh',
+                    'value' => function ($model) {
+                        if ($model->status == 0) {
+                            return '<span class="text-warning">Menuggu Tanggapan</span>';
+                        }
+                        $nama = User::findOne(['id' => $model->ditanggapi_oleh]);
+
+                        return  $nama->username ?? '<span class="text-danger">User Tidak Terdaftar</span>';
+                    },
+                    "format" => 'raw',
+                ],
+                [
+                    'attribute' => 'Ditanggapi Pada',
+                    'value' => function ($model) {
+                        if ($model->status == 0) {
+                            return '<span class="text-warning">Menuggu Tanggapan</span>';
+                        }
+                        if ($model->ditanggapi_pada) {
+                            return date('d-m-Y', strtotime($model->ditanggapi_pada)) ?? '<span class="text-danger">-</span>';
+                        } else {
+                            return '<span class="text-danger">-</span>';
+                        }
+                    },
+                    "format" => 'raw',
+                ],
                 [
                     'format' => 'raw',
                     'attribute' => 'status',
                     'value' => function ($model) {
-                        return $model->statusPengajuan->nama_kode ?? "<span class='text-danger'>master kode tidak aktif</span>";
+                        if ($model->status == 0) {
+                            return '<span class="text-warning">Menuggu Tanggapan</span>';
+                        } elseif ($model->status == 1) {
+                            return '<span class="text-success">Pengajuan Telah Disetujui</span>';
+                        } elseif ($model->status == 2) {
+                            return '<span class="text-danger">Pengajuan  Ditolak</span>';
+                        } else {
+                            return "<span class='text-danger'>master kode tidak aktif</span>";
+                        }
                     },
-                ],
-                [
-                    'label' => 'Tanggapan Admin',
-                    'value' => function ($model) {
-                        return $model->catatan_admin ?? '-';
-                    }
                 ],
             ],
         ]); ?>

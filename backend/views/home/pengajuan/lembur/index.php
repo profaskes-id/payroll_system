@@ -127,8 +127,8 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                     <?php if ($value['status'] == '2') : ?>
 
                         <a href="<?php echo \yii\helpers\Url::to(['/pengajuan/lembur-detail/', 'id' => $value['id_pengajuan_lembur']]) ?>">
-                            <div class="grid grid-cols-12 gap-5 ">
-                                <div class="p-2 text-sm col-span-11  bg-white rounded-md w-full">
+                            <div class="grid grid-cols-1 gap-5 ">
+                                <div class="p-2 text-sm col-span-1 bg-white rounded-md w-full">
                                     <p class="text-[15px] capitalize  text-gray-500">Pengajuan Lembur : <strong><?= date('d M Y', strtotime($value['tanggal'])) ?></strong></p>
                                     <hr class="w-2/3 my-2">
                                     <div class="flex space-x-3 text-gray-500">

@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\Absensi;
+use backend\models\Bagian;
 use backend\models\Karyawan;
 use kartik\select2\Select2;
 use yii\bootstrap4\ActiveForm;
@@ -39,7 +40,7 @@ $today = date('Y-m-d');
             <div class="col-12 col-md-5">
                 <?php
                 $idBagian = Yii::$app->request->post('Bagian')['id_bagian'] ?? 0;
-                $data = \yii\helpers\ArrayHelper::map(\backend\models\Bagian::find()->all(), 'id_bagian', 'nama_bagian');
+                $data = \yii\helpers\ArrayHelper::map(Bagian::find()->all(), 'id_bagian', 'nama_bagian');
                 echo $form->field($bagian, 'id_bagian')->widget(Select2::classname(), [
                     'data' => $data,
                     'options' => ['placeholder' => 'Pilih Divisi ...'],

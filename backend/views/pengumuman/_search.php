@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\Pengumuman;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -19,7 +20,7 @@ use yii\widgets\ActiveForm;
 
         <div class="row">
             <div class="col-5">
-                <?php $nama_group = \yii\helpers\ArrayHelper::map(\backend\models\Pengumuman::find()->all(), 'judul', 'judul');
+                <?php $nama_group = \yii\helpers\ArrayHelper::map(Pengumuman::find()->all(), 'judul', 'judul');
                 echo $form->field($model, 'judul')->widget(kartik\select2\Select2::classname(), [
                     'data' => $nama_group,
                     'language' => 'id',

@@ -28,12 +28,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'tanggal_selesai') ?>
 
-    <?php // echo $form->field($model, 'alasan_cuti') ?>
-
-    <?php // echo $form->field($model, 'status') ?>
-
-    <?php // echo $form->field($model, 'catatan_admin') ?>
-
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
         <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
