@@ -18,12 +18,12 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
 
 
-<div class="max-w-[500px] mx-auto sm:px-6 lg:px-8">
+<div class="max-w-[500px] mx-auto px-5 lg:px-8">
 
 
 
     <?= $this->render('@backend/views/components/_header', ['title' => 'Absensi']); ?>
-    <section class="grid grid-cols-12 justify-center p-5 gap-y-10">
+    <section class="grid grid-cols-12 justify-center mt-2 gap-y-10">
 
 
 
@@ -64,7 +64,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
                 <label for="message" class="col-span-12 block mb-2 text-sm font-medium text-gray-900 ">
                     <span class="block pb-2">Keterangan</span>
-                    <?= $form->field($model, 'keterangan')->textarea(['rows' => 2, 'maxlength' => true, 'class' => 'block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 '])->label(false) ?>
+                    <?= $form->field($model, 'keterangan')->textarea(['rows' => 12, 'maxlength' => true, 'class' => 'block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 '])->label(false) ?>
                 </label>
 
                 <label class="col-span-12 block mb-2 text-sm font-medium text-gray-900 " for="file_input">

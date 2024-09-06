@@ -54,12 +54,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 // 'dari',
                 // 'sampai',
-                [
-                    'attribute' => 'status',
-                    'value' => function ($model) {
-                        return $model->statusPekerjaan->nama_kode;
-                    }
-                ],
+                // [
+                //     'attribute' => 'status',
+                //     'value' => function ($model) {
+                //         return $model->statusPekerjaan->nama_kode;
+                //     }
+                // ],
                 'jabatan',
                 [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),

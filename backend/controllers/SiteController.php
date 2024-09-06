@@ -81,7 +81,6 @@ class SiteController extends Controller
             $TotalData = Absensi::find()->where(['tanggal' => date('Y-m-d')])->count();
             // 3. total yang belum isi absen
             $TotalDataBelum = $TotalKaryawan - $TotalData;
-            // dd($TotalDataBelum);
             // 4. total izin
             $izin = MasterKode::find()->where(['nama_group' => 'status-hadir', 'nama_kode' => 'Izin'])->one();
             $TotalIzin = Absensi::find()->where(['kode_status_hadir' => $izin->kode, 'tanggal' => date('Y-m-d')])->count();

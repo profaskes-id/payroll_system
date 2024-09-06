@@ -45,9 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <li class="nav-item">
                             <a class="nav-link" id="custom-tabs-one-settings-tab" data-toggle="pill" href="#custom-tabs-one-settings" role="tab" aria-controls="custom-tabs-one-settings" aria-selected="false">Data Keluarga</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="custom-tabs-one-pekerjaan-tab" data-toggle="pill" href="#custom-tabs-one-pekerjaan" role="tab" aria-controls="custom-tabs-one-pekerjaan" aria-selected="false">Data Pekerjaan</a>
-                        </li>
+
                     </ul>
                 </div>
                 <div class="card-body">
@@ -73,8 +71,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                             'kode_karyawan',
                                             'nama',
                                             'nomer_identitas',
-                                            'jenis_identitas',
-                                            // ...
+                                            [
+
+                                                'label' => 'Jenis Identitas',
+                                                'value' => function ($model) {
+                                                    return $model->jenisidentitas->nama_kode ?? '';
+                                                }
+                                            ],
                                             [
                                                 'attribute' => 'kode_jenis_kelamin',
                                                 'label' => 'Jenis Kelamin',
@@ -82,23 +85,39 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     return $model->kode_jenis_kelamin == 1 ? 'Laki-laki' : 'Perempuan';
                                                 }
                                             ],
-                                          
+
+
                                             [
-                                                'label' => 'Divisi',
+                                                'label' => 'Tanggal Lahir',
                                                 'value' => function ($model) {
-                                                    $divisiAktif = [];
-                                                    // return $model->data->nama_kode;
-                                                    $filteredData = array_filter($model->dataPekerjaans, function($item) {
-                                                        return $item->is_aktif != 2;
-                                                    });
-                                                    foreach ($filteredData as $key => $value) {
-                                                        $divisiAktif[] = $value->bagian->nama_bagian;
-                                                    }
-                                                    // return implode(', ', $divisiAktif);
-                                                    return implode(', ', $divisiAktif);
-                            
+                                                    return date('d-M-Y', strtotime($model->tanggal_lahir));
                                                 }
-                                            ]
+                                            ],
+                                            [
+                                                'attribute' => 'nomer_telepon',
+                                                'label' => 'Nomer Telepon',
+                                            ],
+                                            [
+                                                'attribute' => 'email',
+                                                'label' => 'Email',
+                                                'format' => 'email',
+                                            ],
+                                            [
+                                                'label' => 'Agama',
+                                                'value' => function ($model) {
+                                                    return $model->masterAgama->nama_kode;
+                                                }
+                                            ],
+                                            [
+                                                'attribute' => 'suku',
+                                                'label' => 'Suku',
+                                            ],
+                                            [
+                                                'label' => 'Status Nikah',
+                                                'value' => function ($model) {
+                                                    return $model->statusNikah->nama_kode;
+                                                }
+                                            ],
                                         ],
                                     ]) ?>
                                 </div>
@@ -107,36 +126,183 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'model' => $model,
                                         'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
                                         'attributes' => [
-                                            // Last 4 attributes
 
-                                            'tanggal_lahir',
-
-                                            [
-                                                'label' => 'Provinsi',
-                                                'value' => 'kode_provinsi'
-                                            ],
                                             [
                                                 'label' => 'Negara',
-                                                'value' => 'kode_negara'
+                                                'value' => function ($model) {
+                                                    return $model->kode_negara;
+                                                }
+                                            ],
+                                            [
+                                                'label' => 'Provinsi',
+                                                'value' => function ($model) {
+                                                    if (!$model->is_current_domisili) {
+                                                        return $model->provinsidomisili->nama_prop ?? '-';
+                                                    }
+                                                    return $model->provinsiidentitas->nama_prop;
+                                                }
                                             ],
                                             [
                                                 'label' => 'Kabupaten / Kota',
-                                                'value' => 'kode_kabupaten_kota'
+                                                'value' => function ($model) {
+                                                    if (!$model->is_current_domisili) {
+                                                        return $model->kabupatendomisili->nama_kab ?? '-';
+                                                    }
+                                                    return $model->kabupatenidentitas->nama_kab;
+                                                }
                                             ],
                                             [
-                                                'label' => 'Kecamatan',
-                                                'value' => 'kode_kecamatan'
+                                                'label' => 'Kecamatam',
+                                                'value' => function ($model) {
+                                                    if (!$model->is_current_domisili) {
+                                                        return $model->kecamatandomisili->nama_kec ?? '-';
+                                                    }
+                                                    return $model->kecamatanidentitas->nama_kec ?? '-';
+                                                }
                                             ],
-                                            'alamat',
                                             [
-                                                'attribute' => 'email',
-                                                'label' => 'Email',
-                                                'format' => 'email',
+                                                'label' => 'Alamat',
+                                                'value' => function ($model) {
+                                                    if (!$model->is_current_domisili) {
+                                                        return $model->alamat_domisili;
+                                                    }
+                                                    return $model->alamat_identitas;
+                                                }
                                             ],
+                                            [
+                                                'label' => 'Desa',
+                                                'value' => function ($model) {
+                                                    if (!$model->is_current_domisili) {
+                                                        return $model->desa_lurah_domisili;
+                                                    }
+                                                    return $model->desa_lurah_identitas;
+                                                }
+                                            ],
+
+                                            [
+                                                'attribute' => 'RT',
+                                                'value' => function ($model) {
+                                                    if (!$model->is_current_domisili) {
+                                                        return $model->rt_domisili;
+                                                    }
+                                                    return $model->rt_identitas;
+                                                }
+                                            ],
+                                            [
+                                                'attribute' => 'RW',
+                                                'value' => function ($model) {
+                                                    if (!$model->is_current_domisili) {
+                                                        return $model->rw_domisili;
+                                                    }
+                                                    return $model->rw_identitas;
+                                                }
+                                            ],
+                                            [
+                                                'attribute' => 'Informasi Lain',
+                                                'value' => function ($model) {
+                                                    return $model->informasi_lain;
+                                                }
+                                            ]
+
+                                        ],
+                                    ]) ?>
+                                </div>
+                                <div class="col-md-6">
+                                    <?= DetailView::widget([
+                                        'model' => $model,
+                                        'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                                        'attributes' => [
+                                            [
+                                                'label' => 'CV',
+                                                'value' => function ($model) {
+                                                    if ($model->ijazah_terakhir != null) {
+                                                        return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->cv, ['target' => '_blank']);
+                                                    }
+                                                    return '<p>Belum Di Set<p>';
+                                                },
+                                                'format' => 'raw',
+                                            ],
+                                            [
+                                                'label' => 'Foto',
+                                                'value' => function ($model) {
+                                                    if ($model->foto != null) {
+                                                        return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->foto, ['target' => '_blank']);
+                                                    }
+                                                    return '<p>Belum Di Set<p>';
+                                                },
+                                                'format' => 'raw',
+                                            ],
+                                            [
+                                                'label' => 'Ijazah Terakhir',
+                                                'value' => function ($model) {
+                                                    if ($model->ijazah_terakhir != null) {
+                                                        return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->ijazah_terakhir, ['target' => '_blank']);
+                                                    }
+                                                    return '<p>Belum Di Set<p>';
+                                                },
+                                                'format' => 'raw',
+                                            ],
+
                                         ],
                                     ]) ?>
                                 </div>
                             </div>
+
+                            <div style="display: flex !important; align-items: center; justify-content: space-between ;margin-block: 20px 10px" style="gap: 10px;">
+                                <p style="font-weight: 700  ;">Data Pekerjaan</p>
+                                <?= Html::a('Add new', ['/data-pekerjaan/create', 'id_karyawan' => $model->id_karyawan], ['class' => 'tambah-button']) ?>
+                            </div>
+
+                            <?= GridView::widget([
+                                'dataProvider' => $pekrjaandataProvider,
+                                'columns' => [
+                                    [
+                                        'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                                        'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
+                                        'class' => 'yii\grid\SerialColumn'
+                                    ],
+                                    [
+                                        'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                                        'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                                        'class' => ActionColumn::className(),
+                                        'urlCreator' => function ($action, DataPekerjaan $model, $key, $index, $column) {
+                                            return Url::toRoute(['data-pekerjaan/view/', 'id_data_pekerjaan' => $model->id_data_pekerjaan]);
+                                        }
+                                    ],
+                                    [
+                                        'label' => 'Bagian',
+                                        'value' => function ($model) {
+                                            return $model->bagian->nama_bagian;
+                                        }
+                                    ],
+
+                                    [
+                                        'headerOptions' => ['style' => 'text-align: center;'],
+                                        'contentOptions' => ['style' => 'text-align: center;'],
+                                        'label' => 'Dari',
+                                        'value' => function ($model) {
+                                            return date('d-m-Y', strtotime($model->dari));
+                                        }
+                                    ],
+                                    [
+                                        'headerOptions' => ['style' => 'text-align: center;'],
+                                        'contentOptions' => ['style' => 'text-align: center;'],
+                                        'attribute' => 'status',
+                                        'value' => function ($model) {
+                                            return $model->statusPekerjaan->nama_kode;
+                                        }
+                                    ],
+                                    [
+                                        'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
+                                        'contentOptions' => ['style' => 'width: 10%; text-align: center;'],
+                                        'label' => 'Aktif',
+                                        'format' => 'html',
+                                        'value' => function ($model) {
+                                            return $model->is_aktif ? '<span class="text-success">YA</span>' : '<span class="text-danger">Tidak</span>';
+                                        }
+                                    ],
+                                ],
+                            ]); ?>
 
                         </div>
                         <div class="tab-pane fade" id="custom-tabs-one-profile" role="tabpanel" aria-labelledby="custom-tabs-one-profile-tab">
@@ -165,7 +331,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'posisi',
                                     'masuk_pada',
                                     'keluar_pada',
-                                 
+
+
                                 ],
                             ]); ?>
 
@@ -204,8 +371,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'institusi',
                                     'tahun_masuk',
                                     'tahun_keluar',
-                                    
-                                
+
+
                                 ],
                             ]);
                             ?>
@@ -237,80 +404,11 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'hubungan',
                                     'pekerjaan',
                                     'tahun_lahir',
-                               
+
                                 ],
                             ]); ?>
                         </div>
-                        <div class="tab-pane fade" id="custom-tabs-one-pekerjaan" role="tabpanel" aria-labelledby="custom-tabs-one-pekerjaan-tab">
 
-                            <p class="d-flex justify-content-end " style="gap: 10px;">
-                                <?= Html::a('Add new', ['/data-pekerjaan/create', 'id_karyawan' => $model->id_karyawan], ['class' => 'tambah-button']) ?>
-                            </p>
-
-
-                            <?= GridView::widget([
-                                'dataProvider' => $pekrjaandataProvider,
-                                'columns' => [
-                                    [
-                                        'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                        'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                        'class' => 'yii\grid\SerialColumn'
-                                    ],
-                                    [
-                                        'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                                        'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                        'class' => ActionColumn::className(),
-                                        'urlCreator' => function ($action, DataPekerjaan $model, $key, $index, $column) {
-                                            return Url::toRoute(['data-pekerjaan/view/', 'id_data_pekerjaan' => $model->id_data_pekerjaan]);
-                                        }
-                                    ],
-
-                                    [
-                                        'label' => 'Bagian',
-                                        'value' => function ($model) {
-                                            return $model->bagian->nama_bagian;
-                                        }
-                                    ],
-
-                                    [
-                                        'headerOptions' => ['style' => 'text-align: center;'],
-                                        'contentOptions' => ['style' => 'text-align: center;'],
-                                        'label' => 'Dari',
-                                        'value' => function ($model) {
-                                            return date('d-m-Y', strtotime($model->dari));
-                                        }
-                                    ],
-                                    [
-                                        'headerOptions' => ['style' => 'text-align: center;'],
-                                        'contentOptions' => ['style' => 'text-align: center;'],
-                                        'label' => 'Sampai',
-                                        'value' => function ($model) {
-                                            return date('d-m-Y', strtotime($model->sampai));
-                                        }
-                                    ],
-
-                                    [
-                                           'headerOptions' => ['style' => 'text-align: center;'],
-                                        'contentOptions' => ['style' => 'text-align: center;'],
-                                        'attribute' => 'status',
-                                        'value' => function ($model) {
-                                            return $model->statusPekerjaan->nama_kode;
-                                        }
-                                    ],
-                                    // 'jabatan',
-                                    [
-                                        'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
-                                        'contentOptions' => ['style' => 'width: 10%; text-align: center;'],
-                                        'label' => 'Aktif',
-                                        'format' => 'html',
-                                        'value' => function ($model) {
-                                            return $model->is_aktif ? '<span class="text-success">YA</span>' : '<span class="text-danger">Tidak</span>';
-                                        }
-                                        ]
-                            
-                                ],
-                            ]); ?>
-                        </div>
                     </div>
                 </div>
 

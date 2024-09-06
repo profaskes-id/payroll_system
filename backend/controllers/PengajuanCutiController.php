@@ -2,8 +2,12 @@
 
 namespace backend\controllers;
 
+use backend\models\MasterCuti;
+use backend\models\MasterKode;
 use backend\models\PengajuanCuti;
 use backend\models\PengajuanCutiSearch;
+use backend\models\RekapCuti;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -78,8 +82,16 @@ class PengajuanCutiController extends Controller
         $model = new PengajuanCuti();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]);
+            if ($model->load($this->request->post())) {
+                $model->tanggal_pengajuan = date('Y-m-d');
+                $model->sisa_hari = 0;
+
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Pengajuan Cuti Berhasil');
+                    return $this->redirect(['view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal Membuat Pengajuan Cuti');
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -101,7 +113,50 @@ class PengajuanCutiController extends Controller
     {
         $model = $this->findModel($id_pengajuan_cuti);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->sisa_hari = 0;
+            $model->ditanggapi_pada = date('Y-m-d');
+            $model->ditanggapi_oleh = Yii::$app->user->identity->id;
+            if ($model->save()) {
+
+                $rekapAsensi = new RekapCuti();
+                $rekapAsensi->id_karyawan = $model->id_karyawan;
+                $rekapAsensi->id_master_cuti = $model->jenis_cuti;
+
+
+
+                $timestamp_mulai = strtotime($model->tanggal_mulai);
+                $timestamp_selesai = strtotime($model->tanggal_selesai);
+
+                // Menghitung selisih hari
+                $selisih_detik = $timestamp_selesai - $timestamp_mulai;
+                $selisih_hari = $selisih_detik / (60 * 60 * 24);
+
+                if ($model->status == Yii::$app->params['diterima']) {
+                    $rekapan = RekapCuti::find()->where(['id_karyawan' => $model->id_karyawan, 'id_master_cuti' => $model->jenis_cuti, 'tahun' => date('Y', strtotime($model->tanggal_mulai))])->one();
+
+                    if ($rekapan) {
+                        $rekapan->total_hari_terpakai += $selisih_hari;
+                        $rekapan->save();
+                    } else {
+                        $NewrekapAsensi = new RekapCuti();
+                        $NewrekapAsensi->id_karyawan = $model->id_karyawan;
+                        $NewrekapAsensi->id_master_cuti = $model->jenis_cuti;
+                        $NewrekapAsensi->total_hari_terpakai = 0;
+                        $NewrekapAsensi->total_hari_terpakai += $selisih_hari;
+                        $NewrekapAsensi->tahun = date('Y', strtotime($model->tanggal_mulai));
+                        $NewrekapAsensi->save();
+                    }
+                }
+
+
+
+
+                Yii::$app->session->setFlash('success', 'Pengajuan Cuti Berhasil Ditanggapi');
+
+                return $this->redirect(['view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]);
+            }
+            Yii::$app->session->setFlash('error', 'Pengajuan Cuti gagal Ditanggapi');
             return $this->redirect(['view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]);
         }
 

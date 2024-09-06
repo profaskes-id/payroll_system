@@ -52,7 +52,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 'keterangan:ntext',
-                'lampiran',
+                [
+                    'label' => 'Lampiran',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        return Html::img(Yii::getAlias('@root') . '/panel/' . $model->lampiran, ['width' => '100px', 'alt' => 'lampiran']);
+                    }
+                ]
             ],
         ]) ?>
 

@@ -54,7 +54,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
 
-                'tanggal',
+                [
+                    'headerOptions' => ['style' => 'width: 15%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 15%; text-align: center;'],
+                    'label' => 'Hari Libur',
+                    'value' => function ($model) {
+                        return date('d-M-Y', strtotime($model->tanggal));
+                    }
+                ],
+                // 'tanggal',
                 'nama_hari_libur',
 
             ],

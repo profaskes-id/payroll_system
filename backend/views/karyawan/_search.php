@@ -1,5 +1,7 @@
 <?php
 
+use backend\models\Karyawan;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -17,12 +19,32 @@ use yii\widgets\ActiveForm;
 
     <div class="row">
         <div class="col-5">
-
-            <?= $form->field($model, 'kode_karyawan')->textInput(['placeholder' => "cari kode karyawan"])->label(false) ?>
+            <?php $nama_group = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'kode_karyawan', 'kode_karyawan');
+            echo $form->field($model, 'kode_karyawan')->widget(Select2::classname(), [
+                'data' => $nama_group,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Cari Kode Karyawan ...'],
+                'pluginOptions' => [
+                    'tags' => true,
+                    'allowClear' => true
+                ],
+            ])->label(false);
+            ?>
         </div>
         <div class="col-4">
-            <?= $form->field($model, 'nama')->textInput(['placeholder' => "cari nama"])->label(false) ?>
+            <?php $nama_group = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'nama', 'nama');
+            echo $form->field($model, 'nama')->widget(Select2::classname(), [
+                'data' => $nama_group,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Cari Nama Karyawan ...'],
+                'pluginOptions' => [
+                    'tags' => true,
+                    'allowClear' => true
+                ],
+            ])->label(false);
+            ?>
         </div>
+
         <div class="col-3">
             <div class="form-group d-flex items-center w-100  justify-content-around">
                 <button class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
@@ -41,7 +63,5 @@ use yii\widgets\ActiveForm;
             </div>
         </div>
     </div>
-
     <?php ActiveForm::end(); ?>
-
 </div>

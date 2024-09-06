@@ -4,9 +4,11 @@ namespace backend\controllers;
 
 use backend\models\DataPekerjaan;
 use backend\models\DataPekerjaanSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * DataPekerjaanController implements the CRUD actions for DataPekerjaan model.
@@ -79,8 +81,11 @@ class DataPekerjaanController extends Controller
         $model = new DataPekerjaan();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_data_pekerjaan' => $model->id_data_pekerjaan]);
+            if ($model->load($this->request->post())) {
+                $lampiranFilesuratLamaranPekerjaan = UploadedFile::getInstance($model, 'surat_lamaran_pekerjaan');
+                $lampiranFilesuratLamaranPekerjaan != null ? $this->saveImage($model, $lampiranFilesuratLamaranPekerjaan, 'surat_lamaran_pekerjaan') : $model->surat_lamaran_pekerjaan = null;
+                $model->save();
+                return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
             }
         } else {
             $model->loadDefaultValues();
@@ -102,8 +107,29 @@ class DataPekerjaanController extends Controller
     {
         $model = $this->findModel($id_data_pekerjaan);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_data_pekerjaan' => $model->id_data_pekerjaan]);
+        $oldPost = $model->oldAttributes;
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $lampiranFilesuratLamaranPekerjaan = UploadedFile::getInstance($model, 'surat_lamaran_pekerjaan');
+
+
+            $data = [
+                'surat_lamaran_pekerjaan' => $lampiranFilesuratLamaranPekerjaan,
+            ];
+
+            foreach ($data as $key => $value) {
+                if ($value != null) {
+                    $this->saveImage($model, $value, $key);
+                    // Hapus gambar lama jika ada
+                    if ($oldPost[$key]) {
+                        $this->deleteImage($oldPost[$key]);
+                    }
+                } else {
+                    $model->$key = $oldPost[$key];
+                }
+            }
+            $model->save();
+            return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
         }
 
         return $this->render('update', [
@@ -139,5 +165,41 @@ class DataPekerjaanController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function saveImage($model, $uploadedFile, $type)
+    {
+        $uploadsDir =  "";
+        if ($type == 'surat_lamaran_pekerjaan' || $type == 0) {
+            $uploadsDir =  Yii::getAlias('@webroot/uploads/surat_lamaran_pekerjaan/');
+        } else {
+            return false;
+        }
+
+        if ($uploadedFile) {
+
+            if (!is_dir($uploadsDir)) {
+                mkdir($uploadsDir, 0777, true);
+            }
+            $fileName = $uploadsDir . '/' . uniqid() . '.' . $uploadedFile->extension;
+
+            if ($uploadedFile->saveAs($fileName)) {
+                // Simpan path gambar baru ke model
+                $model->{$type} = 'uploads/' . $type . '/' . basename($fileName);
+                return true;
+            } else {
+                Yii::$app->session->setFlash('error', 'Failed to save the uploaded file.');
+                return false;
+            }
+        }
+    }
+
+    public function deleteImage($oldThumbnail)
+    {
+        if ($oldThumbnail && file_exists(Yii::getAlias('@webroot') . '/' . $oldThumbnail)) {
+            unlink(Yii::getAlias('@webroot') . '/' . $oldThumbnail);
+        } else {
+            return false;
+        }
     }
 }

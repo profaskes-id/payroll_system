@@ -8,12 +8,15 @@ use backend\models\DataKeluargaSearch;
 use backend\models\DataPekerjaanSearch;
 use backend\models\Karyawan;
 use backend\models\KaryawanSearch;
+use backend\models\MasterKab;
+use backend\models\MasterKec;
 use backend\models\PengalamanKerjaSearch;
 use backend\models\RiwayatPendidikanSearch;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * KaryawanController implements the CRUD actions for Karyawan model.
@@ -104,13 +107,6 @@ class KaryawanController extends Controller
         ]);
     }
 
-    /**
-     * Creates a new Karyawan model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
-
-
 
     public function actionInvite($id_karyawan)
     {
@@ -119,10 +115,8 @@ class KaryawanController extends Controller
         $user = new User();
         $user->email = $model->email;
 
-        $user->newPassword = $model->nomer_identitas;
+        $user->newPassword =  $id_karyawan . $model->kode_karyawan  . $model->jenis_identitas . $model->kode_jenis_kelamin;
         $user->setRegisterAttributes(2, 1);
-
-        // dd($user);
         if ($user->save()) {
             Yii::$app->session->setFlash('success', 'Berhasil Membuat Data');
             $profil = new Profile();
@@ -154,22 +148,40 @@ class KaryawanController extends Controller
         }
     }
 
-
-
     public function actionCreate()
     {
         $model = new Karyawan();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_karyawan' => $model->id_karyawan]);
+            $lampiranFileKtp = UploadedFile::getInstance($model, 'ktp');
+            $lampiranFileCv = UploadedFile::getInstance($model, 'cv');
+            $foto = UploadedFile::getInstance($model, 'foto');
+            $lampiranFileIjazah = UploadedFile::getInstance($model, 'ijazah_terakhir');
+            if ($model->load($this->request->post())) {
+                $lampiranFileKtp != null ? $this->saveImage($model, $lampiranFileKtp, 'ktp') : $model->ktp = null;
+                $lampiranFileCv != null ? $this->saveImage($model, $lampiranFileCv, 'cv') : $model->cv = null;
+                $foto != null ? $this->saveImage($model, $foto, 'foto') : $model->foto = null;
+                $lampiranFileIjazah != null ? $this->saveImage($model, $lampiranFileIjazah, 'ijazah_terakhir') : $model->ijazah_terakhir = null;
+                $model->kode_negara = 'indonesia';
+                $model->kode_karyawan = Yii::$app->request->post('Karyawan')['kode_karyawan'];
+
+
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Membuat Data');
+                    return $this->redirect(['index']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Terjadi Kesalahan saat menyimpan data');
+                }
             }
         } else {
             $model->loadDefaultValues();
         }
 
+
+        $nextKode = $model->generateAutoCode();
         return $this->render('create', [
             'model' => $model,
+            'nextKode' => $nextKode
         ]);
     }
 
@@ -183,8 +195,38 @@ class KaryawanController extends Controller
     public function actionUpdate($id_karyawan)
     {
         $model = $this->findModel($id_karyawan);
+        $oldPost = $model->oldAttributes;
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+
+            $lampiranFileKtp = UploadedFile::getInstance($model, 'ktp');
+            $lampiranFileCv = UploadedFile::getInstance($model, 'cv');
+            $foto = UploadedFile::getInstance($model, 'foto');
+            $lampiranFileIjazah = UploadedFile::getInstance($model, 'ijazah_terakhir');
+
+            $data = [
+                'ktp' => $lampiranFileKtp,
+                'cv' => $lampiranFileCv,
+                'foto' => $foto,
+                'ijazah_terakhir' => $lampiranFileIjazah
+            ];
+
+            foreach ($data as $key => $value) {
+                if ($value != null) {
+                    $this->saveImage($model, $value, $key);
+                    // Hapus gambar lama jika ada
+                    if ($oldPost[$key]) {
+                        $this->deleteImage($oldPost[$key]);
+                    }
+                } else {
+                    $model->$key = $oldPost[$key];
+                }
+            }
+
+
+            $model->save();
+
+
             return $this->redirect(['view', 'id_karyawan' => $model->id_karyawan]);
         }
 
@@ -202,7 +244,32 @@ class KaryawanController extends Controller
      */
     public function actionDelete($id_karyawan)
     {
-        $this->findModel($id_karyawan)->delete();
+        $model =  $this->findModel($id_karyawan);
+        $oldPost = $model->oldAttributes;
+        $oldThumbnailKtp = $oldPost['ktp'];
+        $oldThumbnailCv = $oldPost['cv'];
+        $foto = $oldPost['foto'];
+        $oldThumbnailIjazahTerakhir = $oldPost['ijazah_terakhir'];
+
+        if ($oldThumbnailKtp) {
+            $this->deleteImage($oldThumbnailKtp);
+        }
+
+        if ($oldThumbnailCv) {
+            $this->deleteImage($oldThumbnailCv);
+        }
+
+        if ($foto) {
+            $this->deleteImage($foto);
+        }
+
+        if ($oldThumbnailIjazahTerakhir) {
+            $this->deleteImage($oldThumbnailIjazahTerakhir);
+        }
+
+
+
+        $model->delete();
 
         return $this->redirect(['index']);
     }
@@ -221,5 +288,68 @@ class KaryawanController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+
+    public function saveImage($model, $uploadedFile, $type)
+    {
+        $uploadsDir =  "";
+        if ($type == 'ktp' || $type == 0) {
+            $uploadsDir =  Yii::getAlias('@webroot/uploads/ktp/');
+        } elseif ($type == 'cv' || $type == 1) {
+            $uploadsDir =  Yii::getAlias('@webroot/uploads/cv/');
+        } elseif ($type == 'foto' || $type == 2) {
+            $uploadsDir =  Yii::getAlias('@webroot/uploads/foto/');
+        } elseif ($type == 'ijazah_terakhir' || $type == 3) {
+            $uploadsDir =  Yii::getAlias('@webroot/uploads/ijazah_terakhir/');
+        } else {
+            return false;
+        }
+
+        if ($uploadedFile) {
+
+            if (!is_dir($uploadsDir)) {
+                mkdir($uploadsDir, 0777, true);
+            }
+            $fileName = $uploadsDir . '/' . uniqid() . '.' . $uploadedFile->extension;
+
+            if ($uploadedFile->saveAs($fileName)) {
+                // Simpan path gambar baru ke model
+                $model->{$type} = 'uploads/' . $type . '/' . basename($fileName);
+                return true;
+            } else {
+                Yii::$app->session->setFlash('error', 'Failed to save the uploaded file.');
+                return false;
+            }
+        }
+    }
+
+    public function deleteImage($oldThumbnail)
+    {
+        if ($oldThumbnail && file_exists(Yii::getAlias('@webroot') . '/' . $oldThumbnail)) {
+            unlink(Yii::getAlias('@webroot') . '/' . $oldThumbnail);
+        } else {
+            return false;
+        }
+    }
+
+    public function actionKabupaten($id_prop)
+    {
+        $kabupaten = MasterKab::find()
+            ->where(['kode_prop' => $id_prop])
+            ->all();
+        $dataKabupaten = \yii\helpers\ArrayHelper::map($kabupaten, 'kode_kab', 'nama_kab');
+        return $this->asJson($dataKabupaten);
+    }
+
+    public function actionKecamatan($id_kabupaten)
+    {
+        $kecamatan = MasterKec::find()
+            ->where(['kode_kab' => $id_kabupaten])
+            ->all();
+
+        $dataKecamatan = \yii\helpers\ArrayHelper::map($kecamatan, 'kode_kec', 'nama_kec');
+        return $this->asJson($dataKecamatan);
     }
 }

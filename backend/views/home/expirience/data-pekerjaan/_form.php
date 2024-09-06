@@ -14,10 +14,10 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <div class="mt-10 relative max-w-[332px]">
+    <div class="mt-10 relative ">
 
 
-        <div class="grid gap-6 mb-6 relative overflow-hidden">
+        <div class="grid gap-6 mb-6  relative overflow-hidden">
             <div class="col-span-12">
                 <?= $form->field($model, 'perusahaan')->textInput(['class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5', 'maxlength' => true])->label('Nama Perusahaan')
                 ?>

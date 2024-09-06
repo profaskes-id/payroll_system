@@ -1,5 +1,7 @@
 <?php
 
+use backend\models\Bagian;
+use backend\models\MasterKode;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -11,19 +13,20 @@ use yii\widgets\ActiveForm;
 
 <div class="data-pekerjaan-form table-container">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
     <div class="row">
 
         <?php $id_karyawan = Yii::$app->request->get('id_karyawan'); ?>
 
         <?= $form->field($model, 'id_karyawan')->hiddenInput(['value' => $id_karyawan ?? $model->id_karyawan])->label(false) ?>
+        <?= $form->field($model, 'is_currenty')->hiddenInput(['id' => 'is_currenty', 'value' => 1])->label(false) ?>
 
 
 
         <div class="col-md-6">
             <?php
-            $data = \yii\helpers\ArrayHelper::map(\backend\models\Bagian::find()->all(), 'id_bagian', 'nama_bagian');
+            $data = \yii\helpers\ArrayHelper::map(Bagian::find()->all(), 'id_bagian', 'nama_bagian');
             echo $form->field($model, 'id_bagian')->widget(Select2::classname(), [
                 'data' => $data,
                 'language' => 'id',
@@ -39,17 +42,39 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'dari')->textInput(['type' => 'date']) ?>
         </div>
 
-        <div class="col-md-6">
-            <?= $form->field($model, 'sampai')->textInput(['type' => 'date']) ?>
+        <div class="col-md-6 row align-items-center">
+            <div class="p-1 col-7">
+
+                <?= $form->field($model, 'sampai')->textInput(['id' => 'kode_sampai', 'type' => 'date', 'disabled' => 'true'])->label('sampai') ?>
+            </div>
+            <div class="col-5 mt-3">
+                <label for="manual_kode">
+                    <input type="checkbox" id="manual_kode" checked>
+                    <span style="font-size: 12px">Sampai Sekarang</span>
+                </label>
+            </div>
         </div>
 
         <div class="col-md-6">
             <?php
-            $data = \yii\helpers\ArrayHelper::map(\backend\models\MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pekerjaan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
+            $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pekerjaan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
             echo $form->field($model, 'status')->widget(Select2::classname(), [
                 'data' => $data,
                 'language' => 'id',
-                'options' => ['placeholder' => 'Pilih Status Pekerjaan ...'],
+                'options' => ['placeholder' => 'Pilih Status Karyawan ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ])->label('Status Karyawan');
+            ?>
+        </div>
+        <div class="col-12 col-md-4">
+            <?php
+            $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['jabatan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
+            echo $form->field($model, 'jabatan')->widget(Select2::classname(), [
+                'data' => $data,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Pilih Jabatan ...'],
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
@@ -57,16 +82,17 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
 
-        <div class="col-md-6">
-            <?= $form->field($model, 'jabatan')->textInput(['maxlength' => true, 'placeholder' => 'Jabatan']) ?>
-        </div>
 
 
-        <div class="col-6">
+        <div class="col-4">
             <?= $form->field($model, 'is_aktif')->dropDownList([
                 0 => 'Inactive',
                 1 => 'Active',
-            ], ['prompt' => 'Select Visibility'])->label('Aktif') ?>
+            ], ['prompt' => 'Pilih Status Jabatan'])->label('Status Jabatan') ?>
+        </div>
+        <div class="col-4">
+            <?= $form->field($model, 'surat_lamaran_pekerjaan')->fileInput(['class' => 'form-control'])->label('Surat Lamaran Pekerjaan') ?>
+
         </div>
     </div>
 
@@ -82,3 +108,15 @@ use yii\widgets\ActiveForm;
     <?php ActiveForm::end(); ?>
 
 </div>
+
+<script>
+    const manual_kode = document.querySelector('#manual_kode');
+    const kode_sampai = document.querySelector('#kode_sampai');
+    const is_currenty = document.querySelector('#is_currenty');
+
+    manual_kode.addEventListener('click', () => {
+        kode_sampai.disabled = kode_sampai.disabled ? false : true;
+        is_currenty.value = kode_sampai.disabled ? 1 : 0;
+
+    });
+</script>

@@ -209,9 +209,9 @@ class HomeController extends Controller
                 $model->jam_pulang = date('H:i:s');
                 $model->kode_status_hadir = Yii::$app->request->post('statusHadir');
                 $this->saveImage($model, $lampiranFile);
-
-                $model->save();
-                return $this->redirect(['index']);
+                if ($model->save()) {
+                    return $this->redirect(['index']);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -220,6 +220,16 @@ class HomeController extends Controller
         $this->layout = 'mobile-main';
         return $this->render('create', [
             'model' => $model,
+        ]);
+    }
+
+
+    public function actionTidakHadir($id_karyawan)
+    {
+        $absensi = Absensi::find()->where(['id_karyawan' => $id_karyawan, 'tanggal' => date('Y-m-d')])->one();
+        $this->layout = 'mobile-main';
+        return $this->render('tidak-hadir/index', [
+            'model' => $absensi
         ]);
     }
 
@@ -427,6 +437,7 @@ class HomeController extends Controller
     }
 
 
+
     // ?==============helper
     protected function findModel($id_absensi)
     {
@@ -439,13 +450,12 @@ class HomeController extends Controller
 
     public function saveImage($model, $uploadedFile,)
     {
-        $uploadsDir =  Yii::getAlias('@webroot/panel/uploads/lampiran/');
+        $uploadsDir =  Yii::getAlias('@webroot/uploads/lampiran/');
         if ($uploadedFile) {
             if (!is_dir($uploadsDir)) {
                 mkdir($uploadsDir, 0777, true);
             }
-            $fileName = $uploadsDir . '/' . uniqid() . '.' . $uploadedFile->extension;
-
+            $fileName = $uploadsDir  . uniqid() . '.' . $uploadedFile->extension;
             if ($uploadedFile->saveAs($fileName)) {
                 $model->lampiran = 'uploads/lampiran/' . basename($fileName);
             } else {

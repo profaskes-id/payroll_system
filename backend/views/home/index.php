@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <?php
 // Fungsi untuk memotong deskripsi dan menambahkan link
-function getShortDescription($description, $wordLimit = 4)
+function getShortDescription($description, $wordLimit = 5)
 {
     $words = explode(' ', $description);
     if (count($words) > $wordLimit) {
@@ -43,19 +43,13 @@ function getShortDescription($description, $wordLimit = 4)
         height: 100%;
     }
 
-
-
     .swiper {
         width: 100%;
         height: 200px;
     }
 
     .swiper-slide {
-        /* font-size: 18px; */
         background: #fff;
-        /* display: flex; */
-        /* justify-content: center; */
-        /* align-items: center; */
     }
 
     .swiper-slide img {
@@ -96,27 +90,21 @@ function getShortDescription($description, $wordLimit = 4)
                     </div>
                 </div>
 
-                <!-- swiper -->
                 <div class="  relative  justify-center gap-5 content-start p-5">
-
-                    <!-- Swiper -->
                     <div class="swiper mySwiper border rounded-xl overflow-hidden">
                         <div class="swiper-wrapper">
-
                             <?php foreach ($pengumuman as $key => $value) : ?>
                                 <div class="swiper-slide ">
                                     <a href="/panel/home/pengumuman?id_pengumuman=<?= $value['id_pengumuman'] ?>">
                                         <div class="grid grid-cols-12  w-full h-full">
                                             <div class="col-span-4 h-full ">
-
                                                 <img src="<?= Yii::getAlias('@root') . "/images/icons/toa.jpg" ?>" class="object-cover scale-100" alt="toa">
                                             </div>
-                                            <div class="col-span-8 p-3 w-full flex flex-col justify-around items-start h-full">
+                                            <div class="col-span-8 relative   w-full flex flex-col justify-start items-start h-full p-3">
                                                 <h1 class="text-lg font-semibold text-black"><?= getShortDescription($value['judul']); ?></h1>
-                                                <div class="w-full ">
+                                                <div class="w-full mt-4">
                                                     <p class="pb-2 text-sm text-gray-500"><?= getShortDescription($value['deskripsi']); ?></p>
-
-                                                    <p class=" text-gray-500 text-sm text-end"><?= date('d-M-Y', strtotime($value['dibuat_pada'])) ?></p>
+                                                    <p class="bg-white text-gray-500 text-sm text-end absolute right-2 bottom-2.5"><?= date('d-M-Y', strtotime($value['dibuat_pada'])) ?></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -124,16 +112,9 @@ function getShortDescription($description, $wordLimit = 4)
                                 </div>
                             <?php endforeach; ?>
                         </div>
-                        <!-- <div class=" lg:bloc/k swiper-button-next">
-                                            </div> -->
-                        <!-- <div class=" lg:block swiper-button-prev"></div> -->
                         <div class="swiper-pagination"></div>
                     </div>
 
-                    <!-- Swiper JS -->
-
-
-                    <!-- </section> -->
 
                 </div>
             </div>

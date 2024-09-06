@@ -3,9 +3,12 @@
 namespace backend\controllers;
 
 use backend\models\Karyawan;
+use backend\models\MasterCuti;
+use backend\models\MasterKode;
 use backend\models\PengajuanCuti;
 use backend\models\PengajuanDinas;
 use backend\models\PengajuanLembur;
+use backend\models\RekapCuti;
 use Yii;
 use yii\filters\VerbFilter;
 
@@ -61,23 +64,25 @@ class PengajuanController extends \yii\web\Controller
 
 
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
-        $pengajuanCuti = PengajuanCuti::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['status' => SORT_ASC, 'tanggal_pengajuan' => SORT_DESC])->all();
-
+        $pengajuanCuti = PengajuanCuti::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tahun' => date('Y')])->orderBy(['tanggal_pengajuan' => SORT_DESC, 'status' => SORT_ASC,])->all();
         return $this->render('/home/pengajuan/cuti/index', compact('pengajuanCuti'));
     }
 
     public function actionCutiCreate()
     {
 
+
         $this->layout = 'mobile-main';
         $model = new PengajuanCuti();
-
+        $jenisCuti = MasterCuti::find()->where(['status' => 1])->orderBy(['jenis_cuti' => SORT_ASC])->all();
+        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+        $rekapCuti = RekapCuti::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tahun' => date('Y')])->all();
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-
-                $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
                 $model->id_karyawan = $karyawan->id_karyawan;
-                $model->tanggal_pengajuan = date('Y-m-d');
+                $model->tanggal_pengajuan = date('Y-m-d H:i:s');
+                $model->jenis_cuti = Yii::$app->request->post('jenis_cuti');
+                $model->sisa_hari = 90;
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
                     return $this->redirect(['/pengajuan/cuti']);
@@ -87,8 +92,7 @@ class PengajuanController extends \yii\web\Controller
                 }
             }
         }
-
-        return $this->render('home/pengajuan/cuti/create', compact('model'));
+        return $this->render('home/pengajuan/cuti/create', compact('model', 'jenisCuti', 'rekapCuti'));
     }
 
     public function actionCutiDetail($id)
@@ -117,7 +121,6 @@ class PengajuanController extends \yii\web\Controller
         $poinArray = [];
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-
                 $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
                 $model->id_karyawan = $karyawan->id_karyawan;
                 $model->pekerjaan = json_encode(Yii::$app->request->post('pekerjaan'));

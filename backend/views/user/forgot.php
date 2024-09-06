@@ -25,12 +25,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php else: ?>
 
         <div class="row">
-            <div class="col-lg-5">
+            <div class="">
                 <?php $form = ActiveForm::begin(['id' => 'forgot-form']); ?>
-                    <?= $form->field($model, 'email') ?>
-                    <div class="form-group">
-                        <?= Html::submitButton(Yii::t('user', 'Submit'), ['class' => 'btn btn-primary']) ?>
-                    </div>
+                <?= $form->field($model, 'email')->textInput(['autofocus' => true, 'placeholder' => 'Email', 'type' => 'email', 'class' => 'form-control w-100']) ?>
+                <div class="form-group">
+                    <?= Html::submitButton(Yii::t('user', 'Submit'), ['class' => 'btn btn-primary']) ?>
+                </div>
                 <?php ActiveForm::end(); ?>
             </div>
         </div>

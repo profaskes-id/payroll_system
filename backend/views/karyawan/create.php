@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\Karyawan $model */
 
-$this->title = 'Tabmah Karyawan';
+$this->title = 'Tambah Karyawan';
 $this->params['breadcrumbs'][] = ['label' => 'karyawan', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -20,6 +20,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
+        'nextKode' => $nextKode
+
     ]) ?>
 
 </div>

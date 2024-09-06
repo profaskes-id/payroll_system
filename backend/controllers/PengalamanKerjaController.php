@@ -80,7 +80,6 @@ class PengalamanKerjaController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                // dd($model);
                 return $this->redirect('/panel/karyawan/view?id_karyawan=' . $model->id_karyawan);
             }
         } else {

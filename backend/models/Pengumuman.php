@@ -32,6 +32,7 @@ class Pengumuman extends \yii\db\ActiveRecord
         return [
             [['judul', 'deskripsi', 'dibuat_pada'], 'required'],
             [['deskripsi'], 'string'],
+            [['dibuat_pada', 'update_pada'], 'date'],
             [['dibuat_pada', 'update_pada'], 'safe'],
             [['dibuat_oleh'], 'integer'],
             [['judul'], 'string', 'max' => 255],

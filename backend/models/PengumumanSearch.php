@@ -17,7 +17,7 @@ class PengumumanSearch extends Pengumuman
     public function rules()
     {
         return [
-            [['id_pengumuman', 'dibuat_pada', 'update_pada', 'dibuat_oleh'], 'integer'],
+            [['id_pengumuman',  'dibuat_oleh'], 'integer'],
             [['judul', 'deskripsi'], 'safe'],
         ];
     }

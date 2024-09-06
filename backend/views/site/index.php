@@ -3,19 +3,27 @@
 use yii\helpers\Html;
 
 $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
-// $this->params['breadcrumbs'] = [['label' => $this->title]];
+
 ?>
 <link href="<?= Yii::getAlias('@root') . '/css/tailwind_output.css' ?>" rel="stylesheet">
 <style>
     h2 {
         color: #252525;
-        font-size: 45px;
+        font-size: 30px;
         text-transform: capitalize;
+        margin-bottom: 20px;
+    }
+
+    @media screen and (min-width: 768px) {
+        h2 {
+            font-size: 35px;
+        }
     }
 </style>
 
+
 <div class="container-fluid">
-    <div class="flex justify-between items-center mb-5 -mt-3">
+    <div class="flex justify-between items-center mb-5">
         <p class="text-gray-500 font-medium ">Lihar Rekapan Absnensi Hari Ini</p>
         <div class="flex space-x-2 items-center -mt-10">
 
@@ -66,7 +74,7 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
 
     <div class='table-container'>
         <h1 class="font-bold text-2xl">Rekap Data</h1>
-        <div class="grid grid-cols-3 plce-items-center  divide-x divide-x-2  gap-5 my-3 py-4 border-y-2 border-gray-200/70">
+        <div class="grid grid-cols-3 plce-items-center   divide-x-2  gap-5 my-3 py-4 border-y-2 border-gray-200/70">
             <div class="flex space-x-5 items-center w-full  ">
                 <div class="w-20 h-20 bg-sky-200 rounded-lg grid place-items-center">
                     <?= Html::img('@root/images/icons/users.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>

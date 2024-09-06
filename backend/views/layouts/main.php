@@ -467,6 +467,7 @@ if (
                 .respon {
                     margin-left: -250px !important;
                 }
+
             }
         </style>
         <?php $this->head() ?>
@@ -489,11 +490,10 @@ if (
             ?>
 
             <?php if (Yii::$app->user->can('admin')) : ?>
-                <?php //$this->render('navbar', ['assetDir' => $assetDir]); 
-                ?>
+                <?= $this->render('navbar', ['assetDir' => $assetDir]);   ?>
                 <?= $this->render('sidebar', ['assetDir' => $assetDir]); ?>
                 <!-- Content Wrapper. Contains page content -->
-                <main class="pt-3  " style=" background-color: #000000 ;">
+                <main class="pt-3  " style=" background-color: #272727 ;">
                     <?= $this->render('content', ['content' => $content, 'assetDir' => $assetDir]) ?>
                 </main>
             <?php else : ?>

@@ -1,5 +1,7 @@
 <?php
 
+use backend\models\JamKerja;
+use backend\models\Karyawan;
 use backend\models\MasterKode;
 use kartik\select2\Select2;
 use yii\helpers\Html;
@@ -16,7 +18,7 @@ use yii\widgets\ActiveForm;
     <div class="row">
         <div class="col-md-6">
             <?php
-            $data = \yii\helpers\ArrayHelper::map(\backend\models\Karyawan::find()->all(), 'id_karyawan', 'nama');
+            $data = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
             echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
                 'data' => $data,
                 'language' => 'id',
@@ -29,7 +31,7 @@ use yii\widgets\ActiveForm;
         </div>
         <div class="col-md-6">
             <?php
-            $data = \yii\helpers\ArrayHelper::map(\backend\models\JamKerja::find()->all(), 'id_jam_kerja', 'nama_jam_kerja');
+            $data = \yii\helpers\ArrayHelper::map(JamKerja::find()->all(), 'id_jam_kerja', 'nama_jam_kerja');
             echo $form->field($model, 'id_jam_kerja')->widget(Select2::classname(), [
                 'data' => $data,
                 'language' => 'id',
