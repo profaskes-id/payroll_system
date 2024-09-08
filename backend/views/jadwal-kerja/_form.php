@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 <div class="jadwal-kerja-form table-container">
 
     <?php
-    $formatter = new \IntlDateFormatter(
+    $formatter = intlDateFormatter::create(
         'id_ID',
         \IntlDateFormatter::FULL,
         \IntlDateFormatter::NONE,

@@ -9,7 +9,7 @@ return [
     'senderName' => 'Example.com mailer',
     'user.passwordResetTokenExpire' => 3600,
     'user.passwordMinLength' => 8,
-    'diterima'  => 1,
+    'disetujui'  => 1,
 
     'jenis-kelamin' => 'jenis-kelamin',
     'status-hadir' => 'status-hadir',

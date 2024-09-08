@@ -24,7 +24,6 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
 ?>
 
 <div class="karyawan-form table-container">
-
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
     <div class="row align-items-start ">
 
@@ -46,7 +45,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
                 <?= $form->field($model, 'nama')->textInput([])->label('Nama Lengkap') ?>
             </div>
             <div class="col-12 ">
-                <?= $form->field($model, 'nomer_identitas')->textInput(['type' => 'number'])->label('Nomer Identitas') ?>
+                <?= $form->field($model, 'nomer_identitas')->textInput(['type' => 'number'])->label('Nomor Identitas') ?>
             </div>
             <div class="col-12 ">
                 <?php
@@ -106,7 +105,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
                 <?= $form->field($model, 'email')->textInput(['type' => 'email'])->label('Email') ?>
             </div>
             <div class="col-12 ">
-                <?= $form->field($model, 'nomer_telepon')->textInput(['type' => 'telp'])->label('Nomer Telepon') ?>
+                <?= $form->field($model, 'nomer_telepon')->textInput(['type' => 'telp'])->label('Nomor Telepon') ?>
             </div>
         </div>
 

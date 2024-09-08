@@ -115,7 +115,7 @@ class Karyawan extends \yii\db\ActiveRecord
             'rt_identitas' => 'Rt Identitas',
             'rw_identitas' => 'Rw Identitas',
             'kode_post_identitas' => 'Kode Post Identitas',
-            'is_current_domisili' => 'Alamat Identitas Sama Sengan Alamat Domisili',
+            'is_current_domisili' => 'Alamat Identitas Sama Dengan Alamat Domisili',
             'kode_provinsi_domisili' => 'Kode Provinsi Domisili',
             'kode_kabupaten_kota_domisili' => 'Kode Kabupaten Kota Domisili',
             'kode_kecamatan_domisili' => 'Kode Kecamatan Domisili',

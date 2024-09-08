@@ -64,7 +64,7 @@ class PengajuanController extends \yii\web\Controller
 
 
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
-        $pengajuanCuti = PengajuanCuti::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tahun' => date('Y')])->orderBy(['tanggal_pengajuan' => SORT_DESC, 'status' => SORT_ASC,])->all();
+        $pengajuanCuti = PengajuanCuti::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal_pengajuan' => SORT_ASC, 'status' => SORT_ASC,])->all();
         return $this->render('/home/pengajuan/cuti/index', compact('pengajuanCuti'));
     }
 
@@ -107,7 +107,7 @@ class PengajuanController extends \yii\web\Controller
     {
         $this->layout = 'mobile-main';
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
-        $pengajuanLembur = PengajuanLembur::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal' => SORT_DESC, 'status' => SORT_ASC,])->all();
+        $pengajuanLembur = PengajuanLembur::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal' => SORT_ASC, 'status' => SORT_ASC,])->all();
         return $this->render('/home/pengajuan/lembur/index', compact('pengajuanLembur'));
     }
 
@@ -152,7 +152,7 @@ class PengajuanController extends \yii\web\Controller
     {
         $this->layout = 'mobile-main';
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
-        $pengajuanDinas = PengajuanDinas::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal_mulai' => SORT_DESC, 'status' => SORT_ASC,])->all();
+        $pengajuanDinas = PengajuanDinas::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal_mulai' => SORT_ASC, 'status' => SORT_ASC,])->all();
         return $this->render('/home/pengajuan/dinas/index', compact('pengajuanDinas'));
     }
 

@@ -28,87 +28,68 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class='table-container'>
 
 
-        <div class="card card-primary card-tabs">
-            <div class="card-header p-0 pt-1">
-                <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill" href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile" aria-selected="false">Jadwal Kerja</a>
-                    </li>
+        <div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
+
+            <p class="d-flex justify-content-end " style="gap: 10px;">
+                <?= Html::a('Update', ['update', 'id_jam_kerja' => $model->id_jam_kerja], ['class' => 'add-button']) ?>
+                <?= Html::a('Delete', ['delete', 'id_jam_kerja' => $model->id_jam_kerja], [
+                    'class' => 'reset-button',
+                    'data' => [
+                        'confirm' => 'Are you sure you want to delete this item?',
+                        'method' => 'post',
+                    ],
+                ]) ?>
+            </p>
+
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'id_jam_kerja',
+                    'nama_jam_kerja',
+                    [
+                        'label' => 'Jenis Shift',
+                        'value' => function ($model) {
+                            return $model->jenisShift->nama_kode;
+                        }
+                    ],
+                ],
+            ]) ?>
 
 
-                </ul>
+            <br>
+            <div class="d-flex align-items-center justify-content-between">
+                <h4>Jadwal Kerja</h4>
+                <p class="d-flex justify-content-end " style="gap: 10px;">
+                    <?= Html::a('Add new', ['/jadwal-kerja/create', 'id_jam_kerja' => $model->id_jam_kerja], ['class' => 'tambah-button']) ?>
+                </p>
             </div>
-            <div class="card-body">
-                <div class="tab-content" id="custom-tabs-one-tabContent">
-                    <div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
+            <?= GridView::widget([
+                'dataProvider' => $jadwalKerjaProvider,
+                'columns' => [
+                    [
+                        'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                        'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
+                        'class' => 'yii\grid\SerialColumn'
+                    ],
+                    [
+                        'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                        'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                        'class' => ActionColumn::className(),
+                        'urlCreator' => function ($action, JadwalKerja $model, $key, $index, $column) {
+                            return Url::toRoute(['jadwal-kerja/view', 'id_jadwal_kerja' => $model->id_jadwal_kerja]);
+                        }
+                    ],
+                    [
+                        'label' => 'Nama Hari',
+                        'value' => function ($model) {
+                            return $model->getNamaHari($model->nama_hari);
+                        },
+                    ],
+                    'jam_masuk',
+                    'jam_keluar',
 
-                        <p class="d-flex justify-content-end " style="gap: 10px;">
-                            <?= Html::a('Update', ['update', 'id_jam_kerja' => $model->id_jam_kerja], ['class' => 'add-button']) ?>
-                            <?= Html::a('Delete', ['delete', 'id_jam_kerja' => $model->id_jam_kerja], [
-                                'class' => 'reset-button',
-                                'data' => [
-                                    'confirm' => 'Are you sure you want to delete this item?',
-                                    'method' => 'post',
-                                ],
-                            ]) ?>
-                        </p>
-
-                        <?= DetailView::widget([
-                            'model' => $model,
-                            'attributes' => [
-                                'id_jam_kerja',
-                                'nama_jam_kerja',
-                                [
-                                    'label' => 'Jenis Shift',
-                                    'value' => function ($model) {
-                                        return $model->jenisShift->nama_kode;
-                                    }
-                                ],
-                            ],
-                        ]) ?>
-
-
-                    </div>
-                    <div class="tab-pane fade" id="custom-tabs-one-profile" role="tabpanel" aria-labelledby="custom-tabs-one-profile-tab">
-                        <p class="d-flex justify-content-end " style="gap: 10px;">
-                            <?= Html::a('Add new', ['/jadwal-kerja/create', 'id_jam_kerja' => $model->id_jam_kerja], ['class' => 'tambah-button']) ?>
-                        </p>
-                        <?= GridView::widget([
-                            'dataProvider' => $jadwalKerjaProvider,
-                            'columns' => [
-                                [
-                                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                    'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                    'class' => 'yii\grid\SerialColumn'
-                                ],
-                                [
-                                    'label' => 'Nama Hari',
-                                    'value' => function ($model) {
-                                        return $model->getNamaHari($model->nama_hari);
-                                    },
-                                ],
-                                'jam_masuk',
-                                'jam_keluar',
-                                [
-                                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                    'class' => ActionColumn::className(),
-                                    'urlCreator' => function ($action, JadwalKerja $model, $key, $index, $column) {
-                                        return Url::toRoute(['jadwal-kerja/view', 'id_jadwal_kerja' => $model->id_jadwal_kerja]);
-                                    }
-                                ],
-                            ],
-                        ]); ?>
-
-
-
-                    </div>
-                </div>
-
-            </div>
+                ],
+            ]); ?>
         </div>
-
     </div>
+</div>

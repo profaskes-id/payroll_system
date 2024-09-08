@@ -66,10 +66,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 'headerOptions' => ['style' => 'width: 20%; text-align: center;'],
                 'contentOptions' => ['style' => 'width: 20%; text-align: center;'],
             ],
-            // 'tanggal_pengajuan',
             [
-                'headerOptions' => ['style' => 'width: 30%; text-align: center;'],
-                'attribute' => 'jenis_cuti',
+                'headerOptions' => ['style' => 'width: 20%; text-align: center;'],
+                'contentOptions' => ['style' => 'width: 20%; text-align: center;'],
+                'label' => 'Tanggal Selesai',
+                'value' => function ($model) {
+                    return date('d-m-Y', strtotime($model->tanggal_selesai));
+                }
+            ],
+            [
+                'headerOptions' => ['style' => ' text-align: center;'],
+                'contentOptions' => ['style' => ' text-align: center;'],
+                'label' => 'Jenis Cuti',
                 'format' => 'raw',
                 'value' => function ($model) {
                     return $model->jenisCuti->jenis_cuti;
@@ -85,8 +93,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     if ($model->statusPengajuan->nama_kode !== null) {
                         if (strtolower($model->statusPengajuan->nama_kode) == "pending") {
                             return "<span class='text-capitalize btn btn-outline-warning '>Pending</span>";
-                        } elseif (strtolower($model->statusPengajuan->nama_kode) == "diterima") {
-                            return "<span class='text-capitalize btn btn-outline-success '>diterima</span>";
+                        } elseif (strtolower($model->statusPengajuan->nama_kode) == "disetujui") {
+                            return "<span class='text-capitalize btn btn-outline-success '>Disetujui</span>";
                         } elseif (strtolower($model->statusPengajuan->nama_kode) == "ditolak") {
                             return "<span class='text-capitalize btn btn-outline-danger '>ditolak</span>";
                         }

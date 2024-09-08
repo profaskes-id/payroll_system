@@ -73,6 +73,7 @@ $today = date('Y-m-d');
                 [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'format' => 'raw',
                     'value' => function ($model) {
                         if ($model['absensi']) {
@@ -82,10 +83,16 @@ $today = date('Y-m-d');
         </span>
         </button>', ['view', 'id_absensi' => $model['absensi'][0]['id_absensi']],);
                         }
-                        return '<p class="text-center text-sm text-danger">Tanpa Keterangan<p>';
+                        return '<p class="text-center text-sm text-danger">Belum Hadir<p>';
                     }
                 ],
-                'karyawan.nama',
+                [
+                    'label' => 'Karyawan',
+                    'value' => function($model){
+                        
+                        return $model['karyawan']['nama'];
+                    }
+                    ],
                 [
                     'headerOptions' => ['style' => 'width: 200px; text-align: center;'],
                     'contentOptions' => ['style' => 'text-align: center;'],

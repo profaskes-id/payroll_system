@@ -52,7 +52,7 @@ use yii\widgets\ActiveForm;
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
-            ])->label('Statu Pengajuan');
+            ])->label('Status Pengajuan');
             ?>
         </div>
 
