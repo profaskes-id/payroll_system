@@ -222,7 +222,7 @@ class Karyawan extends \yii\db\ActiveRecord
     {
         $ym = date('Y');
         $_left = "EP" . $ym;
-        $_first = "001";
+        $_first = "0001";
         $_len = strlen($_left);
         $noTransaksi = $_left . $_first;
         $last_kode = $this->find()

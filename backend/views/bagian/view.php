@@ -22,10 +22,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
     <div class='table-container'>
-        <p>
-            <?= Html::a('Update', ['update', 'id_bagian' => $model->id_bagian], ['class' => 'btn btn-primary']) ?>
-            <?= Html::a('Delete', ['delete', 'id_bagian' => $model->id_bagian], [
-                'class' => 'btn btn-danger',
+        <p class="d-flex justify-content-start " style="gap: 10px;">
+            <?= Html::a('Update', ['update', 'id_perusahaan' => $model->id_perusahaan,], ['class' => 'add-button']) ?>
+            <?= Html::a('Delete', ['delete', 'id_perusahaan' => $model->id_perusahaan,], [
+                'class' => 'reset-button',
                 'data' => [
                     'confirm' => 'Are you sure you want to delete this item?',
                     'method' => 'post',
@@ -36,10 +36,9 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= DetailView::widget([
             'model' => $model,
             'attributes' => [
-                'id_bagian',
                 'nama_bagian',
                 [
-                    'label' => 'id_perusahaan',
+                    'label' => 'perusahaan',
                     'value' => function ($model) {
                         return $model->perusahaan->nama_perusahaan;
                     }

@@ -19,10 +19,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'total_hari_pertahun')->textInput() ?>
 
-    <?= $form->field($model, 'status')->dropDownList(
-        [0 => 'Tidak Aktif', 1 => 'Aktif',], // Daftar opsi
-        ['prompt' => 'Pilih Status Aktif'] // Opsi tambahan, misalnya placeholder
+    <?= $form->field($model, 'status')->radioList(
+        [0 => 'Tidak Aktif', 1 => 'Aktif'], // Daftar opsi
+        ['itemOptions' => ['labelOptions' => ['style' => 'margin-right: 10px;']]] // Opsi tambahan, misalnya style
     )->label('Status Aktif') ?>
+
     <div class="form-group">
         <button class="add-button" type="submit">
             <span>

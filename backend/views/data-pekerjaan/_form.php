@@ -85,10 +85,11 @@ use yii\widgets\ActiveForm;
 
 
         <div class="col-4">
-            <?= $form->field($model, 'is_aktif')->dropDownList([
-                0 => 'Inactive',
-                1 => 'Active',
-            ], ['prompt' => 'Pilih Status Jabatan'])->label('Status Jabatan') ?>
+            <?= $form->field($model, 'is_aktif')->radioList(
+                [0 => 'Tidak Aktif', 1 => 'Aktif'], // Daftar opsi
+                ['itemOptions' => ['labelOptions' => ['style' => 'margin-right: 10px;']]] // Opsi tambahan, misalnya style
+            )->label('Status Aktif') ?>
+
         </div>
         <div class="col-4">
             <?= $form->field($model, 'surat_lamaran_pekerjaan')->fileInput(['class' => 'form-control'])->label('Surat Lamaran Pekerjaan') ?>

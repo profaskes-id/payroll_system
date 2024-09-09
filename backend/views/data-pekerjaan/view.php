@@ -45,7 +45,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => $model->bagian->nama_bagian
                 ],
                 'dari',
-                'sampai',
+                [
+                    'attribute' => 'sampai',
+                    'value' => function ($model) {
+                        if ($model->is_currenty != null) {
+                            return 'Sekarang';
+                        }
+                        return date('d-m-Y', strtotime($model->sampai));
+                    }
+                ],
                 [
                     'attribute' => 'status',
                     'value' => function ($model) {

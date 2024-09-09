@@ -27,7 +27,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
     <div class="row align-items-start ">
 
-        <div class="row align-items-start col-4  p-3">
+        <div class="row align-items-start col-12 col-lg-4  p-3">
             <h6 class="text-center col-12">Data Personal</h6>
             <hr class="col-12">
             <div class="col-12  row align-items-start align-items-center justify-items-between ">
@@ -110,7 +110,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
         </div>
 
 
-        <div class="row align-items-start col-4 p-3">
+        <div class="row align-items-start col-12 col-lg-4 p-3">
             <h6 class="text-center col-12">Alamat Sesuai Identitas</h6>
             <hr class="col-12">
             <div class="col-6 ">
@@ -168,7 +168,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
         </div>
 
 
-        <div class="row align-items-start col-4 p-3">
+        <div class="row align-items-start col-12 col-lg-4 p-3">
             <h6 class="text-center col-12">Alamat Sesuai Domisili</h6>
             <hr class="col-12">
             <div class="col-12 text-sm">
@@ -242,16 +242,16 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
         <div class="row align-items-start col-12 p-3">
 
 
-            <div class="col-3 ">
+            <div class="col-6 col-lg-3 ">
                 <?= $form->field($model, 'foto')->fileInput(['class' => 'form-control'])->label('Foto') ?>
             </div>
-            <div class="col-3 ">
+            <div class="col-6 col-lg-3 ">
                 <?= $form->field($model, 'ktp')->fileInput(['class' => 'form-control'])->label('KTP') ?>
             </div>
-            <div class="col-3 ">
+            <div class="col-6 col-lg-3 ">
                 <?= $form->field($model, 'cv')->fileInput(['class' => 'form-control'])->label('CV') ?>
             </div>
-            <div class="col-3 ">
+            <div class="col-6 col-lg-3 ">
                 <?= $form->field($model, 'ijazah_terakhir')->fileInput(['class' => 'form-control'])->label('Ijazah Terakhir') ?>
             </div>
 
@@ -275,39 +275,55 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
 <?php ActiveForm::end(); ?>
 
 
+
+
 <script>
-    const manual_kode = document.querySelector('#manual_kode');
-    const kode_karyawan = document.querySelector('#kode_karyawan');
+    // const manual_kode = document.querySelector('#manual_kode');
+    // const kode_karyawan = document.querySelector('#kode_karyawan');
 
 
-    manual_kode.addEventListener('click', () => {
-        kode_karyawan.disabled = kode_karyawan.disabled ? false : true;
-    });
+    // manual_kode.addEventListener('click', () => {
+    //     kode_karyawan.disabled = kode_karyawan.disabled ? false : true;
+    // });
 
-    const is_currnetly_domisili = document.querySelector('#is_currnetly_domisili');
-    const domisili = Array.from(document.querySelectorAll('.domisili'));
-    window.addEventListener('load', () => {
-        if (is_currnetly_domisili.checked) {
-            domisili.map((item) => {
-                item.disabled = true;
-                item.value = '';
-            })
-        }
-    })
-    is_currnetly_domisili.addEventListener('click', (e) => {
-        let statusCheck = e.target.checked;
-        domisili.map((item) => {
-            item.value = '';
-            item.select = ''
-            item.disabled = e.target.checked
-        })
-    })
+    // const is_currnetly_domisili = document.querySelector('#is_currnetly_domisili');
+    // const domisili = Array.from(document.querySelectorAll('.domisili'));
+    // window.addEventListener('load', () => {
+    //     if (is_currnetly_domisili.checked) {
+    //         domisili.map((item) => {
+    //             item.readonly = true;
+    //             item.value = '';
+    //         })
+    //     }
+    // })
+    // is_currnetly_domisili.addEventListener('click', (e) => {
+    //     let statusCheck = e.target.checked;
+    //     domisili.map((item) => {
+    //         item.value = '';
+    //         item.select = ''
+    //         item.readonly = e.target.checked
+    //     })
+    // })
 </script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script>
     $(document).ready(function() {
+
+        // Toggle disabled state for #kode_karyawan
+        $('#manual_kode').on('click', function() {
+            $('#kode_karyawan').prop('readonly', function(i, val) {
+                return !val;
+            });
+        });
+
+        // Set readonly property based on #is_currnetly_domisili checkbox state
+        const $domisili = $('.domisili');
+        $('#is_currnetly_domisili').on('change', function() {
+            const isChecked = $(this).is(':checked');
+            $domisili.prop('readonly', isChecked).val(isChecked ? '' : $domisili.val());
+        }).trigger('change'); // Trigger change to set initial state
+
 
         $('#provinsi-identitas').change(function(e) {
             $('#kode-kabupaten-kota-identitas').val();
