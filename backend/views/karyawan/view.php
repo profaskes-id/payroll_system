@@ -67,7 +67,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'model' => $model,
                                         'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
                                         'attributes' => [
-                                            'id_karyawan',
                                             'kode_karyawan',
                                             'nama',
                                             'nomer_identitas',

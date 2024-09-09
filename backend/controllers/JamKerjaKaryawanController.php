@@ -4,6 +4,10 @@ namespace backend\controllers;
 
 use backend\models\JamKerjaKaryawan;
 use backend\models\JamKerjaKaryawanSearch;
+use backend\models\Karyawan;
+use backend\models\KaryawanSearch;
+use Yii;
+use yii\data\ArrayDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -47,8 +51,14 @@ class JamKerjaKaryawanController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new JamKerjaKaryawanSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $searchModel = new KaryawanSearch();
+        $dataProvider = $searchModel->searchJadwalKerja($this->request->queryParams);
+
+
+        if (\Yii::$app->request->isPost) {
+            $id_karyawan = Yii::$app->request->post('KaryawanSearch')['id_karyawan'];
+            $dataProvider = $searchModel->searchJadwalKerjaID($id_karyawan);
+        }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -62,10 +72,12 @@ class JamKerjaKaryawanController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id_jam_kerja_karyawan)
+    public function actionView($id_karyawan)
     {
+        $model = JamKerjaKaryawan::find()->where(['id_karyawan' => $id_karyawan])->one();
+
         return $this->render('view', [
-            'model' => $this->findModel($id_jam_kerja_karyawan),
+            'model' => $model,
         ]);
     }
 
@@ -79,7 +91,11 @@ class JamKerjaKaryawanController extends Controller
         $model = new JamKerjaKaryawan();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            if ($model->load($this->request->post())) {
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Jam kerja karyawan ditambahkan');
+                    return $this->redirect(['view', 'id_jam_kerja_karyawan' => $model->id_jam_kerja_karyawan]);
+                }
                 return $this->redirect(['view', 'id_jam_kerja_karyawan' => $model->id_jam_kerja_karyawan]);
             }
         } else {
@@ -123,6 +139,24 @@ class JamKerjaKaryawanController extends Controller
         $this->findModel($id_jam_kerja_karyawan)->delete();
 
         return $this->redirect(['index']);
+    }
+
+
+    public function actionSearch()
+    {
+        $id_karyawan = Yii::$app->request->get('KaryawanSearch')['id_karyawan'];
+        $model = JamKerjaKaryawan::find()->where(['id_karyawan' => $id_karyawan])->one();
+
+        $dataProvider = new ArrayDataProvider([
+            'models' => $model,
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
+
+        return $this->render('index', [
+            'dataProvider' => $dataProvider
+        ]);
     }
 
     /**

@@ -44,7 +44,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                'nama_hari',
+
+
                 'jam_masuk',
                 'jam_keluar',
                 [

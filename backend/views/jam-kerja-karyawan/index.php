@@ -1,6 +1,8 @@
 <?php
 
 use backend\models\JamKerjaKaryawan;
+use backend\models\Karyawan;
+use backend\models\MasterKode;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -30,7 +32,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <div style="margin-top: 10px;">
         <div class="collapse width" id="collapseWidthExample">
             <div class="" style="width: 100%;">
-                <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+                <?= $this->render('_search', ['model' => $searchModel]);
+                ?>
             </div>
         </div>
     </div>
@@ -39,6 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
+            'summary' => false,
             'columns' => [
                 [
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
@@ -46,32 +50,36 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => 'yii\grid\SerialColumn'
                 ],
                 [
-
-                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                    'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, JamKerjaKaryawan $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id_jam_kerja_karyawan' => $model->id_jam_kerja_karyawan]);
-                    }
-                ],
-                [
                     'attribute' => 'Karyawan',
                     'value' => function ($model) {
-                        return $model->karyawan->nama;
-                    }
+                        if ($model['nama_jam_kerja'] && $model['jenis_shift']) {
+                            return Html::a($model['nama'], ['jam-kerja-karyawan/view', 'id_karyawan' => $model['id_karyawan']]);
+                        }
+                        return Html::a($model['nama'], ['jam-kerja-karyawan/create', 'id_karyawan' => $model['id_karyawan']]);
+                    },
+                    'format' => 'raw',
                 ],
                 [
                     'attribute' => 'Jam Kerja',
                     'value' => function ($model) {
-                        return $model->jamKerja->nama_jam_kerja;
-                    }
+                        return $model['nama_jam_kerja'] ?? '<p class="text-danger">(Belum Diset)</p>';
+                    },
+                    'format' => 'raw'
                 ],
                 [
                     'attribute' => 'Jenis Shift',
+                    'format' => 'raw',
                     'value' => function ($model) {
-                        return strtoupper($model->jenisShift->nama_kode);
+                        $master =  MasterKode::find()->where(['nama_group' => 'jenis-shift', 'kode' => $model['jenis_shift']])->one() ?? null;
+                        if ($master) {
+                            return $master->nama_kode;
+                        }
+                        return '<p class="text-danger">(belum diset)</p>';
                     }
                 ],
+
+
+
 
             ],
         ]); ?>

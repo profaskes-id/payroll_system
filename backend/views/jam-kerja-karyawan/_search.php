@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\JamKerja;
+use backend\models\Karyawan;
 use backend\models\MasterKode;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -15,16 +16,16 @@ use yii\widgets\ActiveForm;
 
         <?php $form = ActiveForm::begin([
             'action' => ['index'],
-            'method' => 'get',
+            'method' => 'post',
         ]); ?>
 
         <div class="row">
-            <div class="col-5">
-                <?php $nama_group = \yii\helpers\ArrayHelper::map(JamKerja::find()->all(), 'id_jam_kerja', 'nama_jam_kerja');
-                echo $form->field($model, 'id_jam_kerja')->widget(kartik\select2\Select2::classname(), [
+            <div class="col-9">
+                <?php $nama_group = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
+                echo $form->field($model, 'id_karyawan')->widget(kartik\select2\Select2::classname(), [
                     'data' => $nama_group,
                     'language' => 'id',
-                    'options' => ['placeholder' => 'Cari Jam kerja ...'],
+                    'options' => ['placeholder' => 'Cari karyawan ...'],
                     'pluginOptions' => [
                         'tags' => true,
                         'allowClear' => true
@@ -32,19 +33,7 @@ use yii\widgets\ActiveForm;
                 ])->label(false);
                 ?>
             </div>
-            <div class="col-4">
-                <?php $nama_group = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['jenis-shift']])->andWhere(['!=', 'status', 0])->all(), 'kode', 'nama_kode');
-                echo $form->field($model, 'jenis_shift')->widget(kartik\select2\Select2::classname(), [
-                    'data' => $nama_group,
-                    'language' => 'id',
-                    'options' => ['placeholder' => 'Cari Jenis Shift ...'],
-                    'pluginOptions' => [
-                        'tags' => true,
-                        'allowClear' => true
-                    ],
-                ])->label(false);
-                ?>
-            </div>
+
 
             <div class="col-3">
                 <div class="form-group d-flex items-center w-100  justify-content-around">

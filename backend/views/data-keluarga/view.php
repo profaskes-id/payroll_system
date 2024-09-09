@@ -36,7 +36,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= DetailView::widget([
             'model' => $model,
             'attributes' => [
-                'id_data_keluarga',
                 [
                     'attribute' => 'id_karyawan',
                     'value' => function ($model) {

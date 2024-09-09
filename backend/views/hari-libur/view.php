@@ -37,7 +37,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= DetailView::widget([
             'model' => $model,
             'attributes' => [
-                'id_hari_libur',
                 'tanggal',
                 'nama_hari_libur',
             ],
