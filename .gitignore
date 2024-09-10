@@ -13,6 +13,9 @@ nbproject
 .buildpath
 .project
 .settings
+.zip
+.rar
+.7z
 
 # windows thumbnail cache
 Thumbs.db
