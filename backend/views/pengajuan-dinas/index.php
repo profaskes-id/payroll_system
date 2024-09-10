@@ -103,8 +103,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         if ($model->statusPengajuan->nama_kode !== null) {
                             if (strtolower($model->statusPengajuan->nama_kode) == "pending") {
                                 return "<span class='text-capitalize btn btn-outline-warning '>Pending</span>";
-                            } elseif (strtolower($model->statusPengajuan->nama_kode) == "diterima") {
-                                return "<span class='text-capitalize btn btn-outline-success '>diterima</span>";
+                            } elseif (strtolower($model->statusPengajuan->nama_kode) == "disetujui") {
+                                return "<span class='text-capitalize btn btn-outline-success '>disetujui</span>";
                             } elseif (strtolower($model->statusPengajuan->nama_kode) == "ditolak") {
                                 return "<span class='text-capitalize btn btn-outline-danger '>ditolak</span>";
                             }

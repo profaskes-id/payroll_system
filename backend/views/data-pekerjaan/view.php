@@ -36,7 +36,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= DetailView::widget([
             'model' => $model,
             'attributes' => [
-                'id_data_pekerjaan',
                 [
                     'label' => 'Karyawan',
                     'value' => $model->karyawan->nama
@@ -46,19 +45,33 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => $model->bagian->nama_bagian
                 ],
                 'dari',
-                'sampai',
+                [
+                    'attribute' => 'sampai',
+                    'value' => function ($model) {
+                        if ($model->is_currenty != null) {
+                            return 'Sekarang';
+                        }
+                        return date('d-m-Y', strtotime($model->sampai));
+                    }
+                ],
                 [
                     'attribute' => 'status',
                     'value' => function ($model) {
                         return $model->statusPekerjaan->nama_kode;
                     }
                 ],
-                'jabatan',
+                [
+                    'label' => 'Jabatan',
+                    'value' => $model->jabatanPekerja->nama_kode
+                ],
                 [
                     'label' => 'Surat Lamaran Pekerjaan',
                     'format' => 'raw',
                     'value' => function ($model) {
-                        return Html::img(Yii::getAlias('@root') . '/panel/' . $model->surat_lamaran_pekerjaan, ['width' => '100px', 'alt' => 'surat_lamaran_pekerjaan']);
+                        if ($model->surat_lamaran_pekerjaan) {
+                            return Html::img(Yii::getAlias('@root') . '/panel/' . $model->surat_lamaran_pekerjaan, ['width' => '100px', 'alt' => 'surat_lamaran_pekerjaan']);
+                        }
+                        return '(Belum Di Set)';
                     }
                 ]
             ],

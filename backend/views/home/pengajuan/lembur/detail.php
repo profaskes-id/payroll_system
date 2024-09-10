@@ -28,8 +28,8 @@ use amnah\yii2\user\models\User;
             <hr class="my-2">
             <p class="capitalize  text-gray-500 text-sm">Jam Lembur</p>
             <div class="flex space-x-3 text-gray-500 text-sm">
-                <p><?= date('d-m-Y', strtotime($model['jam_mulai'])) ?></p>
-                <p><?= date('d-m-Y', strtotime($model['jam_selesai'])) ?></p>
+                <p><?= date('H:i', strtotime($model['jam_mulai'])) ?></p>
+                <p><?= date('H:i', strtotime($model['jam_selesai'])) ?></p>
 
             </div>
         </div>

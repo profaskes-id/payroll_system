@@ -37,7 +37,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= DetailView::widget([
             'model' => $model,
             'attributes' => [
-                'id_jadwal_kerja',
                 [
                     'attribute' => 'jam_kerja',
                     'value' => function ($model) {

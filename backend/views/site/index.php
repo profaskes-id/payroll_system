@@ -24,7 +24,7 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
 
 <div class="container-fluid">
     <div class="flex justify-between items-center mb-5">
-        <p class="text-gray-500 font-medium ">Lihar Rekapan Absnensi Hari Ini</p>
+        <p class="text-gray-500 font-medium ">Lihat Rekapan Absensi Hari Ini</p>
         <div class="flex space-x-2 items-center -mt-10">
 
             <?php

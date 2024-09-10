@@ -9,7 +9,7 @@
 
  <div class="relative flex  justify-around items-center  overflow-hidden">
      <!-- <div id="map" style="width: 95dvw !important; height: 80dvh !important; z-index: 2 !important "></div> -->
-     <div class="absolute left-1/2  -translate-x-1/2 bottom-5  bg-white w-[70%] rounded-xl z-50 p-5 ">
+     <div class="absolute left-1/2  -translate-x-1/2 bottom-5  bg-white w-[90%] rounded-xl z-50 p-5 ">
          <div class="flex justify-start space-x-5 items-start">
              <div>
                  <div class="w-[70px] h-[70px] rounded-md bg-blue-400 grid place-items-center">

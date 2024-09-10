@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var backend\models\JamKerjaKaryawan $model */
 
-$this->title = 'jam kerja: ' . $model->karyawan->nama;
+$this->title = 'jam kerja ' . $model->karyawan->nama;
 $this->params['breadcrumbs'][] = ['label' => 'Jam Kerja Karyawan', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -34,7 +34,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= DetailView::widget([
             'model' => $model,
             'attributes' => [
-                'id_jam_kerja_karyawan',
                 [
                     'attribute' => 'karyawan',
                     'value' => function ($model) {

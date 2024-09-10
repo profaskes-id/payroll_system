@@ -24,11 +24,10 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
 ?>
 
 <div class="karyawan-form table-container">
-
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
     <div class="row align-items-start ">
 
-        <div class="row align-items-start col-4  p-3">
+        <div class="row align-items-start col-12 col-lg-4  p-3">
             <h6 class="text-center col-12">Data Personal</h6>
             <hr class="col-12">
             <div class="col-12  row align-items-start align-items-center justify-items-between ">
@@ -46,7 +45,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
                 <?= $form->field($model, 'nama')->textInput([])->label('Nama Lengkap') ?>
             </div>
             <div class="col-12 ">
-                <?= $form->field($model, 'nomer_identitas')->textInput(['type' => 'number'])->label('Nomer Identitas') ?>
+                <?= $form->field($model, 'nomer_identitas')->textInput(['type' => 'number'])->label('Nomor Identitas') ?>
             </div>
             <div class="col-12 ">
                 <?php
@@ -106,12 +105,12 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
                 <?= $form->field($model, 'email')->textInput(['type' => 'email'])->label('Email') ?>
             </div>
             <div class="col-12 ">
-                <?= $form->field($model, 'nomer_telepon')->textInput(['type' => 'telp'])->label('Nomer Telepon') ?>
+                <?= $form->field($model, 'nomer_telepon')->textInput(['type' => 'telp'])->label('Nomor Telepon') ?>
             </div>
         </div>
 
 
-        <div class="row align-items-start col-4 p-3">
+        <div class="row align-items-start col-12 col-lg-4 p-3">
             <h6 class="text-center col-12">Alamat Sesuai Identitas</h6>
             <hr class="col-12">
             <div class="col-6 ">
@@ -169,7 +168,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
         </div>
 
 
-        <div class="row align-items-start col-4 p-3">
+        <div class="row align-items-start col-12 col-lg-4 p-3">
             <h6 class="text-center col-12">Alamat Sesuai Domisili</h6>
             <hr class="col-12">
             <div class="col-12 text-sm">
@@ -177,13 +176,13 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
             </div>
 
             <div class="col-6 ">
-                <?= $form->field($model, 'rt_domisili')->textInput(['class' => ' form-control', 'value' => '00'])->label('RT') ?>
+                <?= $form->field($model, 'rt_domisili')->textInput(['class' => ' domisili form-control', 'value' => '00'])->label('RT') ?>
             </div>
             <div class="col-6 ">
-                <?= $form->field($model, 'rw_domisili')->textInput(['class' => ' form-control', 'value' => '00'])->label('RW') ?>
+                <?= $form->field($model, 'rw_domisili')->textInput(['class' => ' domisili form-control', 'value' => '00'])->label('RW') ?>
             </div>
             <div class="col-12 ">
-                <?= $form->field($model, 'kode_post_domisili')->textInput(['class' => ' form-control'])->label('Kode Pos') ?>
+                <?= $form->field($model, 'kode_post_domisili')->textInput(['class' => 'domisili form-control'])->label('Kode Pos') ?>
             </div>
 
             <div class="col-12">
@@ -191,7 +190,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
                 echo $form->field($model, 'kode_provinsi_domisili')->widget(Select2::classname(), [
                     'data' => $dataProvinsi,
                     'language' => 'id',
-                    'options' => ['id' => 'provinsi-domisili', 'placeholder' => 'Pilih Provinsi ...'],
+                    'options' => ['class' => 'domisili', 'id' => 'provinsi-domisili', 'placeholder' => 'Pilih Provinsi ...'],
                     'pluginOptions' => [
                         'allowClear' => true
                     ],
@@ -204,7 +203,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
                 echo $form->field($model, 'kode_kabupaten_kota_domisili')->widget(Select2::classname(), [
                     'data' => $dataKabupaten,
                     'language' => 'id',
-                    'options' => ['id' => 'kode-kabupaten-kota-domisili', 'placeholder' => 'Pilih kabupaten/kota ...'],
+                    'options' => ['class' => 'domisili', 'readonly' => false, 'id' => 'kode-kabupaten-kota-domisili', 'placeholder' => 'Pilih kabupaten/kota ...'],
                     'pluginOptions' => [
                         'allowClear' => true
                     ],
@@ -218,7 +217,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
                 echo $form->field($model, 'kode_kecamatan_domisili')->widget(Select2::classname(), [
                     'data' => $dataKecamatan,
                     'language' => 'id',
-                    'options' => ['id' => 'kode-kecamatan-domisili', 'placeholder' => 'Pilih Kecamatan ...'],
+                    'options' => ['class' => 'domisili',  'id' => 'kode-kecamatan-domisili', 'placeholder' => 'Pilih Kecamatan ...'],
                     'pluginOptions' => [
                         'allowClear' => true
                     ],
@@ -228,10 +227,10 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
             </div>
 
             <div class="col-12 ">
-                <?= $form->field($model, 'desa_lurah_domisili')->textInput(['class' => 'form-control'])->label('Desa/Lurah') ?>
+                <?= $form->field($model, 'desa_lurah_domisili')->textInput(['class' => 'domisili form-control'])->label('Desa/Lurah') ?>
             </div>
             <div class="col-12 ">
-                <?= $form->field($model, 'alamat_domisili')->textarea(['class' => 'form-control', 'rows' => 5])->label('Alamat') ?>
+                <?= $form->field($model, 'alamat_domisili')->textarea(['class' => 'domisili form-control', 'rows' => 5])->label('Alamat') ?>
             </div>
             <div class="col-12 ">
                 <?= $form->field($model, 'informasi_lain')->textInput([])->label('Informasi Lain') ?>
@@ -243,16 +242,16 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
         <div class="row align-items-start col-12 p-3">
 
 
-            <div class="col-3 ">
+            <div class="col-6 col-lg-3 ">
                 <?= $form->field($model, 'foto')->fileInput(['class' => 'form-control'])->label('Foto') ?>
             </div>
-            <div class="col-3 ">
+            <div class="col-6 col-lg-3 ">
                 <?= $form->field($model, 'ktp')->fileInput(['class' => 'form-control'])->label('KTP') ?>
             </div>
-            <div class="col-3 ">
+            <div class="col-6 col-lg-3 ">
                 <?= $form->field($model, 'cv')->fileInput(['class' => 'form-control'])->label('CV') ?>
             </div>
-            <div class="col-3 ">
+            <div class="col-6 col-lg-3 ">
                 <?= $form->field($model, 'ijazah_terakhir')->fileInput(['class' => 'form-control'])->label('Ijazah Terakhir') ?>
             </div>
 
@@ -276,6 +275,8 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
 <?php ActiveForm::end(); ?>
 
 
+
+
 <script>
     const manual_kode = document.querySelector('#manual_kode');
     const kode_karyawan = document.querySelector('#kode_karyawan');
@@ -290,7 +291,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
     window.addEventListener('load', () => {
         if (is_currnetly_domisili.checked) {
             domisili.map((item) => {
-                item.disabled = true;
+                item.readonly = true;
                 item.value = '';
             })
         }
@@ -304,11 +305,25 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
         })
     })
 </script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script>
     $(document).ready(function() {
+
+        // // Toggle disabled state for #kode_karyawan
+        // $('#manual_kode').on('click', function() {
+        //     $('#kode_karyawan').prop('readonly', function(i, val) {
+        //         return !val;
+        //     });
+        // });
+
+        // // Set readonly property based on #is_currnetly_domisili checkbox state
+        // const $domisili = $('.domisili');
+        // $('#is_currnetly_domisili').on('change', function() {
+        //     const isChecked = $(this).is(':checked');
+        //     $domisili.prop('readonly', isChecked).val(isChecked ? '' : $domisili.val());
+        // }).trigger('change'); // Trigger change to set initial state
+
 
         $('#provinsi-identitas').change(function(e) {
             $('#kode-kabupaten-kota-identitas').val();

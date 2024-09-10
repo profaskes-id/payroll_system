@@ -115,7 +115,7 @@ class Karyawan extends \yii\db\ActiveRecord
             'rt_identitas' => 'Rt Identitas',
             'rw_identitas' => 'Rw Identitas',
             'kode_post_identitas' => 'Kode Post Identitas',
-            'is_current_domisili' => 'Alamat Identitas Sama Sengan Alamat Domisili',
+            'is_current_domisili' => 'Alamat Identitas Sama Dengan Alamat Domisili',
             'kode_provinsi_domisili' => 'Kode Provinsi Domisili',
             'kode_kabupaten_kota_domisili' => 'Kode Kabupaten Kota Domisili',
             'kode_kecamatan_domisili' => 'Kode Kecamatan Domisili',
@@ -222,7 +222,7 @@ class Karyawan extends \yii\db\ActiveRecord
     {
         $ym = date('Y');
         $_left = "EP" . $ym;
-        $_first = "001";
+        $_first = "0001";
         $_len = strlen($_left);
         $noTransaksi = $_left . $_first;
         $last_kode = $this->find()
@@ -278,5 +278,9 @@ class Karyawan extends \yii\db\ActiveRecord
     public function getStatusNikah()
     {
         return $this->hasOne(MasterKode::class, ['kode' => 'status_nikah'])->onCondition(['nama_group' => 'status-pernikahan']);
+    }
+    public function getJenisShift()
+    {
+        return $this->hasOne(MasterKode::class, ['kode' => 'jenis_shift'])->onCondition(['nama_group' => 'jenis-shift']);
     }
 }

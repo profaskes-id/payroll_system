@@ -50,7 +50,7 @@ return [
         ],
         'urlManagerFrontEnd' => [
             'class' => 'yii\web\urlManager',
-            // 'baseUrl' => 'https://profaskes.id',
+            'baseUrl' => 'https://payroll.profaskes.id',
             'baseUrl' => 'https://localhost:8080',
             'enablePrettyUrl' => true,
             'showScriptName' => false,

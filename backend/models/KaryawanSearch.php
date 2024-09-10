@@ -13,6 +13,8 @@ use yii\db\Query;
  */
 class KaryawanSearch extends Karyawan
 {
+
+    public $id_karyawan;
     /**
      * {@inheritdoc}
      */
@@ -166,6 +168,50 @@ class KaryawanSearch extends Karyawan
             'models' => $result,
             'pagination' => [
                 'pageSize' => 10,
+            ],
+        ]);
+
+        return $dataProvider;
+    }
+
+
+    public function searchJadwalKerja($params)
+    {
+
+        $query = Karyawan::find()
+            ->select(['karyawan.id_karyawan', 'karyawan.nama', 'jam_kerja.nama_jam_kerja', 'jam_kerja_karyawan.jenis_shift'])
+            ->leftJoin('jam_kerja_karyawan', 'karyawan.id_karyawan = jam_kerja_karyawan.id_karyawan')
+            ->leftJoin('jam_kerja', 'jam_kerja_karyawan.id_jam_kerja = jam_kerja.id_jam_kerja')
+            ->asArray()
+            ->orderBy(['karyawan.nama' => SORT_ASC])
+            ->all();
+
+        $dataProvider = new ArrayDataProvider([
+            'models' => $query,
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
+
+        return $dataProvider;
+    }
+
+    public function  searchJadwalKerjaID($params)
+    {
+
+        $query = Karyawan::find()
+            ->select(['karyawan.id_karyawan', 'karyawan.nama', 'jam_kerja.nama_jam_kerja', 'jam_kerja_karyawan.jenis_shift'])
+            ->leftJoin('jam_kerja_karyawan', 'karyawan.id_karyawan = jam_kerja_karyawan.id_karyawan')
+            ->leftJoin('jam_kerja', 'jam_kerja_karyawan.id_jam_kerja = jam_kerja.id_jam_kerja')
+            ->asArray()
+            ->where(['karyawan.id_karyawan' => $params])
+            ->orderBy(['karyawan.nama' => SORT_ASC])
+            ->all();
+
+        $dataProvider = new ArrayDataProvider([
+            'models' => $query,
+            'pagination' => [
+                'pageSize' => 20,
             ],
         ]);
 

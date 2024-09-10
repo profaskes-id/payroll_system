@@ -81,24 +81,24 @@ $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:
                             Dear,
                             <br />
                             <br />
-                            Anda telah di daftarkan dalan sistem payroll profasekes.id, berikut adalah akses masuk ke akun anda
+                            Anda telah di daftarkan dalan sistem payroll profaskes.id, berikut adalah akses masuk ke akun anda
                             <br />
                             <br />
                         </p>
                         <p>
 
                         <table>
-                            <tr>
+                              <tr>
+                                <td><strong>Nama</strong></td>
+                                <td><strong> : </strong></td>
+                                <td><?= $model['nama'] ?? '' ?></td>
+                            </tr>
                             <tr>
                                 <td><strong>Email</strong></td>
                                 <td><strong> : </strong></td>
                                 <td><?= $model['email'] ?></td>
                             </tr>
-                            <tr>
-                                <td><strong>Username</strong></td>
-                                <td><strong> : </strong></td>
-                                <td><?= $model['nama'] ?? '' ?></td>
-                            </tr>
+                          
                             <tr>
                                 <td><strong>Password</strong></td>
                                 <td><strong> : </strong></td>

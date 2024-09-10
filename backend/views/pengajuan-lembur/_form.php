@@ -45,20 +45,23 @@ use yii\widgets\ActiveForm;
         <div class="col-md-6">
             <?php
             $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
-            echo $form->field($model, 'status')->widget(Select2::classname(), [
-                'data' => $data,
-                'language' => 'id',
-                'options' => ['placeholder' => 'Pilih Pengajuan ...'],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ])->label('Statu Pengajuan');
+
+            echo $form->field($model, 'status')->radioList($data, [
+                'item' => function ($index, $label, $name, $checked, $value) {
+                    return Html::radio($name, $checked, [
+                        'value' => $value,
+                        'label' => $label,
+                        'labelOptions' => ['class' => 'radio-label mr-4'],
+                    ]);
+                },
+            ])->label('Status Pengajuan');
             ?>
         </div>
 
         <div class="col-md-6">
 
             <div id="items-container">
+                <label for="">List Pekerjaan</label>
                 <?php foreach ($poinArray as $index => $pekerjaan) : ?>
                     <div class="d-flex mt-2">
                         <input type="text" name="pekerjaan[]" class="form-control" placeholder="Item <?= $index + 1 ?>" value="<?= Html::encode($pekerjaan) ?>">

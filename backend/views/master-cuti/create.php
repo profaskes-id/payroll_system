@@ -5,8 +5,8 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\MasterCuti $model */
 
-$this->title = 'Create Master Cuti';
-$this->params['breadcrumbs'][] = ['label' => 'Master Cutis', 'url' => ['index']];
+$this->title = 'Tambah Master Cuti';
+$this->params['breadcrumbs'][] = ['label' => 'Master Cuti', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="master-cuti-create">

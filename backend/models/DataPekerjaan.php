@@ -90,4 +90,8 @@ class DataPekerjaan extends \yii\db\ActiveRecord
     {
         return $this->hasOne(MasterKode::class, ['kode' => 'status'])->onCondition(['nama_group' => 'status-pekerjaan']);
     }
+    public function getJabatanPekerja()
+    {
+        return $this->hasOne(MasterKode::class, ['kode' => 'jabatan'])->onCondition(['nama_group' => 'jabatan']);
+    }
 }

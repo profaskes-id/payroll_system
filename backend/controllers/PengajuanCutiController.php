@@ -85,6 +85,7 @@ class PengajuanCutiController extends Controller
             if ($model->load($this->request->post())) {
                 $model->tanggal_pengajuan = date('Y-m-d');
                 $model->sisa_hari = 0;
+                 $model->status = 0;
 
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Pengajuan Cuti Berhasil');
@@ -132,7 +133,7 @@ class PengajuanCutiController extends Controller
                 $selisih_detik = $timestamp_selesai - $timestamp_mulai;
                 $selisih_hari = $selisih_detik / (60 * 60 * 24);
 
-                if ($model->status == Yii::$app->params['diterima']) {
+                if ($model->status == Yii::$app->params['disetujui']) {
                     $rekapan = RekapCuti::find()->where(['id_karyawan' => $model->id_karyawan, 'id_master_cuti' => $model->jenis_cuti, 'tahun' => date('Y', strtotime($model->tanggal_mulai))])->one();
 
                     if ($rekapan) {

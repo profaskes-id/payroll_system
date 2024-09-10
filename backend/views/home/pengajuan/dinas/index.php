@@ -82,6 +82,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                                     <div class="flex space-x-3 text-gray-500">
                                         <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
                                         <span>&nbsp;~&nbsp;&nbsp;</span>
+                                         <p><?= date('d-m-Y', strtotime($value['tanggal_selesai'])) ?></p>
                                     </div>
                                     <hr class="my-2">
 
@@ -118,6 +119,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                                         <div class="flex space-x-3 text-gray-500">
                                             <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
                                             <span>&nbsp;~&nbsp;&nbsp;</span>
+                                                    <p><?= date('d-m-Y', strtotime($value['tanggal_selesai'])) ?></p>
                                         </div>
                                         <hr class="my-2">
 
@@ -159,6 +161,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                                             <div class="flex space-x-3 text-gray-500">
                                                 <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
                                                 <span>&nbsp;~&nbsp;&nbsp;</span>
+                                                        <p><?= date('d-m-Y', strtotime($value['tanggal_selesai'])) ?></p>
                                             </div>
                                             <hr class="my-2">
 

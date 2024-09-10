@@ -56,16 +56,17 @@ $this->params['breadcrumbs'][] = 'Tanggapan';
             <div class="col-6">
                 <?= $form->field($model, 'tanggal_selesai')->textInput(['type' => 'date']) ?>
             </div>
-            <div class="col-6">
+               <div class="col-6">
                 <?php
                 $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
-                echo $form->field($model, 'status')->widget(Select2::classname(), [
-                    'data' => $data,
-                    'language' => 'id',
-                    'options' => ['placeholder' => 'Pilih Status Pengajuan ...'],
-                    'pluginOptions' => [
-                        'allowClear' => true
-                    ],
+                echo $form->field($model, 'status')->radioList($data, [
+                    'item' => function ($index, $label, $name, $checked, $value) {
+                        return Html::radio($name, $checked, [
+                            'value' => $value,
+                            'label' => $label,
+                            'labelOptions' => ['class' => 'radio-label mr-5'],
+                        ]);
+                    },
                 ])->label('Status Pengajuan');
                 ?>
             </div>

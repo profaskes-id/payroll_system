@@ -82,12 +82,15 @@ $rekapCutiJson = json_encode($rekapCutinew, JSON_PRETTY_PRINT);
 ?>
 
 <script>
+
     $(document).ready(function() {
         let jenisCutiData = <?= $jenisCutiJson ?>;
         let rekapCutiData = <?= $rekapCutiJson ?>;
 
         let JatahSetahun = 0;
-        let sisaHariGlobal = 0;
+
+ 
+        
         $('.radio-button').change(function() {
             let selectedId = $(this).val();
             let selectedData = jenisCutiData.find(function(item) {
@@ -107,7 +110,7 @@ $rekapCutiJson = json_encode($rekapCutinew, JSON_PRETTY_PRINT);
                 }
                 let sisaHari = parseInt(JatahSetahun) - parseInt(newData?.total_hari_terpakai);
                 $('#sisa_hari').val(sisaHari + " Hari");
-                sisaHariGlobal = sisaHari;
+                   
             }
         });
 
@@ -137,9 +140,11 @@ $rekapCutiJson = json_encode($rekapCutinew, JSON_PRETTY_PRINT);
             let diffInMs = new Date(endDate) - new Date(startDate);
             let diffInDays = diffInMs / (1000 * 60 * 60 * 24);
 
-            $('#jumlah_hari').val(diffInDays + " Hari");
 
-            if (diffInDays > sisaHariGlobal) {
+            $('#jumlah_hari').val(diffInDays + " Hari");
+                        let data = $('#sisa_hari').val();
+      let dataSekarang = data.split(' ')[0];
+            if (diffInDays >  dataSekarang) {
                 $('#error').show();
                 $('#error').text('Jatah Cuti Tidak Cukup');
                 $('.add-button').attr('disabled', true);

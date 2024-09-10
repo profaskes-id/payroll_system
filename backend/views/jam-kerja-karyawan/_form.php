@@ -14,21 +14,13 @@ use yii\widgets\ActiveForm;
 
 <div class="jam-kerja-karyawan-form table-container">
 
+    <?php
+    $id_karyawan = Yii::$app->request->get('id_karyawan');
+    ?>
+
     <?php $form = ActiveForm::begin(); ?>
+    <?= $form->field($model, 'id_karyawan')->hiddenInput(['value' => $id_karyawan ?? $model->id_karyawan])->label(false) ?>
     <div class="row">
-        <div class="col-md-6">
-            <?php
-            $data = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
-            echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
-                'data' => $data,
-                'language' => 'id',
-                'options' => ['placeholder' => 'Pilih Karyawan ...'],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ])->label('Karyawan');
-            ?>
-        </div>
         <div class="col-md-6">
             <?php
             $data = \yii\helpers\ArrayHelper::map(JamKerja::find()->all(), 'id_jam_kerja', 'nama_jam_kerja');

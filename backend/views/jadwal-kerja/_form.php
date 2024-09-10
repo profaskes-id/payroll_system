@@ -12,19 +12,10 @@ use yii\widgets\ActiveForm;
 <div class="jadwal-kerja-form table-container">
 
     <?php
-    $formatter = new \IntlDateFormatter(
-        'id_ID',
-        \IntlDateFormatter::FULL,
-        \IntlDateFormatter::NONE,
-        null, // Default timezone
-        null, // Default calendar
-        'eeee' // Hanya nama hari dalam minggu
-    );
     $hari = [];
 
     for ($i = 0; $i < 7; $i++) {
-        $date = new DateTime("Sunday +$i days");
-        $hari[$i] = $formatter->format($date);
+        $hari[$i] = $model->getNamaHari($i);
     }
 
 
