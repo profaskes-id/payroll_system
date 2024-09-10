@@ -119,11 +119,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <!-- ? mobile izin -->
         <div class="flex justify-between  items-center pb-32">
-
-            <?php if (count($absensiToday) > 0 && $absensiToday[0]->jam_pulang) : ?>
-
+            <?php if (count($absensiToday) > 0 or !empty($absensiToday[0]->jam_pulang)) : ?>
                 <div class="grid place-items-center mt-5">
-                    <a href="/panel/home/tidak-hadir?id_karyawan=<?= $absensiToday[0]->id_karyawan ?>">
+                    <a href="">
 
                         <div class="grid place-items-center">
                             <div class="w-[60px] h-[60px]  border bg-red-50 border-gray rounded-full grid place-items-center">
@@ -135,6 +133,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </a>
                 </div>
+
             <?php else : ?>
                 <div class="grid place-items-center mt-5">
                     <a href="/panel/home/create">

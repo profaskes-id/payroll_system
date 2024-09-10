@@ -85,6 +85,7 @@ class PengajuanCutiController extends Controller
             if ($model->load($this->request->post())) {
                 $model->tanggal_pengajuan = date('Y-m-d');
                 $model->sisa_hari = 0;
+                 $model->status = 0;
 
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Pengajuan Cuti Berhasil');

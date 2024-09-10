@@ -176,13 +176,13 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
             </div>
 
             <div class="col-6 ">
-                <?= $form->field($model, 'rt_domisili')->textInput(['class' => ' form-control', 'value' => '00'])->label('RT') ?>
+                <?= $form->field($model, 'rt_domisili')->textInput(['class' => ' domisili form-control', 'value' => '00'])->label('RT') ?>
             </div>
             <div class="col-6 ">
-                <?= $form->field($model, 'rw_domisili')->textInput(['class' => ' form-control', 'value' => '00'])->label('RW') ?>
+                <?= $form->field($model, 'rw_domisili')->textInput(['class' => ' domisili form-control', 'value' => '00'])->label('RW') ?>
             </div>
             <div class="col-12 ">
-                <?= $form->field($model, 'kode_post_domisili')->textInput(['class' => ' form-control'])->label('Kode Pos') ?>
+                <?= $form->field($model, 'kode_post_domisili')->textInput(['class' => 'domisili form-control'])->label('Kode Pos') ?>
             </div>
 
             <div class="col-12">
@@ -190,7 +190,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
                 echo $form->field($model, 'kode_provinsi_domisili')->widget(Select2::classname(), [
                     'data' => $dataProvinsi,
                     'language' => 'id',
-                    'options' => ['id' => 'provinsi-domisili', 'placeholder' => 'Pilih Provinsi ...'],
+                    'options' => ['class' => 'domisili', 'id' => 'provinsi-domisili', 'placeholder' => 'Pilih Provinsi ...'],
                     'pluginOptions' => [
                         'allowClear' => true
                     ],
@@ -203,7 +203,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
                 echo $form->field($model, 'kode_kabupaten_kota_domisili')->widget(Select2::classname(), [
                     'data' => $dataKabupaten,
                     'language' => 'id',
-                    'options' => ['id' => 'kode-kabupaten-kota-domisili', 'placeholder' => 'Pilih kabupaten/kota ...'],
+                    'options' => ['class' => 'domisili', 'readonly' => false, 'id' => 'kode-kabupaten-kota-domisili', 'placeholder' => 'Pilih kabupaten/kota ...'],
                     'pluginOptions' => [
                         'allowClear' => true
                     ],
@@ -217,7 +217,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
                 echo $form->field($model, 'kode_kecamatan_domisili')->widget(Select2::classname(), [
                     'data' => $dataKecamatan,
                     'language' => 'id',
-                    'options' => ['id' => 'kode-kecamatan-domisili', 'placeholder' => 'Pilih Kecamatan ...'],
+                    'options' => ['class' => 'domisili',  'id' => 'kode-kecamatan-domisili', 'placeholder' => 'Pilih Kecamatan ...'],
                     'pluginOptions' => [
                         'allowClear' => true
                     ],
@@ -227,10 +227,10 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
             </div>
 
             <div class="col-12 ">
-                <?= $form->field($model, 'desa_lurah_domisili')->textInput(['class' => 'form-control'])->label('Desa/Lurah') ?>
+                <?= $form->field($model, 'desa_lurah_domisili')->textInput(['class' => 'domisili form-control'])->label('Desa/Lurah') ?>
             </div>
             <div class="col-12 ">
-                <?= $form->field($model, 'alamat_domisili')->textarea(['class' => 'form-control', 'rows' => 5])->label('Alamat') ?>
+                <?= $form->field($model, 'alamat_domisili')->textarea(['class' => 'domisili form-control', 'rows' => 5])->label('Alamat') ?>
             </div>
             <div class="col-12 ">
                 <?= $form->field($model, 'informasi_lain')->textInput([])->label('Informasi Lain') ?>
@@ -278,51 +278,51 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
 
 
 <script>
-    // const manual_kode = document.querySelector('#manual_kode');
-    // const kode_karyawan = document.querySelector('#kode_karyawan');
+    const manual_kode = document.querySelector('#manual_kode');
+    const kode_karyawan = document.querySelector('#kode_karyawan');
 
 
-    // manual_kode.addEventListener('click', () => {
-    //     kode_karyawan.disabled = kode_karyawan.disabled ? false : true;
-    // });
+    manual_kode.addEventListener('click', () => {
+        kode_karyawan.disabled = kode_karyawan.disabled ? false : true;
+    });
 
-    // const is_currnetly_domisili = document.querySelector('#is_currnetly_domisili');
-    // const domisili = Array.from(document.querySelectorAll('.domisili'));
-    // window.addEventListener('load', () => {
-    //     if (is_currnetly_domisili.checked) {
-    //         domisili.map((item) => {
-    //             item.readonly = true;
-    //             item.value = '';
-    //         })
-    //     }
-    // })
-    // is_currnetly_domisili.addEventListener('click', (e) => {
-    //     let statusCheck = e.target.checked;
-    //     domisili.map((item) => {
-    //         item.value = '';
-    //         item.select = ''
-    //         item.readonly = e.target.checked
-    //     })
-    // })
+    const is_currnetly_domisili = document.querySelector('#is_currnetly_domisili');
+    const domisili = Array.from(document.querySelectorAll('.domisili'));
+    window.addEventListener('load', () => {
+        if (is_currnetly_domisili.checked) {
+            domisili.map((item) => {
+                item.readonly = true;
+                item.value = '';
+            })
+        }
+    })
+    is_currnetly_domisili.addEventListener('click', (e) => {
+        let statusCheck = e.target.checked;
+        domisili.map((item) => {
+            item.value = '';
+            item.select = ''
+            item.disabled = e.target.checked
+        })
+    })
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script>
     $(document).ready(function() {
 
-        // Toggle disabled state for #kode_karyawan
-        $('#manual_kode').on('click', function() {
-            $('#kode_karyawan').prop('readonly', function(i, val) {
-                return !val;
-            });
-        });
+        // // Toggle disabled state for #kode_karyawan
+        // $('#manual_kode').on('click', function() {
+        //     $('#kode_karyawan').prop('readonly', function(i, val) {
+        //         return !val;
+        //     });
+        // });
 
-        // Set readonly property based on #is_currnetly_domisili checkbox state
-        const $domisili = $('.domisili');
-        $('#is_currnetly_domisili').on('change', function() {
-            const isChecked = $(this).is(':checked');
-            $domisili.prop('readonly', isChecked).val(isChecked ? '' : $domisili.val());
-        }).trigger('change'); // Trigger change to set initial state
+        // // Set readonly property based on #is_currnetly_domisili checkbox state
+        // const $domisili = $('.domisili');
+        // $('#is_currnetly_domisili').on('change', function() {
+        //     const isChecked = $(this).is(':checked');
+        //     $domisili.prop('readonly', isChecked).val(isChecked ? '' : $domisili.val());
+        // }).trigger('change'); // Trigger change to set initial state
 
 
         $('#provinsi-identitas').change(function(e) {
