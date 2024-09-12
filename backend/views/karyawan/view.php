@@ -3,6 +3,8 @@
 use backend\models\DataKeluarga;
 use backend\models\DataPekerjaan;
 use backend\models\PengalamanKerja;
+use backend\models\RiwayatKesehatan;
+use backend\models\RiwayatPelatihan;
 use backend\models\RiwayatPendidikan;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
@@ -45,6 +47,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         <li class="nav-item">
                             <a class="nav-link" id="custom-tabs-one-settings-tab" data-toggle="pill" href="#custom-tabs-one-settings" role="tab" aria-controls="custom-tabs-one-settings" aria-selected="false">Data Keluarga</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="custom-tabs-one-pelatihan-tab" data-toggle="pill" href="#custom-tabs-one-pelatihan" role="tab" aria-controls="custom-tabs-one-pelatihan" aria-selected="false">Riwayat Pelatihan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="custom-tabs-one-kesehatan-tab" data-toggle="pill" href="#custom-tabs-one-kesehatan" role="tab" aria-controls="custom-tabs-one-kesehatan" aria-selected="false">Riwayat Kesehatan</a>
+                        </li>
 
                     </ul>
                 </div>
@@ -68,7 +76,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
                                         'attributes' => [
                                             'kode_karyawan',
-                                            'nama',
+                                            [
+                                                'label' => 'Nama',
+                                                'value' => function ($model) {
+                                                    return "<p class='m-0 p-0 text-capitalize'>{$model->nama}</p>";
+                                                },
+                                                'format' => 'raw',
+                                            ],
                                             'nomer_identitas',
                                             [
 
@@ -78,11 +92,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 }
                                             ],
                                             [
-                                                'attribute' => 'kode_jenis_kelamin',
                                                 'label' => 'Jenis Kelamin',
                                                 'value' => function ($model) {
                                                     return $model->kode_jenis_kelamin == 1 ? 'Laki-laki' : 'Perempuan';
-                                                }
+                                                },
                                             ],
 
 
@@ -129,8 +142,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                             [
                                                 'label' => 'Negara',
                                                 'value' => function ($model) {
-                                                    return $model->kode_negara;
-                                                }
+                                                    return "<p class=' py-0 my-0 text-uppercase'>{$model->kode_negara}</p>";
+                                                },
+                                                'format' => 'raw',
                                             ],
                                             [
                                                 'label' => 'Provinsi',
@@ -248,12 +262,12 @@ $this->params['breadcrumbs'][] = $this->title;
                             </div>
 
                             <div style="display: flex !important; align-items: center; justify-content: space-between ;margin-block: 20px 10px" style="gap: 10px;">
-                                <p style="font-weight: 700  ;">Data Pekerjaan</p>
+                                <p style="font-weight: 700; font-size: 20px">Data Pekerjaan</p>
                                 <?= Html::a('Add new', ['/data-pekerjaan/create', 'id_karyawan' => $model->id_karyawan], ['class' => 'tambah-button']) ?>
                             </div>
 
                             <?= GridView::widget([
-                                'dataProvider' => $pekrjaandataProvider,
+                                'dataProvider' => $pekerjaandataProvider,
                                 'columns' => [
                                     [
                                         'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
@@ -292,6 +306,21 @@ $this->params['breadcrumbs'][] = $this->title;
                                         }
                                     ],
                                     [
+                                        'label' => 'Gaji Pokok',
+                                        'value' => function ($model) {
+
+                                            // Set locale to Indonesian
+                                            $locale = 'id_ID';
+                                            $fmt = new NumberFormatter($locale, NumberFormatter::CURRENCY);
+
+                                            // Format the number to IDR
+                                            $amount = (int)$model->gaji_pokok;
+                                            return $fmt->formatCurrency($amount, 'IDR'); // Output: Rp2.800.000,00
+
+                                        }
+                                    ],
+
+                                    [
                                         'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
                                         'contentOptions' => ['style' => 'width: 10%; text-align: center;'],
                                         'label' => 'Aktif',
@@ -300,6 +329,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             return $model->is_aktif ? '<span class="text-success">YA</span>' : '<span class="text-danger">Tidak</span>';
                                         }
                                     ],
+
                                 ],
                             ]); ?>
 
@@ -400,9 +430,79 @@ $this->params['breadcrumbs'][] = $this->title;
                                         }
                                     ],
                                     'nama_anggota_keluarga',
-                                    'hubungan',
+                                    [
+                                        'label' => 'hubungan',
+                                        'value' => function ($model) {
+                                            return $model->jenisHubungan->nama_kode;
+                                        }
+                                    ],
                                     'pekerjaan',
                                     'tahun_lahir',
+
+                                ],
+                            ]); ?>
+                        </div>
+                        <div class="tab-pane fade" id="custom-tabs-one-pelatihan" role="tabpanel" aria-labelledby="custom-tabs-one-pelatihan-tab">
+
+                            <p class="d-flex justify-content-end " style="gap: 10px;">
+                                <?= Html::a('Add new', ['/riwayat-pelatihan/create', 'id_karyawan' => $model->id_karyawan], ['class' => 'tambah-button']) ?>
+                            </p>
+
+
+                            <?= GridView::widget([
+                                'dataProvider' => $pelatihanProvider,
+                                'columns' => [
+                                    [
+                                        'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                                        'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
+                                        'class' => 'yii\grid\SerialColumn'
+                                    ],
+                                    [
+                                        'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                                        'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                                        'class' => ActionColumn::className(),
+                                        'urlCreator' => function ($action, RiwayatPelatihan $model, $key, $index, $column) {
+                                            return Url::toRoute(['/riwayat-pelatihan/view/', 'id_riwayat_pelatihan' => $model->id_riwayat_pelatihan]);
+                                        }
+                                    ],
+                                    'judul_pelatihan',
+                                    'tanggal_mulai',
+                                    'tanggal_selesai',
+                                ],
+                            ]); ?>
+                        </div>
+                        <div class="tab-pane fade" id="custom-tabs-one-kesehatan" role="tabpanel" aria-labelledby="custom-tabs-one-kesehatan-tab">
+
+                            <p class="d-flex justify-content-end " style="gap: 10px;">
+                                <?= Html::a('Add new', ['/riwayat-kesehatan/create', 'id_karyawan' => $model->id_karyawan], ['class' => 'tambah-button']) ?>
+                            </p>
+
+
+                            <?= GridView::widget([
+                                'dataProvider' => $KesehatanProvider,
+                                'columns' => [
+                                    [
+                                        'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                                        'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
+                                        'class' => 'yii\grid\SerialColumn'
+                                    ],
+                                    [
+                                        'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                                        'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                                        'class' => ActionColumn::className(),
+                                        'urlCreator' => function ($action, RiwayatKesehatan $model, $key, $index, $column) {
+                                            return Url::toRoute(['/riwayat-kesehatan/view/', 'id_riwayat_kesehatan' => $model->id_riwayat_kesehatan]);
+                                        }
+                                    ],
+                                    [
+                                        'label' => 'Karyawan',
+                                        'value' => function ($model) {
+                                            return $model->karyawan->nama;
+                                        }
+
+                                    ],
+                                    'nama_pengecekan',
+                                    'keterangan:ntext',
 
                                 ],
                             ]); ?>

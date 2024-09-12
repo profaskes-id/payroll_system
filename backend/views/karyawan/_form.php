@@ -265,7 +265,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
     <div class="form-group">
         <button class="add-button" type="submit">
             <span>
-                Submit
+                Save
             </span>
         </button>
     </div>

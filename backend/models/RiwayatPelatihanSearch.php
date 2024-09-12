@@ -4,12 +4,12 @@ namespace backend\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\HariLibur;
+use backend\models\RiwayatPelatihan;
 
 /**
- * HariLiburSearch represents the model behind the search form of `backend\models\HariLibur`.
+ * RiwayatPelatihanSearch represents the model behind the search form of `backend\models\RiwayatPelatihan`.
  */
-class HariLiburSearch extends HariLibur
+class RiwayatPelatihanSearch extends RiwayatPelatihan
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class HariLiburSearch extends HariLibur
     public function rules()
     {
         return [
-            [['id_hari_libur'], 'integer'],
-            [['tanggal', 'nama_hari_libur'], 'safe'],
+            [['id_riwayat_pelatihan', 'id_karyawan'], 'integer'],
+            [['judul_pelatihan', 'tanggal_mulai', 'tanggal_selesai', 'penyelenggara', 'deskripsi', 'sertifikat'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class HariLiburSearch extends HariLibur
      */
     public function search($params)
     {
-        $query = HariLibur::find();
+        $query = RiwayatPelatihan::find();
 
         // add conditions that should always apply here
 
@@ -58,11 +58,16 @@ class HariLiburSearch extends HariLibur
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id_hari_libur' => $this->id_hari_libur,
-            'tanggal' => $this->tanggal,
+            'id_riwayat_pelatihan' => $this->id_riwayat_pelatihan,
+            'id_karyawan' => $this->id_karyawan,
+            'tanggal_mulai' => $this->tanggal_mulai,
+            'tanggal_selesai' => $this->tanggal_selesai,
         ]);
 
-        $query->andFilterWhere(['like', 'nama_hari_libur', $this->nama_hari_libur]);
+        $query->andFilterWhere(['like', 'judul_pelatihan', $this->judul_pelatihan])
+            ->andFilterWhere(['like', 'penyelenggara', $this->penyelenggara])
+            ->andFilterWhere(['like', 'deskripsi', $this->deskripsi])
+            ->andFilterWhere(['like', 'sertifikat', $this->sertifikat]);
 
         return $dataProvider;
     }

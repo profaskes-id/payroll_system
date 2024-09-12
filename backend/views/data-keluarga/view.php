@@ -37,13 +37,18 @@ $this->params['breadcrumbs'][] = $this->title;
             'model' => $model,
             'attributes' => [
                 [
-                    'attribute' => 'id_karyawan',
+                    'attribute' => 'karyawan',
                     'value' => function ($model) {
                         return $model->karyawan->nama;
                     }
                 ],
                 'nama_anggota_keluarga',
-                'hubungan',
+                [
+                    'label' => 'hubungan',
+                    'value' => function ($model) {
+                        return $model->jenisHubungan->nama_kode;
+                    }
+                ],
                 'pekerjaan',
                 'tahun_lahir',
             ],

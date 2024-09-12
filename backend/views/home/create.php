@@ -68,7 +68,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                 </label>
 
                 <label class="col-span-12 block mb-2 text-sm font-medium text-gray-900 " for="file_input">
-                    <span class="block pb-2">Upload Lampiran</span>
+                    <span class="block pb-2">Upload Surat Keterangan Dokter</span>
                     <?= $form->field($model, 'lampiran')->fileInput(['class' => 'block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer  bg-gray-50  py-2  file:py-1 file:mx-0 file:bg-white file:border-0 file:text-sm file:font-semibold file:cursor-pointer file:text-gray-700 hover:file:bg-gray-100 focus:outline-none   '])->label(false) ?>
                 </label>
 

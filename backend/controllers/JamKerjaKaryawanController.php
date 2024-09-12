@@ -94,9 +94,9 @@ class JamKerjaKaryawanController extends Controller
             if ($model->load($this->request->post())) {
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Jam kerja karyawan ditambahkan');
-                    return $this->redirect(['view', 'id_jam_kerja_karyawan' => $model->id_jam_kerja_karyawan]);
+                    return $this->redirect(['view', 'id_karyawan' => $model->id_karyawan]);
                 }
-                return $this->redirect(['view', 'id_jam_kerja_karyawan' => $model->id_jam_kerja_karyawan]);
+                return $this->redirect(['index']);
             }
         } else {
             $model->loadDefaultValues();
@@ -119,7 +119,7 @@ class JamKerjaKaryawanController extends Controller
         $model = $this->findModel($id_jam_kerja_karyawan);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_jam_kerja_karyawan' => $model->id_jam_kerja_karyawan]);
+            return $this->redirect(['view', 'id_karyawan' => $model->id_karyawan]);
         }
 
         return $this->render('update', [

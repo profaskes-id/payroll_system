@@ -43,8 +43,13 @@ use yii\widgets\ActiveForm;
         </div>
     </div>
 
+
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <button class="add-button" type="submit">
+            <span>
+                Save
+            </span>
+        </button>
     </div>
 
     <?php ActiveForm::end(); ?>

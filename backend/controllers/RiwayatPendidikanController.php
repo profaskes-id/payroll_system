@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\RiwayatPendidikan;
 use backend\models\RiwayatPendidikanSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -79,7 +80,14 @@ class RiwayatPendidikanController extends Controller
         $model = new RiwayatPendidikan();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            if ($model->load($this->request->post())) {
+
+
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data Riwayat Pendidikan');
+                    return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
+                }
+                Yii::$app->session->setFlash('error', 'Gagal Menambahkan Data Riwayat Pendidikan');
                 return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
             }
         } else {
@@ -102,7 +110,13 @@ class RiwayatPendidikanController extends Controller
     {
         $model = $this->findModel($id_riwayat_pendidikan);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Berhasil Melakukan Upadte Data Riwayat Pendidikan');
+                return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
+            }
+            Yii::$app->session->setFlash('error', 'Gagal Melakukan Upadte Data Riwayat Pendidikan');
             return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
         }
 
@@ -121,8 +135,12 @@ class RiwayatPendidikanController extends Controller
     public function actionDelete($id_riwayat_pendidikan)
     {
         $model  =  $this->findModel($id_riwayat_pendidikan);
-        $model->delete();
-
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Berhasil Menghapus Data Riwayat Pendidikan');
+            return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
+        }
+        Yii::$app->session->setFlash('error', 'Gagal Menghapus Data Riwayat Pendidikan');
+        return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
         return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
     }
 

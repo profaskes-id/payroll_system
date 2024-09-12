@@ -84,7 +84,11 @@ class DataPekerjaanController extends Controller
             if ($model->load($this->request->post())) {
                 $lampiranFilesuratLamaranPekerjaan = UploadedFile::getInstance($model, 'surat_lamaran_pekerjaan');
                 $lampiranFilesuratLamaranPekerjaan != null ? $this->saveImage($model, $lampiranFilesuratLamaranPekerjaan, 'surat_lamaran_pekerjaan') : $model->surat_lamaran_pekerjaan = null;
-                $model->save();
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data Pekerjaan');
+                    return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
+                }
+                Yii::$app->session->setFlash('error', 'Gagal Menambahkan Data Pekerjaan');
                 return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
             }
         } else {
@@ -108,7 +112,6 @@ class DataPekerjaanController extends Controller
         $model = $this->findModel($id_data_pekerjaan);
 
         $oldPost = $model->oldAttributes;
-
         if ($this->request->isPost && $model->load($this->request->post())) {
             $lampiranFilesuratLamaranPekerjaan = UploadedFile::getInstance($model, 'surat_lamaran_pekerjaan');
 
@@ -128,7 +131,11 @@ class DataPekerjaanController extends Controller
                     $model->$key = $oldPost[$key];
                 }
             }
-            $model->save();
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Berhasil Melakukan Upadte Data Pekerjaan');
+                return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
+            }
+            Yii::$app->session->setFlash('error', 'Gagal Melakukan Upadte Data Pekerjaan');
             return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
         }
 
@@ -146,9 +153,15 @@ class DataPekerjaanController extends Controller
      */
     public function actionDelete($id_data_pekerjaan)
     {
-        $this->findModel($id_data_pekerjaan)->delete();
-
-        return $this->redirect(['index']);
+        $model = $this->findModel($id_data_pekerjaan);
+        if ($this->deleteImage($model->surat_lamaran_pekerjaan)) {
+            if ($model->delete()) {
+                Yii::$app->session->setFlash('success', 'Berhasil Menghapus Data Pekerjaan');
+                return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
+            }
+        }
+        Yii::$app->session->setFlash('error', 'Gagal Menghapus Data Pekerjaan');
+        return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
     }
 
     /**
@@ -169,37 +182,38 @@ class DataPekerjaanController extends Controller
 
     public function saveImage($model, $uploadedFile, $type)
     {
-        $uploadsDir =  "";
-        if ($type == 'surat_lamaran_pekerjaan' || $type == 0) {
-            $uploadsDir =  Yii::getAlias('@webroot/uploads/surat_lamaran_pekerjaan/');
-        } else {
+        if ($type !== 'surat_lamaran_pekerjaan' && $type !== 0) {
+            return false;
+        }
+        $uploadsDir = Yii::getAlias('@webroot/uploads/surat_lamaran_pekerjaan/');
+
+        if (!$uploadedFile) {
             return false;
         }
 
-        if ($uploadedFile) {
+        if (!is_dir($uploadsDir)) {
+            mkdir($uploadsDir, 0777, true);
+        }
 
-            if (!is_dir($uploadsDir)) {
-                mkdir($uploadsDir, 0777, true);
-            }
-            $fileName = $uploadsDir . '/' . uniqid() . '.' . $uploadedFile->extension;
+        $fileName = $uploadsDir . '/' . uniqid() . '.' . $uploadedFile->extension;
 
-            if ($uploadedFile->saveAs($fileName)) {
-                // Simpan path gambar baru ke model
-                $model->{$type} = 'uploads/' . $type . '/' . basename($fileName);
-                return true;
-            } else {
-                Yii::$app->session->setFlash('error', 'Failed to save the uploaded file.');
-                return false;
-            }
+        if ($uploadedFile->saveAs($fileName)) {
+            $model->{$type} = 'uploads/' . $type . '/' . basename($fileName);
+            return true;
+        } else {
+            Yii::$app->session->setFlash('error', 'Failed to save the uploaded file.');
+            return false;
         }
     }
 
     public function deleteImage($oldThumbnail)
     {
-        if ($oldThumbnail && file_exists(Yii::getAlias('@webroot') . '/' . $oldThumbnail)) {
-            unlink(Yii::getAlias('@webroot') . '/' . $oldThumbnail);
+        $filePath = Yii::getAlias('@webroot') . '/' . $oldThumbnail;
+        if ($oldThumbnail && file_exists($filePath)) {
+            unlink($filePath);
+            return true;
         } else {
-            return false;
+            return true;
         }
     }
 }

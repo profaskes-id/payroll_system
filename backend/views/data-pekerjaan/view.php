@@ -65,13 +65,32 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => $model->jabatanPekerja->nama_kode
                 ],
                 [
+                    'label' => 'Gaji Pokok',
+                    'value' => function ($model) {
+
+                        // Set locale to Indonesian
+                        $locale = 'id_ID';
+                        $fmt = new NumberFormatter($locale, NumberFormatter::CURRENCY);
+
+                        // Format the number to IDR
+                        $amount = (int)$model->gaji_pokok;
+                        return $fmt->formatCurrency($amount, 'IDR'); // Output: Rp2.800.000,00
+
+                    }
+                ],
+                [
+                    'label' => 'Terbilang',
+                    'contentOptions' => ['style' => 'text-transform: capitalize; '],
+                    'value' => $model->terbilang
+                ],
+                [
                     'label' => 'Surat Lamaran Pekerjaan',
                     'format' => 'raw',
                     'value' => function ($model) {
                         if ($model->surat_lamaran_pekerjaan) {
-                            return Html::img(Yii::getAlias('@root') . '/panel/' . $model->surat_lamaran_pekerjaan, ['width' => '100px', 'alt' => 'surat_lamaran_pekerjaan']);
+                            return Html::a('Preview Surat Lamaran Pekerjaan', Yii::getAlias('@root') . '/panel/' . $model->surat_lamaran_pekerjaan, ['target' => '_blank']);
                         }
-                        return '(Belum Di Set)';
+                        return 'Belum Ada Surat Lamaran Pekerjaan';
                     }
                 ]
             ],

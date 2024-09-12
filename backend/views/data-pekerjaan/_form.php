@@ -24,7 +24,7 @@ use yii\widgets\ActiveForm;
 
 
 
-        <div class="col-md-6">
+        <div class="col-12">
             <?php
             $data = \yii\helpers\ArrayHelper::map(Bagian::find()->all(), 'id_bagian', 'nama_bagian');
             echo $form->field($model, 'id_bagian')->widget(Select2::classname(), [
@@ -68,7 +68,7 @@ use yii\widgets\ActiveForm;
             ])->label('Status Karyawan');
             ?>
         </div>
-        <div class="col-12 col-md-4">
+        <div class="col-md-6">
             <?php
             $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['jabatan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
             echo $form->field($model, 'jabatan')->widget(Select2::classname(), [
@@ -84,23 +84,29 @@ use yii\widgets\ActiveForm;
 
 
 
-        <div class="col-4">
+        <div class="col-md-6">
             <?= $form->field($model, 'is_aktif')->radioList(
                 [0 => 'Tidak Aktif', 1 => 'Aktif'], // Daftar opsi
-                ['itemOptions' => ['labelOptions' => ['style' => 'margin-right: 10px;']]] // Opsi tambahan, misalnya style
+                ['itemOptions' => ['labelOptions' => ['style' => 'margin-right: 20px;']]] // Opsi tambahan, misalnya style
             )->label('Status Aktif') ?>
 
         </div>
-        <div class="col-4">
+        <div class="col-md-6">
             <?= $form->field($model, 'surat_lamaran_pekerjaan')->fileInput(['class' => 'form-control'])->label('Surat Lamaran Pekerjaan') ?>
 
+        </div>
+        <div class="col-md-6 ">
+            <?= $form->field($model, 'gaji_pokok')->textInput(['format' => 'currency', 'class' => 'form-control'])->label('Gaji Pokok Karyawan') ?>
+        </div>
+        <div class="col-md-6 ">
+            <?= $form->field($model, 'terbilang')->textInput(['class' => 'form-control'])->label('Terbilang') ?>
         </div>
     </div>
 
     <div class="form-group">
         <button class="add-button" type="submit">
             <span>
-                Submit
+                Save
             </span>
         </button>
     </div>

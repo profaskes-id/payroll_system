@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\MasterKode;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -24,7 +25,17 @@ use yii\widgets\ActiveForm;
         </div>
 
         <div class="col-md-6">
-            <?= $form->field($model, 'hubungan')->textInput(['maxlength' => true]) ?>
+            <?php
+            $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['hubungan-keluarga']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
+            echo $form->field($model, 'hubungan')->widget(Select2::classname(), [
+                'data' => $data,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Pilih Hubungan Keluarga ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+            ?>
         </div>
 
         <div class="col-md-6">
@@ -39,7 +50,7 @@ use yii\widgets\ActiveForm;
     <div class="form-group">
         <button class="add-button" type="submit">
             <span>
-                Submit
+                Save
             </span>
         </button>
     </div>

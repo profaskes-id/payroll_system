@@ -23,5 +23,5 @@ return [
     "jenis-identitas" => "jenis-identitas",
     "jenis-cuti" => "jenis-cuti",
     "jabatan" => "jabatan",
-
+    "hubungan-keluarga" => "hubungan-keluarga",
 ];

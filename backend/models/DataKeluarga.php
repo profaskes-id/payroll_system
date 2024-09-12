@@ -63,4 +63,8 @@ class DataKeluarga extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Karyawan::class, ['id_karyawan' => 'id_karyawan']);
     }
+    public function getJenisHubungan()
+    {
+        return $this->hasOne(MasterKode::class, ['kode' => 'hubungan'])->onCondition(['nama_group' => 'hubungan-keluarga', 'status' => 1]);
+    }
 }

@@ -51,7 +51,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 'nama_anggota_keluarga',
-                'hubungan',
+                [
+                    'label' => 'hubungan',
+                    'value' => function ($model) {
+                        dd($model->masterHubungan);
+                        return $model->masterHubungan->nama_kode;
+                    }
+                ],
                 'pekerjaan',
                 //'tahun_lahir',
                 [

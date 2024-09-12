@@ -54,7 +54,7 @@ use yii\widgets\ActiveForm;
     <div class="form-group">
         <button class="add-button" type="submit">
             <span>
-                Submit
+                Save
             </span>
         </button>
     </div>

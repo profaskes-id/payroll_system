@@ -22,7 +22,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class='table-container'>
         <p class="d-flex justify-content-start " style="gap: 10px;">
-            <?= Html::a('update', ['update', 'id_rekap_cuti' => $model->id_rekap_cuti], ['class' => 'add-button']) ?>
+            <?php // Html::a('update', ['update', 'id_rekap_cuti' => $model->id_rekap_cuti], ['class' => 'add-button']) 
+            ?>
             <?= Html::a('Delete', ['delete', 'id_rekap_cuti' => $model->id_rekap_cuti], [
                 'class' => 'reset-button',
                 'data' => [

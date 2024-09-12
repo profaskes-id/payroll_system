@@ -85,34 +85,12 @@ $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:
                             <br />
                             <br />
                         </p>
-                        <p>
 
-                        <table>
-                              <tr>
-                                <td><strong>Nama</strong></td>
-                                <td><strong> : </strong></td>
-                                <td><?= $model['nama'] ?? '' ?></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Email</strong></td>
-                                <td><strong> : </strong></td>
-                                <td><?= $model['email'] ?></td>
-                            </tr>
-                          
-                            <tr>
-                                <td><strong>Password</strong></td>
-                                <td><strong> : </strong></td>
-                                <td><code style="font-size: 16px"><mark style="padding: 1px 3px;"><?= $model->id_karyawan . $model->kode_karyawan  . $model->jenis_identitas . $model->kode_jenis_kelamin ?></mark></code></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Halaman Login</strong></td>
-                                <td><strong> : </strong></td>
-                                <td><?= yii\helpers\Html::a('Login Disini', Yii::getAlias('@root'), ['target' => '_blank']) ?></td>
-                            </tr>
-                        </table>
-                        </p>
+                        <p>Anda Dapat Login Menggunakan token berikut</p>
                         <br>
-                        <br>
+                        <?= Yii::getAlias('@root') . '/panel/auto-login/login?token=' . $user->access_token ?>
+                        <br />
+                        harap untuk melakukan penggantian password di profil aplikasi anda demi keamanan akun anda
 
                         Terima kasih atas perhatian Anda dan selamat menggunakan layanan kami.
                         </p>

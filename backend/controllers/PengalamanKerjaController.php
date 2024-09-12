@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\PengalamanKerja;
 use backend\models\PengalamanKerjaSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -79,8 +80,13 @@ class PengalamanKerjaController extends Controller
         $model = new PengalamanKerja();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect('/panel/karyawan/view?id_karyawan=' . $model->id_karyawan);
+            if ($model->load($this->request->post())) {
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Melakukan Upadte Data Pengalaman Kerja');
+                    return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
+                }
+                Yii::$app->session->setFlash('error', 'Gagal Melakukan Upadte Data Pengalaman Kerja');
+                return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
             }
         } else {
             $model->loadDefaultValues();
@@ -102,7 +108,12 @@ class PengalamanKerjaController extends Controller
     {
         $model = $this->findModel($id_pengalaman_kerja);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Berhasil Melakukan Upadte Data Pengalaman Kerja');
+                return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
+            }
+            Yii::$app->session->setFlash('error', 'Gagal Melakukan Upadte Data Pengalaman Kerja');
             return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
         }
 
@@ -121,8 +132,12 @@ class PengalamanKerjaController extends Controller
     public function actionDelete($id_pengalaman_kerja)
     {
         $data = $this->findModel($id_pengalaman_kerja);
-        $data->delete();
 
+        if ($data->delete()) {
+            Yii::$app->session->setFlash('success', 'Berhasil Melakukan Upadte Data Pengalaman Kerja');
+            return $this->redirect(['/karyawan/view', 'id_karyawan' => $data->id_karyawan]);
+        }
+        Yii::$app->session->setFlash('error', 'Gagal Melakukan Upadte Data Pengalaman Kerja');
         return $this->redirect(['/karyawan/view', 'id_karyawan' => $data->id_karyawan]);
     }
 

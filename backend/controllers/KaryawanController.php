@@ -11,6 +11,9 @@ use backend\models\KaryawanSearch;
 use backend\models\MasterKab;
 use backend\models\MasterKec;
 use backend\models\PengalamanKerjaSearch;
+use backend\models\RiwayatKesehatanSearch;
+use backend\models\RiwayatPelatihan;
+use backend\models\RiwayatPelatihanSearch;
 use backend\models\RiwayatPendidikanSearch;
 use Yii;
 use yii\web\Controller;
@@ -92,18 +95,43 @@ class KaryawanController extends Controller
         $PekerjaansearchModel->id_karyawan = $id_karyawan;
         $pekrjaandataProvider = $PekerjaansearchModel->search($this->request->queryParams);
 
+        $PelatihansearchModel = new RiwayatPelatihanSearch();
+        $PelatihansearchModel->id_karyawan = $id_karyawan;
+        $PelatihanProvider = $PelatihansearchModel->search($this->request->queryParams);
+
+
+
+        $KesehatansearchModel = new RiwayatKesehatanSearch();
+        $KesehatansearchModel->id_karyawan = $id_karyawan;
+        $KesehatanProvider = $KesehatansearchModel->search($this->request->queryParams);
+
 
 
         return $this->render('view', [
-            'PekerjaansearchModel' => $PekerjaansearchModel,
-            'pekrjaandataProvider' => $pekrjaandataProvider,
-            'keluargasearchModel' => $keluargasearchModel,
-            'dataKeluargaProvider' => $dataKeluargaProvider,
-            'riwayatSearch' => $riwayatSearch,
-            'riwayarProvider' => $riwayarProvider,
+
+            'model' => $this->findModel($id_karyawan),
+            'PekerjaansearchModel' => $pekrjaandataProvider,
+            'pekerjaandataProvider' => $pekrjaandataProvider,
+
+
             'PengalamanKerjasearchModel' => $PengalamanKerjasearchModel,
             'pengalamankerjaProvider' => $pengalamankerjaProvider,
-            'model' => $this->findModel($id_karyawan),
+
+
+            'keluargasearchModel' => $keluargasearchModel,
+            'dataKeluargaProvider' => $dataKeluargaProvider,
+
+            'riwayatSearch' => $riwayatSearch,
+            'riwayarProvider' => $riwayarProvider,
+
+            'PelatihansearchModel' => $PelatihansearchModel,
+            'pelatihanProvider' => $PelatihanProvider,
+
+
+            'KesehatansearchModel' => $KesehatansearchModel,
+            'KesehatanProvider' => $KesehatanProvider,
+
+
         ]);
     }
 
@@ -124,8 +152,7 @@ class KaryawanController extends Controller
             $profil->full_name = $model->nama;
             if ($profil->save()) {
 
-                $msgToCheck = $this->renderPartial('@backend/views/karyawan/email_verif', compact('model'));
-
+                $msgToCheck = $this->renderPartial('@backend/views/karyawan/email_verif', compact('user'));
                 $sendMsgToCheck = Yii::$app->mailer->compose()
                     ->setTo($user->email)
                     ->setSubject('Akses Akun Trial profaskes')
@@ -167,10 +194,10 @@ class KaryawanController extends Controller
 
 
                 if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 'Berhasil Membuat Data');
+                    Yii::$app->session->setFlash('success', 'Berhasil Menamabahkan  Data');
                     return $this->redirect(['index']);
                 } else {
-                    Yii::$app->session->setFlash('error', 'Terjadi Kesalahan saat menyimpan data');
+                    Yii::$app->session->setFlash('error', 'Gagal Menamabahkan  Data');
                 }
             }
         } else {
@@ -223,10 +250,11 @@ class KaryawanController extends Controller
                 }
             }
 
-
-            $model->save();
-
-
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Berhasil Melakukan Upadte Data Karyawan');
+                return $this->redirect(['view', 'id_karyawan' => $model->id_karyawan]);
+            }
+            Yii::$app->session->setFlash('error', 'Gagal Melakukan Upadte Data Karyawan');
             return $this->redirect(['view', 'id_karyawan' => $model->id_karyawan]);
         }
 

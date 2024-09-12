@@ -2,16 +2,16 @@
 
 namespace backend\controllers;
 
-use backend\models\HariLibur;
-use backend\models\HariLiburSearch;
+use backend\models\PengajuanLembur;
+use backend\models\RekapLemburSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * HariLiburController implements the CRUD actions for HariLibur model.
+ * RekapLemburController implements the CRUD actions for PengajuanLembur model.
  */
-class HariLiburController extends Controller
+class RekapLemburController extends Controller
 {
     /**
      * @inheritDoc
@@ -27,27 +27,18 @@ class HariLiburController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
-                'access' => [
-                    'class' => \yii\filters\AccessControl::className(),
-                    'rules' => [
-                        [
-                            'allow' => true,
-                            'roles' => ['@'],
-                        ],
-                    ],
-                ],
             ]
         );
     }
 
     /**
-     * Lists all HariLibur models.
+     * Lists all PengajuanLembur models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new HariLiburSearch();
+        $searchModel = new RekapLemburSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -57,30 +48,30 @@ class HariLiburController extends Controller
     }
 
     /**
-     * Displays a single HariLibur model.
-     * @param int $id_hari_libur Id Hari Libur
+     * Displays a single PengajuanLembur model.
+     * @param int $id_pengajuan_lembur Id Pengajuan Lembur
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id_hari_libur)
+    public function actionView($id_pengajuan_lembur)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id_hari_libur),
+            'model' => $this->findModel($id_pengajuan_lembur),
         ]);
     }
 
     /**
-     * Creates a new HariLibur model.
+     * Creates a new PengajuanLembur model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new HariLibur();
+        $model = new PengajuanLembur();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_hari_libur' => $model->id_hari_libur]);
+                return $this->redirect(['view', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur]);
             }
         } else {
             $model->loadDefaultValues();
@@ -92,18 +83,18 @@ class HariLiburController extends Controller
     }
 
     /**
-     * Updates an existing HariLibur model.
+     * Updates an existing PengajuanLembur model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id_hari_libur Id Hari Libur
+     * @param int $id_pengajuan_lembur Id Pengajuan Lembur
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id_hari_libur)
+    public function actionUpdate($id_pengajuan_lembur)
     {
-        $model = $this->findModel($id_hari_libur);
+        $model = $this->findModel($id_pengajuan_lembur);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_hari_libur' => $model->id_hari_libur]);
+            return $this->redirect(['view', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur]);
         }
 
         return $this->render('update', [
@@ -112,32 +103,32 @@ class HariLiburController extends Controller
     }
 
     /**
-     * Deletes an existing HariLibur model.
+     * Deletes an existing PengajuanLembur model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id_hari_libur Id Hari Libur
+     * @param int $id_pengajuan_lembur Id Pengajuan Lembur
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id_hari_libur)
+    public function actionDelete($id_pengajuan_lembur)
     {
-        $this->findModel($id_hari_libur)->delete();
+        $this->findModel($id_pengajuan_lembur)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the HariLibur model based on its primary key value.
+     * Finds the PengajuanLembur model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id_hari_libur Id Hari Libur
-     * @return HariLibur the loaded model
+     * @param int $id_pengajuan_lembur Id Pengajuan Lembur
+     * @return PengajuanLembur the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id_hari_libur)
+    protected function findModel($id_pengajuan_lembur)
     {
-        if (($model = HariLibur::findOne(['id_hari_libur' => $id_hari_libur])) !== null) {
+        if (($model = PengajuanLembur::findOne(['id_pengajuan_lembur' => $id_pengajuan_lembur])) !== null) {
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 }

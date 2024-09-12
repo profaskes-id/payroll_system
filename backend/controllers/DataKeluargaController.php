@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\DataKeluarga;
 use backend\models\DataKeluargaSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -17,28 +18,28 @@ class DataKeluargaController extends Controller
      * @inheritDoc
      */
     public function behaviors()
-{
-    return array_merge(
-        parent::behaviors(),
-        [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-            'access' => [
-                'class' => \yii\filters\AccessControl::className(),
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
+    {
+        return array_merge(
+            parent::behaviors(),
+            [
+                'verbs' => [
+                    'class' => VerbFilter::className(),
+                    'actions' => [
+                        'delete' => ['POST'],
                     ],
                 ],
-            ],
-        ]
-    );
-}
+                'access' => [
+                    'class' => \yii\filters\AccessControl::className(),
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
+            ]
+        );
+    }
 
     /**
      * Lists all DataKeluarga models.
@@ -79,7 +80,13 @@ class DataKeluargaController extends Controller
         $model = new DataKeluarga();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            if ($model->load($this->request->post())) {
+
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data Keluarga');
+                    return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
+                }
+                Yii::$app->session->setFlash('error', 'Gagal Menambahkan Data Keluarga');
                 return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
             }
         } else {
@@ -102,7 +109,12 @@ class DataKeluargaController extends Controller
     {
         $model = $this->findModel($id_data_keluarga);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Berhasil Melakukan Update Data Keluarga');
+                return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
+            }
+            Yii::$app->session->setFlash('error', 'Gagal Melakukan Update Data Keluarga');
             return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
         }
 
@@ -121,7 +133,13 @@ class DataKeluargaController extends Controller
     public function actionDelete($id_data_keluarga)
     {
         $model = $this->findModel($id_data_keluarga);
-        $model->delete();
+
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data Keluarga');
+            return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
+        }
+        Yii::$app->session->setFlash('error', 'Gagal Menambahkan Data Keluarga');
+        return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
 
         return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
     }

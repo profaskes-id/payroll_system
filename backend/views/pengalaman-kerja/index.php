@@ -45,11 +45,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                'id_karyawan',
-                'perusahaan',
-                'posisi',
-                'masuk_pada',
-                //'keluar_pada',
                 [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
@@ -58,6 +53,16 @@ $this->params['breadcrumbs'][] = $this->title;
                         return Url::toRoute([$action, 'id_pengalaman_kerja' => $model->id_pengalaman_kerja]);
                     }
                 ],
+                [
+                    'label' => 'karyawan',
+                    'value' => function ($model) {
+                        return $model->karyawan->nama;
+                    }
+                ],
+                'perusahaan',
+                'posisi',
+                'masuk_pada',
+                //'keluar_pada',
             ],
         ]); ?>
     </div>

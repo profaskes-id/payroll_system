@@ -61,11 +61,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 <?= $this->render('@backend/views/components/fragment/_time'); ?>
 
-                <a href="/panel/home/your-location">
 
-                    <div class="flex justify-around items-center bg-sky-500/10 p-1 text-[13px] w-[80%] mx-auto mt-3 rounded-full">
-                        <span id="latitude"></span>
-                        <span id="longitude"></span>
+                <p class=" text-gray-500 text-center mt-2 -mb-3 capitalize">Lokasi Anda</p>
+                <a href="/panel/home/your-location">
+                    <div class="capitalize flex justify-around items-center bg-sky-500/10 p-1 text-[13px] w-[80%] mx-auto mt-3 rounded-full">
+                        <p>lat : <span id="latitude"></span></p>
+                        <p>long : <span id="longitude"></span></p>
                     </div>
                 </a>
                 <div class="mt-10 grid place-items-center">
@@ -119,20 +120,36 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <!-- ? mobile izin -->
         <div class="flex justify-between  items-center pb-32">
-            <?php if (count($absensiToday) > 0 or !empty($absensiToday[0]->jam_pulang)) : ?>
-                <div class="grid place-items-center mt-5">
-                    <a href="">
-
-                        <div class="grid place-items-center">
-                            <div class="w-[60px] h-[60px]  border bg-red-50 border-gray rounded-full grid place-items-center">
-                                <div class="font-black text-white w-8 h-8 text-center grid place-items-center rounded-full bg-stone-500">
-                                    <span class="w-5 h-1 bg-white rounded-xl"></span>
+            <?php if (count($absensiToday) > 0) : ?>
+                <?php if (empty($absensiToday[0]->jam_pulang)) : ?>
+                    <div class="grid place-items-center mt-5">
+                        <a href="/panel/home/create">
+                            <div class="grid place-items-center">
+                                <div class="w-[60px] h-[60px]  border bg-red-50 border-gray rounded-full grid place-items-center">
+                                    <div class="font-black text-white w-8 h-8 text-center grid place-items-center rounded-full bg-rose-500">
+                                        <span class="w-1 h-5 bg-white rounded-xl"></span>
+                                    </div>
                                 </div>
+                                <p class="mt-2 font-medium capitalize">Izin Pulang Cepat </p>
                             </div>
-                            <p class="mt-2 font-medium capitalize">Izin Tidak hadir</p>
-                        </div>
-                    </a>
-                </div>
+                        </a>
+                    </div>
+                <?php else : ?>
+
+                    <div class="grid place-items-center mt-5">
+                        <a href="">
+
+                            <div class="grid place-items-center">
+                                <div class="w-[60px] h-[60px]  border bg-red-50 border-gray rounded-full grid place-items-center">
+                                    <div class="font-black text-white w-8 h-8 text-center grid place-items-center rounded-full bg-stone-500">
+                                        <span class="w-5 h-1 bg-white rounded-xl"></span>
+                                    </div>
+                                </div>
+                                <p class="mt-2 font-medium capitalize">Izin Tidak hadir</p>
+                            </div>
+                        </a>
+                    </div>
+                <?php endif ?>
 
             <?php else : ?>
                 <div class="grid place-items-center mt-5">

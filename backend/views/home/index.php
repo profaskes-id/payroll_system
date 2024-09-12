@@ -134,10 +134,9 @@ function getShortDescription($description, $wordLimit = 5)
                         <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                             <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/touch.png" alt="touch" width="40px" height="40px">
                         </div>
-                        <div class="flex flex-col justify-center items-center py-1">
+                        <div class="flex flex-col justify-center items-center py-2.5 space-y-3">
                             <p class="text-white font-semibold text-sm"><span class="text-gray-300 text-sm">Jam Masuk : </span><?php echo date('H:i', strtotime($absensi->jam_masuk)) ?></p>
                             <p class="text-white font-semibold text-sm"><span class="text-gray-300 text-sm">Jam Pulang : </span><?php echo date('H:i', strtotime($absensi->jam_pulang)) ?></p>
-                            <p class="text-white font-semibold text-sm"><span class="text-gray-300 text-sm">Total : </span><?php echo $lama_kerja ?></p>
                         </div>
                     </div>
                 </a>
@@ -147,10 +146,9 @@ function getShortDescription($description, $wordLimit = 5)
                         <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                             <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/touch.png" alt="touch" width="40px" height="40px">
                         </div>
-                        <div class="flex flex-col justify-center items-center py-1">
+                        <div class="flex flex-col justify-center items-center py-2.5 space-y-3">
                             <p class="text-white font-semibold text-sm"><span class="text-gray-100 text-sm">Jam Masuk : </span><strong><?php echo date('H:i', strtotime($absensi->jam_masuk)) ?></strong></p>
                             <p class="text-white font-semibold text-sm"><span class="text-gray-100 text-sm">Jam Pulang : </span><strong>-</strong></p>
-                            <p class="text-white font-semibold text-sm"><span class="text-gray-100 text-sm">Total : </span><?php echo $lama_kerja ?? '<strong>-</strong>' ?></p>
                         </div>
                     </div>
                 </a>

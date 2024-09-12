@@ -11,7 +11,7 @@ use yii\widgets\Pjax;
 /** @var backend\models\PengajuanDinasSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Pengajuan Dinas';
+$this->title = 'Pengajuan Dinas Luar';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pengajuan-dinas-index">
