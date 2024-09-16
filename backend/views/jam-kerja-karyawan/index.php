@@ -52,7 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'Karyawan',
                     'value' => function ($model) {
-                        if ($model['nama_jam_kerja'] && $model['jenis_shift']) {
+                        if ($model['nama_jam_kerja']) {
                             return Html::a($model['nama'], ['jam-kerja-karyawan/view', 'id_karyawan' => $model['id_karyawan']]);
                         }
                         return Html::a($model['nama'], ['jam-kerja-karyawan/create', 'id_karyawan' => $model['id_karyawan']]);
@@ -66,21 +66,17 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'format' => 'raw'
                 ],
+
                 [
-                    'attribute' => 'Jenis Shift',
+                    'attribute' => 'Maximal Terlambat',
                     'format' => 'raw',
                     'value' => function ($model) {
-                        $master =  MasterKode::find()->where(['nama_group' => 'jenis-shift', 'kode' => $model['jenis_shift']])->one() ?? null;
-                        if ($master) {
-                            return $master->nama_kode;
+                        if ($model['max_terlambat'] != null) {
+                            return date('H:i', strtotime($model['max_terlambat']));
                         }
-                        return '<p class="text-danger">(belum diset)</p>';
+                        return '<p class="text-danger">(Belum Diset)</p>';
                     }
                 ],
-
-
-
-
             ],
         ]); ?>
     </div>

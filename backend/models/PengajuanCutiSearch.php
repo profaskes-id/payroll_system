@@ -49,6 +49,7 @@ class PengajuanCutiSearch extends PengajuanCuti
             'sort' => [
                 'defaultOrder' => [
                     'status' => SORT_ASC, // Mengurutkan berdasarkan status secara ascending
+
                 ],
             ],
         ]);

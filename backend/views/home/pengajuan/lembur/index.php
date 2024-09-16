@@ -26,7 +26,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
         <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="default-tab" data-tabs-toggle="#default-tab-content" role="tablist">
             <li class="me-2" role="presentation">
                 <button class="flex justify-between items-center space-x-1 p-4 border-b-2 rounded-t-lg " id="profile-tab" data-tabs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
-                    <div class="w-4 h-4 bg-blue-100 rounded-full"></div>
+                    <div class="w-4 h-4 bg-blue-300 rounded-full"></div>
                     <span>
                         All
                     </span>
@@ -35,7 +35,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
             <li class="me-2" role="presentation">
                 <button class="flex justify-between items-center space-x-1  p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="settings-tab" data-tabs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">
-                    <div class="w-4 h-4 bg-green-100 rounded-full"></div>
+                    <div class="w-4 h-4 bg-green-300 rounded-full"></div>
                     <span>
                         Disetujui
                     </span>
@@ -43,7 +43,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
             </li>
             <li role="presentation">
                 <button class="flex justify-between items-center space-x-1  p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="contacts-tab" data-tabs-target="#contacts" type="button" role="tab" aria-controls="contacts" aria-selected="false">
-                    <div class="w-4 h-4 bg-red-100 rounded-full"></div>
+                    <div class="w-4 h-4 bg-red-300 rounded-full"></div>
                     <span>
                         Ditolak
                     </span>
@@ -60,22 +60,29 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                     <?php foreach ($pengajuanLembur as $key => $value) : ?>
                         <a href="<?php echo \yii\helpers\Url::to(['/pengajuan/lembur-detail/', 'id' => $value['id_pengajuan_lembur']]) ?>">
                             <div class="grid grid-cols-12 gap-5 ">
-                                <?php if ($value['status'] == '0') : ?>
-                                    <div class="col-span-1 h-full bg-yellow-200 rounded-full "></div>
-                                <?php elseif ($value['status'] == '1') : ?>
-                                    <div class="col-span-1 h-full bg-green-200 rounded-full "></div>
-                                <?php elseif ($value['status'] == '2') : ?>
-                                    <div class="col-span-1 h-full bg-red-200 rounded-full "></div>
-                                <?php endif ?>
+
                                 <div class="p-2 text-sm col-span-11  bg-white rounded-md w-full">
 
 
                                     <p class="text-[15px] capitalize  text-gray-500">Pengajuan Lembur : <strong><?= date('d M Y', strtotime($value['tanggal'])) ?></strong></p>
-                                    <hr class="w-2/3 my-2">
                                     <div class="flex space-x-3 text-gray-500">
                                         <p><?= date('H:i', strtotime($value['jam_mulai'])) ?></p>
                                         <span>&nbsp;~&nbsp;&nbsp;</span>
                                         <p><?= date('H:i', strtotime($value['jam_selesai'])) ?></p>
+                                    </div>
+                                    <hr class=" my-2">
+                                    <div class="flex justify-between items-center py-2 ">
+
+                                        <div class="">
+                                            <?php if ($value['status'] == '0') : ?>
+                                                <span class=" px-5 py-1 bg-yellow-300 text-black font-semibold rounded-full ">Pending</span>
+                                            <?php elseif ($value['status'] == '1') : ?>
+                                                <span class=" px-5 py-1 bg-green-500 text-white font-semibold rounded-full ">Disetujui</span>
+                                            <?php elseif ($value['status'] == '2') : ?>
+                                                <span class=" px-5 py-1 bg-red-500 text-white font-semibold rounded-full ">Ditolak</span>
+                                            <?php endif ?>
+
+                                        </div>
                                     </div>
 
                                 </div>

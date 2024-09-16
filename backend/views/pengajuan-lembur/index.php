@@ -91,7 +91,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'headerOptions' => ['style' => 'text-align: center;'],
                 'contentOptions' => ['style' => 'text-align: center;'],
                 'format' => 'raw',
-                'attribute' => 'status',
+                'label' => 'Status',
                 'value' => function ($model) {
                     if ($model->statusPengajuan->nama_kode !== null) {
                         if (strtolower($model->statusPengajuan->nama_kode) == "pending") {

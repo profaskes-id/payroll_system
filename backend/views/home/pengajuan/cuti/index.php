@@ -26,7 +26,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
         <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="default-tab" data-tabs-toggle="#default-tab-content" role="tablist">
             <li class="me-2" role="presentation">
                 <button class="flex justify-between items-center space-x-1 p-4 border-b-2 rounded-t-lg " id="profile-tab" data-tabs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
-                    <div class="w-4 h-4 bg-blue-100 rounded-full"></div>
+                    <div class="w-4 h-4 bg-blue-300 rounded-full"></div>
                     <span>
                         All
                     </span>
@@ -35,7 +35,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
             <li class="me-2" role="presentation">
                 <button class="flex justify-between items-center space-x-1  p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="settings-tab" data-tabs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">
-                    <div class="w-4 h-4 bg-green-100 rounded-full"></div>
+                    <div class="w-4 h-4 bg-green-300 rounded-full"></div>
                     <span>
                         Disetujui
                     </span>
@@ -43,7 +43,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
             </li>
             <li role="presentation">
                 <button class="flex justify-between items-center space-x-1  p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="contacts-tab" data-tabs-target="#contacts" type="button" role="tab" aria-controls="contacts" aria-selected="false">
-                    <div class="w-4 h-4 bg-red-100 rounded-full"></div>
+                    <div class="w-4 h-4 bg-red-300 rounded-full"></div>
                     <span>
                         Ditolak
                     </span>
@@ -60,14 +60,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                     <?php foreach ($pengajuanCuti as $key => $value) : ?>
                         <a href="<?php echo \yii\helpers\Url::to(['/pengajuan/cuti-detail/', 'id' => $value['id_pengajuan_cuti']]) ?>">
                             <div class="grid grid-cols-12 gap-5 ">
-                                <?php if ($value['status'] == '0') : ?>
-                                    <div class="col-span-1 h-full bg-yellow-200 rounded-full "></div>
-                                <?php elseif ($value['status'] == '1') : ?>
-                                    <div class="col-span-1 h-full bg-green-200 rounded-full "></div>
-                                <?php elseif ($value['status'] == '2') : ?>
-                                    <div class="col-span-1 h-full bg-red-200 rounded-full "></div>
-                                <?php endif ?>
-                                <div class="p-2 text-sm col-span-11  bg-white rounded-md w-full">
+                                <div class="p-2 text-sm col-span-12  bg-white rounded-md w-full">
 
                                     <?php
                                     $teks = $value['alasan_cuti'];
@@ -87,8 +80,21 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                                         <p><?= date('d-m-Y', strtotime($value['tanggal_selesai'])) ?></p>
                                     </div>
                                     <hr class="my-2">
-                                    <p class="text-[12px] capitalize text-end text-gray-500">diajukan pada :<?= $value['tanggal_pengajuan'] ?></p>
+                                    <div class="flex justify-between items-center py-2 ">
 
+                                        <div class="">
+                                            <?php if ($value['status'] == '0') : ?>
+                                                <span class=" px-5 py-1 bg-yellow-300 text-black font-semibold rounded-full ">Pending</span>
+                                            <?php elseif ($value['status'] == '1') : ?>
+                                                <span class=" px-5 py-1 bg-green-500 text-white font-semibold rounded-full ">Disetujui</span>
+                                            <?php elseif ($value['status'] == '2') : ?>
+                                                <span class=" px-5 py-1 bg-red-500 text-white font-semibold rounded-full ">Ditolak</span>
+                                            <?php endif ?>
+
+                                        </div>
+                                        <p class="text-[12px] capitalize text-end text-gray-500">diajukan pada : <?= date('d M Y', strtotime($value['tanggal_pengajuan'])) ?></p>
+
+                                    </div>
                                 </div>
                             </div>
                         </a>
@@ -129,7 +135,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                                         <p><?= date('d-m-Y', strtotime($value['tanggal_selesai'])) ?></p>
                                     </div>
                                     <hr class="my-2">
-                                    <p class="text-[12px] capitalize text-end text-gray-500">diajukan pada :<?= $value['tanggal_pengajuan'] ?></p>
+                                    <p class="py-1 text-[12px] capitalize text-end text-gray-500">diajukan pada : <?= date('d M Y', strtotime($value['tanggal_pengajuan'])) ?></p>
 
                                 </div>
                             </div>
@@ -170,7 +176,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                                         <p><?= date('d-m-Y', strtotime($value['tanggal_selesai'])) ?></p>
                                     </div>
                                     <hr class="my-2">
-                                    <p class="text-[12px] capitalize text-end text-gray-500">diajukan pada :<?= $value['tanggal_pengajuan'] ?></p>
+                                    <p class="py-1 text-[12px] capitalize text-end text-gray-500">diajukan pada : <?= date('d M Y', strtotime($value['tanggal_pengajuan'])) ?></p>
 
                                 </div>
                             </div>

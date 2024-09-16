@@ -64,6 +64,7 @@ use yii\helpers\Html;
                                 'items' => [
                                     ['label' => 'Perusahaan',  'icon' => 'fa fa-building', 'url' => ['/perusahaan/index'],],
                                     ['label' => 'Karyawan',  'icon' => 'fa fa-users', 'url' => ['/karyawan/index'],],
+                                    ['label' => 'Atasan Karyawan',  'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index'],],
                                 ],
                             ],
                             [
@@ -72,6 +73,7 @@ use yii\helpers\Html;
                                 'items' => [
                                     ['label' => 'Jam Kerja',  'icon' => 'fa fa-clock', 'url' => ['/jam-kerja/index'],],
                                     ['label' => 'Jam Kerja Karyawan',  'icon' => 'fa fa-user-clock', 'url' => ['/jam-kerja-karyawan/index'],],
+
                                 ],
                             ],
                             [
@@ -111,6 +113,7 @@ use yii\helpers\Html;
                                 'items' => [
                                     ['label' => 'Perusahaan',  'icon' => 'fa fa-building', 'url' => ['/perusahaan/index'],],
                                     ['label' => 'Karyawan',  'icon' => 'fa fa-users', 'url' => ['/karyawan/index'],],
+                                    ['label' => 'Atasan Karyawan',  'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index'],],
                                 ],
                             ],
                             [

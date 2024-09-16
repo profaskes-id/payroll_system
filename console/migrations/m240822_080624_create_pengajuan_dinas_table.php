@@ -23,6 +23,7 @@ class m240822_080624_create_pengajuan_dinas_table extends Migration
             'status' => $this->integer()->defaultValue(0),
             'disetujui_pada' => $this->dateTime(),
             'disetujui_oleh' => $this->integer(),
+            'files' => $this->text(),
         ]);
 
         // Add foreign key constraints if necessary

@@ -13,20 +13,18 @@ class m240731_074752_create_jam_kerja_karyawan_table extends Migration
     public function safeUp()
     {
         $this->createTable('{{%jam_kerja_karyawan}}', [
-            'id_jam_kerja_karyawan' => $this->primaryKey(), // Primary key with auto-increment
+            'id_jam_kerja_karyawan' => $this->primaryKey(),
             'id_karyawan' => $this->integer()->notNull(),
             'id_jam_kerja' => $this->integer()->notNull(),
-            'jenis_shift' => $this->integer()->notNull(), // Shift type (integer)
+            'max_terlambat' => $this->time()->notNull()->defaultValue('00:00:00'),
         ]);
 
-        // Create index for foreign key to jam_kerja
         $this->createIndex(
             'idx-jam_kerja_karyawan-id_jam_kerja',
             '{{%jam_kerja_karyawan}}',
             'id_jam_kerja'
         );
 
-        // Add foreign key constraint to jam_kerja
         $this->addForeignKey(
             'fk-jam_kerja_karyawan-id_jam_kerja',
             '{{%jam_kerja_karyawan}}',

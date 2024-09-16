@@ -32,8 +32,8 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
         <div class="col-4">
-            <?php $nama_kode = \yii\helpers\ArrayHelper::map(MasterKode::find()->all(), 'nama_kode', 'nama_kode');
-            echo $form->field($model, 'nama_kode')->widget(Select2::classname(), [
+            <?php $nama_kode = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['jenis-cuti']])->all(), 'kode', 'nama_kode');
+            echo $form->field($model, 'jenis_cuti')->widget(Select2::classname(), [
                 'data' => $nama_kode,
                 'language' => 'id',
                 'options' => ['placeholder' => 'Cari nama kode ...'],

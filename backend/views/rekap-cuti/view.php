@@ -48,9 +48,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
-                    'label' => 'Total Hari Terpakai',
+                    'label' => "Total Cuti Digunakan",
                     'value' => function ($model) {
-                        return $model->total_hari_terpakai . " Hari";
+                        return $model->total_hari_terpakai . ' Hari';
+                    }
+                ],
+                [
+                    'label' => "Jatah Cuti Tersisa",
+                    'value' => function ($model) {
+                        return ($model->masterCuti->total_hari_pertahun - $model->total_hari_terpakai) . ' Hari';
                     }
                 ]
             ],

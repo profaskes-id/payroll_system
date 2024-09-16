@@ -62,20 +62,24 @@ $this->params['breadcrumbs'][] = $this->title;
                 //'disetujui_oleh',
                 //'disetujui_pada',
                 [
-                    'label' => 'Status',
+                    'headerOptions' => ['style' => 'text-align: center;'],
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'format' => 'raw',
+                    'label' => 'Status',
                     'value' => function ($model) {
-                        if ($model->status == 0) {
-                            return '<span class="text-warning">Pending</span>';
-                        } elseif ($model->status == 1) {
-                            return '<span class="text-success">Disetujui</span>';
-                        } elseif ($model->status == 2) {
-                            return '<span class="text-danger">Ditolak</span>';
+                        if ($model->statusPengajuan->nama_kode !== null) {
+                            if (strtolower($model->statusPengajuan->nama_kode) == "pending") {
+                                return "<span class='text-capitalize text-warning '>Pending</span>";
+                            } elseif (strtolower($model->statusPengajuan->nama_kode) == "disetujui") {
+                                return "<span class='text-capitalize text-success '>disetujui</span>";
+                            } elseif (strtolower($model->statusPengajuan->nama_kode) == "ditolak") {
+                                return "<span class='text-capitalize text-danger '>ditolak</span>";
+                            }
                         } else {
                             return "<span class='text-danger'>master kode tidak aktif</span>";
                         }
-                    }
-                ]
+                    },
+                ],
             ],
         ]); ?>
     </div>

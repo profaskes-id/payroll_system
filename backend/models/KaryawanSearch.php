@@ -179,7 +179,7 @@ class KaryawanSearch extends Karyawan
     {
 
         $query = Karyawan::find()
-            ->select(['karyawan.id_karyawan', 'karyawan.nama', 'jam_kerja.nama_jam_kerja', 'jam_kerja_karyawan.jenis_shift'])
+            ->select(['karyawan.id_karyawan', 'karyawan.nama', 'jam_kerja.nama_jam_kerja', 'jam_kerja_karyawan.max_terlambat'])
             ->leftJoin('jam_kerja_karyawan', 'karyawan.id_karyawan = jam_kerja_karyawan.id_karyawan')
             ->leftJoin('jam_kerja', 'jam_kerja_karyawan.id_jam_kerja = jam_kerja.id_jam_kerja')
             ->asArray()
@@ -200,7 +200,7 @@ class KaryawanSearch extends Karyawan
     {
 
         $query = Karyawan::find()
-            ->select(['karyawan.id_karyawan', 'karyawan.nama', 'jam_kerja.nama_jam_kerja', 'jam_kerja_karyawan.jenis_shift'])
+            ->select(['karyawan.id_karyawan', 'karyawan.nama', 'jam_kerja.nama_jam_kerja', 'jam_kerja_karyawan.max_terlambat'])
             ->leftJoin('jam_kerja_karyawan', 'karyawan.id_karyawan = jam_kerja_karyawan.id_karyawan')
             ->leftJoin('jam_kerja', 'jam_kerja_karyawan.id_jam_kerja = jam_kerja.id_jam_kerja')
             ->asArray()
@@ -215,6 +215,58 @@ class KaryawanSearch extends Karyawan
             ],
         ]);
 
+        return $dataProvider;
+    }
+    public function  searchAtasanKaryawan($params)
+    {
+
+
+        $query = (new Query())
+            ->select([
+                'k.id_karyawan',
+                'k.nama',
+                'a.id_atasan',
+                'a.status'
+            ])
+            ->from('karyawan k')
+            ->leftJoin('atasan_karyawan a', 'k.id_karyawan = a.id_karyawan')
+            // ->where(['karyawan.id_karyawan' => $params])
+            ->all();
+
+
+        // dd($query);
+        $dataProvider = new ArrayDataProvider([
+            'models' => $query,
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
+        return $dataProvider;
+    }
+    public function  searchAtasanKaryawanID($params)
+    {
+
+
+        $query = (new Query())
+            ->select([
+                'k.id_karyawan',
+                'k.nama',
+                'a.id_atasan',
+                'a.status'
+            ])
+            ->from('karyawan k')
+            ->leftJoin('atasan_karyawan a', 'k.id_karyawan = a.id_karyawan')
+            ->where(['k.id_karyawan' => $params])
+            ->all();
+
+
+
+        $dataProvider = new ArrayDataProvider([
+            'models' => $query,
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
         return $dataProvider;
     }
 }

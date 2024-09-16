@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\JamKerjaKaryawan;
 use backend\models\MasterCuti;
 use backend\models\MasterKode;
 use backend\models\PengajuanCuti;
@@ -85,7 +86,7 @@ class PengajuanCutiController extends Controller
             if ($model->load($this->request->post())) {
                 $model->tanggal_pengajuan = date('Y-m-d');
                 $model->sisa_hari = 0;
-                 $model->status = 0;
+                $model->status = 0;
 
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Pengajuan Cuti Berhasil');
@@ -126,18 +127,24 @@ class PengajuanCutiController extends Controller
 
 
 
-                $timestamp_mulai = strtotime($model->tanggal_mulai);
-                $timestamp_selesai = strtotime($model->tanggal_selesai);
+                // $timestamp_mulai = strtotime($model->tanggal_mulai);
+                // $timestamp_selesai = strtotime($model->tanggal_selesai);
+                $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $model->id_karyawan])->one();
+                $containsNumber = strpos($jamKerjaKaryawan->jamKerja->nama_jam_kerja, preg_match('/\d+/', "5", $matches) ? $matches[0] : '') !== false;
 
+                $hari_kerja = $this->hitungHariKerja($model->tanggal_mulai, $model->tanggal_selesai, $containsNumber);
+                // dd($hari_kerja);
                 // Menghitung selisih hari
-                $selisih_detik = $timestamp_selesai - $timestamp_mulai;
-                $selisih_hari = $selisih_detik / (60 * 60 * 24);
+                // $selisih_detik = $timestamp_selesai - $timestamp_mulai;
+                // $selisih_hari = $selisih_detik / (60 * 60 * 24);
+
+
 
                 if ($model->status == Yii::$app->params['disetujui']) {
                     $rekapan = RekapCuti::find()->where(['id_karyawan' => $model->id_karyawan, 'id_master_cuti' => $model->jenis_cuti, 'tahun' => date('Y', strtotime($model->tanggal_mulai))])->one();
 
                     if ($rekapan) {
-                        $rekapan->total_hari_terpakai += $selisih_hari;
+                        $rekapan->total_hari_terpakai += $hari_kerja;
                         $rekapan->save();
                     } else {
                         $NewrekapAsensi = new RekapCuti();
@@ -197,4 +204,36 @@ class PengajuanCutiController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public  function hitungHariKerja($tanggal_mulai, $tanggal_selesai, $containsNumber)
+    {
+        // Konversi tanggal menjadi timestamp
+        $timestamp_mulai = strtotime($tanggal_mulai);
+        $timestamp_selesai = strtotime($tanggal_selesai);
+
+        // Inisialisasi variabel untuk menghitung hari kerja
+        $hari_kerja = 0;
+
+        // Loop melalui semua hari antara tanggal mulai dan tanggal selesai
+        for ($timestamp = $timestamp_mulai; $timestamp <= $timestamp_selesai; $timestamp += 86400) { // 86400 detik = 1 hari
+            // Ambil nama hari dalam seminggu (contoh: "Sunday", "Monday", dll.)
+            $hari = date('l', $timestamp);
+
+            if ($containsNumber) {
+                if ($hari != 'Saturday' && $hari != 'Sunday') {
+                    $hari_kerja++;
+                }
+            } else {
+                if ($hari != 'Sunday') {
+                    $hari_kerja++;
+                }
+            }
+            // Periksa apakah hari tersebut bukan Sabtu atau Minggu
+        }
+
+        return $hari_kerja;
+    }
+
+    // Contoh penggunaan fungsi
+
 }

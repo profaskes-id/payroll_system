@@ -17,6 +17,7 @@ use Yii;
  * @property string|null $lampiran
  * @property float|null $latitude
  * @property float|null $longitude
+ * @property string|null $alasan_terlambat
  *
  * @property Karyawan $karyawan
  */
@@ -39,7 +40,7 @@ class Absensi extends \yii\db\ActiveRecord
             [['id_karyawan', 'tanggal', 'kode_status_hadir'], 'required'],
             [['id_karyawan', 'kode_status_hadir'], 'integer'],
             [['tanggal', 'jam_masuk', 'jam_pulang'], 'safe'],
-            [['keterangan'], 'string'],
+            [['keterangan', 'alasan_terlambat'], 'string'],
             [['latitude', 'longitude'], 'number'],
             [['lampiran'], 'string', 'max' => 255],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
@@ -64,6 +65,7 @@ class Absensi extends \yii\db\ActiveRecord
             'lampiran' => 'Lampiran',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
+            'alasan_terlambat' => 'Alasan Terlambat',
         ];
     }
 

@@ -31,8 +31,9 @@ class JamKerjaKaryawan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_karyawan', 'id_jam_kerja', 'jenis_shift'], 'required'],
-            [['id_karyawan', 'id_jam_kerja', 'jenis_shift'], 'integer'],
+            [['id_karyawan', 'id_jam_kerja',], 'required'],
+            [['id_karyawan', 'id_jam_kerja',], 'integer'],
+            [['max_terlambat'], 'safe'],
             [['id_jam_kerja'], 'exist', 'skipOnError' => true, 'targetClass' => JamKerja::class, 'targetAttribute' => ['id_jam_kerja' => 'id_jam_kerja']],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
         ];
@@ -47,7 +48,8 @@ class JamKerjaKaryawan extends \yii\db\ActiveRecord
             'id_jam_kerja_karyawan' => 'Id Jam Kerja Karyawan',
             'id_karyawan' => 'Id Karyawan',
             'id_jam_kerja' => 'Id Jam Kerja',
-            'jenis_shift' => 'Jenis Shift',
+            // 'jenis_shift' => 'Jenis Shift',
+            'max_terlambat' => 'Max Terlambat',
         ];
     }
 
@@ -69,9 +71,5 @@ class JamKerjaKaryawan extends \yii\db\ActiveRecord
     public function getKaryawan()
     {
         return $this->hasOne(Karyawan::class, ['id_karyawan' => 'id_karyawan']);
-    }
-    public function getJenisShift()
-    {
-        return $this->hasOne(MasterKode::class, ['kode' => 'jenis_shift'])->onCondition(['nama_group' => 'jenis-shift']);
     }
 }

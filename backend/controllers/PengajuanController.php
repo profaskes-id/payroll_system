@@ -11,6 +11,7 @@ use backend\models\PengajuanLembur;
 use backend\models\RekapCuti;
 use Yii;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 class PengajuanController extends \yii\web\Controller
 {
@@ -53,6 +54,7 @@ class PengajuanController extends \yii\web\Controller
     }
 
 
+
     public function actionIndex()
     {
         return $this->redirect(['/home']);
@@ -64,6 +66,7 @@ class PengajuanController extends \yii\web\Controller
 
 
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+
         $pengajuanCuti = PengajuanCuti::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal_pengajuan' => SORT_ASC, 'status' => SORT_ASC,])->all();
         return $this->render('/home/pengajuan/cuti/index', compact('pengajuanCuti'));
     }
@@ -74,8 +77,24 @@ class PengajuanController extends \yii\web\Controller
 
         $this->layout = 'mobile-main';
         $model = new PengajuanCuti();
-        $jenisCuti = MasterCuti::find()->where(['status' => 1])->orderBy(['jenis_cuti' => SORT_ASC])->all();
-        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+        $karyawan = Karyawan::find()
+            ->select(['id_karyawan', 'kode_jenis_kelamin'])
+            ->where(['email' => Yii::$app->user->identity->email])
+            ->one();
+
+        // Ambil seluruh data jenis cuti dengan status aktif
+        $jenisCuti = MasterCuti::find()
+            ->where(['status' => 1])
+            ->orderBy(['jenis_cuti' => SORT_ASC])
+            ->all();
+
+        // Filter jenis cuti berdasarkan kode jenis kelamin
+        if ($karyawan->kode_jenis_kelamin == 1) { // Laki-laki
+            $jenisCuti = array_filter($jenisCuti, function ($cuti) {
+                return $cuti->jenis_cuti !== 'Cuti Hamil';
+            });
+        }
+
         $rekapCuti = RekapCuti::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tahun' => date('Y')])->all();
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
@@ -93,6 +112,30 @@ class PengajuanController extends \yii\web\Controller
             }
         }
         return $this->render('home/pengajuan/cuti/create', compact('model', 'jenisCuti', 'rekapCuti'));
+    }
+
+
+    public function actionJenisCuti()
+    {
+        $karyawan = Karyawan::find()
+            ->select(['id_karyawan', 'kode_jenis_kelamin'])
+            ->where(['email' => Yii::$app->user->identity->email])
+            ->one();
+
+        // Ambil seluruh data jenis cuti dengan status aktif
+        $jenisCuti = MasterCuti::find()
+            ->where(['status' => 1])
+            ->orderBy(['jenis_cuti' => SORT_ASC])
+            ->all();
+
+        // Filter jenis cuti berdasarkan kode jenis kelamin
+        if ($karyawan->kode_jenis_kelamin == 1) { // Laki-laki
+            $jenisCuti = array_filter($jenisCuti, function ($cuti) {
+                return $cuti->jenis_cuti !== 'Cuti Hamil';
+            });
+        }
+
+        return $this->asJson($jenisCuti);
     }
 
     public function actionCutiDetail($id)
@@ -189,5 +232,47 @@ class PengajuanController extends \yii\web\Controller
         $this->layout = 'mobile-main';
         $model = PengajuanDinas::find()->where(['id_pengajuan_dinas' => $id])->one();
         return $this->render('home/pengajuan/dinas/detail', compact('model'));
+    }
+    public function actionUploadDokumentasi()
+    {
+        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+        $model = PengajuanDinas::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
+        // dd(Yii::$app->request->post('PengajuanDinas'));
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $model->files = UploadedFile::getInstances($model, 'files');
+
+
+
+                // Path upload folder
+                $uploadPath = Yii::getAlias('@webroot/uploads/dokumentasi/');
+
+                // Array untuk menyimpan path file
+                $filePaths = [];
+
+                foreach ($model->files as $file) {
+                    $fileName = uniqid() . '.' . $file->extension;
+                    $filePath = $uploadPath . $fileName;
+
+                    if ($file->saveAs($filePath)) {
+                        // Simpan path file
+                        $filePaths[] = $filePath;
+                    }
+                }
+
+                // Simpan informasi file di database
+                $model->files = json_encode($filePaths); // Simpan dalam format JSON
+                // dd($model);
+
+                // dd($model->save());
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Files Berhasil Di upload.');
+                    return $this->redirect(['/pengajuan/dinas']);
+                } else {
+                    Yii::$app->session->setFlash('error', ' Gagal Melakukan upload file.');
+                    return $this->redirect(['/pengajuan/dinas']);
+                }
+            }
+        }
     }
 }

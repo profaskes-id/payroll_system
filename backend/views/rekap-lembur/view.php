@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /** @var backend\models\PengajuanLembur $model */
 
 $this->title = $model->karyawan->nama . " (" . date('d-M-Y', strtotime($model->tanggal)) . ")";
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Pengajuan Lemburs'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Pengajuan Lembur'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -53,17 +53,53 @@ $this->params['breadcrumbs'][] = $this->title;
                         return implode('', $finalValue);
                     }
                 ],
-                'status',
-                'jam_mulai',
-                'jam_selesai',
+                [
+                    'format' => 'raw',
+                    'label' => 'Status',
+                    'value' => function ($model) {
+                        if ($model->statusPengajuan->nama_kode !== null) {
+                            if (strtolower($model->statusPengajuan->nama_kode) == "pending") {
+                                return "<span class='text-capitalize text-warning '>Pending</span>";
+                            } elseif (strtolower($model->statusPengajuan->nama_kode) == "disetujui") {
+                                return "<span class='text-capitalize text-success '>disetujui</span>";
+                            } elseif (strtolower($model->statusPengajuan->nama_kode) == "ditolak") {
+                                return "<span class='text-capitalize text-danger '>ditolak</span>";
+                            }
+                        } else {
+                            return "<span class='text-danger'>master kode tidak aktif</span>";
+                        }
+                    },
+                ],
+                [
+                    'label' => 'Jam Mulai',
+                    'value' => function ($model) {
+                        return date('H:i', strtotime($model->jam_mulai));
+                    }
+                ],
+                [
+                    'label' => 'Jam Selesai',
+                    'value' => function ($model) {
+                        return date('H:i', strtotime($model->jam_selesai));
+                    }
+                ],
                 [
                     'label' => 'Tanggal',
                     'value' => function ($model) {
                         return date('d-M-Y', strtotime($model->tanggal));
                     }
                 ],
-                'disetujui_oleh',
-                'disetujui_pada',
+                [
+                    'label' => 'Disetujui Oleh',
+                    'value' => function ($model) {
+                        return $model->disetujuiOleh->username ?? 'Admin';
+                    }
+                ],
+                [
+                    'label' => 'Tanggal',
+                    'value' => function ($model) {
+                        return date('d-M-Y', strtotime($model->disetujui_pada));
+                    }
+                ],
             ],
         ]) ?>
 

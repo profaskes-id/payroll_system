@@ -25,7 +25,7 @@ use kartik\select2\Select2;
             echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
                 'data' => $id_karyawan,
                 'language' => 'id',
-                'options' => ['placeholder' => 'Cari Nama Group ...'],
+                'options' => ['placeholder' => 'Cari Nama Karyawan ...'],
                 'pluginOptions' => [
                     'tags' => true,
                     'allowClear' => true

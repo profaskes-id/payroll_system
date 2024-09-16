@@ -7,6 +7,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -166,6 +167,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     </a>
                 </div>
             <?php endif ?>
+
+            <?php if ($isTerlambatActive): ?>
+                <?= $this->render('@backend/views/components/fragment/_terlambat', ['model' => $model]); ?>
+            <?php endif ?>
+
             <div class="grid place-items-center mt-5">
 
                 <?= Html::a('
@@ -200,39 +206,94 @@ $redirectUrl = Yii::getAlias('@web'); // Atau ganti dengan alias yang sesuai
 ?>
 <script>
     function checkLocationAccess() {
-        // Memeriksa apakah browser mendukung Geolocation API
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    // Jika posisi berhasil didapat, tidak melakukan apa-apa
-                },
+                function(position) {},
                 function(error) {
-                    // Jika gagal mendapatkan posisi, redirect ke halaman lain
                     alert('Izinkan Browser Untuk Mengakses Lokasi Anda');
                 }
             );
         } else {
-            // Jika browser tidak mendukung Geolocation API, redirect ke halaman lain
             alert('Izinkan Browser Untuk Mengakses Lokasi Anda');
         }
     }
 
-    // Menjalankan fungsi untuk memeriksa akses lokasi
     checkLocationAccess();
 </script>
 
+
+<?php
+$dataToday = ArrayHelper::toArray($dataJam);
+$dataTodayJson = json_encode($dataToday, JSON_PRETTY_PRINT);
+?>
 <script>
+    let todayJson = <?= $dataTodayJson ?>;
+
+    jam_masuk = todayJson?.today?.jam_masuk;
+    max_telat = todayJson?.karyawan?.max_terlambat;
+    let form = document.getElementById('my-form');
     let submitButton = document.getElementById('submitButton');
-    console.info(submitButton);
+
     submitButton.addEventListener('click', function() {
-        let form = document.getElementById('my-form');
-        form.submit();
+
+        function getWaktuSaatIni() {
+            const sekarang = new Date();
+            return {
+                jam: sekarang.getHours(),
+                menit: sekarang.getMinutes(),
+                detik: sekarang.getSeconds()
+            };
+        }
+
+        const {
+            jam,
+            menit,
+            detik
+        } = getWaktuSaatIni();
+
+
+        const [batasJam, batasMenit, batasDetik] = jam_masuk.split(':').map(Number);
+        const [maximalTelatJam, maximalTelatbatasMenit, maximalTelatbatasDetik] = max_telat.split(':').map(Number);
+
+        function isSebelumBatas(jam, menit, detik) {
+            if (jam < batasJam) return true;
+            if (jam === batasJam && menit < batasMenit) return true;
+            if (jam === batasJam && menit === batasMenit && detik < batasDetik) return true;
+            return false;
+        }
+
+        function isTerlambat(jam, menit, detik) {
+            console.info(jam, batasJam, menit, maximalTelatbatasMenit)
+            if (jam > batasJam) return true;
+            if (jam == batasJam && menit < maximalTelatbatasMenit) return true;
+            // if (jam === batasJam && menit === maximalTelatMenit && detik < maximalTelatDetik) return true;
+            return false;
+        }
+
+        const alasanTerlambat = document.querySelector('#alasanTerlambat');
+        if (isSebelumBatas(jam, menit, detik)) {
+            form.submit();
+            alert('Terkirim jam 08:00:00, sekarang ' + jam + ':' + menit + ':' + detik);
+        } else if (isTerlambat(jam, menit, detik)) {
+            if (jam === batasJam && menit <= maximalTelatbatasMenit) {
+                alert('Kenapa terlambat? Sekarang ' + jam + ':' + menit + ':' + detik);
+                form.submit();
+                // alasanTerlambat.classList.toggle('hidden');
+
+            } else {
+                alert('Tidak masuk. Sekarang ' + jam + ':' + menit + ':' + detik);
+                form.submit();
+                // alasanTerlambat.classList.toggle('hidden');
+            }
+        } else {
+            alert('Anda Terlambat. Sekarang ' + jam + ':' + menit + ':' + detik);
+            // alasanTerlambat.classList.toggle('hidden');
+        }
     });
 
-    window.addEventListener('load', function() {
 
+    window.addEventListener('load', function() {
         navigator.geolocation.watchPosition(function(position) {
-                console.log(position);
                 document.getElementById('latitude').textContent = position.coords.latitude.toFixed(10);
                 document.getElementById('longitude').textContent = position.coords.longitude.toFixed(10);
                 document.querySelector('.latitude').value = position.coords.latitude.toFixed(10);

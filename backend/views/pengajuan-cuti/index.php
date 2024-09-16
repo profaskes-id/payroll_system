@@ -62,7 +62,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-                'attribute' => 'tanggal_mulai',
+                'label' => 'tanggal_mulai',
+                'value' => function ($model) {
+                    return date('d-m-Y', strtotime($model->tanggal_mulai));
+                },
                 'headerOptions' => ['style' => 'width: 20%; text-align: center;'],
                 'contentOptions' => ['style' => 'width: 20%; text-align: center;'],
             ],

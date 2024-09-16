@@ -46,10 +46,11 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->jamKerja->nama_jam_kerja;
                     }
                 ],
+
                 [
-                    'attribute' => 'Jenis Shift',
+                    'attribute' => 'Maximal Terlambat',
                     'value' => function ($model) {
-                        return strtoupper($model->jenisShift->nama_kode);
+                        return date('H:i', strtotime($model->max_terlambat));
                     }
                 ],
             ],

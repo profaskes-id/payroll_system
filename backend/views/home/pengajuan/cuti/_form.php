@@ -1,11 +1,8 @@
 <?php
 
-use backend\models\Karyawan;
-use backend\models\RekapCuti;
-use Codeception\Lib\Di;
+
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
 
 $form = ActiveForm::begin(); ?>
 
@@ -73,91 +70,100 @@ $form = ActiveForm::begin(); ?>
 
 
 <?php
-$jenisCutinew = ArrayHelper::toArray($jenisCuti);
+// $jenisCutinew = ArrayHelper::toArray($jenisCuti);
 $rekapCutinew = ArrayHelper::toArray($rekapCuti);
 
-$jenisCutiJson = json_encode($jenisCutinew, JSON_PRETTY_PRINT);
-$rekapCutiJson = json_encode($rekapCutinew, JSON_PRETTY_PRINT);
-
+// $jenisCutiJson = json_encode($jenisCutinew);
+$rekapCutiJson = json_encode($rekapCutinew);
 ?>
 
 <script>
-
     $(document).ready(function() {
-        let jenisCutiData = <?= $jenisCutiJson ?>;
-        let rekapCutiData = <?= $rekapCutiJson ?>;
 
-        let JatahSetahun = 0;
+        let jenisCutiData = [];
 
- 
-        
-        $('.radio-button').change(function() {
-            let selectedId = $(this).val();
-            let selectedData = jenisCutiData.find(function(item) {
-                return item.id_master_cuti == selectedId;
-            });
+        $.ajax({
+            type: "get",
+            url: '/panel/pengajuan/jenis-cuti',
+            // data: "data",
+            dataType: "json",
+            success: function(response) {
+                $.each(response, function(key, value) {
+                    jenisCutiData.push(value);
+                });
+                let rekapCutiData = <?= $rekapCutiJson ?>;
+                let JatahSetahun = 0;
 
-            //apakah jenis cuti nya ada
-            if (selectedData) {
-                //ambil jatah setajin
-                JatahSetahun = selectedData.total_hari_pertahun;
-                let newData = rekapCutiData.find(function(item) {
-                    return item.id_master_cuti == selectedData.id_master_cuti;
-                })
-                if (!newData) {
-                    $('#sisa_hari').val(JatahSetahun + " Hari");
-                    return
-                }
-                let sisaHari = parseInt(JatahSetahun) - parseInt(newData?.total_hari_terpakai);
-                $('#sisa_hari').val(sisaHari + " Hari");
-                   
+                $('.radio-button').change(function() {
+                    let selectedId = $(this).val();
+                    let selectedData = jenisCutiData.find(function(item) {
+                        return item.id_master_cuti == selectedId;
+                    });
+
+                    if (selectedData) {
+                        //ambil jatah setajin
+                        JatahSetahun = selectedData.total_hari_pertahun;
+                        let newData = rekapCutiData.find(function(item) {
+                            return item.id_master_cuti == selectedData.id_master_cuti;
+                        })
+                        if (!newData) {
+                            $('#sisa_hari').val(JatahSetahun + " Hari");
+                            return
+                        }
+                        let sisaHari = parseInt(JatahSetahun) - parseInt(newData?.total_hari_terpakai);
+                        $('#sisa_hari').val(sisaHari + " Hari");
+
+                    }
+                });
+
+                $('#tanggal_mulai').change(function(e) {
+                    $('#tanggal_selesai').attr('readonly', false);
+
+                });
+
+                $('#tanggal_selesai').change(function(e) {
+
+                    let startDate = $('#tanggal_mulai').val();
+                    let endDate = this.value;
+                    let yearstart = Number(startDate.split('-')[0]);
+                    let yearEnd = Number(endDate.split('-')[0]);
+
+                    if (yearEnd != yearstart) {
+                        $('#error-year').html('Tidak Boleh Lebih Dari 1 Tahun');
+                        $('#error-year').show();
+                        $('.add-button').attr('disabled', true);
+                    } else {
+                        // $('#error-year').html('Tidak Boleh Lebih Dari 1 Tahun');
+                        $('#error-year').hide();
+                        $('.add-button').attr('disabled', true);
+
+                    }
+                    // Menghitung selisih hari
+                    let diffInMs = new Date(endDate) - new Date(startDate);
+                    let diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+
+                    $('#jumlah_hari').val(diffInDays + " Hari");
+                    let data = $('#sisa_hari').val();
+                    let dataSekarang = data.split(' ')[0];
+                    if (diffInDays > dataSekarang) {
+                        $('#error').show();
+                        $('#error').text('Jatah Cuti Tidak Cukup');
+                        $('.add-button').attr('disabled', true);
+                    } else if (diffInDays < 0) {
+                        $('#error-year').show();
+                        $('#error-year').text('Tanggal Selesai Lebih Kecil dari Tanggal Mulai');
+                        $('.add-button').attr('disabled', true);
+                    } else {
+                        $('#error-year').hide();
+                        $('#error').hide();
+                        $('.add-button').attr('disabled', false);
+                    }
+
+                });
+
             }
         });
 
-        $('#tanggal_mulai').change(function(e) {
-            $('#tanggal_selesai').attr('readonly', false);
-
-        });
-
-        $('#tanggal_selesai').change(function(e) {
-
-            let startDate = $('#tanggal_mulai').val();
-            let endDate = this.value;
-            let yearstart = Number(startDate.split('-')[0]);
-            let yearEnd = Number(endDate.split('-')[0]);
-
-            if (yearEnd != yearstart) {
-                $('#error-year').html('Tidak Boleh Lebih Dari 1 Tahun');
-                $('#error-year').show();
-                $('.add-button').attr('disabled', true);
-            } else {
-                // $('#error-year').html('Tidak Boleh Lebih Dari 1 Tahun');
-                $('#error-year').hide();
-                $('.add-button').attr('disabled', true);
-
-            }
-            // Menghitung selisih hari
-            let diffInMs = new Date(endDate) - new Date(startDate);
-            let diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-
-
-            $('#jumlah_hari').val(diffInDays + " Hari");
-                        let data = $('#sisa_hari').val();
-      let dataSekarang = data.split(' ')[0];
-            if (diffInDays >  dataSekarang) {
-                $('#error').show();
-                $('#error').text('Jatah Cuti Tidak Cukup');
-                $('.add-button').attr('disabled', true);
-            } else if (diffInDays < 0) {
-                $('#error-year').show();
-                $('#error-year').text('Tanggal Selesai Lebih Kecil dari Tanggal Mulai');
-                $('.add-button').attr('disabled', true);
-            } else {
-                $('#error-year').hide();
-                $('#error').hide();
-                $('.add-button').attr('disabled', false);
-            }
-
-        });
     });
 </script>

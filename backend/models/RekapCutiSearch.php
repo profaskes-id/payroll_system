@@ -45,6 +45,7 @@ class RekapCutiSearch extends RekapCuti
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['id_rekap_cuti' => SORT_DESC]],
         ]);
 
         $this->load($params);

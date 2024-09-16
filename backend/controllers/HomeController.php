@@ -6,10 +6,13 @@ use amnah\yii2\user\models\User;
 use backend\models\Absensi;
 use backend\models\DataKeluarga;
 use backend\models\DataPekerjaan;
+use backend\models\JamKerjaKaryawan;
 use backend\models\Karyawan;
 use backend\models\PengajuanCuti;
 use backend\models\PengalamanKerja;
 use backend\models\Pengumuman;
+use backend\models\RiwayatKesehatan;
+use backend\models\RiwayatPelatihan;
 use backend\models\RiwayatPendidikan;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -138,7 +141,7 @@ class HomeController extends Controller
     public function actionAbsenMasuk()
     {
         $model = new Absensi();
-
+        $isTerlambatActive = false;
         if ($this->request->isPost) {
 
             $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
@@ -148,10 +151,9 @@ class HomeController extends Controller
             $model->jam_masuk = date('H:i:s');
             $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
             $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
-
-
             if ($model->save()) {
-                return $this->redirect(['absen-masuk']);
+                Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil');
+                $isTerlambatActive = true;
             }
         }
         $dataProvider = new ActiveDataProvider([
@@ -160,15 +162,41 @@ class HomeController extends Controller
         $model = new Absensi();
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
         $absensiToday = Absensi::find()->where(['tanggal' => date('Y-m-d'), 'id_karyawan' => $karyawan->id_karyawan])->all();
+
+        $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
+        $jamKerjaHari = $jamKerjaKaryawan->jamKerja->jadwalKerjas;
+        $hariIni = date('w') == '0' ? 0 : date('w') - 1;
+
+        // dd($jamKerjaHari, $hariIni);
+        $jamKerjaToday = $jamKerjaHari[$hariIni];
+
+        // dd($jamKerjaHari);
+        // if ($jamKerjaHari == null) {
+        // }
+
+        $dataJam = [
+            'karyawan' => $jamKerjaKaryawan,
+            'today' => $jamKerjaToday
+        ];
+
         $this->layout = 'mobile-main';
         return $this->render('absen-masuk', [
             'model' => $model,
             'absensiToday' => $absensiToday,
             'dataProvider' => $dataProvider,
+            'jamKerjaKaryawan' => $jamKerjaKaryawan,
+            'dataJam' => $dataJam,
+            'isTerlambatActive' => $isTerlambatActive
         ]);
 
 
         return $this->redirect(['absen-masuk']);
+    }
+
+    public function actionTerlambat()
+    {
+        if ($this->request->isPost) {
+        }
     }
 
 
@@ -208,7 +236,7 @@ class HomeController extends Controller
                 $model->jam_masuk = date('H:i:s');
                 $model->jam_pulang = date('H:i:s');
                 $model->kode_status_hadir = Yii::$app->request->post('statusHadir');
-                $this->saveImage($model, $lampiranFile);
+                $this->saveImage($model, $lampiranFile, 'lampiran');
                 if ($model->save()) {
                     return $this->redirect(['index']);
                 }
@@ -241,8 +269,11 @@ class HomeController extends Controller
         $pengalamanKerja = PengalamanKerja::find()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
         $riwayatPendidikan = RiwayatPendidikan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
         $keluarga = DataKeluarga::find()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
+        $RiwayatPelatihan = RiwayatPelatihan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
+        $RiwayatKesehatan = RiwayatKesehatan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
 
-        return $this->render('expirience/index', compact('pengalamanKerja', 'riwayatPendidikan', 'keluarga'));
+
+        return $this->render('expirience/index', compact('pengalamanKerja', 'riwayatPendidikan', 'keluarga', 'RiwayatPelatihan', 'RiwayatKesehatan'));
     }
 
     // ! pekerjaan
@@ -359,6 +390,8 @@ class HomeController extends Controller
     }
 
     //! data keluarga
+
+
     public function actionDataKeluargaCreate()
     {
 
@@ -366,15 +399,16 @@ class HomeController extends Controller
         $model = new DataKeluarga();
 
         if ($this->request->isPost) {
+
             if ($model->load($this->request->post())) {
                 $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
                 $model->id_karyawan = $karyawan->id_karyawan;
 
                 if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 'Berhasil Menyimpa Data Pengalaman Kerja');
+                    Yii::$app->session->setFlash('success', 'Berhasil Menyimpa Data Keluarga');
                     return $this->redirect(['expirience']);
                 } else {
-                    Yii::$app->session->setFlash('error', 'Gagal Menyimpa Data Pengalaman Kerja');
+                    Yii::$app->session->setFlash('error', 'Gagal Menyimpa Data Keluarga');
                     return $this->redirect(['expirience']);
                 }
             }
@@ -396,10 +430,10 @@ class HomeController extends Controller
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 'Berhasil Mengubah Data Pendidikan');
+                    Yii::$app->session->setFlash('success', 'Berhasil Mengubah Data Keluarga');
                     return $this->redirect(['expirience']);
                 } else {
-                    Yii::$app->session->setFlash('error', 'Gagal Mengubah Data Pendidikan');
+                    Yii::$app->session->setFlash('error', 'Gagal Mengubah Data Keluarga');
                     return $this->redirect(['expirience']);
                 }
             }
@@ -417,6 +451,146 @@ class HomeController extends Controller
         $model = DataKeluarga::findOne($id);
         $model->delete();
         Yii::$app->session->setFlash('success', 'Berhasil Menghapus Data Keluarga');
+        return $this->redirect(['expirience']);
+    }
+
+
+    //! Pelatihan
+    public function actionRiwayatPelatihanCreate()
+    {
+
+        $this->layout = 'mobile-main';
+        $model = new RiwayatPelatihan();
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $lampiranFile = UploadedFile::getInstance($model, 'sertifikat');
+                $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+                $model->id_karyawan = $karyawan->id_karyawan;
+                $this->saveImage($model, $lampiranFile, 'sertifikat');
+                // dd($model);
+
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Menyimpa Data Riwayat Pelatihan');
+                    return $this->redirect(['expirience']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal Menyimpa Data Riwayat Pelatihan');
+                    return $this->redirect(['expirience']);
+                }
+            }
+        } else {
+            $model->loadDefaultValues();
+        }
+
+
+        return $this->render('expirience/riwayat-pelatihan/create', compact('model'));
+    }
+
+
+    public function actionRiwayatPelatihanUpdate($id)
+    {
+        $this->layout = 'mobile-main';
+
+        $model = RiwayatPelatihan::findOne($id);
+
+        if ($this->request->isPost) {
+            $lampiranFile = UploadedFile::getInstance($model, 'sertifikat');
+            if ($model->load($this->request->post())) {
+                $this->saveImage($model, $lampiranFile, 'sertifikat');
+
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Mengubah Data Riwayat Pelatihan');
+                    return $this->redirect(['expirience']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal Mengubah Data Riwayat Pelatihan');
+                    return $this->redirect(['expirience']);
+                }
+            }
+        }
+
+        return $this->render('expirience/riwayat-pelatihan/update', [
+            'model' => $model
+        ]);
+    }
+    public function actionRiwayatPelatihanDelete()
+    {
+
+        $this->layout = 'mobile-main';
+        $id = Yii::$app->request->post('id');
+        $model = RiwayatPelatihan::findOne($id);
+        $model->delete();
+        Yii::$app->session->setFlash('success', 'Berhasil Menghapus Data Riwayat Pelatihan');
+        return $this->redirect(['expirience']);
+    }
+
+
+    //! Kesehatan
+    public function actionRiwayatKesehatanCreate()
+    {
+
+        $this->layout = 'mobile-main';
+        $model = new RiwayatKesehatan();
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $lampiranFile = UploadedFile::getInstance($model, 'surat_dokter');
+
+                $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+                $model->id_karyawan = $karyawan->id_karyawan;
+                $this->saveImage($model, $lampiranFile, 'surat_dokter');
+
+                if ($model->save()) {
+
+                    Yii::$app->session->setFlash('success', 'Berhasil Menyimpa Data Riwayat Kesehatan');
+                    return $this->redirect(['expirience']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal Menyimpa Data Riwayat Kesehatan');
+                    return $this->redirect(['expirience']);
+                }
+            }
+        } else {
+            $model->loadDefaultValues();
+        }
+
+
+        return $this->render('expirience/riwayat-kesehatan/create', compact('model'));
+    }
+
+
+    public function actionRiwayatKesehatanUpdate($id)
+    {
+        $this->layout = 'mobile-main';
+
+        $model = RiwayatKesehatan::findOne($id);
+
+        if ($this->request->isPost) {
+            $lampiranFile = UploadedFile::getInstance($model, 'surat_dokter');
+            if ($model->load($this->request->post())) {
+                $this->saveImage($model, $lampiranFile, 'surat_dokter');
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Mengubah Data Riwayat Kesehatan');
+                    return $this->redirect(['expirience']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal Mengubah Data Riwayat Kesehatan');
+                    return $this->redirect(['expirience']);
+                }
+            }
+        }
+
+        return $this->render('expirience/riwayat-kesehatan/update', [
+            'model' => $model
+        ]);
+    }
+    public function actionRiwayatKesehatanDelete()
+    {
+
+        $this->layout = 'mobile-main';
+        $id = Yii::$app->request->post('id');
+        $model = RiwayatKesehatan::findOne($id);
+        $model->delete();
+        $this->deleteImage($model->surat);
+
+        Yii::$app->session->setFlash('success', 'Berhasil Menghapus Data Riwayat Kesehatan');
         return $this->redirect(['expirience']);
     }
 
@@ -448,19 +622,30 @@ class HomeController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function saveImage($model, $uploadedFile,)
+    public function saveImage($model, $uploadedFile, $type)
     {
-        $uploadsDir =  Yii::getAlias('@webroot/uploads/lampiran/');
+        $uploadsDir =  Yii::getAlias('@webroot/uploads/' . $type . '/');
         if ($uploadedFile) {
             if (!is_dir($uploadsDir)) {
                 mkdir($uploadsDir, 0777, true);
             }
             $fileName = $uploadsDir  . uniqid() . '.' . $uploadedFile->extension;
             if ($uploadedFile->saveAs($fileName)) {
-                $model->lampiran = 'uploads/lampiran/' . basename($fileName);
+                $model->{$type} = "uploads/{$type}/" . basename($fileName);
             } else {
                 Yii::$app->session->setFlash('error', 'Failed to save the uploaded file.');
             }
+        }
+    }
+
+    public function deleteImage($oldThumbnail)
+    {
+        $filePath = Yii::getAlias('@webroot') . '/' . $oldThumbnail;
+        if ($oldThumbnail && file_exists($filePath)) {
+            unlink($filePath);
+            return true;
+        } else {
+            return true;
         }
     }
 }

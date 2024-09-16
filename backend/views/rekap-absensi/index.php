@@ -53,8 +53,17 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->karyawan->nama;
                     }
                 ],
-                'tanggal',
                 [
+                    'headerOptions' => ['style' => ' text-align: center;'],
+                    'contentOptions' => ['style' => ' text-align: center;'],
+                    'label' => 'Tgl. Absen',
+                    'value' => function ($model) {
+                        return date('d-m-Y', strtotime($model->tanggal));
+                    }
+                ],
+                [
+                    'headerOptions' => ['style' => ' text-align: center;'],
+                    'contentOptions' => ['style' => ' text-align: center;'],
                     'label' => 'Status Hadir',
                     'value' => function ($model) {
                         return $model->statusHadir->nama_kode;

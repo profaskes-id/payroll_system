@@ -35,17 +35,9 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
 
-        <div class="col-md-6">
-            <?php
-            $jenisShift = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['jenis-shift']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
-            echo $form->field($model, 'jenis_shift')->widget(Select2::classname(), [
-                'data' => $jenisShift,
-                'language' => 'id',
-                'options' => ['placeholder' => 'Pilih Jam Kerja ...'],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ])->label('Jenis Shift');
+
+        <div class="col-12">
+            <?= $form->field($model, 'max_terlambat')->textInput(['type' => 'time'])->label('Maximal Terlambat');
             ?>
         </div>
     </div>
