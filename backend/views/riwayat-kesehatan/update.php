@@ -5,10 +5,10 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\RiwayatKesehatan $model */
 
-$this->title = Yii::t('app', 'Update Riwayat Kesehatan: {name}', [
-    'name' => $model->id_riwayat_kesehatan,
+$this->title = Yii::t('app', 'Update Riwayat Kesehatan {name}', [
+    'name' => '',
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Riwayat Kesehatans'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Riwayat Kesehatan'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id_riwayat_kesehatan, 'url' => ['view', 'id_riwayat_kesehatan' => $model->id_riwayat_kesehatan]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>

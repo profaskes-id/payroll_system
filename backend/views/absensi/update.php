@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /** @var backend\models\Absensi $model */
 
 $this->title = 'Absensi Pulang';
-$this->params['breadcrumbs'][] = ['label' => 'Absensis', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Absensi', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => 'Absensi Pulang', 'url' => ['view', 'id_absensi' => $model->id_absensi]];
 
 ?>

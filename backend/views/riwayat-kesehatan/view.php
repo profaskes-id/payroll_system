@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /** @var backend\models\RiwayatKesehatan $model */
 
 $this->title = "Kesehatan: " . $model->karyawan->nama;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Riwayat Kesehatans'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Riwayat Kesehatan'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -41,7 +41,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 'nama_pengecekan',
                 'keterangan:ntext',
-                'tanggal',
+                [
+                    'label' => 'Tanggal',
+                    'value' => function ($model) {
+                        return date('d M Y', strtotime($model->tanggal));
+                    }
+                ],
                 [
                     'label' => 'Surat Dokter',
                     'format' => 'raw',

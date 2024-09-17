@@ -57,7 +57,7 @@ class HomeController extends Controller
 
     public function beforeAction($action)
     {
-        if ($action->id == 'view' || $action->id == 'expirience-pekerjaan-delete' || $action->id == 'expirience-pendidikan-delete' || $action->id == 'data-keluarga-delete') {
+        if ($action->id == 'view' || $action->id == 'expirience-pekerjaan-delete' || $action->id == 'expirience-pendidikan-delete' || $action->id == 'data-keluarga-delete' || $action->id == 'riwayat-pelatihan-delete' || $action->id == 'riwayat-kesehatan-delete') {
             // Menonaktifkan CSRF verification untuk aksi 'view'
             $this->enableCsrfValidation = false;
         }
@@ -492,11 +492,16 @@ class HomeController extends Controller
         $this->layout = 'mobile-main';
 
         $model = RiwayatPelatihan::findOne($id);
-
+        $oldThumbnail = $model->sertifikat;
         if ($this->request->isPost) {
             $lampiranFile = UploadedFile::getInstance($model, 'sertifikat');
             if ($model->load($this->request->post())) {
-                $this->saveImage($model, $lampiranFile, 'sertifikat');
+                if (!$lampiranFile == null) {
+                    $this->saveImage($model, $lampiranFile, 'sertifikat');
+                    $this->deleteImage($oldThumbnail);
+                } else {
+                    $model->surat_dokter = $oldThumbnail;
+                }
 
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Mengubah Data Riwayat Pelatihan');
@@ -518,6 +523,7 @@ class HomeController extends Controller
         $this->layout = 'mobile-main';
         $id = Yii::$app->request->post('id');
         $model = RiwayatPelatihan::findOne($id);
+        $this->deleteImage($model->sertifikat);
         $model->delete();
         Yii::$app->session->setFlash('success', 'Berhasil Menghapus Data Riwayat Pelatihan');
         return $this->redirect(['expirience']);
@@ -562,11 +568,17 @@ class HomeController extends Controller
         $this->layout = 'mobile-main';
 
         $model = RiwayatKesehatan::findOne($id);
-
+        $oldThumbnail = $model->surat_dokter;
+        // dd($oldThumbnail);
         if ($this->request->isPost) {
             $lampiranFile = UploadedFile::getInstance($model, 'surat_dokter');
             if ($model->load($this->request->post())) {
-                $this->saveImage($model, $lampiranFile, 'surat_dokter');
+                if (!$lampiranFile == null) {
+                    $this->saveImage($model, $lampiranFile, 'surat_dokter');
+                    $this->deleteImage($oldThumbnail);
+                } else {
+                    $model->surat_dokter = $oldThumbnail;
+                }
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Mengubah Data Riwayat Kesehatan');
                     return $this->redirect(['expirience']);
@@ -587,8 +599,8 @@ class HomeController extends Controller
         $this->layout = 'mobile-main';
         $id = Yii::$app->request->post('id');
         $model = RiwayatKesehatan::findOne($id);
+        $this->deleteImage($model->surat_dokter);
         $model->delete();
-        $this->deleteImage($model->surat);
 
         Yii::$app->session->setFlash('success', 'Berhasil Menghapus Data Riwayat Kesehatan');
         return $this->redirect(['expirience']);

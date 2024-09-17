@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 
     <div class="costume-container">
         <?php
-        $id_karyawan = Yii::$app->request->get('id_karyawan');
+        $id_karyawan = Yii::$app->request->get('id_karyawan') ?? $model->id_karyawan;
         ?>
         <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['karyawan/view?id_karyawan=' . $id_karyawan], ['class' => 'costume-btn']) ?>
     </div>

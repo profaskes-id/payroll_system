@@ -9,7 +9,7 @@ use yii\helpers\Html;
 /** @var backend\models\Absensi $model */
 
 $this->title = 'Tambah Pengajuan Dinas';
-$this->params['breadcrumbs'][] = ['label' => 'Pengajuan Cutos', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Pengajuan Cuti', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 

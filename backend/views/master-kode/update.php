@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /** @var backend\models\MasterKode $model */
 
 $this->title = 'Update Master Kode: ' . $model->nama_group;
-$this->params['breadcrumbs'][] = ['label' => 'Master Kodes', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Master Kode', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->nama_group, 'url' => ['view', 'nama_group' => $model->nama_group, 'kode' => $model->kode]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>

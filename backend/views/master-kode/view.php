@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /** @var backend\models\MasterKode $model */
 
 $this->title = $model->nama_group;
-$this->params['breadcrumbs'][] = ['label' => 'Master Kodes', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Master Kode', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>

@@ -9,7 +9,7 @@ use yii\widgets\DetailView;
 /** @var backend\models\Absensi $model */
 
 $this->title = "Histori";
-$this->params['breadcrumbs'][] = ['label' => 'Absensis', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Absensi', 'url' => ['index']];
 // $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 

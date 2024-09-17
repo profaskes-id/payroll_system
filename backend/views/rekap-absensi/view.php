@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /** @var backend\models\Absensi $model */
 
 $this->title =  $model->karyawan->nama . ' (' . date('d-M-Y', strtotime($model->tanggal)) . ')';
-$this->params['breadcrumbs'][] = ['label' => 'Absensis', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Absensi', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>

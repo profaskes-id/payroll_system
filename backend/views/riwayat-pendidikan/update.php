@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /** @var backend\models\RiwayatPendidikan $model */
 
 $this->title = 'Update Riwayat Pendidikan ';
-$this->params['breadcrumbs'][] = ['label' => 'Riwayat Pendidikans', 'url' => ['karyawan/view', 'id_karyawan' => $model->id_karyawan]];
+$this->params['breadcrumbs'][] = ['label' => 'Riwayat Pendidikan', 'url' => ['karyawan/view', 'id_karyawan' => $model->id_karyawan]];
 $this->params['breadcrumbs'][] = ['label' => $model->institusi, 'url' => ['view', 'id_riwayat_pendidikan' => $model->id_riwayat_pendidikan]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>

@@ -22,9 +22,17 @@ use yii\widgets\ActiveForm;
                 <?= $form->field($model, 'nama_anggota_keluarga')->textInput(['class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5', 'maxlength' => true])->label('Nama Anggota Keluarga')
                 ?>
             </div>
+
+            <?php
+            $pendidikan = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['hubungan-keluarga']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
+
+            ?>
+
             <div class="col-span-12">
-                <?= $form->field($model, 'hubungan')->textInput(['class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5', 'maxlength' => true]) ?>
+
+                <?= $form->field($model, 'hubungan')->dropDownList($pendidikan, ['class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5', 'prompt' => 'Pilih Hubungan Keluarga']) ?>
             </div>
+
 
             <div class="col-span-12">
                 <?= $form->field($model, 'pekerjaan')->textInput(["class" => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5',]) ?>

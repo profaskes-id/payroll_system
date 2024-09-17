@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /** @var backend\models\MasterKode $model */
 
 $this->title = 'Tambahkan Master Kode';
-$this->params['breadcrumbs'][] = ['label' => 'Master Kodes', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Master Kode', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="master-kode-create">
