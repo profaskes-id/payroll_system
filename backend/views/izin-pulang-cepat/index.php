@@ -1,30 +1,29 @@
 <?php
 
-use backend\models\PengajuanDinas;
+use backend\models\IzinPulangCepat;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
-use yii\widgets\Pjax;
 
 /** @var yii\web\View $this */
-/** @var backend\models\PengajuanDinasSearch $searchModel */
+/** @var backend\models\IzinPulangCepatSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Pengajuan Dinas Luar';
+$this->title = Yii::t('app', 'Izin Pulang Cepat');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="pengajuan-dinas-index">
+<div class="izin-pulang-cepat-index">
 
 
-    <div class="costume-container">
+
+    <!-- <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) ?>
+            <?php // Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) 
+            ?>
         </p>
-    </div>
+    </div> -->
 
-
-    <?php Pjax::begin(); ?>
     <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
         <i class="fas fa-search"></i>
         <span>
@@ -38,22 +37,24 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
     </div>
+
     <div class='table-container'>
+
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'columns' => [
+
                 [
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-
                 [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, PengajuanDinas $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]);
+                    'urlCreator' => function ($action, IzinPulangCepat $model, $key, $index, $column) {
+                        return Url::toRoute([$action, 'id_izin_pulang_cepat' => $model->id_izin_pulang_cepat]);
                     }
                 ],
                 [
@@ -63,34 +64,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
-                    'label' => 'Keterangan Perjalanan',
+                    'headerOptions' => ['style' => ' text-align: center;'],
+                    'contentOptions' => ['style' => ' text-align: center;'],
+                    'label' => 'Tanggal',
                     'value' => function ($model) {
-                        $text = $model->keterangan_perjalanan;
-                        $words = explode(' ', $text);
-                        if (count($words) > 8) {
-                            $text = implode(' ', array_slice($words, 0, 8)) . '...';
-                        }
-
-                        return $text;
-                    }
-                ],
-
-
-                [
-                    'headerOptions' => ['style' => 'text-align: center;'],
-                    'contentOptions' => ['style' => 'text-align: center;'],
-                    'label' => 'Tanggal Mulai',
-                    'format' => 'date',
-                    'value' => function ($model) {
-                        return $model->tanggal_mulai;
-                    }
-                ],
-                [
-                    'headerOptions' => ['style' => 'text-align: center;'],
-                    'contentOptions' => ['style' => 'text-align: center;'],
-                    'label' => 'Estimasi Biaya',
-                    'value' => function ($model) {
-                        return $model->estimasi_biaya;
+                        return date('d-m-Y', strtotime($model->tanggal));
                     }
                 ],
                 [
@@ -114,8 +92,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ],
         ]); ?>
+
+
     </div>
-
-    <?php Pjax::end(); ?>
-
 </div>

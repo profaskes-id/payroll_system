@@ -1,5 +1,7 @@
 <?php
 
+use yii\helpers\Html;
+
 if (Yii::$app->request->getPathInfo() ==  "user/account"): ?>
     <link href="<?= Yii::getAlias('@root') . '/css/tailwind_output.css' ?>" rel="stylesheet">
 <?php endif ?>
@@ -93,10 +95,8 @@ if (Yii::$app->request->getPathInfo() ==  "user/account"): ?>
             <div class="tooltip-arrow" data-popper-arrow></div>
         </div>
         <div class="flex items-center justify-center">
-            <a href="/panel/home/absen-masuk" data-tooltip-target="tooltip-new" class="-translate-y-5 inline-flex relative items-center justify-center w-12 h-12 font-medium bg-blue-600 rounded-full hover:bg-blue-700 group focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800">
-                <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
-                </svg>
+            <a href="/panel/home/absen-masuk" data-tooltip-target="tooltip-new" class="-translate-y-5 inline-flex relative items-center justify-center w-12 h-12 font-medium bg-orange-400 rounded-full hover:bg-orange-500 group focus:ring-4 focus:ring-orange-300 focus:outline-none ">
+                <?php echo Html::img('@root/images/icons/click.svg', ['class' => 'w-6 h-6 object-cover']) ?>
                 <span class="sr-only">Absen Hari Ini</span>
             </a>
         </div>

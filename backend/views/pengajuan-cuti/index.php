@@ -62,7 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-                'label' => 'tanggal_mulai',
+                'label' => 'Tanggal Mulai',
                 'value' => function ($model) {
                     return date('d-m-Y', strtotime($model->tanggal_mulai));
                 },
@@ -95,11 +95,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => function ($model) {
                     if ($model->statusPengajuan->nama_kode !== null) {
                         if (strtolower($model->statusPengajuan->nama_kode) == "pending") {
-                            return "<span class='text-capitalize btn btn-outline-warning '>Pending</span>";
+                            return "<span class='text-capitalize text-warning '>Pending</span>";
                         } elseif (strtolower($model->statusPengajuan->nama_kode) == "disetujui") {
-                            return "<span class='text-capitalize btn btn-outline-success '>Disetujui</span>";
+                            return "<span class='text-capitalize text-success '>Disetujui</span>";
                         } elseif (strtolower($model->statusPengajuan->nama_kode) == "ditolak") {
-                            return "<span class='text-capitalize btn btn-outline-danger '>ditolak</span>";
+                            return "<span class='text-capitalize text-danger '>ditolak</span>";
                         }
                     } else {
                         return "<span class='text-danger'>master kode tidak aktif</span>";

@@ -10,10 +10,6 @@ use yii\helpers\Html;
 $this->title = 'Create Absensi';
 $this->params['breadcrumbs'][] = ['label' => 'Absensi', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-
-
-$izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['!=', 'nama_kode', 'Hadir'])->orderBy(['urutan' => SORT_ASC])->all();
-
 ?>
 
 
@@ -31,7 +27,6 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
             <?php $form = ActiveForm::begin([
                 'id' => 'form-absensi',
-                'options' => ['enctype' => 'multipart/form-data'],
             ]); ?>
 
             <?php if ($model->kode_status_hadir == 1): ?>

@@ -44,8 +44,19 @@ $this->params['breadcrumbs'][] = $this->title;
                 'tanggal_selesai',
                 'estimasi_biaya',
                 'biaya_yang_disetujui',
-                'disetujui_oleh',
-                'disetujui_pada',
+                [
+                    'label' => 'Disetujui Oleh',
+                    'value' => function ($model) {
+                        return $model->user->username ?? '';
+                    }
+                ],
+                [
+                    'label' => 'Disetujui Pada',
+                    'value' => function ($model) {
+                        return date('d-m-Y H:i', strtotime($model->disetujui_pada));
+                    }
+                ],
+
                 [
                     'label' => 'Status',
                     'format' => 'raw',

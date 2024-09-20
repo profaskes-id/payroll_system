@@ -43,8 +43,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 'perusahaan',
                 'posisi',
-                'masuk_pada',
-                'keluar_pada',
+                [
+                    'label' => 'Masuk Pada',
+                    'value' => date('d-m-Y', strtotime($model->masuk_pada))
+                ],
+                [
+                    'label' => 'Keluar Pada',
+                    'value' => date('d-m-Y', strtotime($model->keluar_pada))
+                ],
             ],
         ]) ?>
     </div>

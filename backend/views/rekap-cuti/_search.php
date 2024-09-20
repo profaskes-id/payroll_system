@@ -1,5 +1,8 @@
 <?php
 
+use backend\models\Karyawan;
+use backend\models\MasterCuti;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -10,24 +13,46 @@ use yii\widgets\ActiveForm;
 
 <div class="rekap-cuti-search">
 
+
+
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'id_rekap_cuti') ?>
+    <div class="row">
+        <div class="col-9">
+            <?php $nama_group = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
+            echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
+                'data' => $nama_group,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Cari Karyawan ...'],
+                'pluginOptions' => [
+                    'tags' => true,
+                    'allowClear' => true
+                ],
+            ])->label(false);
+            ?>
+        </div>
 
-    <?= $form->field($model, 'id_master_cuti') ?>
 
-    <?= $form->field($model, 'id_karyawan') ?>
+        <div class="col-3">
+            <div class="form-group d-flex items-center w-100  justify-content-around">
+                <button class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+                    <i class="fas fa-search"></i>
+                    <span>
+                        Search
+                    </span>
+                </button>
 
-    <?= $form->field($model, 'total_hari_terpakai') ?>
-
-    <div class="form-group">
-        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
+                <a class="reset-button" href="<?= \yii\helpers\Url::to(['index']) ?>">
+                    <i class="fas fa-undo"></i>
+                    <span>
+                        Reset
+                    </span>
+                </a>
+            </div>
+        </div>
     </div>
-
     <?php ActiveForm::end(); ?>
-
 </div>

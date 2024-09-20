@@ -111,6 +111,26 @@ if (
                 transition: all .6s ease;
             }
 
+            .cetak-button {
+                border: none;
+                display: flex;
+                padding: 0.75rem 1.5rem;
+                background-color: #ffde21;
+                color: #000;
+                font-size: 0.75rem;
+                line-height: 1rem;
+                font-weight: 700;
+                text-align: center;
+                text-transform: uppercase;
+                vertical-align: middle;
+                align-items: center;
+                border-radius: 0.5rem;
+                user-select: none;
+                gap: 0.65rem;
+                box-shadow: 0 4px 6px -1px #ec484b31, 0 2px 4px -1px #ec484b17;
+                transition: all .6s ease;
+            }
+
             .reset-button:hover,
             .tambah-button:hover,
             .add-button:hover {

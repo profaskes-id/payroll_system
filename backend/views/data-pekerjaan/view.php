@@ -92,7 +92,15 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                         return 'Belum Ada Surat Lamaran Pekerjaan';
                     }
-                ]
+                ],
+                [
+                    'label' => 'Aktif',
+                    'format' => 'html',
+                    'value' => function ($model) {
+                        return $model->is_aktif ? '<span class="text-success">YA</span>' : '<span class="text-danger">Tidak</span>';
+                    }
+                ],
+
             ],
         ]) ?>
     </div>

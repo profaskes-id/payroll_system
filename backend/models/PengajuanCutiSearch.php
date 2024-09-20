@@ -17,7 +17,7 @@ class PengajuanCutiSearch extends PengajuanCuti
     public function rules()
     {
         return [
-            [['id_pengajuan_cuti', 'id_karyawan', 'status'], 'integer'],
+            [['id_pengajuan_cuti', 'id_karyawan', 'status', 'jenis_cuti'], 'integer'],
             [['tanggal_pengajuan', 'tanggal_mulai', 'tanggal_selesai', 'alasan_cuti', 'catatan_admin'], 'safe'],
         ];
     }
@@ -70,6 +70,7 @@ class PengajuanCutiSearch extends PengajuanCuti
             'tanggal_mulai' => $this->tanggal_mulai,
             'tanggal_selesai' => $this->tanggal_selesai,
             'status' => $this->status,
+            'jenis_cuti' => $this->jenis_cuti,
         ]);
 
         $query->andFilterWhere(['like', 'alasan_cuti', $this->alasan_cuti])

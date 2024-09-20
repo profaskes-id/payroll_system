@@ -1,5 +1,7 @@
 <?php
 
+use backend\models\MasterHaribesar;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -10,26 +12,48 @@ use yii\widgets\ActiveForm;
 
 <div class="master-haribesar-search">
 
+
+
+
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'kode') ?>
+    <div class="row">
+        <div class="col-5">
+            <?= $form->field($model, 'tanggal')->textInput(['type' => 'date', 'class' => 'form-control'])->label(false) ?>
+        </div>
+        <div class="col-4">
+            <?php $nama_kode = \yii\helpers\ArrayHelper::map(MasterHaribesar::find()->all(), 'nama_hari', 'nama_hari');
+            echo $form->field($model, 'nama_hari')->widget(Select2::classname(), [
+                'data' => $nama_kode,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Cari nama kode ...'],
+                'pluginOptions' => [
+                    'tags' => true,
+                    'allowClear' => true
+                ],
+            ])->label(false);
+            ?>
+        </div>
+        <div class="col-3">
+            <div class="form-group d-flex items-center w-100  justify-content-around">
+                <button class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+                    <i class="fas fa-search"></i>
+                    <span>
+                        Search
+                    </span>
+                </button>
 
-    <?= $form->field($model, 'tanggal') ?>
-
-    <?= $form->field($model, 'nama_hari') ?>
-
-    <?= $form->field($model, 'libur_nasional') ?>
-
-    <?= $form->field($model, 'pesan_default') ?>
-
-    <?php // echo $form->field($model, 'lampiran') ?>
-
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-outline-secondary']) ?>
+                <a class="reset-button" href="<?= \yii\helpers\Url::to(['index']) ?>">
+                    <i class="fas fa-undo"></i>
+                    <span>
+                        Reset
+                    </span>
+                </a>
+            </div>
+        </div>
     </div>
 
     <?php ActiveForm::end(); ?>

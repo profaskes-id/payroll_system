@@ -92,7 +92,7 @@ use yii\widgets\ActiveForm;
 
         </div>
         <div class="col-md-6">
-            <?= $form->field($model, 'surat_lamaran_pekerjaan')->fileInput(['class' => 'form-control'])->label('Surat Lamaran Pekerjaan') ?>
+            <?= $form->field($model, 'surat_lamaran_pekerjaan')->fileInput(['class' => 'form-control'])->label('Surat Lamaran Pekerjaan <sup>(opsional)<sup>') ?>
 
         </div>
         <div class="col-md-6 ">

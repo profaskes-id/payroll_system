@@ -63,6 +63,7 @@ class DataPekerjaanSearch extends DataPekerjaan
             'id_bagian' => $this->id_bagian,
             'dari' => $this->dari,
             'sampai' => $this->sampai,
+            'is_aktif' => $this->is_aktif,
         ]);
 
         $query->andFilterWhere(['like', 'status', $this->status])

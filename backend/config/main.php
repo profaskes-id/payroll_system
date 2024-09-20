@@ -20,7 +20,16 @@ return [
         ],
     ],
     'components' => [
-
+        'mpdf' => [
+            'class' => '\kartik\mpdf\Pdf',
+            'format' => 'A4-L',
+            'orientation' => 'L',
+            'destination' => 'D',
+            'methods' => [
+                'SetHeader' => [''],
+                'SetFooter' => [''],
+            ],
+        ],
         'request' => [
             'csrfParam' => '_csrf-backend',
         ],

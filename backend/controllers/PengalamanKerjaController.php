@@ -82,10 +82,10 @@ class PengalamanKerjaController extends Controller
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 'Berhasil Melakukan Upadte Data Pengalaman Kerja');
+                    Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data Pengalaman Kerja');
                     return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
                 }
-                Yii::$app->session->setFlash('error', 'Gagal Melakukan Upadte Data Pengalaman Kerja');
+                Yii::$app->session->setFlash('error', 'Gagal Menambahkan Data Pengalaman Kerja');
                 return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
             }
         } else {
@@ -134,10 +134,10 @@ class PengalamanKerjaController extends Controller
         $data = $this->findModel($id_pengalaman_kerja);
 
         if ($data->delete()) {
-            Yii::$app->session->setFlash('success', 'Berhasil Melakukan Upadte Data Pengalaman Kerja');
+            Yii::$app->session->setFlash('success', 'Berhasil Menghapus Data Pengalaman Kerja');
             return $this->redirect(['/karyawan/view', 'id_karyawan' => $data->id_karyawan]);
         }
-        Yii::$app->session->setFlash('error', 'Gagal Melakukan Upadte Data Pengalaman Kerja');
+        Yii::$app->session->setFlash('error', 'Gagal Menghapus Data Pengalaman Kerja');
         return $this->redirect(['/karyawan/view', 'id_karyawan' => $data->id_karyawan]);
     }
 

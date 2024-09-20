@@ -1,7 +1,14 @@
 <?php
 
+use backend\models\IzinPulangCepat;
 use yii\helpers\Html;
 ?>
+
+<?php
+$jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m-d'), 'status' => 0])->count();
+
+?>
+
 <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #131133 !important;">
 
     <!-- Sidebar -->
@@ -9,7 +16,7 @@ use yii\helpers\Html;
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center justify-content-center">
             <div class="image">
-                <img src="<?= $assetDir ?>/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle " style="width: 40px; opacity: .8">
+                <img src="<?= Yii::getAlias('@root') ?>/images/logo.svg" alt="Profaskes Logo" class="brand-image img-circle " style="width: 60px; ">
             </div>
             <div class="info">
                 <a href="#" style="font-size: 17.8px;" class="d-block fw-bold  text-white">Profaskes</a>
@@ -89,15 +96,22 @@ use yii\helpers\Html;
                                 'label' => 'Rekapitulasi Data',
                                 'icon' => 'th',
                                 'items' => [
+                                    ['label' => 'Rekap Absensi',  'icon' => 'fa fa-table', 'url' => ['/rekap-absensi/index'],],
                                     ['label' => 'Rekap Cuti',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-cuti/index'],],
                                     ['label' => 'Rekap Lembur',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-lembur/index'],],
                                     ['label' => 'Rekap dinas',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-dinas/index'],],
-                                    ['label' => 'Rekap Absensi',  'icon' => 'fa fa-table', 'url' => ['/rekap-absensi/index'],],
                                 ],
                             ],
                             ['label' => 'Absensi',  'icon' => 'fa fa-user-check', 'url' => ['/absensi/index'],],
                             ['label' => 'Pengumuman',  'icon' => 'fa fa-bullhorn', 'url' => ['/pengumuman/index'],],
+                            [
+                                'label' => 'Pulang Cepat <span class="right badge badge-warning">' . $jumlahPulangCepatToday . '</span>',
+                                'icon' => 'fas fa-clock',
+                                'url' => ['/izin-pulang-cepat/index'],
+                                'options' => ['class' => 'nav-item'], // Opsional, untuk styling
+                            ],
                         ],
+                        'encodeLabels' => false, // Pastikan ini diatur ke false agar HTML di-render
                     ]);
                     ?>
                 </nav>
@@ -138,15 +152,17 @@ use yii\helpers\Html;
                                 'label' => 'Rekapitulasi Data',
                                 'icon' => 'th',
                                 'items' => [
+                                    ['label' => 'Rekap Absensi',  'icon' => 'fa fa-table', 'url' => ['/rekap-absensi/index'],],
                                     ['label' => 'Rekap Cuti',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-cuti/index'],],
                                     ['label' => 'Rekap Lembur',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-lembur/index'],],
                                     ['label' => 'Rekap dinas',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-dinas/index'],],
-                                    ['label' => 'Rekap Absensi',  'icon' => 'fa fa-table', 'url' => ['/rekap-absensi/index'],],
 
                                 ],
                             ],
                             ['label' => 'Absensi',  'icon' => 'fa fa-user-check', 'url' => ['/absensi/index'],],
                             ['label' => 'Pengumuman',  'icon' => 'fa fa-bullhorn', 'url' => ['/pengumuman/index'],],
+                            ['label' => 'Pulang Cepat',  'icon' => 'fa fa-clock ', 'url' => ['/izin-pulang-cepat/index'],],
+
                         ],
                     ]);
                     ?>

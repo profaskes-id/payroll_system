@@ -31,7 +31,7 @@ use yii\widgets\ActiveForm;
         </div>
 
         <div class="col-md-6">
-            <?= $form->field($model, 'sertifikat')->fileInput(['class' => 'form-control', 'maxlength' => true]) ?>
+            <?= $form->field($model, 'sertifikat')->fileInput(['class' => 'form-control', 'maxlength' => true])->label('Sertifikat') ?>
         </div>
         <div class="col-md-6">
             <?= $form->field($model, 'deskripsi')->textarea(['rows' => 1]) ?>

@@ -15,6 +15,7 @@ use backend\models\RiwayatKesehatanSearch;
 use backend\models\RiwayatPelatihan;
 use backend\models\RiwayatPelatihanSearch;
 use backend\models\RiwayatPendidikanSearch;
+use kartik\mpdf\Pdf;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -130,8 +131,6 @@ class KaryawanController extends Controller
 
             'KesehatansearchModel' => $KesehatansearchModel,
             'KesehatanProvider' => $KesehatanProvider,
-
-
         ]);
     }
 
@@ -379,5 +378,99 @@ class KaryawanController extends Controller
 
         $dataKecamatan = \yii\helpers\ArrayHelper::map($kecamatan, 'kode_kec', 'nama_kec');
         return $this->asJson($dataKecamatan);
+    }
+
+
+    public function actionReport($id_karyawan)
+    {
+
+
+
+        $PengalamanKerjasearchModel = new PengalamanKerjaSearch();
+        $PengalamanKerjasearchModel->id_karyawan = $id_karyawan;
+        $pengalamankerjaProvider = $PengalamanKerjasearchModel->search($this->request->queryParams);
+
+        $riwayatSearch = new RiwayatPendidikanSearch();
+        $riwayatSearch->id_karyawan = $id_karyawan;
+        $riwayarProvider = $riwayatSearch->search($this->request->queryParams);
+
+
+        $keluargasearchModel = new DataKeluargaSearch();
+        $keluargasearchModel->id_karyawan = $id_karyawan;
+        $dataKeluargaProvider = $keluargasearchModel->search($this->request->queryParams);
+
+
+        $PekerjaansearchModel = new DataPekerjaanSearch();
+        $PekerjaansearchModel->id_karyawan = $id_karyawan;
+        $PekerjaansearchModel->is_aktif = 1;
+        $pekrjaandataProvider = $PekerjaansearchModel->search($this->request->queryParams);
+
+        $PelatihansearchModel = new RiwayatPelatihanSearch();
+        $PelatihansearchModel->id_karyawan = $id_karyawan;
+        $PelatihanProvider = $PelatihansearchModel->search($this->request->queryParams);
+
+
+
+        $KesehatansearchModel = new RiwayatKesehatanSearch();
+        $KesehatansearchModel->id_karyawan = $id_karyawan;
+        $KesehatanProvider = $KesehatansearchModel->search($this->request->queryParams);
+
+        // get your HTML raw content without any layouts or scripts
+        // ('',);
+
+
+        $content = $this->renderPartial('_reportView', [
+
+            'model' => $this->findModel($id_karyawan),
+            'PekerjaansearchModel' => $pekrjaandataProvider,
+            'pekerjaandataProvider' => $pekrjaandataProvider,
+
+
+            'PengalamanKerjasearchModel' => $PengalamanKerjasearchModel,
+            'pengalamankerjaProvider' => $pengalamankerjaProvider,
+
+
+            'keluargasearchModel' => $keluargasearchModel,
+            'dataKeluargaProvider' => $dataKeluargaProvider,
+
+            'riwayatSearch' => $riwayatSearch,
+            'riwayarProvider' => $riwayarProvider,
+
+            'PelatihansearchModel' => $PelatihansearchModel,
+            'pelatihanProvider' => $PelatihanProvider,
+
+
+            'KesehatansearchModel' => $KesehatansearchModel,
+            'KesehatanProvider' => $KesehatanProvider,
+        ]);
+
+        // setup kartik\mpdf\Pdf component
+        $pdf = new Pdf([
+            // set to use core fonts only
+            'mode' => Pdf::MODE_CORE,
+            // A4 paper format
+            'format' => Pdf::FORMAT_A4,
+            // portrait orientation
+            'orientation' => Pdf::ORIENT_PORTRAIT,
+            // stream to browser inline
+            'destination' => Pdf::DEST_BROWSER,
+            // your html content input
+            'content' => $content,
+            // format content from your own css file if needed or use the
+            // enhanced bootstrap css built by Krajee for mPDF formatting 
+            'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
+            // any css to be embedded if required
+            'cssInline' => '.kv-heading-1{font-size:18px}',
+            // set mPDF properties on the fly
+            'options' => ['title' => 'Report Karyawan'],
+            // call mPDF methods on the fly
+            'methods' => [
+                'SetHeader' => ['Data Karyawan'],
+                'SetFooter' => ['{PAGENO}'],
+            ]
+        ]);
+
+        // return the pdf output as per the destination setting
+        return $pdf->render();
     }
 }

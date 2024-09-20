@@ -3,11 +3,15 @@
 namespace backend\controllers;
 
 use backend\models\Absensi;
+use backend\models\IzinPulangCepatSearch;
 use backend\models\Karyawan;
 use backend\models\MasterKode;
 use backend\models\PengajuanCuti;
+use backend\models\PengajuanCutiSearch;
 use backend\models\PengajuanDinas;
+use backend\models\PengajuanDinasSearch;
 use backend\models\PengajuanLembur;
+use backend\models\PengajuanLemburSearch;
 use backend\models\Pengumuman;
 use common\models\LoginForm;
 use common\models\User;
@@ -92,10 +96,31 @@ class SiteController extends Controller
             $pengajuanDinas = PengajuanDinas::find()->where(['status' => '0'])->count();
 
 
+            // pengajuan Cuti
+            $PengajuanCuti = new PengajuanCutiSearch();
+            $PengajuanCuti->status = 0;
+            $PengajuanCuti_dataProvider = $PengajuanCuti->search($this->request->queryParams);
+
+            //pengajuan lembur
+            $PengajuanLembur = new PengajuanLemburSearch();
+            $PengajuanLembur->status = 0;
+            $PengajuanLembu_dataProvider = $PengajuanLembur->search($this->request->queryParams);
+
+            //pengajuan dinas
+            $PengajuanDinas = new PengajuanDinasSearch();
+            $PengajuanDinas->status = 0;
+            $PengajuanDinas_dataProvider = $PengajuanDinas->search($this->request->queryParams);
+
+
+            //izin pulang cepat
+            $izinPulcep = new IzinPulangCepatSearch();
+            $izinPulcep->status = 0;
+            $PulangCepat_dataProvider = $izinPulcep->search($this->request->queryParams);
+            // dd($PulangCepat_dataProvider->models);
 
 
 
-            return $this->render('index', compact('TotalKaryawan', 'TotalData', 'TotalDataBelum', 'TotalIzin', 'totalPengumuman', 'pengajuanLembur', 'pengajuanCuti', 'pengajuanDinas'));
+            return $this->render('index', compact('TotalKaryawan', 'TotalData', 'TotalDataBelum', 'TotalIzin', 'totalPengumuman', 'pengajuanLembur', 'pengajuanCuti', 'pengajuanDinas', 'PengajuanCuti_dataProvider', 'PengajuanLembu_dataProvider', 'PengajuanDinas_dataProvider', 'PulangCepat_dataProvider'));
         } elseif (!Yii::$app->user->can('admin')) {
 
             return $this->redirect(['home/index']);

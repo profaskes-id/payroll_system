@@ -54,9 +54,30 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->karyawan->nama;
                     }
                 ],
-                'jam_mulai',
-                'jam_selesai',
-                'tanggal',
+                [
+                    'headerOptions' => ['style' => 'text-align: center;'],
+                    'contentOptions' => ['style' => ' text-align: center;'],
+                    'label' => 'Jam Mulai',
+                    'value' => function ($model) {
+                        return date('H:i', strtotime($model->jam_mulai));
+                    }
+                ],
+                [
+                    'headerOptions' => ['style' => 'text-align: center;'],
+                    'contentOptions' => ['style' => ' text-align: center;'],
+                    'label' => 'Jam Selesai',
+                    'value' => function ($model) {
+                        return date('H:i', strtotime($model->jam_selesai));
+                    }
+                ],
+                [
+                    'headerOptions' => ['style' => 'text-align: center;'],
+                    'contentOptions' => ['style' => ' text-align: center;'],
+                    'label' => 'Tanggal',
+                    'value' => function ($model) {
+                        return date('d-m-Y', strtotime($model->tanggal));
+                    }
+                ],
                 [
                     'headerOptions' => ['style' => 'text-align: center;'],
                     'contentOptions' => ['style' => 'text-align: center;'],

@@ -6,13 +6,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var backend\models\PengajuanLemburSearch $model */
+/** @var backend\models\IzinPulangCepatSearch $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="pengajuan-lembur-search">
-
-
+<div class="izin-pulang-cepat-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -39,7 +37,7 @@ use yii\widgets\ActiveForm;
             echo $form->field($model, 'status')->widget(\kartik\select2\Select2::classname(), [
                 'data' => $nama_kode,
                 'language' => 'id',
-                'options' => ['placeholder' => 'Cari Status pengajuan ...'],
+                'options' => ['placeholder' => 'Cari Status Pengajuan ...'],
                 'pluginOptions' => [
                     'tags' => true,
                     'allowClear' => true

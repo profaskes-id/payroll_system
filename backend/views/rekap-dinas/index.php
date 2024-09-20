@@ -55,8 +55,22 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 'keterangan_perjalanan:ntext',
-                'tanggal_mulai',
-                'tanggal_selesai',
+                [
+                    'headerOptions' => ['style' => 'text-align: center;'],
+                    'contentOptions' => ['style' => ' text-align: center;'],
+                    'label' => 'Tanggal Mulai',
+                    'value' => function ($model) {
+                        return date('d-m-Y', strtotime($model->tanggal_mulai));
+                    }
+                ],
+                [
+                    'headerOptions' => ['style' => 'text-align: center;'],
+                    'contentOptions' => ['style' => ' text-align: center;'],
+                    'label' => 'Tanggal Selesai',
+                    'value' => function ($model) {
+                        return date('d-m-Y', strtotime($model->tanggal_selesai));
+                    }
+                ],
                 //'estimasi_biaya',
                 //'biaya_yang_disetujui',
                 //'disetujui_oleh',

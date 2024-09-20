@@ -283,4 +283,8 @@ class Karyawan extends \yii\db\ActiveRecord
     {
         return $this->hasOne(MasterKode::class, ['kode' => 'jenis_shift'])->onCondition(['nama_group' => 'jenis-shift', 'status' => 1]);
     }
+    public function getBagian()
+    {
+        return $this->hasOne(Bagian::class, ['id_bagian' => 'id_bagian']);
+    }
 }

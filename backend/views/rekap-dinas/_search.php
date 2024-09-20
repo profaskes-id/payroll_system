@@ -1,5 +1,7 @@
 <?php
 
+use backend\models\Karyawan;
+use backend\models\MasterKode;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -10,35 +12,60 @@ use yii\widgets\ActiveForm;
 
 <div class="pengajuan-dinas-search">
 
+
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'id_pengajuan_dinas') ?>
+    <div class="row">
 
-    <?= $form->field($model, 'id_karyawan') ?>
+        <div class="col-5">
+            <?php $nama_group = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
+            echo $form->field($model, 'id_karyawan')->widget(kartik\select2\Select2::classname(), [
+                'data' => $nama_group,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Cari Karyawan ...'],
+                'pluginOptions' => [
+                    'tags' => true,
+                    'allowClear' => true
+                ],
+            ])->label(false);
+            ?>
+        </div>
+        <div class="col-4">
+            <?php $nama_kode = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->all(), 'kode', 'nama_kode');
+            echo $form->field($model, 'status')->widget(\kartik\select2\Select2::classname(), [
+                'data' => $nama_kode,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Cari Status Pengajuan ...'],
+                'pluginOptions' => [
+                    'tags' => true,
+                    'allowClear' => true
+                ],
+            ])->label(false);
+            ?>
+        </div>
 
-    <?= $form->field($model, 'keterangan_perjalanan') ?>
+        <div class="col-3">
+            <div class="form-group d-flex items-center w-100  justify-content-around">
+                <button class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+                    <i class="fas fa-search"></i>
+                    <span>
+                        Search
+                    </span>
+                </button>
 
-    <?= $form->field($model, 'tanggal_mulai') ?>
-
-    <?= $form->field($model, 'tanggal_selesai') ?>
-
-    <?php // echo $form->field($model, 'estimasi_biaya') ?>
-
-    <?php // echo $form->field($model, 'biaya_yang_disetujui') ?>
-
-    <?php // echo $form->field($model, 'disetujui_oleh') ?>
-
-    <?php // echo $form->field($model, 'disetujui_pada') ?>
-
-    <?php // echo $form->field($model, 'status') ?>
-
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-outline-secondary']) ?>
+                <a class="reset-button" href="<?= \yii\helpers\Url::to(['index']) ?>">
+                    <i class="fas fa-undo"></i>
+                    <span>
+                        Reset
+                    </span>
+                </a>
+            </div>
+        </div>
     </div>
+
 
     <?php ActiveForm::end(); ?>
 

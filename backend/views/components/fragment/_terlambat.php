@@ -4,7 +4,7 @@ use yii\widgets\ActiveForm;
 ?>
 
 
-<div data-modal-target="popup-modal-terlambat" data-modal-toggle="popup-modal-terlambat" class="grid place-items-center mt-5" id="alasanTerlambat">
+<div data-modal-target="popup-modal-terlambat" data-modal-toggle="popup-modal-terlambat" class="grid place-items-center mt-5 hidden" id="alasanTerlambat">
   <button class="block text-white  font-medium rounded-lg text-sm px-5 py-2.5 text-center " type="button">
     <div class="grid place-items-center">
       <div class="w-[60px] h-[60px] bg-orange-50 border border-gray rounded-full grid place-items-center">
@@ -26,18 +26,17 @@ use yii\widgets\ActiveForm;
         </svg>
         <span class="sr-only">Close modal</span>
       </button>
-      <div class="p-4 md:p-5 text-center">
+      <div class=" text-center">
         <h1>Alasan Terlambat</h1>
         <?php
-        $formAbsen = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',  'action' => ['home/absen-masuk']]); ?>
-
-        <?= $formAbsen->field($model, 'id_karyawan')->textInput(['value' => $model->id_karyawan, 'class' => 'py-2 px-5 border border-gray-200 rounded-md'])->label(false) ?>
-        <?= $formAbsen->field($model, 'tanggal')->textInput(['value' => $model->tanggal, 'class' => 'py-2 px-5 border border-gray-200 rounded-md'])->label(false) ?>
-        <?= $formAbsen->field($model, 'alasan_terlambat')->textarea(['class' => 'py-2 px-5 border border-gray-200 rounded-md'])->label(false) ?>
+        $formAbsen = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',  'action' => ['home/absen-terlambat']]); ?>
+        <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'lati'])->label(false) ?>
+        <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'longi'])->label(false) ?>
+        <?= $formAbsen->field($model, 'alasan_terlambat')->textarea(['class' => 'py-2 px-5 border border-gray-200 rounded-md', 'required' => true])->label(false) ?>
 
         <div class="flex justify-center items-center space-x-4">
 
-          <button data-modal-hide="popup-modal-terlambat" type="button" class="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300  font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+          <button type="submit" class="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300  font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
             Submit
           </button>
 

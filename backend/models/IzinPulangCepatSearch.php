@@ -4,12 +4,12 @@ namespace backend\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\PengajuanDinas;
+use backend\models\IzinPulangCepat;
 
 /**
- * PengajuanDinasSearch represents the model behind the search form of `backend\models\PengajuanDinas`.
+ * IzinPulangCepatSearch represents the model behind the search form of `backend\models\IzinPulangCepat`.
  */
-class PengajuanDinasSearch extends PengajuanDinas
+class IzinPulangCepatSearch extends IzinPulangCepat
 {
     /**
      * {@inheritdoc}
@@ -17,9 +17,8 @@ class PengajuanDinasSearch extends PengajuanDinas
     public function rules()
     {
         return [
-            [['id_pengajuan_dinas', 'id_karyawan', 'disetujui_oleh'], 'integer'],
-            [['keterangan_perjalanan', 'tanggal', 'disetujui_pada'], 'safe'],
-            [['estimasi_biaya', 'biaya_yang_disetujui'], 'number'],
+            [['id_izin_pulang_cepat', 'id_karyawan', 'status'], 'integer'],
+            [['alasan'], 'safe'],
         ];
     }
 
@@ -41,14 +40,13 @@ class PengajuanDinasSearch extends PengajuanDinas
      */
     public function search($params)
     {
-        $query = PengajuanDinas::find();
+        $query = IzinPulangCepat::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => ['defaultOrder' => ['status' => SORT_ASC]],
-
+            'sort' => ['defaultOrder' => ['tanggal' => SORT_DESC]],
         ]);
 
         $this->load($params);
@@ -61,18 +59,13 @@ class PengajuanDinasSearch extends PengajuanDinas
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id_pengajuan_dinas' => $this->id_pengajuan_dinas,
+            'id_izin_pulang_cepat' => $this->id_izin_pulang_cepat,
             'id_karyawan' => $this->id_karyawan,
-            'tanggal_mulai' => $this->tanggal_mulai,
-            'tanggal_selesai' => $this->tanggal_selesai,
-            'estimasi_biaya' => $this->estimasi_biaya,
-            'biaya_yang_disetujui' => $this->biaya_yang_disetujui,
-            'disetujui_oleh' => $this->disetujui_oleh,
-            'disetujui_pada' => $this->disetujui_pada,
             'status' => $this->status,
+            'tanggal' => $this->tanggal,
         ]);
 
-        $query->andFilterWhere(['like', 'keterangan_perjalanan', $this->keterangan_perjalanan]);
+        $query->andFilterWhere(['like', 'alasan', $this->alasan]);
 
         return $dataProvider;
     }

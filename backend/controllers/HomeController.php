@@ -6,6 +6,7 @@ use amnah\yii2\user\models\User;
 use backend\models\Absensi;
 use backend\models\DataKeluarga;
 use backend\models\DataPekerjaan;
+use backend\models\IzinPulangCepat;
 use backend\models\JamKerjaKaryawan;
 use backend\models\Karyawan;
 use backend\models\PengajuanCuti;
@@ -170,14 +171,13 @@ class HomeController extends Controller
         // dd($jamKerjaHari, $hariIni);
         $jamKerjaToday = $jamKerjaHari[$hariIni];
 
-        // dd($jamKerjaHari);
-        // if ($jamKerjaHari == null) {
-        // }
 
         $dataJam = [
             'karyawan' => $jamKerjaKaryawan,
             'today' => $jamKerjaToday
         ];
+
+        $isPulangCepat = IzinPulangCepat::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
 
         $this->layout = 'mobile-main';
         return $this->render('absen-masuk', [
@@ -186,18 +186,39 @@ class HomeController extends Controller
             'dataProvider' => $dataProvider,
             'jamKerjaKaryawan' => $jamKerjaKaryawan,
             'dataJam' => $dataJam,
-            'isTerlambatActive' => $isTerlambatActive
+            'isTerlambatActive' => $isTerlambatActive,
+            'isPulangCepat' => $isPulangCepat
         ]);
 
 
         return $this->redirect(['absen-masuk']);
     }
-
-    public function actionTerlambat()
+    public function actionAbsenTerlambat()
     {
+        $model = new Absensi();
         if ($this->request->isPost) {
+            $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+            $model->id_karyawan = $karyawan->id_karyawan;
+            $model->tanggal = date('Y-m-d');
+            $model->kode_status_hadir = 1;
+            $model->jam_masuk = date('H:i:s');
+            $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
+            $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
+            $model->alasan_terlambat = Yii::$app->request->post('Absensi')['alasan_terlambat'];
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil, Anda Terlambat');
+            }
         }
+
+
+
+        return $this->redirect(['absen-masuk']);
+
+
+        return $this->redirect(['absen-masuk']);
     }
+
+
 
 
     public function actionAbsenPulang()
@@ -208,8 +229,6 @@ class HomeController extends Controller
         $model = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
         if ($this->request->isPost) {
             $model->jam_pulang = date('H:i:s');
-
-
             if ($model->save()) {
                 return $this->redirect(['absen-masuk']);
             }
@@ -260,6 +279,45 @@ class HomeController extends Controller
             'model' => $absensi
         ]);
     }
+
+    public function actionPulangCepat()
+    {
+        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->select('id_karyawan')->one();
+
+        $model =  IzinPulangCepat::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
+
+        $this->layout = 'mobile-main';
+        return $this->render('pulang-cepat/index', [
+            'model' => $model
+        ]);
+    }
+    public function actionPulangCepatCreate()
+    {
+        $model = new IzinPulangCepat();
+
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $karyawan = Karyawan::findOne(['email' => Yii::$app->user->identity->email])->id_karyawan;
+                $model->id_karyawan = $karyawan;
+                $model->tanggal = date('Y-m-d');
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Mengajuakan Pengajuan  Pulang Cepat, Menunggu Konfirmasi Admin');
+                    return $this->redirect(['absen-masuk']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal Mengajuakan Pengajuan  Pulang Cepat');
+                    return $this->redirect(['absen-masuk']);
+                }
+            }
+        }
+
+
+        $this->layout = 'mobile-main';
+        return $this->render('pulang-cepat/create', [
+            'model' => $model
+        ]);
+    }
+
 
     // ?================================Expirience`
     public function actionExpirience()

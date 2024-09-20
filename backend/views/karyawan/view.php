@@ -30,6 +30,9 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     <div class="table-container">
+        <p class="d-inline-block">
+            <?= Html::a('Print PDF <i class="fa fa-print"></i>', ['report', 'id_karyawan' => $model->id_karyawan], ['target' => '_blank', 'class' => 'cetak-button']) ?>
+        </p>
         <div class="w-100">
             <div class="card card-primary card-tabs">
                 <div class="card-header p-0 pt-1">

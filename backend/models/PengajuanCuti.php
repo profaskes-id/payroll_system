@@ -56,6 +56,7 @@ class PengajuanCuti extends \yii\db\ActiveRecord
             'tanggal_selesai' => 'Tanggal Selesai',
             'alasan_cuti' => 'Alasan Cuti',
             'status' => 'Status',
+            'jenis_cuti' => 'Jenis Cuti',
             'catatan_admin' => 'Catatan Admin',
             'sisa_hari' => 'Sisa Hari',
         ];
