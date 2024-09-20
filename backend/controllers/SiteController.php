@@ -19,6 +19,7 @@ use Symfony\Component\CssSelector\Parser\Shortcut\ElementParser;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -116,11 +117,33 @@ class SiteController extends Controller
             $izinPulcep = new IzinPulangCepatSearch();
             $izinPulcep->status = 0;
             $PulangCepat_dataProvider = $izinPulcep->search($this->request->queryParams);
-            // dd($PulangCepat_dataProvider->models);
 
 
+            $dates = [];
+            for ($i = 6; $i >= 0; $i--) {
+                $date = date('d-m-Y', strtotime("-$i days"));
+                $dates[$date] = null;
+            }
 
-            return $this->render('index', compact('TotalKaryawan', 'TotalData', 'TotalDataBelum', 'TotalIzin', 'totalPengumuman', 'pengajuanLembur', 'pengajuanCuti', 'pengajuanDinas', 'PengajuanCuti_dataProvider', 'PengajuanLembu_dataProvider', 'PengajuanDinas_dataProvider', 'PulangCepat_dataProvider'));
+            $absensi = Absensi::find()
+                ->select(['id_karyawan', 'tanggal'])
+                ->where(['kode_status_hadir' => 1])
+                ->andWhere(['>=', 'tanggal', date('Y-m-d', strtotime('-7 days'))])
+                ->orderBy('tanggal')
+                ->all();
+
+            foreach ($absensi as $absen) {
+                $tanggal = date('d-m-Y', strtotime($absen->tanggal));
+                if (!isset($dates[$tanggal])) {
+                    $dates[$tanggal] = [];
+                }
+                $dates[$tanggal][] = $absen;
+            }
+
+            $datesAsJson = Json::encode($dates);
+
+
+            return $this->render('index', compact('datesAsJson', 'TotalKaryawan', 'TotalData', 'TotalDataBelum', 'TotalIzin', 'totalPengumuman', 'pengajuanLembur', 'pengajuanCuti', 'pengajuanDinas', 'PengajuanCuti_dataProvider', 'PengajuanLembu_dataProvider', 'PengajuanDinas_dataProvider', 'PulangCepat_dataProvider'));
         } elseif (!Yii::$app->user->can('admin')) {
 
             return $this->redirect(['home/index']);
