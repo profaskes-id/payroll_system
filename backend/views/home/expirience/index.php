@@ -54,334 +54,496 @@ $this->title = 'Expirience';
                         <?php // dd($karyawan);
                         ?>
                         <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
-                            <div>
-                                <p class=" text-[#272727]"><?= $karyawan->kode_karyawan ?></p>
-                                <p class=" text-[#272727]"><?= $karyawan->nama ?></p>
-                                <p class=" text-[#272727]"><?= $karyawan->email ?></p>
-                                <p class=" text-[#272727]"><?= $karyawan->nomer_identitas ?></p>
-                                <p class=" text-[#272727]"><?= $karyawan->kode_jenis_kelamin == 1 ? 'Laki-Laki' : 'Perempuan' ?></p>
-                                <p class=" text-[#272727]"><?= $karyawan->jenisidentitas->nama_kode ?></p>
-                                <p class=" text-[#272727]"><?= $karyawan->tempat_lahir ?></p>
-                                <p class=" text-[#272727]"><?= date('d M Y', strtotime($karyawan->tanggal_lahir)) ?></p>
-                                <p class=" text-[#272727]"><?= $karyawan->statusNikah->nama_kode ?></p>
-                                <p class=" text-[#272727]"><?= $karyawan->masterAgama->nama_kode ?></p>
-                                <p class=" text-[#272727]"><?= $karyawan->nomer_telepon ?></p>
+                            <div class="grid grid-cols-12 gap-2">
+                                <div class="w-full border border-gray-300 p-2 col-span-12 lg:col-span-6">
+                                    <p>Data Pribadi</p>
+                                    <div>
+                                        <table class="w-full table-fixed text-left ">
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Kode Karyawan</th>
+                                                <td><?= $karyawan->kode_karyawan ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Nama Karyawan</th>
+                                                <td><?= $karyawan->nama ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Email</th>
+                                                <td><?= $karyawan->email ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Nomer Telfon</th>
+                                                <td><?= $karyawan->nomer_telepon ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Nomer Identitas</th>
+                                                <td><?= $karyawan->nomer_identitas ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Jenis Identitas</th>
+                                                <td><?= $karyawan->jenisidentitas->nama_kode ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Jenis Kelamin</th>
+                                                <td><?= $karyawan->kode_jenis_kelamin == 1 ? 'Laki-Laki' : 'Perempuan' ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Tempat Lahir</th>
+                                                <td><?= $karyawan->tempat_lahir ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Tanggal Lahir</th>
+                                                <td><?= date('d M Y', strtotime($karyawan->tanggal_lahir)) ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Status Nikah</th>
+                                                <td><?= $karyawan->statusNikah->nama_kode ?></td>
+                                            </tr>
+                                            <tr class="border-b border-gray-300">
+                                                <th>Suku</th>
+                                                <td><?= $karyawan->suku ?></td>
+                                            </tr>
+                                            <tr class=" ">
+                                                <th>Agama</th>
+                                                <td><?= $karyawan->masterAgama->nama_kode ?></td>
+                                            </tr>
 
-                                <br>
-                                <p>Alamat</p>
-                                <!-- <p class="text-[13px] text-black/80"><? // $value['keterangan'] 
-                                                                            ?></p> -->
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="w-full border border-gray-300 p-2 col-span-12 lg:col-span-6">
+                                    <p>Alamat Sesuai Identitas</p>
+                                    <div>
+                                        <table class="w-full table-fixed text-left ">
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Negara</th>
+                                                <td><?= $karyawan->kode_negara ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Provinsi</th>
+                                                <td><?= $karyawan->provinsiidentitas->nama_prop ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Kabupaten</th>
+                                                <td><?= $karyawan->kabupatenidentitas->nama_kab ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Kecamatan</th>
+                                                <td><?= $karyawan->kecamatanidentitas->nama_kec ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Alamat Identitas</th>
+                                                <td><?= $karyawan->alamat_identitas ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Desa Atau Lurah</th>
+                                                <td><?= $karyawan->desa_lurah_identitas ?></td>
+                                            </tr>
+
+                                            <tr class=" border-b border-gray-300">
+                                                <th>RT</th>
+                                                <td><?= $karyawan->rt_identitas ?></td>
+                                            </tr>
+                                            <tr class="border-b border-gray-300">
+                                                <th>RW</th>
+                                                <td><?= $karyawan->rw_identitas ?></td>
+                                            </tr>
+                                            <tr class=" ">
+                                                <th>Informasi Lain</th>
+                                                <td><?= $karyawan->informasi_lain ?></td>
+                                            </tr>
+
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="justify-self-end w-full border border-gray-300 p-2 col-span-12">
+                                    <p>Alamat Domisili</p>
+                                    <div>
+                                        <table class="w-full table-fixed text-left ">
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Negara</th>
+                                                <td><?= $karyawan->kode_negara ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Provinsi</th>
+                                                <td><?= $karyawan->provinsidomisili->nama_prop ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Kabupaten</th>
+                                                <td><?= $karyawan->kabupatendomisili->nama_kab ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Kecamatan</th>
+                                                <td><?= $karyawan->kecamatandomisili->nama_kec ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Alamat Identitas</th>
+                                                <td><?= $karyawan->alamat_domisili ?></td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Desa Atau Lurah</th>
+                                                <td><?= $karyawan->desa_lurah_domisili ?></td>
+                                            </tr>
+
+                                            <tr class=" border-b border-gray-300">
+                                                <th>RT</th>
+                                                <td><?= $karyawan->rt_domisili ?></td>
+                                            </tr>
+                                            <tr class="border-b border-gray-300">
+                                                <th>RW</th>
+                                                <td><?= $karyawan->rw_domisili ?></td>
+                                            </tr>
+                                            <tr class=" ">
+                                                <th>Informasi Lain</th>
+                                                <td><?= $karyawan->informasi_lain ?></td>
+                                            </tr>
+
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="justify-self-end w-full border border-gray-300 p-2 col-span-12">
+                                    <p>Alamat Domisili</p>
+                                    <div>
+                                        <table class="w-full table-fixed text-left ">
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Foto</th>
+                                                <td>
+                                                    <div>
+                                                        <?php if (!$karyawan->foto == null): ?>
+                                                            <?= Html::a('preview', [$karyawan->foto], ['class' => 'text-blue-500', 'target' => '_blank']) ?>
+                                                        <?php else: ?>
+                                                            <p>Belum Ada</p>
+                                                        <?php endif ?>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>KTP</th>
+                                                <td>
+                                                    <div>
+                                                        <?php if (!$karyawan->ktp == null): ?>
+                                                            <?= Html::a('preview', [$karyawan->ktp], ['class' => 'text-blue-500', 'target' => '_blank']) ?>
+                                                        <?php else: ?>
+                                                            <p>Belum Ada</p>
+                                                        <?php endif ?>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>CV</th>
+                                                <td>
+                                                    <div>
+                                                        <?php if (!$karyawan->cv == null): ?>
+                                                            <?= Html::a('preview', [$karyawan->cv], ['class' => 'text-blue-500', 'target' => '_blank']) ?>
+                                                        <?php else: ?>
+                                                            <p>Belum Ada</p>
+                                                        <?php endif ?>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class=" border-b border-gray-300">
+                                                <th>Ijazah Terakhir</th>
+                                                <td>
+                                                    <div>
+                                                        <?php if (!$karyawan->ijazah_terakhir == null): ?>
+                                                            <?= Html::a('preview', [$karyawan->ijazah_terakhir], ['class' => 'text-blue-500', 'target' => '_blank']) ?>
+                                                        <?php else: ?>
+                                                            <p>Belum Ada</p>
+                                                        <?php endif ?>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                </div>
+
+            <?php else: ?>
+                <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                    <div>
+                        <p class="py-2 text-[#272727]">Belum Ada Data</p>
+                    </div>
+
+                </div>
+            <?php endif ?>
+
+
+
+            </div>
+        </div>
+        <div class="hidden p-4 rounded-lg bg-gray-100 dark:bg-gray-800" id="styled-profile" role="tabpanel" aria-labelledby="profile-tab">
+
+            <h2 class=" font-semibold text-gray-900 ">Pengalaman Kerja <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($pengalamanKerja) ?></span>
+            </h2>
+            <a href="/panel/home/expirience-pekerjaan-create" class=" my-3 w-full flex items-center justify-center py-1 px-4  gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-400 text-white hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
+            <div class="mt-2 grid grid-cols-1 gap-y-3">
+
+                <?php if (!empty($pengalamanKerja)) : ?>
+                    <?php foreach ($pengalamanKerja as $key => $value) : ?>
+
+                        <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                            <div>
+                                <p class="font-semibold text-[#272727]"><?= $value['posisi'] ?></p>
+                                <p class="text-[13px] text-black/80"><?= $value['perusahaan'] ?></p>
                             </div>
                             <hr>
-                            <!-- <div class="flex justify-between">
-                                    <p class="text-[13px] text-black/80"><?php // date('d-m-Y', strtotime($value['tanggal'])) 
-                                                                            ?> </p>
-                                    <div class="flex space-x-2">
-                                        <a href="/panel/home/riwayat-kesehatan-update?id=<?php // $value['id_riwayat_kesehatan'] 
-                                                                                            ?>" class="flex items-center justify-center">
+                            <div class="flex justify-between">
+                                <p class="text-[13px] text-black/80"><?= date('d-m-Y', strtotime($value['masuk_pada'])) ?> &nbsp;&nbsp;~&nbsp;&nbsp; <?= date('d-m-Y', strtotime($value['keluar_pada'])) ?></p>
+                                <div class="flex space-x-2">
+                                    <a href="/panel/home/expirience-pekerjaan-update?id=<?= $value['id_pengalaman_kerja'] ?>" class="flex items-center justify-center">
 
-                                            <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                    <path fill="black" fill-rule="evenodd" d="M21.455 5.416a.75.75 0 0 1-.096.943l-9.193 9.192a.75.75 0 0 1-.34.195l-3.829 1a.75.75 0 0 1-.915-.915l1-3.828a.8.8 0 0 1 .161-.312L17.47 2.47a.75.75 0 0 1 1.06 0l2.829 2.828a1 1 0 0 1 .096.118m-1.687.412L18 4.061l-8.518 8.518l-.625 2.393l2.393-.625z" clip-rule="evenodd" />
-                                                    <path fill="black" d="M19.641 17.16a44.4 44.4 0 0 0 .261-7.04a.4.4 0 0 1 .117-.3l.984-.984a.198.198 0 0 1 .338.127a46 46 0 0 1-.21 8.372c-.236 2.022-1.86 3.607-3.873 3.832a47.8 47.8 0 0 1-10.516 0c-2.012-.225-3.637-1.81-3.873-3.832a46 46 0 0 1 0-10.67c.236-2.022 1.86-3.607 3.873-3.832a48 48 0 0 1 7.989-.213a.2.2 0 0 1 .128.34l-.993.992a.4.4 0 0 1-.297.117a46 46 0 0 0-6.66.255a2.89 2.89 0 0 0-2.55 2.516a44.4 44.4 0 0 0 0 10.32a2.89 2.89 0 0 0 2.55 2.516c3.355.375 6.827.375 10.183 0a2.89 2.89 0 0 0 2.55-2.516" />
-                                                </svg></p>
-                                            <p>
-                                        </a>
+                                        <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                <path fill="black" fill-rule="evenodd" d="M21.455 5.416a.75.75 0 0 1-.096.943l-9.193 9.192a.75.75 0 0 1-.34.195l-3.829 1a.75.75 0 0 1-.915-.915l1-3.828a.8.8 0 0 1 .161-.312L17.47 2.47a.75.75 0 0 1 1.06 0l2.829 2.828a1 1 0 0 1 .096.118m-1.687.412L18 4.061l-8.518 8.518l-.625 2.393l2.393-.625z" clip-rule="evenodd" />
+                                                <path fill="black" d="M19.641 17.16a44.4 44.4 0 0 0 .261-7.04a.4.4 0 0 1 .117-.3l.984-.984a.198.198 0 0 1 .338.127a46 46 0 0 1-.21 8.372c-.236 2.022-1.86 3.607-3.873 3.832a47.8 47.8 0 0 1-10.516 0c-2.012-.225-3.637-1.81-3.873-3.832a46 46 0 0 1 0-10.67c.236-2.022 1.86-3.607 3.873-3.832a48 48 0 0 1 7.989-.213a.2.2 0 0 1 .128.34l-.993.992a.4.4 0 0 1-.297.117a46 46 0 0 0-6.66.255a2.89 2.89 0 0 0-2.55 2.516a44.4 44.4 0 0 0 0 10.32a2.89 2.89 0 0 0 2.55 2.516c3.355.375 6.827.375 10.183 0a2.89 2.89 0 0 0 2.55-2.516" />
+                                            </svg></p>
+                                        <p>
+                                    </a>
 
 
-                                        <form action="/panel/home/riwayat-kesehatan-delete" method="POST">
-                                            <input type="text" name="id" value="<?php // $value['id_riwayat_kesehatan'] 
-                                                                                ?>" hidden>
-                                            <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class=" grid place-items-center" onclick="deleteClick(this)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                    <path fill="red" d="M10 5h4a2 2 0 1 0-4 0M8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.111A3.75 3.75 0 0 1 15.026 22H8.974a3.75 3.75 0 0 1-3.733-3.389L4.07 6.5H2.75a.75.75 0 0 1 0-1.5zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0zM14.25 9a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 .75-.75m-7.516 9.467a2.25 2.25 0 0 0 2.24 2.033h6.052a2.25 2.25 0 0 0 2.24-2.033L18.424 6.5H5.576z" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div> -->
+                                    <form action="/panel/home/expirience-pekerjaan-delete" method="POST">
+                                        <input type="text" name="id" value="<?= $value['id_pengalaman_kerja'] ?>" hidden>
+                                        <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class=" grid place-items-center" onclick="deleteClick(this)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                <path fill="red" d="M10 5h4a2 2 0 1 0-4 0M8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.111A3.75 3.75 0 0 1 15.026 22H8.974a3.75 3.75 0 0 1-3.733-3.389L4.07 6.5H2.75a.75.75 0 0 1 0-1.5zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0zM14.25 9a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 .75-.75m-7.516 9.467a2.25 2.25 0 0 0 2.24 2.033h6.052a2.25 2.25 0 0 0 2.24-2.033L18.424 6.5H5.576z" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
+                    <?php endforeach ?>
+                <?php else : ?>
+                    <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                        <div>
+                            <p class="py-2 text-[#272727]">Belum Ada Data</p>
+                        </div>
+                    </div>
+                <?php endif ?>
 
-                    <?php else: ?>
+
+            </div>
+        </div>
+        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+            <h2 class=" font-semibold text-gray-900 ">Riwayat Pendidikan <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($riwayatPendidikan) ?></span> </h2>
+            <a href="/panel/home/expirience-pendidikan-create" class=" my-3 w-full flex items-center justify-center py-1 px-4  gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-400 text-white hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
+            <div class="mt-2 grid grid-cols-1 gap-y-3">
+
+                <?php if (!empty($riwayatPendidikan)) : ?>
+                    <?php foreach ($riwayatPendidikan as $key => $value) : ?>
+                        <?php $jenajngPendidikan = MasterKode::find()->select('nama_kode')->where(['nama_group' => 'jenjang-pendidikan', 'kode' => $value['jenjang_pendidikan']])->one(); ?>
                         <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
                             <div>
-                                <p class="py-2 text-[#272727]">Belum Ada Data</p>
+                                <p class="font-semibold text-[#272727]"><?= $jenajngPendidikan['nama_kode'] ?></p>
+                                <p class="text-[13px] text-black/80"><?= $value['institusi'] ?></p>
                             </div>
+                            <hr>
+                            <div class="flex justify-between">
+                                <p class="text-[13px] text-black/80"><?= $value['tahun_masuk']; ?> &nbsp;&nbsp;~&nbsp;&nbsp; <?= $value['tahun_keluar']; ?></p>
+                                <div class="flex space-x-2">
+                                    <a href="/panel/home/expirience-pendidikan-update?id=<?= $value['id_riwayat_pendidikan'] ?>" class="flex items-center justify-center">
 
+                                        <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                <path fill="black" fill-rule="evenodd" d="M21.455 5.416a.75.75 0 0 1-.096.943l-9.193 9.192a.75.75 0 0 1-.34.195l-3.829 1a.75.75 0 0 1-.915-.915l1-3.828a.8.8 0 0 1 .161-.312L17.47 2.47a.75.75 0 0 1 1.06 0l2.829 2.828a1 1 0 0 1 .096.118m-1.687.412L18 4.061l-8.518 8.518l-.625 2.393l2.393-.625z" clip-rule="evenodd" />
+                                                <path fill="black" d="M19.641 17.16a44.4 44.4 0 0 0 .261-7.04a.4.4 0 0 1 .117-.3l.984-.984a.198.198 0 0 1 .338.127a46 46 0 0 1-.21 8.372c-.236 2.022-1.86 3.607-3.873 3.832a47.8 47.8 0 0 1-10.516 0c-2.012-.225-3.637-1.81-3.873-3.832a46 46 0 0 1 0-10.67c.236-2.022 1.86-3.607 3.873-3.832a48 48 0 0 1 7.989-.213a.2.2 0 0 1 .128.34l-.993.992a.4.4 0 0 1-.297.117a46 46 0 0 0-6.66.255a2.89 2.89 0 0 0-2.55 2.516a44.4 44.4 0 0 0 0 10.32a2.89 2.89 0 0 0 2.55 2.516c3.355.375 6.827.375 10.183 0a2.89 2.89 0 0 0 2.55-2.516" />
+                                            </svg></p>
+                                        <p>
+                                    </a>
+
+
+                                    <form action="/panel/home/expirience-pendidikan-delete" method="POST">
+                                        <input type="text" name="id" value="<?= $value['id_riwayat_pendidikan'] ?>" hidden>
+                                        <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class=" grid place-items-center" onclick="deleteClick(this)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                <path fill="red" d="M10 5h4a2 2 0 1 0-4 0M8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.111A3.75 3.75 0 0 1 15.026 22H8.974a3.75 3.75 0 0 1-3.733-3.389L4.07 6.5H2.75a.75.75 0 0 1 0-1.5zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0zM14.25 9a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 .75-.75m-7.516 9.467a2.25 2.25 0 0 0 2.24 2.033h6.052a2.25 2.25 0 0 0 2.24-2.033L18.424 6.5H5.576z" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                    <?php endif ?>
+                    <?php endforeach ?>
 
 
+                <?php else : ?>
+                    <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                        <div>
+                            <p class="py-2 text-[#272727]">Belum Ada Data</p>
+                        </div>
 
-                </div>
+                    </div>
+                <?php endif ?>
+
             </div>
-            <div class="hidden p-4 rounded-lg bg-gray-100 dark:bg-gray-800" id="styled-profile" role="tabpanel" aria-labelledby="profile-tab">
+        </div>
+        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-settings" role="tabpanel" aria-labelledby="settings-tab">
 
-                <h2 class=" font-semibold text-gray-900 ">Pengalaman Kerja <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($pengalamanKerja) ?></span>
-                </h2>
-                <a href="/panel/home/expirience-pekerjaan-create" class=" my-3 w-full flex items-center justify-center py-1 px-4  gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-400 text-white hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
-                <div class="mt-2 grid grid-cols-1 gap-y-3">
+            <h2 class=" font-semibold text-gray-900 ">Data Keluarga <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($keluarga) ?></span> </h2>
+            <a href="/panel/home/data-keluarga-create" class=" my-3 w-full flex items-center justify-center py-1 px-4  gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-400 text-white hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
+            <div class="mt-2 grid grid-cols-1 gap-y-3">
 
-                    <?php if (!empty($pengalamanKerja)) : ?>
-                        <?php foreach ($pengalamanKerja as $key => $value) : ?>
-
-                            <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
-                                <div>
-                                    <p class="font-semibold text-[#272727]"><?= $value['posisi'] ?></p>
-                                    <p class="text-[13px] text-black/80"><?= $value['perusahaan'] ?></p>
-                                </div>
-                                <hr>
-                                <div class="flex justify-between">
-                                    <p class="text-[13px] text-black/80"><?= date('d-m-Y', strtotime($value['masuk_pada'])) ?> &nbsp;&nbsp;~&nbsp;&nbsp; <?= date('d-m-Y', strtotime($value['keluar_pada'])) ?></p>
-                                    <div class="flex space-x-2">
-                                        <a href="/panel/home/expirience-pekerjaan-update?id=<?= $value['id_pengalaman_kerja'] ?>" class="flex items-center justify-center">
-
-                                            <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                    <path fill="black" fill-rule="evenodd" d="M21.455 5.416a.75.75 0 0 1-.096.943l-9.193 9.192a.75.75 0 0 1-.34.195l-3.829 1a.75.75 0 0 1-.915-.915l1-3.828a.8.8 0 0 1 .161-.312L17.47 2.47a.75.75 0 0 1 1.06 0l2.829 2.828a1 1 0 0 1 .096.118m-1.687.412L18 4.061l-8.518 8.518l-.625 2.393l2.393-.625z" clip-rule="evenodd" />
-                                                    <path fill="black" d="M19.641 17.16a44.4 44.4 0 0 0 .261-7.04a.4.4 0 0 1 .117-.3l.984-.984a.198.198 0 0 1 .338.127a46 46 0 0 1-.21 8.372c-.236 2.022-1.86 3.607-3.873 3.832a47.8 47.8 0 0 1-10.516 0c-2.012-.225-3.637-1.81-3.873-3.832a46 46 0 0 1 0-10.67c.236-2.022 1.86-3.607 3.873-3.832a48 48 0 0 1 7.989-.213a.2.2 0 0 1 .128.34l-.993.992a.4.4 0 0 1-.297.117a46 46 0 0 0-6.66.255a2.89 2.89 0 0 0-2.55 2.516a44.4 44.4 0 0 0 0 10.32a2.89 2.89 0 0 0 2.55 2.516c3.355.375 6.827.375 10.183 0a2.89 2.89 0 0 0 2.55-2.516" />
-                                                </svg></p>
-                                            <p>
-                                        </a>
-
-
-                                        <form action="/panel/home/expirience-pekerjaan-delete" method="POST">
-                                            <input type="text" name="id" value="<?= $value['id_pengalaman_kerja'] ?>" hidden>
-                                            <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class=" grid place-items-center" onclick="deleteClick(this)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                    <path fill="red" d="M10 5h4a2 2 0 1 0-4 0M8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.111A3.75 3.75 0 0 1 15.026 22H8.974a3.75 3.75 0 0 1-3.733-3.389L4.07 6.5H2.75a.75.75 0 0 1 0-1.5zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0zM14.25 9a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 .75-.75m-7.516 9.467a2.25 2.25 0 0 0 2.24 2.033h6.052a2.25 2.25 0 0 0 2.24-2.033L18.424 6.5H5.576z" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach ?>
-                    <?php else : ?>
+                <?php if (!empty($keluarga)) : ?>
+                    <?php foreach ($keluarga as $key => $value) : ?>
                         <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
                             <div>
-                                <p class="py-2 text-[#272727]">Belum Ada Data</p>
+                                <p class="font-semibold text-[#272727]">Nama : <?= $value['nama_anggota_keluarga'] ?></p>
+                                <p class="text-[13px] text-black/80">Hubungan : <?= $value->jenisHubungan->nama_kode ?></p>
+                                <p class="text-[13px] text-black/80">lahir pada : <?= $value['tahun_lahir'] ?> </p>
+                            </div>
+                            <hr>
+                            <div class="flex justify-between">
+                                <p class="text-[13px] text-black/80">Pekerjaan : <?= $value['pekerjaan'] ?></p>
+                                <div class="flex space-x-2">
+                                    <a href="/panel/home/data-keluarga-update?id=<?= $value['id_data_keluarga'] ?>" class="flex items-center justify-center">
+
+                                        <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                <path fill="black" fill-rule="evenodd" d="M21.455 5.416a.75.75 0 0 1-.096.943l-9.193 9.192a.75.75 0 0 1-.34.195l-3.829 1a.75.75 0 0 1-.915-.915l1-3.828a.8.8 0 0 1 .161-.312L17.47 2.47a.75.75 0 0 1 1.06 0l2.829 2.828a1 1 0 0 1 .096.118m-1.687.412L18 4.061l-8.518 8.518l-.625 2.393l2.393-.625z" clip-rule="evenodd" />
+                                                <path fill="black" d="M19.641 17.16a44.4 44.4 0 0 0 .261-7.04a.4.4 0 0 1 .117-.3l.984-.984a.198.198 0 0 1 .338.127a46 46 0 0 1-.21 8.372c-.236 2.022-1.86 3.607-3.873 3.832a47.8 47.8 0 0 1-10.516 0c-2.012-.225-3.637-1.81-3.873-3.832a46 46 0 0 1 0-10.67c.236-2.022 1.86-3.607 3.873-3.832a48 48 0 0 1 7.989-.213a.2.2 0 0 1 .128.34l-.993.992a.4.4 0 0 1-.297.117a46 46 0 0 0-6.66.255a2.89 2.89 0 0 0-2.55 2.516a44.4 44.4 0 0 0 0 10.32a2.89 2.89 0 0 0 2.55 2.516c3.355.375 6.827.375 10.183 0a2.89 2.89 0 0 0 2.55-2.516" />
+                                            </svg></p>
+                                        <p>
+                                    </a>
+
+
+                                    <form action="/panel/home/data-keluarga-delete" method="POST">
+                                        <input type="text" name="id" value="<?= $value['id_data_keluarga'] ?>" hidden>
+                                        <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class=" grid place-items-center" onclick="deleteClick(this)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                <path fill="red" d="M10 5h4a2 2 0 1 0-4 0M8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.111A3.75 3.75 0 0 1 15.026 22H8.974a3.75 3.75 0 0 1-3.733-3.389L4.07 6.5H2.75a.75.75 0 0 1 0-1.5zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0zM14.25 9a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 .75-.75m-7.516 9.467a2.25 2.25 0 0 0 2.24 2.033h6.052a2.25 2.25 0 0 0 2.24-2.033L18.424 6.5H5.576z" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    <?php endif ?>
+                    <?php endforeach ?>
+
+                <?php else: ?>
+                    <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                        <div>
+                            <p class="py-2 text-[#272727]">Belum Ada Data</p>
+                        </div>
+
+                    </div>
+                <?php endif ?>
 
 
-                </div>
+
             </div>
-            <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-                <h2 class=" font-semibold text-gray-900 ">Riwayat Pendidikan <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($riwayatPendidikan) ?></span> </h2>
-                <a href="/panel/home/expirience-pendidikan-create" class=" my-3 w-full flex items-center justify-center py-1 px-4  gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-400 text-white hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
-                <div class="mt-2 grid grid-cols-1 gap-y-3">
+        </div>
+        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-pelatihan" role="tabpanel" aria-labelledby="pelatihan-tab">
 
-                    <?php if (!empty($riwayatPendidikan)) : ?>
-                        <?php foreach ($riwayatPendidikan as $key => $value) : ?>
-                            <?php $jenajngPendidikan = MasterKode::find()->select('nama_kode')->where(['nama_group' => 'jenjang-pendidikan', 'kode' => $value['jenjang_pendidikan']])->one(); ?>
-                            <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
-                                <div>
-                                    <p class="font-semibold text-[#272727]"><?= $jenajngPendidikan['nama_kode'] ?></p>
-                                    <p class="text-[13px] text-black/80"><?= $value['institusi'] ?></p>
-                                </div>
-                                <hr>
-                                <div class="flex justify-between">
-                                    <p class="text-[13px] text-black/80"><?= $value['tahun_masuk']; ?> &nbsp;&nbsp;~&nbsp;&nbsp; <?= $value['tahun_keluar']; ?></p>
-                                    <div class="flex space-x-2">
-                                        <a href="/panel/home/expirience-pendidikan-update?id=<?= $value['id_riwayat_pendidikan'] ?>" class="flex items-center justify-center">
+            <h2 class=" font-semibold text-gray-900 ">Riwayat Pelatihan <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($RiwayatPelatihan) ?></span> </h2>
+            <a href="/panel/home/riwayat-pelatihan-create" class=" my-3 w-full flex items-center justify-center py-1 px-4  gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-400 text-white hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
+            <div class="mt-2 grid grid-cols-1 gap-y-3">
 
-                                            <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                    <path fill="black" fill-rule="evenodd" d="M21.455 5.416a.75.75 0 0 1-.096.943l-9.193 9.192a.75.75 0 0 1-.34.195l-3.829 1a.75.75 0 0 1-.915-.915l1-3.828a.8.8 0 0 1 .161-.312L17.47 2.47a.75.75 0 0 1 1.06 0l2.829 2.828a1 1 0 0 1 .096.118m-1.687.412L18 4.061l-8.518 8.518l-.625 2.393l2.393-.625z" clip-rule="evenodd" />
-                                                    <path fill="black" d="M19.641 17.16a44.4 44.4 0 0 0 .261-7.04a.4.4 0 0 1 .117-.3l.984-.984a.198.198 0 0 1 .338.127a46 46 0 0 1-.21 8.372c-.236 2.022-1.86 3.607-3.873 3.832a47.8 47.8 0 0 1-10.516 0c-2.012-.225-3.637-1.81-3.873-3.832a46 46 0 0 1 0-10.67c.236-2.022 1.86-3.607 3.873-3.832a48 48 0 0 1 7.989-.213a.2.2 0 0 1 .128.34l-.993.992a.4.4 0 0 1-.297.117a46 46 0 0 0-6.66.255a2.89 2.89 0 0 0-2.55 2.516a44.4 44.4 0 0 0 0 10.32a2.89 2.89 0 0 0 2.55 2.516c3.355.375 6.827.375 10.183 0a2.89 2.89 0 0 0 2.55-2.516" />
-                                                </svg></p>
-                                            <p>
-                                        </a>
-
-
-                                        <form action="/panel/home/expirience-pendidikan-delete" method="POST">
-                                            <input type="text" name="id" value="<?= $value['id_riwayat_pendidikan'] ?>" hidden>
-                                            <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class=" grid place-items-center" onclick="deleteClick(this)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                    <path fill="red" d="M10 5h4a2 2 0 1 0-4 0M8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.111A3.75 3.75 0 0 1 15.026 22H8.974a3.75 3.75 0 0 1-3.733-3.389L4.07 6.5H2.75a.75.75 0 0 1 0-1.5zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0zM14.25 9a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 .75-.75m-7.516 9.467a2.25 2.25 0 0 0 2.24 2.033h6.052a2.25 2.25 0 0 0 2.24-2.033L18.424 6.5H5.576z" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach ?>
-
-
-                    <?php else : ?>
+                <?php if (!empty($RiwayatPelatihan)) : ?>
+                    <?php foreach ($RiwayatPelatihan as $key => $value) : ?>
                         <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
                             <div>
-                                <p class="py-2 text-[#272727]">Belum Ada Data</p>
+                                <p class="font-semibold text-[#272727]"><?= $value['judul_pelatihan'] ?></p>
+                                <p class="text-[13px] text-black/80"><?= $value['penyelenggara'] ?></p>
                             </div>
+                            <hr>
+                            <div class="flex justify-between">
+                                <p class="text-[13px] text-black/80"><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?> &nbsp;&nbsp;~&nbsp;&nbsp; <?= date('d-m-Y', strtotime($value['tanggal_selesai'])) ?></p>
+                                <div class="flex space-x-2">
+                                    <a href="/panel/home/riwayat-pelatihan-update?id=<?= $value['id_riwayat_pelatihan'] ?>" class="flex items-center justify-center">
 
+                                        <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                <path fill="black" fill-rule="evenodd" d="M21.455 5.416a.75.75 0 0 1-.096.943l-9.193 9.192a.75.75 0 0 1-.34.195l-3.829 1a.75.75 0 0 1-.915-.915l1-3.828a.8.8 0 0 1 .161-.312L17.47 2.47a.75.75 0 0 1 1.06 0l2.829 2.828a1 1 0 0 1 .096.118m-1.687.412L18 4.061l-8.518 8.518l-.625 2.393l2.393-.625z" clip-rule="evenodd" />
+                                                <path fill="black" d="M19.641 17.16a44.4 44.4 0 0 0 .261-7.04a.4.4 0 0 1 .117-.3l.984-.984a.198.198 0 0 1 .338.127a46 46 0 0 1-.21 8.372c-.236 2.022-1.86 3.607-3.873 3.832a47.8 47.8 0 0 1-10.516 0c-2.012-.225-3.637-1.81-3.873-3.832a46 46 0 0 1 0-10.67c.236-2.022 1.86-3.607 3.873-3.832a48 48 0 0 1 7.989-.213a.2.2 0 0 1 .128.34l-.993.992a.4.4 0 0 1-.297.117a46 46 0 0 0-6.66.255a2.89 2.89 0 0 0-2.55 2.516a44.4 44.4 0 0 0 0 10.32a2.89 2.89 0 0 0 2.55 2.516c3.355.375 6.827.375 10.183 0a2.89 2.89 0 0 0 2.55-2.516" />
+                                            </svg></p>
+                                        <p>
+                                    </a>
+
+
+                                    <form action="/panel/home/riwayat-pelatihan-delete" method="POST">
+                                        <input type="text" name="id" value="<?= $value['id_riwayat_pelatihan'] ?>" hidden>
+                                        <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class=" grid place-items-center" onclick="deleteClick(this)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                <path fill="red" d="M10 5h4a2 2 0 1 0-4 0M8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.111A3.75 3.75 0 0 1 15.026 22H8.974a3.75 3.75 0 0 1-3.733-3.389L4.07 6.5H2.75a.75.75 0 0 1 0-1.5zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0zM14.25 9a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 .75-.75m-7.516 9.467a2.25 2.25 0 0 0 2.24 2.033h6.052a2.25 2.25 0 0 0 2.24-2.033L18.424 6.5H5.576z" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                    <?php endif ?>
+                    <?php endforeach ?>
 
-                </div>
+                <?php else: ?>
+                    <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                        <div>
+                            <p class="py-2 text-[#272727]">Belum Ada Data</p>
+                        </div>
+
+                    </div>
+                <?php endif ?>
+
+
+
             </div>
-            <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-settings" role="tabpanel" aria-labelledby="settings-tab">
+        </div>
+        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-kesehatan" role="tabpanel" aria-labelledby="kesehatan-tab">
 
-                <h2 class=" font-semibold text-gray-900 ">Data Keluarga <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($keluarga) ?></span> </h2>
-                <a href="/panel/home/data-keluarga-create" class=" my-3 w-full flex items-center justify-center py-1 px-4  gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-400 text-white hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
-                <div class="mt-2 grid grid-cols-1 gap-y-3">
+            <h2 class=" font-semibold text-gray-900 ">Riwayat Kesehatan <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($RiwayatKesehatan) ?></span> </h2>
+            <a href="/panel/home/riwayat-kesehatan-create" class=" my-3 w-full flex items-center justify-center py-1 px-4  gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-400 text-white hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
+            <div class="mt-2 grid grid-cols-1 gap-y-3">
 
-                    <?php if (!empty($keluarga)) : ?>
-                        <?php foreach ($keluarga as $key => $value) : ?>
-                            <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
-                                <div>
-                                    <p class="font-semibold text-[#272727]">Nama : <?= $value['nama_anggota_keluarga'] ?></p>
-                                    <p class="text-[13px] text-black/80">Hubungan : <?= $value->jenisHubungan->nama_kode ?></p>
-                                    <p class="text-[13px] text-black/80">lahir pada : <?= $value['tahun_lahir'] ?> </p>
-                                </div>
-                                <hr>
-                                <div class="flex justify-between">
-                                    <p class="text-[13px] text-black/80">Pekerjaan : <?= $value['pekerjaan'] ?></p>
-                                    <div class="flex space-x-2">
-                                        <a href="/panel/home/data-keluarga-update?id=<?= $value['id_data_keluarga'] ?>" class="flex items-center justify-center">
-
-                                            <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                    <path fill="black" fill-rule="evenodd" d="M21.455 5.416a.75.75 0 0 1-.096.943l-9.193 9.192a.75.75 0 0 1-.34.195l-3.829 1a.75.75 0 0 1-.915-.915l1-3.828a.8.8 0 0 1 .161-.312L17.47 2.47a.75.75 0 0 1 1.06 0l2.829 2.828a1 1 0 0 1 .096.118m-1.687.412L18 4.061l-8.518 8.518l-.625 2.393l2.393-.625z" clip-rule="evenodd" />
-                                                    <path fill="black" d="M19.641 17.16a44.4 44.4 0 0 0 .261-7.04a.4.4 0 0 1 .117-.3l.984-.984a.198.198 0 0 1 .338.127a46 46 0 0 1-.21 8.372c-.236 2.022-1.86 3.607-3.873 3.832a47.8 47.8 0 0 1-10.516 0c-2.012-.225-3.637-1.81-3.873-3.832a46 46 0 0 1 0-10.67c.236-2.022 1.86-3.607 3.873-3.832a48 48 0 0 1 7.989-.213a.2.2 0 0 1 .128.34l-.993.992a.4.4 0 0 1-.297.117a46 46 0 0 0-6.66.255a2.89 2.89 0 0 0-2.55 2.516a44.4 44.4 0 0 0 0 10.32a2.89 2.89 0 0 0 2.55 2.516c3.355.375 6.827.375 10.183 0a2.89 2.89 0 0 0 2.55-2.516" />
-                                                </svg></p>
-                                            <p>
-                                        </a>
-
-
-                                        <form action="/panel/home/data-keluarga-delete" method="POST">
-                                            <input type="text" name="id" value="<?= $value['id_data_keluarga'] ?>" hidden>
-                                            <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class=" grid place-items-center" onclick="deleteClick(this)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                    <path fill="red" d="M10 5h4a2 2 0 1 0-4 0M8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.111A3.75 3.75 0 0 1 15.026 22H8.974a3.75 3.75 0 0 1-3.733-3.389L4.07 6.5H2.75a.75.75 0 0 1 0-1.5zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0zM14.25 9a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 .75-.75m-7.516 9.467a2.25 2.25 0 0 0 2.24 2.033h6.052a2.25 2.25 0 0 0 2.24-2.033L18.424 6.5H5.576z" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach ?>
-
-                    <?php else: ?>
+                <?php if (!empty($RiwayatKesehatan)) : ?>
+                    <?php foreach ($RiwayatKesehatan as $key => $value) : ?>
                         <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
                             <div>
-                                <p class="py-2 text-[#272727]">Belum Ada Data</p>
+                                <p class="font-semibold text-[#272727]"><?= $value['nama_pengecekan'] ?></p>
+                                <p class="text-[13px] text-black/80"><?= $value['keterangan'] ?></p>
                             </div>
+                            <hr>
+                            <div class="flex justify-between">
+                                <p class="text-[13px] text-black/80"><?= date('d-m-Y', strtotime($value['tanggal'])) ?> </p>
+                                <div class="flex space-x-2">
+                                    <a href="/panel/home/riwayat-kesehatan-update?id=<?= $value['id_riwayat_kesehatan'] ?>" class="flex items-center justify-center">
 
+                                        <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                <path fill="black" fill-rule="evenodd" d="M21.455 5.416a.75.75 0 0 1-.096.943l-9.193 9.192a.75.75 0 0 1-.34.195l-3.829 1a.75.75 0 0 1-.915-.915l1-3.828a.8.8 0 0 1 .161-.312L17.47 2.47a.75.75 0 0 1 1.06 0l2.829 2.828a1 1 0 0 1 .096.118m-1.687.412L18 4.061l-8.518 8.518l-.625 2.393l2.393-.625z" clip-rule="evenodd" />
+                                                <path fill="black" d="M19.641 17.16a44.4 44.4 0 0 0 .261-7.04a.4.4 0 0 1 .117-.3l.984-.984a.198.198 0 0 1 .338.127a46 46 0 0 1-.21 8.372c-.236 2.022-1.86 3.607-3.873 3.832a47.8 47.8 0 0 1-10.516 0c-2.012-.225-3.637-1.81-3.873-3.832a46 46 0 0 1 0-10.67c.236-2.022 1.86-3.607 3.873-3.832a48 48 0 0 1 7.989-.213a.2.2 0 0 1 .128.34l-.993.992a.4.4 0 0 1-.297.117a46 46 0 0 0-6.66.255a2.89 2.89 0 0 0-2.55 2.516a44.4 44.4 0 0 0 0 10.32a2.89 2.89 0 0 0 2.55 2.516c3.355.375 6.827.375 10.183 0a2.89 2.89 0 0 0 2.55-2.516" />
+                                            </svg></p>
+                                        <p>
+                                    </a>
+
+
+                                    <form action="/panel/home/riwayat-kesehatan-delete" method="POST">
+                                        <input type="text" name="id" value="<?= $value['id_riwayat_kesehatan'] ?>" hidden>
+                                        <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class=" grid place-items-center" onclick="deleteClick(this)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                                <path fill="red" d="M10 5h4a2 2 0 1 0-4 0M8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.111A3.75 3.75 0 0 1 15.026 22H8.974a3.75 3.75 0 0 1-3.733-3.389L4.07 6.5H2.75a.75.75 0 0 1 0-1.5zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0zM14.25 9a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 .75-.75m-7.516 9.467a2.25 2.25 0 0 0 2.24 2.033h6.052a2.25 2.25 0 0 0 2.24-2.033L18.424 6.5H5.576z" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                    <?php endif ?>
+                    <?php endforeach ?>
 
-
-
-                </div>
-            </div>
-            <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-pelatihan" role="tabpanel" aria-labelledby="pelatihan-tab">
-
-                <h2 class=" font-semibold text-gray-900 ">Riwayat Pelatihan <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($RiwayatPelatihan) ?></span> </h2>
-                <a href="/panel/home/riwayat-pelatihan-create" class=" my-3 w-full flex items-center justify-center py-1 px-4  gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-400 text-white hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
-                <div class="mt-2 grid grid-cols-1 gap-y-3">
-
-                    <?php if (!empty($RiwayatPelatihan)) : ?>
-                        <?php foreach ($RiwayatPelatihan as $key => $value) : ?>
-                            <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
-                                <div>
-                                    <p class="font-semibold text-[#272727]"><?= $value['judul_pelatihan'] ?></p>
-                                    <p class="text-[13px] text-black/80"><?= $value['penyelenggara'] ?></p>
-                                </div>
-                                <hr>
-                                <div class="flex justify-between">
-                                    <p class="text-[13px] text-black/80"><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?> &nbsp;&nbsp;~&nbsp;&nbsp; <?= date('d-m-Y', strtotime($value['tanggal_selesai'])) ?></p>
-                                    <div class="flex space-x-2">
-                                        <a href="/panel/home/riwayat-pelatihan-update?id=<?= $value['id_riwayat_pelatihan'] ?>" class="flex items-center justify-center">
-
-                                            <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                    <path fill="black" fill-rule="evenodd" d="M21.455 5.416a.75.75 0 0 1-.096.943l-9.193 9.192a.75.75 0 0 1-.34.195l-3.829 1a.75.75 0 0 1-.915-.915l1-3.828a.8.8 0 0 1 .161-.312L17.47 2.47a.75.75 0 0 1 1.06 0l2.829 2.828a1 1 0 0 1 .096.118m-1.687.412L18 4.061l-8.518 8.518l-.625 2.393l2.393-.625z" clip-rule="evenodd" />
-                                                    <path fill="black" d="M19.641 17.16a44.4 44.4 0 0 0 .261-7.04a.4.4 0 0 1 .117-.3l.984-.984a.198.198 0 0 1 .338.127a46 46 0 0 1-.21 8.372c-.236 2.022-1.86 3.607-3.873 3.832a47.8 47.8 0 0 1-10.516 0c-2.012-.225-3.637-1.81-3.873-3.832a46 46 0 0 1 0-10.67c.236-2.022 1.86-3.607 3.873-3.832a48 48 0 0 1 7.989-.213a.2.2 0 0 1 .128.34l-.993.992a.4.4 0 0 1-.297.117a46 46 0 0 0-6.66.255a2.89 2.89 0 0 0-2.55 2.516a44.4 44.4 0 0 0 0 10.32a2.89 2.89 0 0 0 2.55 2.516c3.355.375 6.827.375 10.183 0a2.89 2.89 0 0 0 2.55-2.516" />
-                                                </svg></p>
-                                            <p>
-                                        </a>
-
-
-                                        <form action="/panel/home/riwayat-pelatihan-delete" method="POST">
-                                            <input type="text" name="id" value="<?= $value['id_riwayat_pelatihan'] ?>" hidden>
-                                            <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class=" grid place-items-center" onclick="deleteClick(this)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                    <path fill="red" d="M10 5h4a2 2 0 1 0-4 0M8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.111A3.75 3.75 0 0 1 15.026 22H8.974a3.75 3.75 0 0 1-3.733-3.389L4.07 6.5H2.75a.75.75 0 0 1 0-1.5zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0zM14.25 9a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 .75-.75m-7.516 9.467a2.25 2.25 0 0 0 2.24 2.033h6.052a2.25 2.25 0 0 0 2.24-2.033L18.424 6.5H5.576z" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach ?>
-
-                    <?php else: ?>
-                        <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
-                            <div>
-                                <p class="py-2 text-[#272727]">Belum Ada Data</p>
-                            </div>
-
+                <?php else: ?>
+                    <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                        <div>
+                            <p class="py-2 text-[#272727]">Belum Ada Data</p>
                         </div>
-                    <?php endif ?>
+
+                    </div>
+                <?php endif ?>
 
 
 
-                </div>
             </div>
-            <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-kesehatan" role="tabpanel" aria-labelledby="kesehatan-tab">
-
-                <h2 class=" font-semibold text-gray-900 ">Riwayat Kesehatan <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($RiwayatKesehatan) ?></span> </h2>
-                <a href="/panel/home/riwayat-kesehatan-create" class=" my-3 w-full flex items-center justify-center py-1 px-4  gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-400 text-white hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
-                <div class="mt-2 grid grid-cols-1 gap-y-3">
-
-                    <?php if (!empty($RiwayatKesehatan)) : ?>
-                        <?php foreach ($RiwayatKesehatan as $key => $value) : ?>
-                            <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
-                                <div>
-                                    <p class="font-semibold text-[#272727]"><?= $value['nama_pengecekan'] ?></p>
-                                    <p class="text-[13px] text-black/80"><?= $value['keterangan'] ?></p>
-                                </div>
-                                <hr>
-                                <div class="flex justify-between">
-                                    <p class="text-[13px] text-black/80"><?= date('d-m-Y', strtotime($value['tanggal'])) ?> </p>
-                                    <div class="flex space-x-2">
-                                        <a href="/panel/home/riwayat-kesehatan-update?id=<?= $value['id_riwayat_kesehatan'] ?>" class="flex items-center justify-center">
-
-                                            <p><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                    <path fill="black" fill-rule="evenodd" d="M21.455 5.416a.75.75 0 0 1-.096.943l-9.193 9.192a.75.75 0 0 1-.34.195l-3.829 1a.75.75 0 0 1-.915-.915l1-3.828a.8.8 0 0 1 .161-.312L17.47 2.47a.75.75 0 0 1 1.06 0l2.829 2.828a1 1 0 0 1 .096.118m-1.687.412L18 4.061l-8.518 8.518l-.625 2.393l2.393-.625z" clip-rule="evenodd" />
-                                                    <path fill="black" d="M19.641 17.16a44.4 44.4 0 0 0 .261-7.04a.4.4 0 0 1 .117-.3l.984-.984a.198.198 0 0 1 .338.127a46 46 0 0 1-.21 8.372c-.236 2.022-1.86 3.607-3.873 3.832a47.8 47.8 0 0 1-10.516 0c-2.012-.225-3.637-1.81-3.873-3.832a46 46 0 0 1 0-10.67c.236-2.022 1.86-3.607 3.873-3.832a48 48 0 0 1 7.989-.213a.2.2 0 0 1 .128.34l-.993.992a.4.4 0 0 1-.297.117a46 46 0 0 0-6.66.255a2.89 2.89 0 0 0-2.55 2.516a44.4 44.4 0 0 0 0 10.32a2.89 2.89 0 0 0 2.55 2.516c3.355.375 6.827.375 10.183 0a2.89 2.89 0 0 0 2.55-2.516" />
-                                                </svg></p>
-                                            <p>
-                                        </a>
-
-
-                                        <form action="/panel/home/riwayat-kesehatan-delete" method="POST">
-                                            <input type="text" name="id" value="<?= $value['id_riwayat_kesehatan'] ?>" hidden>
-                                            <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class=" grid place-items-center" onclick="deleteClick(this)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                                    <path fill="red" d="M10 5h4a2 2 0 1 0-4 0M8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.111A3.75 3.75 0 0 1 15.026 22H8.974a3.75 3.75 0 0 1-3.733-3.389L4.07 6.5H2.75a.75.75 0 0 1 0-1.5zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0zM14.25 9a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 .75-.75m-7.516 9.467a2.25 2.25 0 0 0 2.24 2.033h6.052a2.25 2.25 0 0 0 2.24-2.033L18.424 6.5H5.576z" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach ?>
-
-                    <?php else: ?>
-                        <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
-                            <div>
-                                <p class="py-2 text-[#272727]">Belum Ada Data</p>
-                            </div>
-
-                        </div>
-                    <?php endif ?>
-
-
-
-                </div>
-            </div>
-
         </div>
 
-    </section>
+</div>
+
+</section>
 </div>
 
 

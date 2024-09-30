@@ -249,6 +249,16 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 'format' => 'raw',
                                             ],
                                             [
+                                                'label' => 'KTP',
+                                                'value' => function ($model) {
+                                                    if ($model->ktp != null) {
+                                                        return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->ktp, ['target' => '_blank']);
+                                                    }
+                                                    return '<p>Belum Di Set<p>';
+                                                },
+                                                'format' => 'raw',
+                                            ],
+                                            [
                                                 'label' => 'Ijazah Terakhir',
                                                 'value' => function ($model) {
                                                     if ($model->ijazah_terakhir != null) {
@@ -311,8 +321,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     [
                                         'label' => 'Gaji Pokok',
                                         'value' => function ($model) {
-                                    return $model->gaji_pokok;
-
+                                            return $model->gaji_pokok;
                                         }
                                     ],
 
