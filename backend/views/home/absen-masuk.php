@@ -67,11 +67,17 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 
-<section class="flex justify-center items-center w-full h-screen overflow-x-hidden">
+<section class="hidden lg:flex justify-center items-center w-full h-screen overflow-x-hidden">
     <h1 class="w-[50%] text-xl text-center text-rose-900 capitalize">Mohon Maaf, pengisian absen hanya dapat dilakukan melalui perangkat mobile atau tablet Demi memastikan keakuratan lokasi Anda. Terima kasih atas pengertiannya.</h1>
 </section>
 
 <section class="lg:hidden grid grid-cols-10 z-10  relative overflow-x-hidden min-h-[90dvh]">
+
+
+
+    <div class="fixed w-1/2 bottom-0 left-1/2 -translate-x-1/2 z-40 hidden lg:block  ">
+        <?= $this->render('@backend/views/components/_footer'); ?>
+    </div>
 
 
     <!-- content -->
@@ -82,6 +88,8 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="col-span-12  w-full">
 
                 <?= $this->render('@backend/views/components/fragment/_time'); ?>
+
+
 
                 <div class="flex flex-col lg:flex-row space-y-3 lg:space-y-0 justify-center items-center">
                     <div class="w-full ">
@@ -105,8 +113,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 </div>
 
-
                 <div class="mt-10 grid place-items-center">
+
+
+
 
                     <?php if (count($absensiToday) > 0) : ?>
                         <?php if (empty($absensiToday[0]->jam_pulang)) : ?>
@@ -155,7 +165,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
         <!-- ? mobile izin -->
-        <div class="flex justify-between  relative z-20 items-center mb-32">
+        <div class="flex justify-between  items-center pb-32">
             <?php if (count($absensiToday) > 0) : ?>
                 <?php if (empty($absensiToday[0]->jam_pulang)) : ?>
                     <div class="grid place-items-center mt-5">
@@ -239,6 +249,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 </section>
+
+<div class="lg:hidden fixed bottom-0 left-0 right-0 z-50">
+
+    <?= $this->render('@backend/views/components/_footer'); ?>
+</div>
+
 
 
 
@@ -388,7 +404,6 @@ $dataTodayJson = json_encode($dataToday, JSON_PRETTY_PRINT);
     }
 
     // Mengecek waktu setiap detik
-    // const testTime = '2024-09-18T17:00:00';
-    // cekWaktu(testTime);
+    //const testTime = '2024-09-18T17:00:00';
     setInterval(cekWaktu, 30000);
 </script>

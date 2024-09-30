@@ -5,14 +5,17 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\MasterLokasi $model */
 
-$this->title = Yii::t('app', 'Create Master Lokasi');
+$this->title = Yii::t('app', 'Tambah Master Lokasi');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Master Lokasis'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="master-lokasi-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
+    <div class="costume-container">
+        <p class="">
+            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+        </p>
+    </div>
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>

@@ -10,38 +10,56 @@ use yii\grid\GridView;
 /** @var backend\models\MasterLokasiSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Master Lokasis');
+$this->title = Yii::t('app', 'Master Lokasi');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="master-lokasi-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Master Lokasi'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <div class="costume-container">
+        <p class="">
+            <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) ?>
+        </p>
+    </div>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id_master_lokasi',
-            'label',
-            'alamat',
-            'longtitude',
-            'latitude',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, MasterLokasi $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id_master_lokasi' => $model->id_master_lokasi]);
-                 }
+    <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+        <i class="fas fa-search"></i>
+        <span>
+            Search
+        </span>
+    </button>
+    <div style="margin-top: 10px;">
+        <div class="collapse width" id="collapseWidthExample">
+            <div class="" style="width: 100%;">
+                <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+            </div>
+        </div>
+    </div>
+    <div class='table-container'>
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'columns' => [
+                [
+                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'class' => 'yii\grid\SerialColumn'
+                ],
+                [
+                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'class' => ActionColumn::className(),
+                    'urlCreator' => function ($action, MasterLokasi $model, $key, $index, $column) {
+                        return Url::toRoute([$action, 'id_master_lokasi' => $model->id_master_lokasi]);
+                    }
+                ],
+                'label',
+                'alamat',
+                'longtitude',
+                'latitude',
             ],
-        ],
-    ]); ?>
+        ]); ?>
 
 
+    </div>
 </div>

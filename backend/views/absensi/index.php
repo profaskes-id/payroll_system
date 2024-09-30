@@ -15,7 +15,7 @@ use yii\widgets\Pjax;
 /** @var backend\models\AbsensiSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Absensi';
+$this->title = 'Absensi Hari Ini';
 $this->params['breadcrumbs'][] = $this->title;
 
 $today = date('Y-m-d');
@@ -27,17 +27,9 @@ $today = date('Y-m-d');
     <?php $form = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',   'action' => ['absensi/index']]); ?>
     <div class='table-container'>
         <div class="row mb-2">
-            <div class="col-12 col-md-5">
-                <?= $form->field($absensi, 'tanggal')->textInput([
-                    'class' => 'form-control',
-                    'value' => Yii::$app->request->post('Absensi')['tanggal'] ?? $today,
-                    'type' => 'date',
-                    'id' => 'tanggal-input' // Tambahkan ID
-                ])->label(false) ?>
-            </div>
 
 
-            <div class="col-12 col-md-5">
+            <div class="col-10">
                 <?php
                 $idBagian = Yii::$app->request->post('Bagian')['id_bagian'] ?? 0;
                 $data = \yii\helpers\ArrayHelper::map(Bagian::find()->all(), 'id_bagian', 'nama_bagian');
@@ -164,16 +156,16 @@ $today = date('Y-m-d');
 
                             $val = [...$result];
                             if ($val[0]['kode_status_hadir'] == 1) {
-                                return Html::a("<span class='text-success'>Hadir</span>", ['update', 'id_absensi' => $model['absensi'][0]['id_absensi']],);;
+                                return "<span class='text-success'>Hadir</span>";
                             } else if ($val[0]['kode_status_hadir'] == 2) {
-                                return Html::a("<span class='text-black'>IZIN</span>", ['update', 'id_absensi' => $model['absensi'][0]['id_absensi']],);;
+                                return "<span class='text-warning'>IZIN</span>";
                             } else if ($val[0]['kode_status_hadir'] == 3) {
-                                return Html::a("<span class='  text-primary'>Sakit</span>", ['update', 'id_absensi' => $model['absensi'][0]['id_absensi']],);;
+                                return "<span class='text-primary'>Sakit</span>";
                             } else {
-                                return Html::a("<span class='text-warnging'>Belum di set</span>", ['create', 'tanggal' => Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d'), 'id_karyawan' => $model['karyawan']['id_karyawan']]);
+                                return "<span class='text-black'>Belum di set</span>";
                             }
                         } else {
-                            return Html::a("<span class='text-warnging'>Belum di set</span>", ['create', 'tanggal' => Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d'), 'id_karyawan' => $model['karyawan']['id_karyawan']]);
+                            return "<span class=' text-black'>Belum di set</span>";
                         }
                     },
                     'format' => 'raw',

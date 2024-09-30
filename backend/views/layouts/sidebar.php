@@ -63,7 +63,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                     ['label' => 'Master Kode',  'icon' => 'file-code', 'url' => ['/master-kode/index'],],
                                     ['label' => 'Master Cuti',  'icon' => 'fa  fa-calendar-alt', 'url' => ['/master-cuti/index'],],
                                     ['label' => 'Master Hari Besar',  'icon' => 'fa fa-calendar-day', 'url' => ['/master-haribesar/index'],],
-                                    ['label' => 'Master Lokasi',  'icon' => 'fa fa-calendar-day', 'url' => ['/master-lokasi/index'],],
+                                    ['label' => 'Master Lokasi',  'icon' => 'fa fa-map-marker', 'url' => ['/master-lokasi/index'],],
                                 ],
                             ],
                             [

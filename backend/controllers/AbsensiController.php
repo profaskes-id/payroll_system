@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\Absensi;
+use backend\models\AtasanKaryawan;
 use backend\models\Bagian;
 use backend\models\KaryawanSearch;
 use Yii;
@@ -84,8 +85,17 @@ class AbsensiController extends Controller
      */
     public function actionView($id_absensi)
     {
+        $model = $this->findModel($id_absensi);
+        $atasanKaryawan = AtasanKaryawan::find()->where(['id_karyawan' => $model['id_karyawan']])->one();
+        if ($atasanKaryawan == null) {
+            Yii::$app->session->setFlash('error', 'Mohon Untuk Menambahkan Data Atasan Karyawan dan Penempatan Terlebih Dahulu');
+            return $this->redirect(['index']);
+        }
+        $alamat = $atasanKaryawan->masterLokasi;
+
         return $this->render('view', [
-            'model' => $this->findModel($id_absensi),
+            'model' => $model,
+            'alamat' => $alamat
         ]);
     }
 

@@ -76,7 +76,7 @@ class RekapAbsensiController extends Controller
         $model = $this->findModel($id_absensi);
         $atasanKaryawan = AtasanKaryawan::find()->where(['id_karyawan' => $model['id_karyawan']])->one();
         if ($atasanKaryawan == null) {
-            Yii::$app->session->setFlash('error', 'Mohon Untuk Menambahkan Data Atasan Karyawan Terlebih Dahulu');
+            Yii::$app->session->setFlash('error', 'Mohon Untuk Menambahkan Data Atasan Karyawan dan Penempatan Terlebih Dahulu');
             return $this->redirect(['index']);
         }
         $alamat = $atasanKaryawan->masterLokasi;

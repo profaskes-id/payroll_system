@@ -70,14 +70,18 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                         return '<p>Belum Di Set<p>';
                     }
+                ],
+                [
+                    'label' => 'jarak ke lokasi',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        return '<span id="distance"></span>';
+                    }
                 ]
             ],
         ]) ?>
 
-        <p style="display: flex;  gap: 10px;">
-            <span>Jarak Dari Lokasi : </span>
-            <span id="distance"></span>
-        </p>
+
 
         <div class='table-container'>
             <p>Lokasi Karyawan Mengisi Absen</p>
@@ -88,13 +92,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
         <?php
-        // $latitude_now = $model->latitude;
-        // $longitude_now = $model->longitude;
+        $latitude_now = $model->latitude;
+        $longitude_now = $model->longitude;
         $latitude_penempatan = strval($alamat->latitude);
         $longitude_penempatan = strval($alamat->longtitude);
         // dd($latitude_now, $longitude_now, $latitude_penempatan, $longitude_penempatan);
-        $latitude_now = "-0.350190";
-        $longitude_now = "100.372248";
+        // $latitude_now = "-0.350190";
+        // $longitude_now = "100.372248";
 
         // Debugging: Pastikan nilai-nilai ini benar
         echo "<script>console.log('Now: {$latitude_now}, {$longitude_now}, Penempatan: {$latitude_penempatan}, {$longitude_penempatan}');</script>";
@@ -139,8 +143,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
         // Tampilkan jarak dalam kilometer
         var container = document.getElementById('distance');
-        container.innerHTML = (distance / 1000).toFixed(2) + ' km'; // Jarak dalam kilometer
-   
+        // container.innerHTML = (distance / 1000).toFixed(2) + ' km'; // Jarak dalam kilometer
+   container.innerHTML = distance.toFixed(0) + ' Meter'; // Jarak dalam meter
+
 
 
             ");

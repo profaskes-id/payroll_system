@@ -117,7 +117,7 @@
 
 
 
-<body class="w-full  mx-auto">
+<body class="w-full  mx-auto relative">
 
     <section class="grid grid-cols-11">
         <div class="col-span-11">

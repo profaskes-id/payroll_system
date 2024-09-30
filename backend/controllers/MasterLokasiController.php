@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\MasterLokasi;
 use backend\models\MasterLokasiSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -70,7 +71,12 @@ class MasterLokasiController extends Controller
         $model = new MasterLokasi();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            if ($model->load($this->request->post())) {
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Data Master Lokasi Berhasil Disimpan');
+                } else {
+                    Yii::$app->session->setFlash('error', 'Data Master Lokasi Gagal Disimpan');
+                }
                 return $this->redirect(['view', 'id_master_lokasi' => $model->id_master_lokasi]);
             }
         } else {
@@ -93,7 +99,12 @@ class MasterLokasiController extends Controller
     {
         $model = $this->findModel($id_master_lokasi);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Update Data Master Lokasi Berhasil');
+            } else {
+                Yii::$app->session->setFlash('error', 'Update Data Master Lokasi Gagal Disimpan');
+            }
             return $this->redirect(['view', 'id_master_lokasi' => $model->id_master_lokasi]);
         }
 
@@ -111,7 +122,12 @@ class MasterLokasiController extends Controller
      */
     public function actionDelete($id_master_lokasi)
     {
-        $this->findModel($id_master_lokasi)->delete();
+        $model =  $this->findModel($id_master_lokasi);
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Berhasil Menghapus Data Master Lokasi ');
+        } else {
+            Yii::$app->session->setFlash('error', 'Gagal Menghapus Data Master Lokasi Gagal ');
+        }
 
         return $this->redirect(['index']);
     }

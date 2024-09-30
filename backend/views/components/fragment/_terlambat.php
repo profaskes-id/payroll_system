@@ -4,7 +4,7 @@ use yii\widgets\ActiveForm;
 ?>
 
 
-<div data-modal-target="popup-modal-terlambat" data-modal-toggle="popup-modal-terlambat" class="grid place-items-center mt-5 hidden"  id="alasanTerlambat">
+<div data-modal-target="popup-modal-terlambat" data-modal-toggle="popup-modal-terlambat" class="grid place-items-center mt-5 hidden " id="alasanTerlambat">
   <button class="block text-white  font-medium rounded-lg text-sm px-5 py-2.5 text-center " type="button">
     <div class="grid place-items-center">
       <div class="w-[60px] h-[60px] bg-orange-50 border border-gray rounded-full grid place-items-center">
@@ -17,8 +17,8 @@ use yii\widgets\ActiveForm;
   </button>
 </div>
 
-<div id="popup-modal-terlambat" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full" >
-  <div class="relative p-4 w-full max-w-md max-h-full">
+<div id="popup-modal-terlambat" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full" style="z-index: 9999 !important; ">
+  <div class=" relative p-4 w-full max-w-md max-h-full">
     <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
       <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-hide="popup-modal-terlambat">
         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -31,7 +31,7 @@ use yii\widgets\ActiveForm;
         $formAbsen = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',  'action' => ['home/absen-terlambat']]); ?>
         <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'lati'])->label(false) ?>
         <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'longi'])->label(false) ?>
-        <?= $formAbsen->field($model, 'alasan_terlambat')->textarea(['class' => 'py-1 w-full border border-gray-200 rounded-md', 'required' => true, 'rows'=> 7, 'placeholder' => 'Alasan Anda Terlambat'])->label(false) ?>
+        <?= $formAbsen->field($model, 'alasan_terlambat')->textarea(['class' => 'py-1 w-full border border-gray-200 rounded-md', 'required' => true, 'rows' => 7, 'placeholder' => 'Alasan Anda Terlambat'])->label(false) ?>
 
         <div class="flex justify-end items-center space-x-4">
 
