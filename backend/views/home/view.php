@@ -19,7 +19,7 @@ $masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['stat
 
 
 
-    <?= $this->render('@backend/views/components/_header', ['title' => 'Rekap Absensi']); ?>
+    <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home/absen-masuk', 'title' => 'Rekap Absensi']); ?>
 
 
 
@@ -38,7 +38,7 @@ $masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['stat
                     </svg>
                 </div>
 
-                <input autocomplete="off" name=" tanggal_searh" datepicker id="default-datepicker" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm w rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
+                <input autocomplete="off" name=" tanggal_searh" datepicker id="default-datepicker" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm w rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Pilih Tanggal">
             </div>
 
             <div class="col-span-2">
@@ -135,12 +135,4 @@ $masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['stat
 
         </div>
     </section>
-
-
-
-
-</div>
-<div class="">
-
-    <?= $this->render('@backend/views/components/_footer'); ?>
 </div>

@@ -16,6 +16,18 @@ use yii\web\UploadedFile;
 class PengajuanController extends \yii\web\Controller
 {
 
+
+
+    public function beforeAction($action)
+    {
+        if ($action->id == 'lembur-delete') {
+            // Menonaktifkan CSRF verification untuk aksi 'view'
+            $this->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
+    }
+
+
     public function behaviors()
     {
         return array_merge(
@@ -180,6 +192,30 @@ class PengajuanController extends \yii\web\Controller
 
         return $this->render('home/pengajuan/lembur/create', compact('model', 'poinArray'));
     }
+    public function actionLemburUpdate($id)
+    {
+
+        $pengajuanLembur = PengajuanLembur::find()->where(['id_pengajuan_lembur' => $id])->one();
+        $poinArray = json_decode($pengajuanLembur->pekerjaan);
+        if ($this->request->isPost) {
+            if ($pengajuanLembur->load($this->request->post())) {
+                $pengajuanLembur->pekerjaan = json_encode(Yii::$app->request->post('pekerjaan'));
+                if ($pengajuanLembur->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Mengubah Pengajuan');
+                    return $this->redirect(['/pengajuan/lembur']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal Mengubah Pengajuan');
+                    return $this->redirect(['/pengajuan/lembur']);
+                }
+            }
+        }
+
+        $this->layout = 'mobile-main';
+        return $this->render('home/pengajuan/lembur/update', [
+            'model' => $pengajuanLembur,
+            'poinArray' => $poinArray
+        ]);
+    }
 
     public function actionLemburDetail($id)
     {
@@ -187,6 +223,19 @@ class PengajuanController extends \yii\web\Controller
         $model = PengajuanLembur::find()->where(['id_pengajuan_lembur' => $id])->one();
         $poinArray = json_decode($model->pekerjaan);
         return $this->render('home/pengajuan/lembur/detail', compact('model', 'poinArray'));
+    }
+
+    public function actionLemburDelete()
+    {
+        $id = Yii::$app->request->post('id');
+        $model = PengajuanLembur::find()->where(['id_pengajuan_lembur' => $id])->one();
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Berhasil Menghapus Pengajuan');
+            return $this->redirect(['/pengajuan/lembur']);
+        }
+
+        Yii::$app->session->setFlash('error', 'Gagal Menghapus Pengajuan');
+        return $this->redirect(['/pengajuan/lembur']);
     }
 
 
@@ -238,11 +287,10 @@ class PengajuanController extends \yii\web\Controller
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
         $model = PengajuanDinas::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
         // dd(Yii::$app->request->post('PengajuanDinas'));
+        $files = $model->files;
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                $model->files = UploadedFile::getInstances($model, 'files');
-
-
+                $dataGambar = UploadedFile::getInstances($model, 'files');
 
                 // Path upload folder
                 $uploadPath = Yii::getAlias('@webroot/uploads/dokumentasi/');
@@ -250,19 +298,25 @@ class PengajuanController extends \yii\web\Controller
                 // Array untuk menyimpan path file
                 $filePaths = [];
 
-                foreach ($model->files as $file) {
+                // Ambil gambar lama dari database
+                if ($files) {
+                    $existingFiles = json_decode($files);
+                    $filePaths = array_merge($filePaths, $existingFiles);
+                }
+
+                foreach ($dataGambar as $file) {
                     $fileName = uniqid() . '.' . $file->extension;
                     $filePath = $uploadPath . $fileName;
 
                     if ($file->saveAs($filePath)) {
-                        // Simpan path file
-                        $filePaths[] = $filePath;
+                        // Simpan path file baru
+                        $filePaths[] = 'uploads/dokumentasi/' . $fileName;
                     }
                 }
 
                 // Simpan informasi file di database
                 $model->files = json_encode($filePaths); // Simpan dalam format JSON
-                // dd($model);
+
 
                 // dd($model->save());
                 if ($model->save()) {
@@ -273,6 +327,29 @@ class PengajuanController extends \yii\web\Controller
                     return $this->redirect(['/pengajuan/dinas']);
                 }
             }
+        }
+    }
+
+    public function actionDeleteDokumentasi($id)
+    {
+
+        $model = PengajuanDinas::find()->where(['id_pengajuan_dinas' => $id])->one();
+
+        if ($model->files) {
+            $data = json_decode($model->files, true);
+            foreach ($data as $key => $item) {
+                if (file_exists(Yii::getAlias('@webroot') . '/' . $item)) {
+                    unlink(Yii::getAlias('@webroot') . '/' . $item);
+                }
+            }
+        }
+        $model->files = null;
+        if ($model->save()) {
+            Yii::$app->session->setFlash('success', 'Files Berhasil Di hapus.');
+            return $this->redirect(['/pengajuan/dinas']);
+        } else {
+            Yii::$app->session->setFlash('error', ' Gagal Melakukan hapus file.');
+            return $this->redirect(['/pengajuan/dinas']);
         }
     }
 }

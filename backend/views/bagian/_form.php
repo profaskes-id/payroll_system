@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\MasterLokasi;
 use backend\models\Perusahaan;
 use kartik\select2\Select2;
 use yii\helpers\Html;

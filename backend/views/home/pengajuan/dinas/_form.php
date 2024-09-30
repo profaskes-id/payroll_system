@@ -3,7 +3,7 @@
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 
-$this->title = 'Pengajuan Dinas';
+$this->title = 'Pengajuan Dinas Luar';
 
 $form = ActiveForm::begin(); ?>
 

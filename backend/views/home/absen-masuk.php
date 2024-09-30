@@ -67,12 +67,11 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 
-<section class="grid grid-cols-10  relative overflow-x-hidden min-h-[90dvh]">
+<section class="flex justify-center items-center w-full h-screen overflow-x-hidden">
+    <h1 class="w-[50%] text-xl text-center text-rose-900 capitalize">Mohon Maaf, pengisian absen hanya dapat dilakukan melalui perangkat mobile atau tablet Demi memastikan keakuratan lokasi Anda. Terima kasih atas pengertiannya.</h1>
+</section>
 
-
-    <div class="fixed w-1/2 bottom-0 left-1/2 -translate-x-1/2 z-40 hidden lg:block  ">
-        <?= $this->render('@backend/views/components/_footer'); ?>
-    </div>
+<section class="lg:hidden grid grid-cols-10 z-10  relative overflow-x-hidden min-h-[90dvh]">
 
 
     <!-- content -->
@@ -84,18 +83,30 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 <?= $this->render('@backend/views/components/fragment/_time'); ?>
 
+                <div class="flex flex-col lg:flex-row space-y-3 lg:space-y-0 justify-center items-center">
+                    <div class="w-full ">
 
-                <p class=" text-gray-500 text-center mt-2 -mb-3 capitalize">Lokasi Anda</p>
-                <a href="/panel/home/your-location">
-                    <div class="capitalize flex justify-around items-center bg-sky-500/10 p-1 text-[13px] w-[80%] mx-auto mt-3 rounded-full">
-                        <p>lat : <span id="latitude"></span></p>
-                        <p>long : <span id="longitude"></span></p>
+                        <p class="  text-xs text-center mt-2 -mb-3 capitalize">Lokasi Anda</p>
+                        <a href="/panel/home/your-location">
+                            <div class="capitalize flex justify-around items-center bg-sky-500/10 p-1 text-[13px] w-[80%] mx-auto mt-3 rounded-full">
+                                <p>lat : <span id="latitude"></span></p>
+                                <p>long : <span id="longitude"></span></p>
+                            </div>
+                        </a>
                     </div>
-                </a>
+                    <div class="w-full ">
+                        <p class="text-xs text-center mt-2 -mb-3">Jam Kerja </p>
+                        <div class="capitalize flex justify-around items-center bg-orange-500/10 p-1 text-[13px] w-[80%] mx-auto mt-3 rounded-full">
+                            <p><?= date('g:i A', strtotime($jamKerjaToday->jam_masuk)) ?></p>
+                            <p>S/D</p>
+                            <p><?= date('g:i A', strtotime($jamKerjaToday->jam_keluar)) ?></p>
+                        </div>
+                    </div>
+
+                </div>
+
+
                 <div class="mt-10 grid place-items-center">
-
-
-
 
                     <?php if (count($absensiToday) > 0) : ?>
                         <?php if (empty($absensiToday[0]->jam_pulang)) : ?>
@@ -144,7 +155,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
         <!-- ? mobile izin -->
-        <div class="flex justify-between  items-center pb-32">
+        <div class="flex justify-between  relative z-20 items-center mb-32">
             <?php if (count($absensiToday) > 0) : ?>
                 <?php if (empty($absensiToday[0]->jam_pulang)) : ?>
                     <div class="grid place-items-center mt-5">
@@ -155,7 +166,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <span class="w-1 h-5 bg-white rounded-xl"></span>
                                     </div>
                                 </div>
-                                <p class="mt-2 font-medium capitalize">Pulang Cepat </p>
+                                <p class="mt-2 font-medium capitalize text-center">Pulang Cepat </p>
                             </div>
                         </a>
                     </div>
@@ -171,7 +182,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             <span class="w-1 h-5 bg-white rounded-xl"></span>
                                         </div>
                                     </div>
-                                    <p class="mt-2 font-medium capitalize">Pulang Cepat </p>
+                                    <p class="mt-2 font-medium capitalize text-center">Pulang Cepat </p>
                                 </div>
                             </a>
                         </div>
@@ -184,7 +195,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             <span class="w-1 h-5 bg-white rounded-xl"></span>
                                         </div>
                                     </div>
-                                    <p class="mt-2 font-medium capitalize">Pulang Cepat </p>
+                                    <p class="mt-2 font-medium capitalize text-center">Pulang Cepat </p>
                                 </div>
                             </a>
                         </div>
@@ -201,7 +212,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <span class="w-5 h-1 bg-white rounded-xl"></span>
                                 </div>
                             </div>
-                            <p class="mt-2 font-medium capitalize">Izin Tidak hadir</p>
+                            <p class="mt-2 font-medium capitalize text-center">Izin Tidak hadir</p>
                         </div>
                     </a>
                 </div>
@@ -219,7 +230,7 @@ $this->params['breadcrumbs'][] = $this->title;
               <span class="w-2 h-1 bg-white rounded-xl"></span>
               </div>
               </div>
-              <p class="mt-2 font-medium capitalize">Lihat History</p>
+              <p class="mt-2 font-medium capitalize text-center">Lihat History</p>
               </div>
               ', ['/home/view', 'id_user' => Yii::$app->user->identity->id]) ?>
             </div>
@@ -228,12 +239,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 </section>
-
-<div class="lg:hidden fixed bottom-0 left-0 right-0 z-50">
-
-    <?= $this->render('@backend/views/components/_footer'); ?>
-</div>
-
 
 
 
@@ -383,6 +388,7 @@ $dataTodayJson = json_encode($dataToday, JSON_PRETTY_PRINT);
     }
 
     // Mengecek waktu setiap detik
-    //const testTime = '2024-09-18T17:00:00';
+    // const testTime = '2024-09-18T17:00:00';
+    // cekWaktu(testTime);
     setInterval(cekWaktu, 30000);
 </script>

@@ -152,15 +152,17 @@ class KaryawanSearch extends Karyawan
 
             // Add absensi
             if ($row['id_absensi']) {
-                $result[$row['id_karyawan']]['absensi'][] = [
-                    'id_absensi' => $row['id_absensi'],
-                    'tanggal_absensi' => $row['tanggal_absensi'],
-                    'jam_masuk' => $row['jam_masuk'],
-                    'jam_pulang' => $row['jam_pulang'],
-                    'kode_status_hadir' => $row['kode_status_hadir'],
-                    'keterangan_absensi' => $row['keterangan_absensi'],
-                    'lampiran' => $row['lampiran'],
-                ];
+                if ($row['tanggal_absensi'] == date('Y-m-d')) {
+                    $result[$row['id_karyawan']]['absensi'][] = [
+                        'id_absensi' => $row['id_absensi'],
+                        'tanggal_absensi' => $row['tanggal_absensi'],
+                        'jam_masuk' => $row['jam_masuk'],
+                        'jam_pulang' => $row['jam_pulang'],
+                        'kode_status_hadir' => $row['kode_status_hadir'],
+                        'keterangan_absensi' => $row['keterangan_absensi'],
+                        'lampiran' => $row['lampiran'],
+                    ];
+                }
             }
         }
 
@@ -226,7 +228,8 @@ class KaryawanSearch extends Karyawan
                 'k.id_karyawan',
                 'k.nama',
                 'a.id_atasan',
-                'a.status'
+                'a.status',
+                'a.id_master_lokasi',
             ])
             ->from('karyawan k')
             ->leftJoin('atasan_karyawan a', 'k.id_karyawan = a.id_karyawan')
@@ -252,7 +255,8 @@ class KaryawanSearch extends Karyawan
                 'k.id_karyawan',
                 'k.nama',
                 'a.id_atasan',
-                'a.status'
+                'a.status',
+                'a.id_master_lokasi'
             ])
             ->from('karyawan k')
             ->leftJoin('atasan_karyawan a', 'k.id_karyawan = a.id_karyawan')

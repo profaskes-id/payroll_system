@@ -147,11 +147,15 @@ class PengajuanCutiController extends Controller
                         $rekapan->total_hari_terpakai += $hari_kerja;
                         $rekapan->save();
                     } else {
+                        $timestamp_mulai = strtotime($model->tanggal_mulai);
+                        $timestamp_selesai = strtotime($model->tanggal_selesai);
+
+                        $selisih_detik = $timestamp_selesai - $timestamp_mulai;
+                        $selisih_hari = $selisih_detik / (60 * 60 * 24);
                         $NewrekapAsensi = new RekapCuti();
                         $NewrekapAsensi->id_karyawan = $model->id_karyawan;
                         $NewrekapAsensi->id_master_cuti = $model->jenis_cuti;
-                        $NewrekapAsensi->total_hari_terpakai = 0;
-                        $NewrekapAsensi->total_hari_terpakai += $selisih_hari;
+                        $NewrekapAsensi->total_hari_terpakai = $selisih_hari;
                         $NewrekapAsensi->tahun = date('Y', strtotime($model->tanggal_mulai));
                         $NewrekapAsensi->save();
                     }

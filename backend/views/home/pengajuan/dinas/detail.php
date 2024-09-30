@@ -1,9 +1,10 @@
 <?php
 
+use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 ?>
-<section class="max-w-[500px] mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5">
-    <?= $this->render('@backend/views/components/_header', ['title' => 'Pengajuan Dinas']); ?>
+<section class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5">
+    <?= $this->render('@backend/views/components/_header', ['link' => '/panel/pengajuan/dinas', 'title' => 'Pengajuan Dinas Luar']); ?>
 
 
     <div class="bg-gray-100/50 w-full h-[80dvh] rounded-md p-2  relative ">
@@ -25,13 +26,32 @@ use yii\widgets\ActiveForm;
 
             </div>
         </div>
-        <div class="inline-flex items-center justify-center w-full mb-4">
+        <div class="inline-flex items-center justify-center w-full mb-4 relative">
             <hr class="w-64 h-px my-1 bg-gray-200 border-0 dark:bg-gray-700">
+        </div>
+        <div class="bg-white text-black relative  w-full  rounded-md p-2 min-h-32 mt-2">
+            <div class="flex justify-between items-center">
+                <p class="capitalize  text-gray-500 font-semibold">Dokumentasi Perjalanan</p>
+                <?= Html::a('Delete All', ['pengajuan/delete-dokumentasi', 'id' => $model->id_pengajuan_dinas], ['class' => 'text-rose-500 rounded-md  p-1']) ?>
+            </div>
+            <?php if (!$model->files == []): ?>
+
+                <?php
+                $data = json_decode($model->files, true);
+                foreach ($data as $key => $item) : ?>
+                    <?php $key++ ?>
+                    <p class="my-1">
+                        <?= Html::a("Preview Dokumentasi {$key}", Yii::getAlias('@root') . '/panel/' . $item, ['target' => '_blank', 'class' => 'text-blue-500']) ?>
+                    </p>
+                <?php endforeach ?>
+            <?php else : ?>
+            <?php endif; ?>
         </div>
 
 
-        <div class="mt-1">
 
+
+        <div class="mt-5">
             <?php
 
             if ($model['status'] == '1'): ?>

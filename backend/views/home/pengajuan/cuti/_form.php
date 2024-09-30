@@ -51,6 +51,7 @@ $form = ActiveForm::begin(); ?>
     <div class="mb-5">
         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">Jumlah Hari</label>
         <input type="text" disabled class="disabled:bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" id="jumlah_hari">
+        <p class="text-xs">Jika pengajuan cuti disetujui, hari cuti Anda tidak akan dihitung pada hari non-kerja . Sisa jatah cuti akan tetap terjaga.</p>
     </div>
     <div class="mb-5">
         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">alasan cuti</label>

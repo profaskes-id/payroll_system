@@ -2,7 +2,7 @@
 
 
  <div class="px-5">
-     <?= $this->render('@backend/views/components/_header', ['title' => 'Lokasi']); ?>
+     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home', 'title' => 'Lokasi']); ?>
 
  </div>
 
@@ -30,9 +30,6 @@
  </div>
 
 
- <div class="fixed bottom-0 left-0 right-0 z-50">
-     <?= $this->render('@backend/views/components/_footer'); ?>
- </div>
 
 
 

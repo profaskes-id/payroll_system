@@ -1,5 +1,5 @@
-<section class="max-w-[500px] mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5">
-    <?= $this->render('@backend/views/components/_header', ['title' => 'Pengajuan Cuti']); ?>
+<section class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5">
+    <?= $this->render('@backend/views/components/_header', ['link' => '/panel/pengajuan/cuti', 'title' => 'Pengajuan Cuti']); ?>
 
 
     <div class="bg-gray-100/50 w-full h-[80dvh] rounded-md p-2">
@@ -30,7 +30,5 @@
 
     </div>
 
-    <div class="fixed bottom-0 left-0 right-0 z-50">
-        <?= $this->render('@backend/views/components/_footer'); ?>
-    </div>
+
 </section>

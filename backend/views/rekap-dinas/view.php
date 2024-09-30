@@ -40,8 +40,18 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => $model->karyawan->nama
                 ],
                 'keterangan_perjalanan:ntext',
-                'tanggal_mulai',
-                'tanggal_selesai',
+                 [
+                    'label' => 'Tanggal Mulai',
+                    'value' => function ($model) {
+                        return date('d-M-Y', strtotime($model->tanggal_mulai));
+                    }
+                ],
+                [
+                    'label' => 'Tanggal Mulai',
+                    'value' => function ($model) {
+                        return date('d-M-Y', strtotime($model->tanggal_selesai));
+                    }
+                ],
                 'estimasi_biaya',
                 'biaya_yang_disetujui',
                 [

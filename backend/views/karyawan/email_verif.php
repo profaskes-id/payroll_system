@@ -87,8 +87,9 @@ $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:
                         </p>
 
                         <p>Anda Dapat Login Menggunakan token berikut</p>
+                        <p>nomer identitas : <?= $model->nomer_identitas ?></p>
                         <br>
-                        <?= Yii::getAlias('@root') . '/panel/auto-login/login?token=' . $user->access_token ?>
+                        <?= Yii::getAlias('@root') . '/panel/auto-login/login?token=' . $ciphertext . '&id=' . $model->nomer_identitas ?>
                         <br />
                         harap untuk melakukan penggantian password di profil aplikasi anda demi keamanan akun anda
 

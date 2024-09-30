@@ -17,8 +17,8 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
 ?>
 
-<div class="max-w-[500px] mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5">
-    <?= $this->render('@backend/views/components/_header', ['title' => 'Pengajuan Cuti']); ?>
+<div class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5">
+    <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home', 'title' => 'Pengajuan Cuti']); ?>
 
 
 
@@ -192,9 +192,4 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
     </div>
 </div>
 
-</div>
-
-
-<div class="fixed bottom-0 left-0 right-0 z-50">
-    <?= $this->render('@backend/views/components/_footer'); ?>
 </div>

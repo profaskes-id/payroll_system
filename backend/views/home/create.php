@@ -18,11 +18,11 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
 
 
-<div class="max-w-[500px] mx-auto px-5 lg:px-8">
+<div class="w-full mx-auto px-5 lg:px-8">
 
 
 
-    <?= $this->render('@backend/views/components/_header', ['title' => 'Absensi']); ?>
+    <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home/absen-masuk', 'title' => 'Absensi']); ?>
     <section class="grid grid-cols-12 justify-center mt-2 gap-y-10">
 
 

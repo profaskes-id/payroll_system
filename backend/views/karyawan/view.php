@@ -311,14 +311,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     [
                                         'label' => 'Gaji Pokok',
                                         'value' => function ($model) {
-
-                                            // Set locale to Indonesian
-                                            $locale = 'id_ID';
-                                            $fmt = new NumberFormatter($locale, NumberFormatter::CURRENCY);
-
-                                            // Format the number to IDR
-                                            $amount = (int)$model->gaji_pokok;
-                                            return $fmt->formatCurrency($amount, 'IDR'); // Output: Rp2.800.000,00
+                                    return $model->gaji_pokok;
 
                                         }
                                     ],

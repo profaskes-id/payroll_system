@@ -27,7 +27,7 @@ $today = date('Y-m-d');
     <?php $form = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',   'action' => ['absensi/index']]); ?>
     <div class='table-container'>
         <div class="row mb-2">
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-5">
                 <?= $form->field($absensi, 'tanggal')->textInput([
                     'class' => 'form-control',
                     'value' => Yii::$app->request->post('Absensi')['tanggal'] ?? $today,
@@ -51,10 +51,17 @@ $today = date('Y-m-d');
                 ?>
 
             </div>
-            <div class="col-12 col-md-1">
+            <div class="col-2 col-md-1">
                 <button class="add-button" type="submit">
                     <i class="fas fa-search"></i>
                 </button>
+            </div>
+            <div class="col-2 col-md-1">
+                <a href="/panel/absensi">
+                    <button class="reset-button" type="reset">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                </a>
             </div>
         </div>
         <?php ActiveForm::end(); ?>
@@ -73,7 +80,7 @@ $today = date('Y-m-d');
                 [
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'format' => 'raw',
                     'value' => function ($model) {
                         if ($model['absensi']) {
@@ -88,11 +95,11 @@ $today = date('Y-m-d');
                 ],
                 [
                     'label' => 'Karyawan',
-                    'value' => function($model){
-                        
+                    'value' => function ($model) {
+
                         return $model['karyawan']['nama'];
                     }
-                    ],
+                ],
                 [
                     'headerOptions' => ['style' => 'width: 200px; text-align: center;'],
                     'contentOptions' => ['style' => 'text-align: center;'],
@@ -135,7 +142,8 @@ $today = date('Y-m-d');
                         });
                         if (!empty($result)) {
                             $var = [...$result];
-                            return date('H:i', strtotime($var[0]['jam_pulang'] ?? '00:00:00')) ?? '-';
+                            $jam =  date('H:i', strtotime($var[0]['jam_pulang'] ?? '00:00:00')) ?? 'Belum Di Set';
+                            return $jam == '00:00' ? 'Belum Di Set' : $jam;
                         } else {
                             return '-';
                         }

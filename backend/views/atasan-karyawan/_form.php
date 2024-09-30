@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\Karyawan;
+use backend\models\MasterLokasi;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -32,6 +33,19 @@ use yii\widgets\ActiveForm;
                     'allowClear' => true
                 ],
             ])->label('Atasan Karyawan');
+            ?>
+        </div>
+        <div class="col-md-6">
+            <?php
+            $data = \yii\helpers\ArrayHelper::map(MasterLokasi::find()->all(), 'id_master_lokasi', 'label');
+            echo $form->field($model, 'id_master_lokasi')->widget(Select2::classname(), [
+                'data' => $data,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Pilih Lokasi Penempatan ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ])->label('Lokasi Penempatan');
             ?>
         </div>
 

@@ -144,7 +144,7 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
     <div class="col-span-4">
         <div class="grid grid-col-1 gap-y-3 table-container">
 
-            <h1 class="text-bold text-3xl  mt-0">Pengajuan Karyawan</h1>
+            <h1 class="text-bold mt-0" style="font-size:22px;">Pengajuan Karyawan</h1>
             <p class="-mt-2 text-gray-500 mb-3">Menunggu Ditanggapi</p>
             <div class="grid grid-cols-6 gap-10">
                 <div class="col-span-6">

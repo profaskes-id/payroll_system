@@ -7,7 +7,7 @@ use yii\bootstrap4\Breadcrumbs;
 
 
 
-<div class="content-wrapper  p-3" style="border-top-left-radius: 20px; border-top-right-radius: 20px; background-color: #f8f9fb !important">
+<div class="content-wrapper  p-3" style="border-top-left-radius: 20px; border-top-right-radius: 20px; background-color: #f8f9fb !important; ">
     <!-- Content Header (Page header) -->
     <?php
 

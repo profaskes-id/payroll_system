@@ -16,7 +16,9 @@ use backend\models\RiwayatPelatihan;
 use backend\models\RiwayatPelatihanSearch;
 use backend\models\RiwayatPendidikanSearch;
 use kartik\mpdf\Pdf;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
 use Yii;
+use yii\base\Security;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -135,43 +137,81 @@ class KaryawanController extends Controller
     }
 
 
+
+
     public function actionInvite($id_karyawan)
     {
 
         $model = $this->findModel($id_karyawan);
-        $user = new User();
-        $user->email = $model->email;
 
-        $user->newPassword =  $id_karyawan . $model->kode_karyawan  . $model->jenis_identitas . $model->kode_jenis_kelamin;
-        $user->setRegisterAttributes(2, 1);
-        if ($user->save()) {
-            Yii::$app->session->setFlash('success', 'Berhasil Membuat Data');
-            $profil = new Profile();
-            $profil->user_id = $user->id;
-            $profil->full_name = $model->nama;
-            if ($profil->save()) {
 
-                $msgToCheck = $this->renderPartial('@backend/views/karyawan/email_verif', compact('user'));
-                $sendMsgToCheck = Yii::$app->mailer->compose()
-                    ->setTo($user->email)
-                    ->setSubject('Akses Akun Trial profaskes')
-                    ->setHtmlBody($msgToCheck);
-                if ($sendMsgToCheck->send()) {
-                    Yii::$app->session->setFlash(
-                        'success',
-                        'Email Telah Berhasil Terkirim kepada ' . $user->email
-                    );
-                }
+        // Configure different password hashers via the factory
+        $factory = new PasswordHasherFactory([
+            'common' => ['algorithm' => 'bcrypt'],
+            'memory-hard' => ['algorithm' => 'sodium'],
+        ]);
 
-                return $this->redirect(['index']);
-            } else {
-                Yii::$app->session->setFlash('error', 'Terjadi kesalahan saat menyimpan data.');
-                return $this->redirect(['index']);
-            }
-        } else {
-            Yii::$app->session->setFlash('error', 'Terjadi kesalahan saat menyimpan data.');
-            return $this->redirect(['index']);
+        // Retrieve the right password hasher by its name
+        $passwordHasher = $factory->getPasswordHasher('common');
+
+        // Hash a plain password
+        $hash = $passwordHasher->hash(strval($model->nomer_identitas));
+        // Verify that a given plain password matches the hash
+        // $passwordHasher->verify($hash, 'wrong'); // returns false
+        $ciphertext = $hash;
+        // dd($passwordHasher->verify($hash, strval($model->nomer_identitas))); // returns true (valid)
+
+
+        // $ciphertext = $security->encryptByKey($model->nomer_identitas, $key);
+
+        $msgToCheck = $this->renderPartial('@backend/views/karyawan/email_verif', compact('model', 'ciphertext'));
+        $sendMsgToCheck = Yii::$app->mailer->compose()
+            ->setTo($model->email)
+            ->setSubject('Akses Akun Trial profaskes')
+            ->setHtmlBody($msgToCheck);
+        if ($sendMsgToCheck->send()) {
+            Yii::$app->session->setFlash(
+                'success',
+                'Email Telah Berhasil Terkirim kepada ' . $model->email
+            );
         }
+
+        return $this->redirect(['index']);
+
+        //nik dan hashnik kirim ke email
+
+        // $user = new User();
+        // $user->email = $model->email;
+        // $user->newPassword =  $id_karyawan . $model->kode_karyawan  . $model->jenis_identitas . $model->kode_jenis_kelamin;
+        // $user->setRegisterAttributes(2, 1);
+        // if ($user->save()) {
+        //     Yii::$app->session->setFlash('success', 'Berhasil Membuat Data');
+        //     $profil = new Profile();
+        //     $profil->user_id = $user->id;
+        //     $profil->full_name = $model->nama;
+        //     if ($profil->save()) {
+
+        //         $msgToCheck = $this->renderPartial('@backend/views/karyawan/email_verif', compact('user'));
+        //         $sendMsgToCheck = Yii::$app->mailer->compose()
+        //             ->setTo($user->email)
+        //             ->setSubject('Akses Akun Trial profaskes')
+        //             ->setHtmlBody($msgToCheck);
+        //         if ($sendMsgToCheck->send()) {
+        //             Yii::$app->session->setFlash(
+        //                 'success',
+        //                 'Email Telah Berhasil Terkirim kepada ' . $user->email
+        //             );
+        //         }
+
+        //         return $this->redirect(['index']);
+        //     } else {
+        //         Yii::$app->session->setFlash('error', 'Terjadi kesalahan saat menyimpan data.');
+        //         return $this->redirect(['index']);
+        //     }
+        // } else {
+        //     Yii::$app->session->setFlash('error', 'Terjadi kesalahan saat menyimpan data.');
+        //     return $this->redirect(['index']);
+        // }
     }
 
     public function actionCreate()

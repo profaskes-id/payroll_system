@@ -11,6 +11,9 @@ $this->params['breadcrumbs'][] = ['label' => 'Absensi', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
 <div class="absensi-view">
 
     <div class="costume-container">
@@ -41,7 +44,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
 
-                'tanggal',
+                [
+                    'label' => 'TanggalAbsen',
+                    // 'format' => 'datetime',
+                    'value' => function ($model) {
+                        return date('d-M-Y', strtotime($model->tanggal));
+                    }
+                ],
                 'jam_masuk',
                 'jam_pulang',
                 [
@@ -50,9 +59,38 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->statusHadir->nama_kode;
                     }
                 ],
+
             ],
         ]) ?>
     </div>
 
 
 </div>
+<div class='table-container'>
+    <p>Lokasi Karyawan Mengisi Absen</p>
+    <?php
+    echo '<div id="map" style="height: 400px;"></div>';
+    ?>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<?php
+$latitude = $model->latitude;
+$longitude = $model->longitude;
+
+$this->registerJs("
+    $(document).ready(function() {
+        // Inisialisasi peta
+        let map = L.map('map').setView([$latitude, $longitude], 15);
+        
+        // Tambahkan tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a>',
+            subdomains: ['a', 'b', 'c']
+        }).addTo(map);
+        
+        // Tambahkan marker
+        L.marker([$latitude, $longitude]).addTo(map);
+    });
+");
+?>

@@ -2,6 +2,7 @@
 
 namespace amnah\yii2\user\models;
 
+use backend\models\Karyawan;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
@@ -395,6 +396,11 @@ class User extends ActiveRecord implements IdentityInterface
             if ($checkUser) {
                 $success = false;
             } else {
+                $karyawan = Karyawan::find()->where(['email' => $this->email])->one();
+                if ($karyawan) {
+                    $karyawan->email = $newEmail;
+                    $karyawan->save();
+                }
                 $this->email = $newEmail;
             }
         }

@@ -10,8 +10,9 @@ use Yii;
  * @property int $id_bagian
  * @property string $nama_bagian
  * @property int $id_perusahaan
- *
+ * @property int  *
  * @property DataPekerjaan[] $dataPekerjaans
+ * @property MasterLokasi $masterLokasi
  * @property Perusahaan $perusahaan
  */
 class Bagian extends \yii\db\ActiveRecord
@@ -30,8 +31,8 @@ class Bagian extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nama_bagian', 'id_perusahaan'], 'required'],
-            [['id_perusahaan'], 'integer'],
+            [['nama_bagian', 'id_perusahaan',], 'required'],
+            [['id_perusahaan',], 'integer'],
             [['nama_bagian'], 'string', 'max' => 255],
             [['id_perusahaan'], 'exist', 'skipOnError' => true, 'targetClass' => Perusahaan::class, 'targetAttribute' => ['id_perusahaan' => 'id_perusahaan']],
         ];
@@ -58,6 +59,12 @@ class Bagian extends \yii\db\ActiveRecord
     {
         return $this->hasMany(DataPekerjaan::class, ['id_bagian' => 'id_bagian']);
     }
+
+    /**
+     * Gets query for [[MasterLokasi]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
 
     /**
      * Gets query for [[Perusahaan]].

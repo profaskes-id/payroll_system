@@ -494,7 +494,7 @@ if (
 
     </head>
 
-    <body class="hold-transition sidebar-mini relative">
+    <body class="hold-transition sidebar-mini relative " style="overflow-x: auto;">
         <?php $this->beginBody() ?>
 
         <div class="wrapper relative">

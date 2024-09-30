@@ -6,7 +6,7 @@ return [
     ],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'components' => [
-        'assetManager' => [
+ 'assetManager' => [
             'bundles' => [
                 'kartik\select2\Select2' => [
                     'bsDependencyEnabled' => false,

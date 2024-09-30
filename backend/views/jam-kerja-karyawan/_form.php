@@ -36,7 +36,7 @@ use yii\widgets\ActiveForm;
         </div>
 
 
-        <div class="col-12">
+        <div class="col-md-6">
             <?= $form->field($model, 'max_terlambat')->textInput(['type' => 'time'])->label('Maximal Terlambat');
             ?>
         </div>

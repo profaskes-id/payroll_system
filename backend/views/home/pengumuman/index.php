@@ -1,4 +1,4 @@
-<div class="max-w-[500px] mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5">
+<div class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5">
     <?= $this->render('@backend/views/components/_header', ['title' => 'Pengumuman']); ?>
     <div class="bg-gray-50 rounded-md p-5">
 

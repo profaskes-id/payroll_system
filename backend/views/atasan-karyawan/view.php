@@ -68,6 +68,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         return date('d-M-Y - H:i', strtotime($model->di_setting_pada));
                     },
                 ],
+                [
+                    'label' => 'Penampatan',
+                    'attribute' => 'masterLokasi.label',
+                ]
             ],
         ]) ?>
 

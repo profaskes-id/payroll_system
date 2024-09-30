@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 use backend\models\Absensi;
 use backend\models\AbsensiSearch;
+use backend\models\AtasanKaryawan;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -48,7 +50,14 @@ class RekapAbsensiController extends Controller
     public function actionIndex()
     {
         $searchModel = new AbsensiSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        if (Yii::$app->request->get() != []) {
+            $dataProvider = $searchModel->search($this->request->queryParams, false,); // Pencarian biasa
+        } else {
+            $dataProvider = $searchModel->search($this->request->queryParams, true); // Pencarian bulanan
+        }
+
+
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -64,8 +73,17 @@ class RekapAbsensiController extends Controller
      */
     public function actionView($id_absensi)
     {
+        $model = $this->findModel($id_absensi);
+        $atasanKaryawan = AtasanKaryawan::find()->where(['id_karyawan' => $model['id_karyawan']])->one();
+        if ($atasanKaryawan == null) {
+            Yii::$app->session->setFlash('error', 'Mohon Untuk Menambahkan Data Atasan Karyawan Terlebih Dahulu');
+            return $this->redirect(['index']);
+        }
+        $alamat = $atasanKaryawan->masterLokasi;
+
         return $this->render('view', [
-            'model' => $this->findModel($id_absensi),
+            'model' => $model,
+            'alamat' => $alamat
         ]);
     }
 

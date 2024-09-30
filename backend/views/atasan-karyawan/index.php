@@ -85,6 +85,20 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     }
                 ],
+                [
+                    'label' => 'Penampatan',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        if (!$model) {
+                            return '<p class="text-danger">(Belum Di Set)</p>';
+                        }
+                        $atasan = AtasanKaryawan::find()->where(['id_master_lokasi' => $model['id_master_lokasi']])->one();
+                        if ($atasan) {
+                            return $atasan->masterLokasi->label;
+                        }
+                        return '<p class="text-danger">(Belum Di Set)</p>';
+                    }
+                ],
             ],
         ]); ?>
     </div>

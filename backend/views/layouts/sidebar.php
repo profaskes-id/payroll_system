@@ -63,6 +63,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                     ['label' => 'Master Kode',  'icon' => 'file-code', 'url' => ['/master-kode/index'],],
                                     ['label' => 'Master Cuti',  'icon' => 'fa  fa-calendar-alt', 'url' => ['/master-cuti/index'],],
                                     ['label' => 'Master Hari Besar',  'icon' => 'fa fa-calendar-day', 'url' => ['/master-haribesar/index'],],
+                                    ['label' => 'Master Lokasi',  'icon' => 'fa fa-calendar-day', 'url' => ['/master-lokasi/index'],],
                                 ],
                             ],
                             [
@@ -71,7 +72,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                 'items' => [
                                     ['label' => 'Perusahaan',  'icon' => 'fa fa-building', 'url' => ['/perusahaan/index'],],
                                     ['label' => 'Karyawan',  'icon' => 'fa fa-users', 'url' => ['/karyawan/index'],],
-                                    ['label' => 'Atasan Karyawan',  'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index'],],
+                                    ['label' => 'Atasan dan Penempatan',  'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index'],],
                                 ],
                             ],
                             [
@@ -127,7 +128,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                 'items' => [
                                     ['label' => 'Perusahaan',  'icon' => 'fa fa-building', 'url' => ['/perusahaan/index'],],
                                     ['label' => 'Karyawan',  'icon' => 'fa fa-users', 'url' => ['/karyawan/index'],],
-                                    ['label' => 'Atasan Karyawan',  'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index'],],
+                                    ['label' => 'Atasan dan Penempatan',  'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index'],],
                                 ],
                             ],
                             [

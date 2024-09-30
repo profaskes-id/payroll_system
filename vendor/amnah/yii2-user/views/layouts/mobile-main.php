@@ -116,7 +116,7 @@
 </style>
 
 
-<body class="max-w-[500px] mx-auto">
+<body class="w-full mx-auto">
 
 
     <!-- alert -->

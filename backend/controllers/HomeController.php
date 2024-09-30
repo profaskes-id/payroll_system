@@ -73,9 +73,9 @@ class HomeController extends Controller
     {
 
 
-
         $this->layout = 'mobile-main';
         $karyawan = Karyawan::findOne(['email' => Yii::$app->user->identity->email]);
+        // dd($karyawan);
         $pengumuman = Pengumuman::find()->orderBy(['dibuat_pada' => SORT_DESC])->limit(5)->all();
         $absensi = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
         $lama_kerja = null;
@@ -99,10 +99,12 @@ class HomeController extends Controller
         $this->layout = 'mobile-main';
 
         if ($this->request->isPost) {
+
             $tanggal_searh = Yii::$app->request->post('tanggal_searh');
             $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
             $formaterTanggal = date('Y-m-d', strtotime($tanggal_searh));
             $absensiSearh = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => $formaterTanggal])->all();
+
 
             return $this->render('view', [
                 'absensi' => $absensiSearh,
@@ -114,7 +116,13 @@ class HomeController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
         $karyawan = Karyawan::find()->where(['email' => $user->email])->one();
-        $absensi = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal' => SORT_DESC])->all();
+        $tanggalSatuBulanLalu = (new \DateTime())->modify('-1 month')->format('Y-m-d');
+
+        $absensi = Absensi::find()
+            ->where(['id_karyawan' => $karyawan->id_karyawan])
+            ->andWhere(['>=', 'tanggal', $tanggalSatuBulanLalu])
+            ->orderBy(['tanggal' => SORT_DESC])
+            ->all();
         return $this->render('view', [
             'absensi' => $absensi,
         ]);
@@ -187,7 +195,8 @@ class HomeController extends Controller
             'jamKerjaKaryawan' => $jamKerjaKaryawan,
             'dataJam' => $dataJam,
             'isTerlambatActive' => $isTerlambatActive,
-            'isPulangCepat' => $isPulangCepat
+            'isPulangCepat' => $isPulangCepat,
+            'jamKerjaToday' => $jamKerjaToday
         ]);
 
 
@@ -323,7 +332,7 @@ class HomeController extends Controller
     public function actionExpirience()
     {
         $this->layout = 'mobile-main';
-        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+        $karyawan = Karyawan::find()->where(['email' => Yii::$app->user->identity->email])->one();
         $pengalamanKerja = PengalamanKerja::find()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
         $riwayatPendidikan = RiwayatPendidikan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
         $keluarga = DataKeluarga::find()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
@@ -331,7 +340,7 @@ class HomeController extends Controller
         $RiwayatKesehatan = RiwayatKesehatan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
 
 
-        return $this->render('expirience/index', compact('pengalamanKerja', 'riwayatPendidikan', 'keluarga', 'RiwayatPelatihan', 'RiwayatKesehatan'));
+        return $this->render('expirience/index', compact('karyawan', 'pengalamanKerja', 'riwayatPendidikan', 'keluarga', 'RiwayatPelatihan', 'RiwayatKesehatan'));
     }
 
     // ! pekerjaan

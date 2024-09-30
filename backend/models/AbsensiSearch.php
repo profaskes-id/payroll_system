@@ -38,21 +38,23 @@ class AbsensiSearch extends Absensi
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $bulanan = false)
     {
         $query = Absensi::find();
 
-        // add conditions that should always apply here
+        // Jika ingin mengambil data bulanan, tambahkan filter tanggal
+        if ($bulanan) {
+            $query->andFilterWhere(['>=', 'tanggal', date('Y-m-d', strtotime('-1 month'))]);
+        }
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['tanggal' => SORT_DESC]],
         ]);
 
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 
@@ -63,6 +65,7 @@ class AbsensiSearch extends Absensi
             'tanggal' => $this->tanggal,
             'jam_masuk' => $this->jam_masuk,
             'jam_pulang' => $this->jam_pulang,
+            'tanggal' => $this->tanggal,
         ]);
 
         $query->andFilterWhere(['like', 'kode_status_hadir', $this->kode_status_hadir]);

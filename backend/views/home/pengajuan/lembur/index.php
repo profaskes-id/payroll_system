@@ -17,8 +17,8 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
 ?>
 
-<div class="max-w-[500px] mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5">
-    <?= $this->render('@backend/views/components/_header', ['title' => 'Pengajuan Lembur']); ?>
+<div class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5">
+    <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home', 'title' => 'Pengajuan Lembur']); ?>
 
 
 
@@ -61,7 +61,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                         <a href="<?php echo \yii\helpers\Url::to(['/pengajuan/lembur-detail/', 'id' => $value['id_pengajuan_lembur']]) ?>">
                             <div class="grid grid-cols-12 gap-5 ">
 
-                                <div class="p-2 text-sm col-span-11  bg-white rounded-md w-full">
+                                <div class="p-2 text-sm col-span-12  bg-white rounded-md w-full">
 
 
                                     <p class="text-[15px] capitalize  text-gray-500">Pengajuan Lembur : <strong><?= date('d M Y', strtotime($value['tanggal'])) ?></strong></p>
@@ -159,9 +159,4 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
     </div>
 </div>
 
-</div>
-
-
-<div class="fixed bottom-0 left-0 right-0 z-50">
-    <?= $this->render('@backend/views/components/_footer'); ?>
 </div>
