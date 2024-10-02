@@ -30,7 +30,7 @@ class MasterKode extends \yii\db\ActiveRecord
     {
         return [
             [['nama_group', 'kode', 'nama_kode', 'status', 'urutan'], 'required'],
-            [['kode', 'status', 'urutan'], 'integer'],
+            [['status', 'urutan'], 'integer'],
             [['nama_group', 'nama_kode'], 'string', 'max' => 255],
             [['nama_group', 'kode'], 'unique', 'targetAttribute' => ['nama_group', 'kode']],
         ];

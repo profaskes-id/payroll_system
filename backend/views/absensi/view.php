@@ -70,6 +70,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
+                    'label' => 'Keterangan',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        return $model->keterangan;
+                    }
+                ],
+                [
                     'label' => 'jarak ke lokasi',
                     'format' => 'raw',
                     'value' => function ($model) {

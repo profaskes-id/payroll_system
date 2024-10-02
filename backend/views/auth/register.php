@@ -34,17 +34,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         <label for="password">Password</label>
                         <input type="password" id="password" name="password" class="form-control w-100">
                     </div>
-                    <div class="form-group">
-                        <label for="confirm-password">Konfirmasi Password</label>
-                        <input type="password" id="confirm-password" name="confirm-password" class="form-control w-100">
-                        <small id="error-message" style="color: red; display: none;">Password tidak cocok!</small>
-                    </div>
-
-
-
 
                     <div class="form-group">
-                        <button onclick="validatePasswords()" type="submit" class="form-control btn  rounded submit px-3" style="background-color: #1e70b8; color: white; font-weight: 800; font-size: 18px;">Masuk</button>
+                        <button class="add-button" type="submit">
+                            <span>
+                                Submit
+                            </span>
+                        </button>
                     </div>
                     <div class="form-group ">
                         <div class="text-left">
@@ -60,19 +56,3 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 </section>
-<script>
-    function validatePasswords() {
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirm-password').value;
-        const errorMessage = document.getElementById('error-message');
-
-        if (password !== confirmPassword) {
-            errorMessage.style.display = 'block';
-        } else {
-            errorMessage.style.display = 'none';
-            // Form can be submitted here, or any other action you want to perform
-            // alert('Password valid!');
-            document.getElementById('login-form').submit();
-        }
-    }
-</script>

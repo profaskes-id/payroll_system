@@ -156,7 +156,7 @@ class HomeController extends Controller
             $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
             $model->id_karyawan = $karyawan->id_karyawan;
             $model->tanggal = date('Y-m-d');
-            $model->kode_status_hadir = 1;
+            $model->kode_status_hadir = "H";
             $model->jam_masuk = date('H:i:s');
             $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
             $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
@@ -227,7 +227,7 @@ class HomeController extends Controller
             $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
             $model->id_karyawan = $karyawan->id_karyawan;
             $model->tanggal = date('Y-m-d');
-            $model->kode_status_hadir = 1;
+            $model->kode_status_hadir = "H";
             $model->jam_masuk = date('H:i:s');
             $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
             $model->longitude = Yii::$app->request->post('Absensi')['longitude'];

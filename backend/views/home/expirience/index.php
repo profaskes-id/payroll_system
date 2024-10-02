@@ -85,7 +85,7 @@ $this->title = 'Expirience';
                                             </tr>
                                             <tr class=" border-b border-gray-300">
                                                 <th>Jenis Kelamin</th>
-                                                <td><?= $karyawan->kode_jenis_kelamin == 0 ? 'Laki-Laki' : 'Perempuan' ?></td>
+                                                <td><?= $karyawan->kode_jenis_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan' ?></td>
                                             </tr>
                                             <tr class=" border-b border-gray-300">
                                                 <th>Tempat Lahir</th>

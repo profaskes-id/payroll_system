@@ -16,11 +16,22 @@ use yii\bootstrap4\Breadcrumbs;
     echo  Alert::widget();
     ?>
 
+
+    <style>
+        @media screen and (max-width: 1024px) {
+            .title-costume {
+                font-size: 23px;
+            }
+
+        }
+    </style>
+
+
     <div class="content-header">
         <div class="container-fluid">
             <div class="row justify-content-center  align-items-center">
                 <div class="col-12">
-                    <h2 class="m-0 " style="font-weight: bold">
+                    <h2 class="m-0 title-costume" style="font-weight: bold">
                         <?php
                         if (!is_null($this->title)) {
                             echo \yii\helpers\Html::encode($this->title);
@@ -29,7 +40,7 @@ use yii\bootstrap4\Breadcrumbs;
                         }
                         ?>
                     </h2>
-                    <p class="">
+                    <p class="breadcrumb-title">
                         <?php
                         echo Breadcrumbs::widget([
                             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],

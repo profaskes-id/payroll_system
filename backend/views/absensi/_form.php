@@ -24,60 +24,32 @@ $pathInfo = Yii::$app->request->getPathInfo();
         <?= $form->field($model, 'id_karyawan')->hiddenInput(['value' => $id_karyawan ?? $model->id_karyawan])->label(false) ?>
         <?= $form->field($model, 'tanggal')->hiddenInput(['value' => $tanggal])->label(false) ?>
 
-        <?php if ($pathInfo == 'absensi/update') : ?>
-            <div class="col-md-6">
-                <?= $form->field($model, 'jam_masuk')->textInput(['readonly' => true, 'disabled' => true, 'type' => 'time',]) ?>
-            </div>
-        <?php else : ?>
-            <div class="col-md-6">
-                <?= $form->field($model, 'jam_masuk')->textInput(['type' => 'time', 'value' => '08:00']) ?>
-            </div>
-        <?php endif; ?>
+
+        <div class="col-md-6">
+            <?= $form->field($model, 'jam_masuk')->textInput(['type' => 'time', 'value' => '08:00']) ?>
+        </div>
+
+        <div class="col-md-6">
+            <?= $form->field($model, 'jam_pulang')->textInput(['type' => 'time', 'value' => '17:00']) ?>
+        </div>
 
 
-        <?php if ($pathInfo == 'absensi/create') : ?>
-            <div class="col-md-6">
-                <?= $form->field($model, 'jam_pulang')->textInput(['readonly' => true, 'disabled' => true, 'type' => 'time',]) ?>
-            </div>
-        <?php else : ?>
-            <div class="col-md-6">
-                <?= $form->field($model, 'jam_pulang')->textInput(['type' => 'time', 'value' => '17:00']) ?>
-            </div>
-        <?php endif; ?>
 
 
-        <?php if ($pathInfo == 'absensi/create') : ?>
-            <div class="col-12">
-                <?php
-                $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-hadir']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
-                echo $form->field($model, 'kode_status_hadir')->widget(Select2::classname(), [
-                    'data' => $data,
-                    'language' => 'id',
-                    'options' => ['placeholder' => 'Pilih Status Kehadiran ...'],
-                    'pluginOptions' => [
-                        'allowClear' => true
-                    ],
-                ])->label('Status Hadir');
-                ?>
-            </div>
-        <?php else : ?>
-            <div class="col-12">
-                <?php
-                $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-hadir']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
-                echo $form->field($model, 'kode_status_hadir')->widget(Select2::classname(), [
-                    'data' => $data,
-                    'language' => 'id',
-                    'options' => ['placeholder' => 'Pilih Status Kehadiran ...'],
-                    'pluginOptions' => [
-                        'allowClear' => true
-                    ],
-                    'disabled' => true,
-                    'readonly' => true
-                ])->label('Status Hadir');
-                ?>
-            </div>
+        <div class="col-12">
+            <?php
+            $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-hadir']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
+            echo $form->field($model, 'kode_status_hadir')->widget(Select2::classname(), [
+                'data' => $data,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Pilih Status Kehadiran ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ])->label('Status Hadir');
+            ?>
+        </div>
 
-        <?php endif; ?>
 
         <div class="col-md-6">
             <?= $form->field($model, 'keterangan')->textarea(['rows' => 1, 'maxlength' => true, "class" => "form-control", "placeholder" => "Keterangan Berhalangan Hadir"]) ?>

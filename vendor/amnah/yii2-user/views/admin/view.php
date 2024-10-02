@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-view">
 
-    <div class='table-container'>
+    <div class="table-container table-responsive">
 
         <div class="costume-container">
             <p class="">

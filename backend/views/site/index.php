@@ -88,10 +88,10 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
 
     </div>
 </div>
-<section class="mt-6 grid grid-cols-1 md:grid-cols-12 justify-center gap-4">
+<section class="mt-6 grid grid-cols-1 lg:grid-cols-12 justify-center  lg:gap-4">
     <div class="col-span-8">
         <div class="grid grid-cols-1 gap-y-3">
-            <div class="grid grid-cols-2 gap-2 px-2 place-items-center  p-1 rounded-md">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 px-2 place-items-center  p-1 rounded-md">
                 <div class="w-full h-[150px] rounded-md p-5 bg-white ">
                     <div class="flex items-start justify-start space-x-5">
                         <?= Html::img('@root/images/icons/users.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>
@@ -150,155 +150,28 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
                 <div class="col-span-6">
                     <h1 class="font-semibold text-lg mb-2">Pengajuan Izin Pulang Cepat</h1>
 
-                    <?= GridView::widget([
-                        'dataProvider' => $PulangCepat_dataProvider,
-                        'columns' => [
 
-                            [
-                                'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                'class' => 'yii\grid\SerialColumn'
-                            ],
-                            [
-                                'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                                'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                'class' => ActionColumn::className(),
-                                'urlCreator' => function ($action, IzinPulangCepat $model, $key, $index, $column) {
-                                    return Url::toRoute(['izin-pulang-cepat/view', 'id_izin_pulang_cepat' => $model->id_izin_pulang_cepat]);
-                                }
-                            ],
-                            [
-                                'label' => 'Karyawan',
-                                'value' => function ($model) {
-                                    return $model->karyawan->nama;
-                                }
-                            ],
-
-                        ],
-                    ]); ?>
                 </div>
                 <div class="col-span-6">
                     <h1 class="font-semibold text-lg mb-2">Pengajuan Cuti</h1>
-                    <?= GridView::widget([
-                        'dataProvider' => $PengajuanCuti_dataProvider,
-                        'columns' => [
-                            [
-                                'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                'class' => 'yii\grid\SerialColumn'
-                            ],
-                            [
-                                'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                                'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                'class' => ActionColumn::className(),
-                                'urlCreator' => function ($action, PengajuanCuti $model, $key, $index, $column) {
-                                    return Url::toRoute(['pengajuan-cuti/view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]);
-                                }
-                            ],
-                            [
-                                'label' => 'Nama',
-                                'value' => function ($model) {
-                                    return $model->karyawan->nama;
-                                }
-                            ],
-                            [
-                                'headerOptions' => ['style' => ' text-align: center;'],
-                                'contentOptions' => ['style' => ' text-align: center;'],
-                                'label' => 'Jenis Cuti',
-                                'format' => 'raw',
-                                'value' => function ($model) {
-                                    return $model->jenisCuti->jenis_cuti;
-                                },
-                            ],
 
-                        ],
-                    ]); ?>
 
                 </div>
                 <div class="col-span-6">
                     <h1 class="font-semibold text-lg mb-2">Pengajuan Lembur</h1>
-                    <?= GridView::widget([
-                        'dataProvider' => $PengajuanLembu_dataProvider,
-                        'columns' => [
-                            [
-                                'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                'class' => 'yii\grid\SerialColumn'
-                            ],
-                            [
-                                'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                                'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                'class' => ActionColumn::className(),
-                                'urlCreator' => function ($action, PengajuanLembur $model, $key, $index, $column) {
-                                    return Url::toRoute(['pengajuan-lembur/view', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur]);
-                                }
-                            ],
-                            [
-                                "label" => "Nama",
-                                "value" => "karyawan.nama"
-                            ],
-
-                            [
-                                'label' => 'Tanggal',
-                                'value' => function ($model) {
-                                    return date('d-M-Y', strtotime($model->tanggal));
-                                },
-                                'headerOptions' => ['style' => 'text-align: center;'],
-                                'contentOptions' => ['style' => 'text-align: center;'],
-                            ],
-
-
-                        ],
-                    ]); ?>
 
 
                 </div>
                 <div class="col-span-6">
                     <h1 class="font-semibold text-lg mb-2">Pengajuan Dinas</h1>
-                    <?= GridView::widget([
-                        'dataProvider' => $PengajuanDinas_dataProvider,
-                        'columns' => [
-                            [
-                                'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                'class' => 'yii\grid\SerialColumn'
-                            ],
 
-                            [
-                                'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                                'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                'class' => ActionColumn::className(),
-                                'urlCreator' => function ($action, PengajuanDinas $model, $key, $index, $column) {
-                                    return Url::toRoute(['pengajuan-dinas/view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]);
-                                }
-                            ],
-                            [
-                                'label' => 'Karyawan',
-                                'value' => function ($model) {
-                                    return $model->karyawan->nama;
-                                }
-                            ],
-
-
-                            [
-                                'headerOptions' => ['style' => 'text-align: center;'],
-                                'contentOptions' => ['style' => 'text-align: center;'],
-                                'label' => 'Tanggal Mulai',
-                                'format' => 'date',
-                                'value' => function ($model) {
-                                    return $model->tanggal_mulai;
-                                }
-                            ],
-
-                        ],
-                    ]); ?>
 
 
                 </div>
 
             </div>
             <!-- <div class="h-[400px] w-full bg-gray-400">
-                <div class="max-w-md mx-auto p-4 pt-6 md:p-6 lg:p-12">
+                <div class="max-w-md mx-auto p-4 pt-6 lg:p-6 lg:p-12">
                     <div class="flex justify-center mb-4">
                         <h2 id="month-year"></h2>
                     </div>

@@ -53,16 +53,19 @@ class m240731_070402_create_karyawan_table extends Migration
             'is_current_domisili' => $this->smallInteger()->notNull()->defaultValue(0),
 
             // Alamat Domisili
-            'kode_provinsi_domisili' => $this->string()->notNull(),
-            'kode_kabupaten_kota_domisili' => $this->string()->notNull(),
-            'kode_kecamatan_domisili' => $this->string()->notNull(),
-            'desa_lurah_domisili' => $this->string()->notNull(),
-            'alamat_domisili' => $this->text()->notNull(),
+            'kode_provinsi_domisili' => $this->string()->null(),
+            'kode_kabupaten_kota_domisili' => $this->string()->null(),
+            'kode_kecamatan_domisili' => $this->string()->null(),
+            'desa_lurah_domisili' => $this->string()->null(),
+            'alamat_domisili' => $this->text()->null(),
             'rt_domisili' => $this->string()->null(),
             'rw_domisili' => $this->string()->null(),
             'kode_post_domisili' => $this->string()->null(),
 
             'informasi_lain' => $this->text()->notNull(),
+
+            'is_invite' => $this->smallInteger()->notNull()->defaultValue(0),
+            'invite_at' => $this->date()->null(),
         ]);
     }
 

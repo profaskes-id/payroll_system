@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\Absensi;
 use backend\models\AtasanKaryawan;
 use backend\models\Bagian;
+use backend\models\JamKerjaKaryawan;
 use backend\models\KaryawanSearch;
 use Yii;
 use yii\web\Controller;
@@ -107,6 +108,13 @@ class AbsensiController extends Controller
     public function actionCreate()
     {
         $model = new Absensi();
+        $karyawan = Yii::$app->request->get('id_karyawan');
+        $jadwalKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan])->one();
+        if (!$jadwalKerjaKaryawan) {
+
+            Yii::$app->session->setFlash('error', 'Mohon Untuk Menambahkan Data Jadwal Kerja Terlebih Dahulu');
+            return $this->redirect(['index']);
+        }
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {

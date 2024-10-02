@@ -77,73 +77,73 @@ $today = date('Y-m-d');
                     'value' => function ($model) {
                         if ($model['absensi']) {
                             return Html::a('<button  style=" border-radius: 6px !important; background: #488aec50 !important; color:#252525; all:unset;  display: block;">
-        <span style="margin: 3px 3px !important;display: block; background: #488aec !important; padding: 0px 3px 0.1px !important; border-radius: 6px !important;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.5 3.75H6A2.25 2.25 0 0 0 3.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0 1 20.25 6v1.5m0 9V18A2.25 2.25 0 0 1 18 20.25h-1.5m-9 0H6A2.25 2.25 0 0 1 3.75 18v-1.5M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0"/></svg>
-        </span>
-        </button>', ['view', 'id_absensi' => $model['absensi'][0]['id_absensi']],);
+                                        <span style="margin: 3px 3px !important;display: block; background: #488aec !important; padding: 0px 3px 0.1px !important; border-radius: 6px !important;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.5 3.75H6A2.25 2.25 0 0 0 3.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0 1 20.25 6v1.5m0 9V18A2.25 2.25 0 0 1 18 20.25h-1.5m-9 0H6A2.25 2.25 0 0 1 3.75 18v-1.5M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0"/></svg>
+                                        </span>
+                                        </button>', ['view', 'id_absensi' => $model['absensi']['id_absensi']],);
+                        } else {
+                            return Html::a('<button  style=" border-radius: 6px !important; background: #E9EC4850 !important; color:#252525; all:unset;  display: block;">
+                                        <span style="margin: 3px 3px !important;display: block; background: #E9EC48 !important; padding: 0px 3px 0.1px !important; border-radius: 6px !important;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844l2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565l6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/></svg>
+                                         </span>
+                                        </button>', ['create', 'id_karyawan' => $model['karyawan']['id_karyawan'], 'tanggal' => date('Y-m-d'), 'id_jadwal_kerja' => $model['jadwal_kerja']['id_jadwal_kerja'] ?? '-1'],);
                         }
-                        return '<p class="text-center text-sm text-danger">Belum Hadir<p>';
                     }
                 ],
                 [
                     'label' => 'Karyawan',
                     'value' => function ($model) {
-
                         return $model['karyawan']['nama'];
                     }
                 ],
                 [
-                    'label' => 'hari',
+                    'label' => 'Hari',
                     'value' => function ($model) {
                         return date('l');
                     }
                 ],
                 [
-                    'headerOptions' => ['style' => 'width: 200px; text-align: center;'],
-                    'contentOptions' => ['style' => 'text-align: center;'],
-                    'label' => 'Tanggal',
-                    'value' => function () {
-                        $tanggal = Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d');
-                        $formattedTanggal = date('d-m-Y', strtotime($tanggal));
-
-                        return $formattedTanggal;
-                    }
-                ],
-
-                [
                     'headerOptions' => ['style' => 'width: 15%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 15%; text-align: center;'],
                     'label' => 'Jam Masuk',
+                    'format' => 'raw',
                     'value' => function ($model) {
-                        $item = Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d');
 
-                        $result = array_filter($model['absensi'], function ($value) use ($item) {
-                            return $value['tanggal_absensi'] == $item;
-                        });
-                        if (!empty($result)) {
-                            $var = [...$result];
-                            return  date('H:i', strtotime($var[0]['jam_masuk'] ?? '00:00:00')) ?? '-';
+                        if ($model['absensi']) {
+                            $jam_masuk_kerja = $model['jadwal_kerja']['jam_masuk'];
+                            $jam_karyawan_masuk = $model['absensi']['jam_masuk'];
+
+                            if ($jam_masuk_kerja && $jam_karyawan_masuk) {
+                                // Mengkonversi jam ke format waktu
+                                $jam_masuk_kerja_time = strtotime($jam_masuk_kerja);
+                                $jam_karyawan_masuk_time = strtotime($jam_karyawan_masuk);
+
+                                // Menentukan warna teks berdasarkan waktu
+                                if ($jam_karyawan_masuk_time <= $jam_masuk_kerja_time) {
+                                    // Tepat waktu atau sebelum jam masuk kerja
+                                    return "<span style='color: black;'>$jam_karyawan_masuk</span>";
+                                } else {
+                                    // Terlambat
+                                    return "<span style='color: red;'>$jam_karyawan_masuk</span>";
+                                }
+                            } else {
+                                return "<span style='color: red; font-size: 10px'>00:00:00</span>";
+                            }
                         } else {
-                            return '-';
+                            return "<span style='color: red;'>00:00:00</span>";
                         }
                     },
                 ],
+
                 [
                     'headerOptions' => ['style' => 'width: 15%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 15%; text-align: center;'],
                     'label' => 'Jam Pulang',
                     'value' => function ($model) {
-                        $item = Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d');
-
-                        $result = array_filter($model['absensi'], function ($value) use ($item) {
-                            return $value['tanggal_absensi'] == $item;
-                        });
-                        if (!empty($result)) {
-                            $var = [...$result];
-                            $jam =  date('H:i', strtotime($var[0]['jam_pulang'] ?? '00:00:00')) ?? 'Belum Di Set';
-                            return $jam == '00:00' ? 'Belum Di Set' : $jam;
+                        if ($model['absensi']) {
+                            return $model['absensi']['jam_pulang'] ?? '00:00:00';
                         } else {
-                            return '-';
+                            return '00:00:00';
                         }
                     },
                 ],
@@ -153,19 +153,16 @@ $today = date('Y-m-d');
 
                     'label' => 'Kehadiran',
                     'value' => function ($model) {
-                        $item = Yii::$app->request->post('Absensi')['tanggal'] ?? date('Y-m-d');
+                        // if ($model['jadwal_kerja'] == null) {
+                        //     return "<span style='color: red; font-size: 10px; text-transform: capitalize;'> jadwal kerja  Belum di set</span>";
+                        // }
+                        if ($model['absensi']) {
 
-                        $result = array_filter($model['absensi'], function ($value) use ($item) {
-                            return $value['tanggal_absensi'] == $item;
-                        });
-                        if (!empty($result)) {
-
-                            $val = [...$result];
-                            if ($val[0]['kode_status_hadir'] == 1) {
+                            if ($model['absensi']['kode_status_hadir'] == "H") {
                                 return "<span class='text-success'>Hadir</span>";
-                            } else if ($val[0]['kode_status_hadir'] == 2) {
+                            } else if ($model['absensi']['kode_status_hadir'] == 'I') {
                                 return "<span class='text-warning'>IZIN</span>";
-                            } else if ($val[0]['kode_status_hadir'] == 3) {
+                            } else if ($model['absensi']['kode_status_hadir'] == 'S') {
                                 return "<span class='text-primary'>Sakit</span>";
                             } else {
                                 return "<span class='text-black'>Tidak Hadir</span>";

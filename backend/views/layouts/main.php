@@ -178,10 +178,18 @@ if (
             }
 
             .costume-container {
-                top: -80px;
+                top: -20px;
                 position: relative;
                 z-index: 1;
-                margin-bottom: -50px;
+            }
+
+
+            @media screen and (min-width: 1024px) {
+
+                .costume-container {
+                    top: -80px;
+                    margin-bottom: -50px;
+                }
             }
 
             .table-container {

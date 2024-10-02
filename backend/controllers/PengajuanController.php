@@ -101,7 +101,7 @@ class PengajuanController extends \yii\web\Controller
             ->all();
 
         // Filter jenis cuti berdasarkan kode jenis kelamin
-        if ($karyawan->kode_jenis_kelamin == 1) { // Laki-laki
+        if ($karyawan->kode_jenis_kelamin == 'L') { // Laki-laki
             $jenisCuti = array_filter($jenisCuti, function ($cuti) {
                 return $cuti->jenis_cuti !== 'Cuti Hamil';
             });
@@ -141,7 +141,7 @@ class PengajuanController extends \yii\web\Controller
             ->all();
 
         // Filter jenis cuti berdasarkan kode jenis kelamin
-        if ($karyawan->kode_jenis_kelamin == 1) { // Laki-laki
+        if ($karyawan->kode_jenis_kelamin == L) { // Laki-laki
             $jenisCuti = array_filter($jenisCuti, function ($cuti) {
                 return $cuti->jenis_cuti !== 'Cuti Hamil';
             });

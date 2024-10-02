@@ -29,9 +29,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'id' => 'form-absensi',
             ]); ?>
 
-            <?php if ($model->kode_status_hadir == 1): ?>
+            <?php if ($model->kode_status_hadir == 'H'): ?>
                 <p class="bg-green-100 text-green-800  font-medium me-2 px-2.5 py-0.5 rounded "><?= $model->statusHadir->nama_kode ?></p>
-            <?php elseif ($model->kode_status_hadir == 2): ?>
+            <?php elseif ($model->kode_status_hadir == 'I'): ?>
                 <p class="bg-green-100 text-yellow-800  font-medium me-2 px-2.5 py-0.5 rounded "><?= $model->statusHadir->nama_kode ?></p>
             <?php else: ?>
                 <p class="bg-green-100 text-rose-800  font-medium me-2 px-2.5 py-0.5 rounded "><?= $model->statusHadir->nama_kode ?></p>
@@ -42,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 
-            <?php if (!$model->kode_status_hadir == 1): ?>
+            <?php if (!$model->kode_status_hadir == 'H'): ?>
 
                 <div class="p-2 rounded-md  overflow-hidden col-span-12  w-full">
                     <?= Html::img('@root' . '/panel/' . $model->lampiran, ["alt" => 'users', 'class' => 'w-[100%] ']) ?>

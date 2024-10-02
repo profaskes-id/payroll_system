@@ -97,7 +97,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             [
                                                 'label' => 'Jenis Kelamin',
                                                 'value' => function ($model) {
-                                                    return $model->kode_jenis_kelamin == 1 ? 'Laki-laki' : 'Perempuan';
+                                                    return $model->kode_jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan';
                                                 },
                                             ],
 

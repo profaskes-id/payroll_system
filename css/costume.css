@@ -120,12 +120,14 @@ tbody tr {
   border-radius: 15px;
   position: relative;
   z-index: 19;
+  overflow-x: auto;
 }
 
 .table-container .table {
   position: relative !important;
   z-index: 19 !important;
   background-color: white !important;
+  table-layout: auto;
 }
 .costume-btn {
   width: 130px;

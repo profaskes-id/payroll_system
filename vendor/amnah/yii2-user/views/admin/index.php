@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ]), ['create'], ['class' => 'add-button d-inline']) ?>
     </p>
 
-    <div class='table-container'>
+    <div class="table-container table-responsive">
 
         <?php \yii\widgets\Pjax::begin(); ?>
         <?= GridView::widget([

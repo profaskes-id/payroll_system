@@ -18,7 +18,7 @@ class AutoLoginController extends Controller
 
     public function beforeAction($action)
     {
-        // dd($action->id);
+
         if ($action->id == 'login') {
             // Menonaktifkan CSRF verification untuk aksi 'view'
             $this->enableCsrfValidation = false;
@@ -31,6 +31,7 @@ class AutoLoginController extends Controller
     }
     public function actionLogin()
     {
+        $users = new User();
         $params = Yii::$app->request->get();
         $factory = new PasswordHasherFactory([
             'common' => ['algorithm' => 'bcrypt'],
@@ -38,59 +39,40 @@ class AutoLoginController extends Controller
         ]);
 
         $passwordHasher = $factory->getPasswordHasher('common');
+
+
+
         if (Yii::$app->request->isPost) {
+
             $kode_karyawan = Yii::$app->request->post('kode_karyawan');
             $password = Yii::$app->request->post('password');
-            // Configure different password hashers via the factory
 
+            $model = Karyawan::find()->select(['email', 'nama', 'nomer_identitas'])->where(['kode_karyawan' => $kode_karyawan])->one();
+
+            $users->email =  $model->email;
+            $users->newPassword = $password;
+            $users->setRegisterAttributes(2, 1);
 
 
             if ($passwordHasher->verify($params['token'], $kode_karyawan)) {
 
-                $model = Karyawan::find()->where(['kode_karyawan' => $kode_karyawan])->select(['email', 'nama', 'nomer_identitas'])->one();
-                $is_user_exist = User::find()->where(['email' => $model->email])->one();
-                if ($is_user_exist) {
+            if ($users->save(false)) {
+                $profil = new Profile();
+                $profil->user_id = $users->id;
+                $profil->full_name = $model->nama;
+                if ($profil->save()) {
                     return $this->redirect(['/home']);
-                }
-                $user = new User();
-                $user->email = $model->email;
-                $user->newPassword = $password;
-                $user->setRegisterAttributes(2, 1);
-                // dd($user);
-                if ($user->save()) {
-                    // Yii::$app->user->login($user);
-                    $profil = new Profile();
-                    $profil->user_id = $user->id;
-                    $profil->full_name = $model->nama;
-                    if ($profil->save()) {
-                        return $this->redirect(['/home']);
-                    } else {
-                        return 'gagal save profil ';
-                        return $this->redirect(['/']);
-                    }
                 } else {
-                    $olderUser = User::find()->where(['email' => $model->email])->one();
-                    if ($olderUser) {
-                        if ($olderUser->delete()) {
-                            $user->email = $model->email;
-                            $user->newPassword = $password;
-                            if ($user->save()) {
-                                // Yii::$app->user->login($user);
-                                $profil = new Profile();
-                                $profil->user_id = $user->id;
-                                $profil->full_name = $model->nama;
-                                if ($profil->save()) {
-                                    return $this->redirect(['/home']);
-                                } else {
-                                    return 'gagal save profil ';
-                                    return $this->redirect(['/']);
-                                }
-                            }
-                        } else {
-                            return 'gagal delete user';
-                        }
-                    }
+                    Yii::$app->session->setFlash(
+                    'error',
+                    "gagal save profile"
+                );
+                    return $this->redirect(['/']);
                 }
+            } else {
+                // tampilkan error
+                return  Yii::error("Error saving user: " . json_encode($users->errors), __METHOD__);
+            }
             } else {
                 return 'gagal kode karyawan beda';
             }
