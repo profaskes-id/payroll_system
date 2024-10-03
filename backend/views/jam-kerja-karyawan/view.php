@@ -41,9 +41,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
+                    'format' => 'raw',
                     'attribute' => 'jam_kerja',
                     'value' => function ($model) {
-                        return $model->jamKerja->nama_jam_kerja;
+                        if ($model->jamKerja->nama_jam_kerja) {
+                            return '<p class="text-danger">Belum Di Set</p>';
+                        }
+                        return $model->jamKerja->nama_jam_kerja . ' (' . $model->jamKerja->jenisShift->nama_kode . ')';
                     }
                 ],
 

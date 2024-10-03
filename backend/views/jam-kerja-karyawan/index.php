@@ -62,7 +62,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'Jam Kerja',
                     'value' => function ($model) {
-                        return $model['nama_jam_kerja'] ?? '<p class="text-danger">(Belum Diset)</p>';
+                        if (!$model['nama_jam_kerja']) {
+                            return '<p class="text-danger">(Belum Diset)</p>';
+                        }
+                        return "{$model['nama_jam_kerja']} ({$model['nama_kode']})" ?? '<p class="text-danger">(Belum Diset)</p>';
                     },
                     'format' => 'raw'
                 ],

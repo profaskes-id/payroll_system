@@ -9,7 +9,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
 
 ?>
 
-<aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #131133 !important;">
+<aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #131133 !important; ">
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -31,9 +31,8 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                 <?= Html::a('<i class="fa fa-solid fa-users"></i>', ['/user/admin'], ['class' => 'nav-link']) ?>
             <?php endif; ?>
             <?= Html::a('<i class="fas fa-sign-out-alt"></i>', ['/user/logout'], ['data-method' => 'post', 'class' => 'nav-link']) ?>
-
         </div>
-        <hr style="background-color: white; margin: 0; padding: 0;">
+        <hr style="background-color: white; margin: 0; padding: 0;" />
         <!-- SidebarSearch Form -->
         <!-- href be escaped -->
         <div class="form-inline">
@@ -163,11 +162,6 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                 </nav>
             <?php endif; ?>
 
-
-
         </div>
-
-        <!-- /.sidebar-menu -->
     </div>
-    <!-- /.sidebar -->
 </aside>

@@ -223,54 +223,88 @@ $this->params['breadcrumbs'][] = $this->title;
                                         ],
                                     ]) ?>
                                 </div>
-                                <div class="col-md-6">
-                                    <?= DetailView::widget([
-                                        'model' => $model,
-                                        'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
-                                        'attributes' => [
-                                            [
-                                                'label' => 'CV',
-                                                'value' => function ($model) {
-                                                    if ($model->ijazah_terakhir != null) {
-                                                        return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->cv, ['target' => '_blank']);
-                                                    }
-                                                    return '<p>Belum Di Set<p>';
-                                                },
-                                                'format' => 'raw',
-                                            ],
-                                            [
-                                                'label' => 'Foto',
-                                                'value' => function ($model) {
-                                                    if ($model->foto != null) {
-                                                        return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->foto, ['target' => '_blank']);
-                                                    }
-                                                    return '<p>Belum Di Set<p>';
-                                                },
-                                                'format' => 'raw',
-                                            ],
-                                            [
-                                                'label' => 'KTP',
-                                                'value' => function ($model) {
-                                                    if ($model->ktp != null) {
-                                                        return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->ktp, ['target' => '_blank']);
-                                                    }
-                                                    return '<p>Belum Di Set<p>';
-                                                },
-                                                'format' => 'raw',
-                                            ],
-                                            [
-                                                'label' => 'Ijazah Terakhir',
-                                                'value' => function ($model) {
-                                                    if ($model->ijazah_terakhir != null) {
-                                                        return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->ijazah_terakhir, ['target' => '_blank']);
-                                                    }
-                                                    return '<p>Belum Di Set<p>';
-                                                },
-                                                'format' => 'raw',
-                                            ],
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <?= DetailView::widget([
+                                                'model' => $model,
+                                                'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                                                'attributes' => [
+                                                    [
+                                                        'label' => 'Ijazah Terakhir',
+                                                        'value' => function ($model) {
+                                                            if ($model->ijazah_terakhir != null) {
+                                                                return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->ijazah_terakhir, ['target' => '_blank']);
+                                                            }
+                                                            return '<p>Belum Di Set<p>';
+                                                        },
+                                                        'format' => 'raw',
+                                                    ],
 
-                                        ],
-                                    ]) ?>
+                                                ],
+                                            ]) ?>
+                                        </div>
+                                        <div class="col-3">
+                                            <?= DetailView::widget([
+                                                'model' => $model,
+                                                'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                                                'attributes' => [
+                                                    [
+                                                        'label' => 'CV',
+                                                        'value' => function ($model) {
+                                                            if ($model->ijazah_terakhir != null) {
+                                                                return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->cv, ['target' => '_blank']);
+                                                            }
+                                                            return '<p>Belum Di Set<p>';
+                                                        },
+                                                        'format' => 'raw',
+                                                    ],
+                                                ],
+
+                                            ]) ?>
+                                        </div>
+                                        <div class="col-3">
+                                            <?= DetailView::widget([
+                                                'model' => $model,
+                                                'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                                                'attributes' => [
+                                                    [
+                                                        'label' => 'Foto',
+                                                        'value' => function ($model) {
+                                                            if ($model->foto != null) {
+                                                                return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->foto, ['target' => '_blank']);
+                                                            }
+                                                            return '<p>Belum Di Set<p>';
+                                                        },
+                                                        'format' => 'raw',
+                                                    ],
+
+                                                ],
+                                            ]) ?>
+                                        </div>
+                                        <div class="col-3">
+                                            <?= DetailView::widget([
+                                                'model' => $model,
+                                                'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                                                'attributes' => [
+
+                                                    [
+                                                        'label' => 'KTP',
+                                                        'value' => function ($model) {
+                                                            if ($model->ktp != null) {
+                                                                return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->ktp, ['target' => '_blank']);
+                                                            }
+                                                            return '<p>Belum Di Set<p>';
+                                                        },
+                                                        'format' => 'raw',
+                                                    ],
+
+
+                                                ],
+                                            ]) ?>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
 

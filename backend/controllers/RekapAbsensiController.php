@@ -5,6 +5,8 @@ namespace backend\controllers;
 use backend\models\Absensi;
 use backend\models\AbsensiSearch;
 use backend\models\AtasanKaryawan;
+use backend\models\Karyawan;
+use kartik\mpdf\Pdf;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -18,6 +20,15 @@ class RekapAbsensiController extends Controller
     /**
      * @inheritDoc
      */
+
+    public function beforeAction($action)
+    {
+        if ($action->id == 'index' || $action->id == 'report') {
+            // Menonaktifkan CSRF verification untuk aksi 'view'
+            $this->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
+    }
     public function behaviors()
     {
         return array_merge(
@@ -49,28 +60,180 @@ class RekapAbsensiController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new AbsensiSearch();
 
-        if (Yii::$app->request->get() != []) {
-            $dataProvider = $searchModel->search($this->request->queryParams, false,); // Pencarian biasa
+        if (Yii::$app->request->isPost) {
+
+            $query =  $this->RekapData(Yii::$app->request->post());
+            $bulan = Yii::$app->request->post('bulan');
+            $tahun = Yii::$app->request->post('tahun');
+            $data = $query;
         } else {
-            $dataProvider = $searchModel->search($this->request->queryParams, true); // Pencarian bulanan
+            $bulan = date('m');
+            $tahun = date('Y');
+            $data = $this->RekapData();
+        }
+
+        return $this->render('index', [
+            'bulan' => $bulan,
+            'tahun' => $tahun,
+            'hasil' => $data['hasil'],
+            'rekapanAbsensi' => $data['rekapanAbsensi'],
+            'tanggal_bulanan' => $data['tanggal_bulanan'],
+
+        ]);
+    }
+
+    public function actionReport()
+    {
+        $bulan = date('m');
+        $tahun = date('Y');
+        $data = $this->RekapData();
+
+
+
+        // MASUKAN KE PDF
+        $content = $this->renderPartial('_report', [
+            'bulan' => $bulan,
+            'tahun' => $tahun,
+            'hasil' => $data['hasil'],
+            'rekapanAbsensi' => $data['rekapanAbsensi'],
+            'tanggal_bulanan' => $data['tanggal_bulanan'],
+        ]);
+
+        // setup kartik\mpdf\Pdf component
+        $pdf = new Pdf([
+            // set to use core fonts only
+            'mode' => Pdf::MODE_CORE,
+            // A4 paper format
+            'format' => Pdf::FORMAT_A4,
+            // portrait orientation
+            'orientation' => Pdf::ORIENT_PORTRAIT,
+            // stream to browser inline
+            'destination' => Pdf::DEST_BROWSER,
+            // your html content input
+            'content' => $content,
+            // format content from your own css file if needed or use the
+            // enhanced bootstrap css built by Krajee for mPDF formatting 
+            'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
+            // any css to be embedded if required
+            'cssInline' => '.kv-heading-1{font-size:18px}',
+            // set mPDF properties on the fly
+            'options' => ['title' => 'Report Rekap Absensi ' . date('F')],
+            'methods' => [
+                'SetHeader' => ['Data Rekap Absensi ' . date('F')],
+                'SetFooter' => ['{PAGENO}'],
+            ]
+        ]);
+
+        // return the pdf output as per the destination setting
+        return $pdf->render();
+    }
+
+
+
+
+    public function RekapData($params = null)
+    {
+        // Jika params tidak null, maka ambil bulan dan tahun dari params
+        if ($params != null) {
+            $bulan = $params['bulan'];
+            $tahun = $params['tahun'];
+        } else {
+            // Jika params null, maka ambil bulan dan tahun sekarang
+            $bulan = date('m');
+            $tahun = date('Y');
         }
 
 
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+        // dd($bulan, $tahun);
+        // Buat tanggal awal dan akhir bulan
+        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, 1, $tahun));
+        $lastDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, date('t', mktime(0, 0, 0, $bulan, 1, $tahun)), $tahun));
+
+        // Mengambil data absensi bulan ini
+        $absensi = Absensi::find()
+            ->select(['absensi.id_karyawan', 'absensi.tanggal', 'absensi.jam_masuk', 'absensi.kode_status_hadir', 'absensi.jam_masuk', 'jkk.id_jam_kerja',   'jdk.jam_masuk AS jam_masuk_kerja', 'jdk.nama_hari'])
+            ->asArray()
+            ->leftJoin('{{%jam_kerja_karyawan}} jkk', 'absensi.id_karyawan = jkk.id_karyawan')
+            ->leftJoin('{{%jadwal_kerja}} jdk', 'jkk.id_jam_kerja = jdk.id_jam_kerja')
+            ->where(['jdk.nama_hari' => date('l', strtotime('absensi.tanggal'))])
+            ->where(['>=', 'tanggal', $firstDayOfMonth])
+            ->andWhere(['<=', 'tanggal', $lastDayOfMonth])
+            ->all();
+
+        // dd($absensi);
+        // Buat array tanggal bulanan
+        $tanggal_bulanan = array();
+        for ($i = 1; $i <= date('t', mktime(0, 0, 0, $bulan, 1, $tahun)); $i++) {
+            $tanggal_bulanan[] = date('d', mktime(0, 0, 0, $bulan, $i, $tahun));
+        }
+        // dd($tanggal_bulanan);
+
+        // Mengambil data karyawan
+        $dataKaryawan = Karyawan::find()->select(['id_karyawan', 'nama'])->asArray()->orderBy(['nama' => SORT_ASC])->all();
+
+        // Buat array hasil
+        $hasil = [];
+        $totalHari = date('t', mktime(0, 0, 0, $bulan, 1, $tahun));
+        foreach ($dataKaryawan as $karyawan) {
+            $karyawanData = [$karyawan['nama']];
+            for ($i = 1; $i <= $totalHari; $i++) {
+                $tanggal = date('Y-m-d', mktime(0, 0, 0, $bulan, $i, $tahun));
+                $statusHadir = null; // Default jika tidak ada data
+                $jamMasukKaryawan = null; // Default jika tidak ada data
+                $jamMasukKantor = null; // Default jika tidak ada data
+                foreach ($absensi as $record) {
+                    if ($record['id_karyawan'] == $karyawan['id_karyawan'] && $record['tanggal'] == $tanggal) {
+                        $statusHadir = $record['kode_status_hadir'];
+                        $jamMasukKaryawan = $record['jam_masuk'];
+                        $jamMasukKantor = $record['jam_masuk_kerja'];
+                        break;
+                    }
+                }
+                $karyawanData[] = [
+                    'status_hadir' => $statusHadir,
+                    'jam_masuk_karyawan' => $jamMasukKaryawan,
+                    'jam_masuk_kantor' => $jamMasukKantor
+                ]; // Wrap status hadir in an array
+            }
+            $hasil[] = $karyawanData;
+        }
+
+
+
+        $rekapanAbsensi = [];
+        $tanggalBulan = range(1, date('t', strtotime("$tahun-$bulan-01"))); // Mendapatkan semua tanggal dalam bulan
+
+        // Ambil data kehadiran dalam satu query
+        $dataAbsensiHadir = Absensi::find()->where(['kode_status_hadir' => 'H'])
+            ->andWhere(['between', 'tanggal', "$tahun-$bulan-01", "$tahun-$bulan-" . date('t', strtotime("$tahun-$bulan-01"))])
+            ->all();
+
+        // Hitung kehadiran dan simpan dalam array
+        foreach ($dataAbsensiHadir as $absensi) {
+            $tanggal = date('j', strtotime($absensi->tanggal)); // Ambil tanggal dari record absensi
+            $rekapanAbsensi[$tanggal] = isset($rekapanAbsensi[$tanggal]) ? $rekapanAbsensi[$tanggal] + 1 : 1;
+        }
+
+        // Pastikan setiap tanggal terisi, jika tidak ada kehadiran, isi dengan 0
+        foreach ($tanggalBulan as $tanggal) {
+            if (!isset($rekapanAbsensi[$tanggal])) {
+                $rekapanAbsensi[$tanggal] = 0; // Isi 0 jika tidak ada kehadiran
+            }
+        }
+
+        // Mengurutkan array berdasarkan tanggal
+        ksort($rekapanAbsensi);
+
+
+
+
+        return ['tanggal_bulanan' => $tanggal_bulanan, 'hasil' => $hasil, 'rekapanAbsensi' => $rekapanAbsensi];
     }
 
-    /**
-     * Displays a single Absensi model.
-     * @param int $id_absensi Id Absensi
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+
+
     public function actionView($id_absensi)
     {
         $model = $this->findModel($id_absensi);

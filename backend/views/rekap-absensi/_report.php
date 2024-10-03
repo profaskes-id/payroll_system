@@ -14,29 +14,11 @@ $this->title = 'Rekap Absensi';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="absensi-index position-relative">
-    <div class="row">
-        <div class="col-9 col-md-10">
-            <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
-                <i class="fas fa-search"></i>
-                <span>
-                    Search
-                </span>
-            </button>
-        </div>
-        <div class="col-2">
-            <p class="d-inline-block">
-                <?= Html::a('Print PDF <i class="fa fa-print"></i>', ['report'], ['target' => '_blank', 'class' => 'cetak-button']) ?>
-            </p>
-        </div>
-    </div>
 
-    <div style="margin-top: 10px;">
-        <div class="collapse width" id="collapseWidthExample">
-            <div class="" style="width: 100%;">
-                <?php echo $this->render('_search', ['bulan' => $bulan, 'tahun' => $tahun,]) ?>
-            </div>
-        </div>
-    </div>
+
+    <h2>Data Rekapan Absnesi</h2>
+    <h4>Bulan : <?= date('F') ?></h4>
+    <h4>tahun : <?= date('Y') ?></h4>
 
 
 
@@ -48,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <th>Nama</th>
                 <?php foreach ($tanggal_bulanan as $item) : ?>
                     <?php
-                    $date = date_create($item . '-' . $bulan . '-' . $tahun);
+                    $date = date_create($item . '-' . date('m-Y'));
                     $day_of_week = date_format($date, 'w');
                     ?>
                     <td <?php if ($day_of_week == 0) echo 'style="background-color: #be123c; color:white;"'; ?>>
@@ -67,39 +49,31 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <span style="text-transform: capitalize;"><?= $text ?></span>
                             </td>
 
-
                         <?php else : ?>
                             <?php
-                            $date = date_create($tanggal_bulanan[$key - 1]  . '-' . $bulan . '-' . $tahun);
+                            $date = date_create($tanggal_bulanan[$key - 1]  . '-' . date('m-Y'));
                             $day_of_week = date_format($date, 'w');
                             ?>
                             <td <?php if ($day_of_week == 0) echo 'style="background-color: #be123c; color:white;"'; ?>>
+                                <?php if ($data !== null && $data['status_hadir'] !== null && $data['jam_masuk_karyawan'] !== null):  ?>
+                                    <?php
+                                    $jamKerjakaryawan = $data['jam_masuk_karyawan'];
+                                    $jamKerjaKantor = $data['jam_masuk_kantor'];
 
-                                <p>
-                                    <?php if ($data !== null && $data['status_hadir'] !== null && $data['jam_masuk_karyawan'] !== null):  ?>
-                                        <?php
-                                        $jamKerjakaryawan = $data['jam_masuk_karyawan'];
-                                        $jamKerjaKantor = $data['jam_masuk_kantor'];
+                                    $jam_masuk_kerja_time = strtotime($jamKerjakaryawan);
+                                    $jam_karyawan_masuk_time = strtotime($jamKerjaKantor);
+                                    ?>
 
-                                        $jam_masuk_kerja_time = strtotime($jamKerjakaryawan);
-                                        $jam_karyawan_masuk_time = strtotime($jamKerjaKantor);
-                                        ?>
-
-                                        <?php if ($jam_karyawan_masuk_time <= $jam_masuk_kerja_time) : ?>
-                                            <span style='color: red;'><?= $data['status_hadir'] ?></span>
-                                        <?php else :  ?>
-                                            <span style='color: black;'> <?= $data['status_hadir'] ?> </span>
-                                        <?php endif ?>
-
+                                    <?php if ($jam_karyawan_masuk_time <= $jam_masuk_kerja_time) : ?>
+                                        <span style='color: red;'><?= $data['status_hadir'] ?></span>
                                     <?php else :  ?>
+                                        <span style='color: black;'> <?= $data['status_hadir'] ?> </span>
                                     <?php endif ?>
-
-                                </p>
-
-                            <?php endif ?>
+                                <?php endif ?>
                             </td>
+                        <?php endif ?>
 
-                        <?php endforeach ?>
+                    <?php endforeach ?>
                 </tr>
             <?php endforeach ?>
             <tr>
@@ -118,4 +92,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </tr>
         </table>
     </div>
+
+
+
 </div>

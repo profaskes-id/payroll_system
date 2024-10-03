@@ -322,13 +322,15 @@ class KaryawanSearch extends Karyawan
     {
 
         $query = Karyawan::find()
-            ->select(['karyawan.id_karyawan', 'karyawan.nama', 'jam_kerja.nama_jam_kerja', 'jam_kerja_karyawan.max_terlambat'])
+            ->select(['karyawan.id_karyawan', 'karyawan.nama', 'jam_kerja.nama_jam_kerja', 'master_kode.nama_kode', 'jam_kerja_karyawan.max_terlambat'])
+            ->asArray()
             ->leftJoin('jam_kerja_karyawan', 'karyawan.id_karyawan = jam_kerja_karyawan.id_karyawan')
             ->leftJoin('jam_kerja', 'jam_kerja_karyawan.id_jam_kerja = jam_kerja.id_jam_kerja')
-            ->asArray()
+            ->leftJoin('master_kode', 'master_kode.nama_group = "jenis-shift" ')
             ->orderBy(['karyawan.nama' => SORT_ASC])
             ->all();
 
+        // dd($query);
         $dataProvider = new ArrayDataProvider([
             'models' => $query,
             'pagination' => [
@@ -343,13 +345,15 @@ class KaryawanSearch extends Karyawan
     {
 
         $query = Karyawan::find()
-            ->select(['karyawan.id_karyawan', 'karyawan.nama', 'jam_kerja.nama_jam_kerja', 'jam_kerja_karyawan.max_terlambat'])
+            ->select(['karyawan.id_karyawan', 'karyawan.nama', 'jam_kerja.nama_jam_kerja', 'master_kode.nama_kode', 'jam_kerja_karyawan.max_terlambat'])
+            ->asArray()
             ->leftJoin('jam_kerja_karyawan', 'karyawan.id_karyawan = jam_kerja_karyawan.id_karyawan')
             ->leftJoin('jam_kerja', 'jam_kerja_karyawan.id_jam_kerja = jam_kerja.id_jam_kerja')
-            ->asArray()
+            ->leftJoin('master_kode', 'master_kode.nama_group = "jenis-shift" ')
             ->where(['karyawan.id_karyawan' => $params])
             ->orderBy(['karyawan.nama' => SORT_ASC])
             ->all();
+
 
         $dataProvider = new ArrayDataProvider([
             'models' => $query,

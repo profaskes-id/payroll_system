@@ -143,28 +143,54 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
     </div>
     <div class="col-span-4">
         <div class="grid grid-col-1 gap-y-3 table-container">
-
             <h1 class="text-bold mt-0" style="font-size:22px;">Pengajuan Karyawan</h1>
             <p class="-mt-2 text-gray-500 mb-3">Menunggu Ditanggapi</p>
             <div class="grid grid-cols-6 gap-10">
                 <div class="col-span-6">
-                    <h1 class="font-semibold text-lg mb-2">Pengajuan Izin Pulang Cepat</h1>
-
-
-                </div>
-                <div class="col-span-6">
-                    <h1 class="font-semibold text-lg mb-2">Pengajuan Cuti</h1>
-
-
-                </div>
-                <div class="col-span-6">
-                    <h1 class="font-semibold text-lg mb-2">Pengajuan Lembur</h1>
-
+                    <div class="w-full h-[150px] rounded-md p-5 text-white bg-yellow-400">
+                        <div class="flex  items-start justify-start space-x-5">
+                            <?= Html::img('@root/images/icons/hadir.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>
+                            <div>
+                                <p class="font-bold text-3xl"><?= $pengajuanPulangCepat ?> <span class="font-normal text-whitetext-base">Orang</span></p>
+                                <p class="text-base text-white">Pengajuan Pulang Cepat</p>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
                 <div class="col-span-6">
-                    <h1 class="font-semibold text-lg mb-2">Pengajuan Dinas</h1>
+                    <div class="w-full h-[150px] rounded-md p-5 text-white bg-teal-500">
+                        <div class="flex  items-start justify-start space-x-5">
+                            <?= Html::img('@root/images/icons/hadir.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>
+                            <div>
+                                <p class="font-bold text-3xl"><?= $pengajuanCuti ?> <span class="font-normal text-whitetext-base">Orang</span></p>
+                                <p class="text-base text-white">Pengajuan Cuti</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-span-6">
+                    <div class="w-full h-[150px] rounded-md p-5 text-white bg-rose-500">
+                        <div class="flex  items-start justify-start space-x-5">
+                            <?= Html::img('@root/images/icons/hadir.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>
+                            <div>
+                                <p class="font-bold text-3xl"><?= $pengajuanLembur ?> <span class="font-normal text-whitetext-base">Orang</span></p>
+                                <p class="text-base text-white">Pengajuan Lembur</p>
+                            </div>
+                        </div>
+                    </div>
 
+                </div>
+                <div class="col-span-6">
+                    <div class="w-full h-[150px] rounded-md p-5 text-white bg-orange-500">
+                        <div class="flex  items-start justify-start space-x-5">
+                            <?= Html::img('@root/images/icons/hadir.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>
+                            <div>
+                                <p class="font-bold text-3xl"><?= $pengajuanDinas ?> <span class="font-normal text-whitetext-base">Orang</span></p>
+                                <p class="text-base text-white">Pengajuan Dinas</p>
+                            </div>
+                        </div>
+                    </div>
 
 
                 </div>

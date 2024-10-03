@@ -46,6 +46,7 @@ class DataPekerjaanSearch extends DataPekerjaan
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['id_data_pekerjaan' => SORT_DESC]],
         ]);
 
         $this->load($params);

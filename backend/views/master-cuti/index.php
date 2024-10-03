@@ -13,11 +13,11 @@ use yii\grid\GridView;
 $this->title = 'Master Cuti';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="master-cuti-index">
+<div class="master-kode-index position-relative">
 
 
     <div class="costume-container">
-        <p lass="">
+        <p class="">
             <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
@@ -36,9 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
-    <div class="table-container table-responsive">
-
-
+    <div class="table-container table-responsive ">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'columns' => [
@@ -73,4 +71,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
     </div>
+
+
 </div>

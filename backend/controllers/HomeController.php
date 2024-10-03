@@ -9,6 +9,7 @@ use backend\models\DataPekerjaan;
 use backend\models\IzinPulangCepat;
 use backend\models\JamKerjaKaryawan;
 use backend\models\Karyawan;
+use backend\models\MasterHaribesar;
 use backend\models\PengajuanCuti;
 use backend\models\PengalamanKerja;
 use backend\models\Pengumuman;
@@ -184,11 +185,30 @@ class HomeController extends Controller
         $jamKerjaHari = $jamKerjaKaryawan->jamKerja->jadwalKerjas;
 
         $hariIni = date('w') == '0' ? 0 : date('w') - 1;
-        if (!$hariIni == 0) {
-            $jamKerjaToday = $jamKerjaHari[$hariIni] ?? null;
+        if ($hariIni != 0) {
+            $hariBesar = MasterHaribesar::find()->select('tanggal')->asArray()->all();
+
+            // Ambil tanggal hari ini
+            $tanggalHariIni = date('Y-m-d'); // Sesuaikan format tanggal dengan format yang digunakan di database
+
+            // Cek jika tanggal hari ini ada dalam daftar hari besar
+            $adaHariBesar = false;
+            foreach ($hariBesar as $hari) {
+                if ($hari['tanggal'] === $tanggalHariIni) {
+                    $adaHariBesar = true;
+                    break;
+                }
+            }
+
+            if ($adaHariBesar) {
+                $jamKerjaToday = null;
+            } else {
+                $jamKerjaToday = $jamKerjaHari[$hariIni] ?? null;
+            }
         } else {
             $jamKerjaToday = null;
         }
+
 
 
         $dataJam = [
@@ -196,13 +216,7 @@ class HomeController extends Controller
             'today' => $jamKerjaToday
         ];
 
-
-        // dd($dataJam);
         $isPulangCepat = IzinPulangCepat::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
-
-
-        // apakah sekarang hari kerja
-        // dd($hariIni);
 
 
         $this->layout = 'mobile-main';

@@ -77,7 +77,7 @@ class SiteController extends Controller
         } elseif (Yii::$app->user->can('admin')) {
 
             $TotalKaryawan = User::find()->where(['role_id' => '2'])->count();
-            $TotalData = Absensi::find()->where(['tanggal' => date('Y-m-d')])->count();
+            $TotalData = Absensi::find()->where(['tanggal' => date('Y-m-d'), 'kode_status_hadir' => 'H'])->count();
             $TotalDataBelum = $TotalKaryawan - $TotalData;
             $izin = MasterKode::find()->where(['nama_group' => 'status-hadir', 'nama_kode' => 'Izin'])->one();
             $TotalIzin = Absensi::find()->where(['kode_status_hadir' => $izin->kode, 'tanggal' => date('Y-m-d')])->count();

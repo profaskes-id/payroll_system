@@ -53,11 +53,20 @@ $this->params['breadcrumbs'][] = $this->title;
                         return Url::toRoute([$action, 'nama_group' => $model->nama_group, 'kode' => $model->kode]);
                     }
                 ],
-                'nama_group',
+                // 'nama_group',
                 'nama_kode',
                 'kode',
-                'status',
                 'urutan',
+                [
+                    'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 10%; text-align: center;'],
+                    'format' => 'raw',
+                    'attribute' => 'status',
+                    'value' => function ($model) {
+                        // return MasterKode::findOne($model->status)->nama_kode;
+                        return $model->status == 0 ? '<span class="text-danger">Tidak Aktif</span>' : '<span class="text-success">Aktif</span>';
+                    }
+                ],
             ],
         ]); ?>
 

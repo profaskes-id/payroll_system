@@ -43,6 +43,7 @@ if (
         <style>
             * {
                 font-family: "Poppins", sans-serif;
+                font-size: 0.91rem;
             }
 
             a {
@@ -493,6 +494,7 @@ if (
 
             @media screen and (min-width: 768px) {
                 .respon {
+
                     margin-left: -250px !important;
                 }
 
@@ -546,6 +548,27 @@ if (
 
         </div>
 
+        <script>
+            function checkScreenWidth() {
+                const wrapper = document.querySelector('.wrapper');
+
+                if (window.innerWidth >= 1024) {
+                    if (wrapper) {
+                        wrapper.classList.remove('wrapper');
+                    }
+                } else {
+                    if (!wrapper.classList.contains('wrapper')) {
+                        wrapper.classList.add('wrapper');
+                    }
+                }
+            }
+
+            // Memeriksa lebar saat halaman pertama kali dimuat
+            checkScreenWidth();
+
+            // Menambahkan event listener untuk perubahan ukuran jendela
+            window.addEventListener('resize', checkScreenWidth);
+        </script>
         <?php $this->endBody() ?>
     </body>
 

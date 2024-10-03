@@ -33,12 +33,14 @@ class DataPekerjaan extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+    public $selama;
     public function rules()
     {
         return [
             [['id_karyawan', 'id_bagian', 'dari', 'status', 'jabatan', 'is_aktif'], 'required'],
             [['id_karyawan', 'id_bagian', 'status', 'is_aktif', 'is_currenty'], 'integer'],
-            [['dari', 'sampai'], 'safe'],
+            [['dari', 'sampai', 'selama'], 'safe'],
             [['gaji_pokok'], 'number'],
             [['jabatan', 'surat_lamaran_pekerjaan', 'terbilang'], 'string', 'max' => 255],
             [['id_bagian'], 'exist', 'skipOnError' => true, 'targetClass' => Bagian::class, 'targetAttribute' => ['id_bagian' => 'id_bagian']],
