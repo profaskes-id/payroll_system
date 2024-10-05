@@ -5,7 +5,7 @@ use yii\helpers\Html;
 
 $form = ActiveForm::begin(); ?>
 
-<div class="">
+<div style="padding-bottom: 100px;">
 
     <div class="mb-5">
         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">Tanggal</label>

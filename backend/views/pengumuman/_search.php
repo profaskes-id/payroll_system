@@ -19,12 +19,12 @@ use yii\widgets\ActiveForm;
         ]); ?>
 
         <div class="row">
-            <div class="col-5">
+            <div class="col-md-5 col-6">
                 <?php $nama_group = \yii\helpers\ArrayHelper::map(Pengumuman::find()->all(), 'judul', 'judul');
                 echo $form->field($model, 'judul')->widget(kartik\select2\Select2::classname(), [
                     'data' => $nama_group,
                     'language' => 'id',
-                    'options' => ['placeholder' => 'Cari id Jam kerja ...'],
+                    'options' => ['placeholder' => 'Cari Jam kerja ...'],
                     'pluginOptions' => [
                         'tags' => true,
                         'allowClear' => true
@@ -32,7 +32,7 @@ use yii\widgets\ActiveForm;
                 ])->label(false);
                 ?>
             </div>
-            <div class="col-4">
+            <div class="col-md-4 col-6">
 
                 <?= $form->field($model, 'dibuat_pada')->textInput(['type' => 'date'])->label(false); ?>
 

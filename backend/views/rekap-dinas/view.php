@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </p>
     </div>
 
-    <div class='table-container'>
+    <div class="table-container table-responsive">
         <p class="d-flex justify-content-start " style="gap: 10px;">
             <?php // Html::a('update', ['update', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas], ['class' => 'add-button']) 
             ?>
@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => $model->karyawan->nama
                 ],
                 'keterangan_perjalanan:ntext',
-                 [
+                [
                     'label' => 'Tanggal Mulai',
                     'value' => function ($model) {
                         return date('d-M-Y', strtotime($model->tanggal_mulai));

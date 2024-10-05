@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </p>
     </div>
 
-    <div class="table-container">
+    <div class="table-container table-responsive">
         <p class="d-flex justify-content-start " style="gap: 10px;">
             <?= Html::a('Update', ['update', 'id_absensi' => $model->id_absensi], ['class' => 'add-button']) ?>
             <?= Html::a('Delete', ['delete', 'id_absensi' => $model->id_absensi], [
@@ -60,6 +60,16 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
+                    'label' => 'Lampiran',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        if ($model->lampiran != null) {
+                            return Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->lampiran, ['target' => '_blank']);
+                        }
+                        return '<p>Belum Di Set<p>';
+                    }
+                ],
+                [
                     'label' => 'jarak ke lokasi',
                     'format' => 'raw',
                     'value' => function ($model) {
@@ -75,7 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 
 
-<div class='table-container'>
+<div class="table-container table-responsive">
     <p>Lokasi Karyawan Mengisi Absen</p>
     <?php
     echo '<div id="map" style="height: 400px;"></div>';

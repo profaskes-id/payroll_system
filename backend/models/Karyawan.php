@@ -44,6 +44,8 @@ use yii\helpers\ArrayHelper;
  * @property string|null $rw_domisili
  * @property string|null $kode_post_domisili
  * @property string $informasi_lain
+ * @property int $is_invite
+ * @property string|null $invite_at
  *
  * @property Absensi[] $absensis
  * @property DataKeluarga[] $dataKeluargas
@@ -72,8 +74,8 @@ class Karyawan extends \yii\db\ActiveRecord
     {
         return [
             [['kode_karyawan', 'nama', 'nomer_identitas', 'jenis_identitas', 'kode_jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'status_nikah', 'agama', 'email', 'nomer_telepon', 'kode_negara', 'kode_provinsi_identitas', 'kode_kabupaten_kota_identitas', 'kode_kecamatan_identitas', 'desa_lurah_identitas', 'alamat_identitas'], 'required'],
-            [['jenis_identitas', 'kode_jenis_kelamin', 'status_nikah', 'is_current_domisili',  'agama'], 'integer'],
-            [['tanggal_lahir', 'kode_provinsi_domisili', 'kode_kabupaten_kota_domisili', 'kode_kecamatan_domisili', 'desa_lurah_domisili'], 'safe'],
+            [['jenis_identitas', 'kode_jenis_kelamin', 'status_nikah', 'is_current_domisili',  'agama', 'is_invite'], 'integer'],
+            [['tanggal_lahir', 'kode_provinsi_domisili', 'kode_kabupaten_kota_domisili', 'kode_kecamatan_domisili', 'desa_lurah_domisili', 'invite_at'], 'safe'],
             [['alamat_identitas', 'alamat_domisili', 'informasi_lain'], 'string'],
             [['kode_karyawan', 'nama', 'nomer_identitas', 'tempat_lahir', 'agama', 'suku', 'email', 'nomer_telepon', 'foto', 'ktp', 'cv', 'ijazah_terakhir', 'kode_negara', 'kode_provinsi_identitas', 'kode_kabupaten_kota_identitas', 'kode_kecamatan_identitas', 'desa_lurah_identitas', 'rt_identitas', 'rw_identitas', 'kode_post_identitas', 'kode_provinsi_domisili', 'kode_kabupaten_kota_domisili', 'kode_kecamatan_domisili', 'desa_lurah_domisili', 'rt_domisili', 'rw_domisili', 'kode_post_domisili'], 'string', 'max' => 255],
             [['kode_karyawan'], 'unique'],
@@ -125,6 +127,8 @@ class Karyawan extends \yii\db\ActiveRecord
             'rw_domisili' => 'Rw Domisili',
             'kode_post_domisili' => 'Kode Post Domisili',
             'informasi_lain' => 'Informasi Lain',
+            'is_invite' => 'Is Invite',
+            'invite_at' => 'Invite At',
         ];
     }
 

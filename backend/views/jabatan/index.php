@@ -1,24 +1,23 @@
 <?php
 
-use backend\models\MasterHaribesar;
+use backend\models\MasterKode;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var backend\models\MasterHaribesarSearch $searchModel */
+/** @var backend\models\MasterKodeSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Master Hari Besars');
+$this->title = Yii::t('app', 'Jabatan');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="master-haribesar-index">
-
+<div class="master-kode-index">
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create', 'nama_group' => 'jabatan'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 
@@ -35,6 +34,8 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
     </div>
+
+
     <div class="table-container table-responsive">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
@@ -48,27 +49,18 @@ $this->params['breadcrumbs'][] = $this->title;
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, MasterHaribesar $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'kode' => $model->kode]);
+                    'urlCreator' => function ($action, MasterKode $model, $key, $index, $column) {
+                        return Url::toRoute([$action, 'nama_group' => $model->nama_group, 'kode' => $model->kode]);
                     }
                 ],
-                [
-                    'headerOptions' => ['text-align: center;'],
-                    'contentOptions' => ['text-align: center;'],
-                    'attribute' => 'Tanggal',
-                    'value' => function ($model) {
-                        return date('d-M-Y', strtotime($model->tanggal));
-                    }
-                ],
-                'nama_hari:ntext',
-                [
-                    'attribute' => 'libur_nasional',
-                    'value' => function ($model) {
-                        return $model->libur_nasional ? 'Yes' : 'No';
-                    }
-                ]
+                'nama_group',
+                'nama_kode',
+                'kode',
+                'status',
+                'urutan',
             ],
         ]); ?>
 
 
     </div>
+</div>

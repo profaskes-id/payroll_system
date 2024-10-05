@@ -6,7 +6,8 @@ use yii\helpers\ArrayHelper;
 
 $form = ActiveForm::begin(); ?>
 
-<div class="">
+<div style="padding-bottom: 100px;">
+
 
     <div class="my-4 grid grid-cols-2 gap-5">
         <?php foreach ($jenisCuti as $key => $value) : ?>

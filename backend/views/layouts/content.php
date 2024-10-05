@@ -29,12 +29,12 @@ use yii\bootstrap4\Breadcrumbs;
                         }
                         ?>
                     </h2>
-                    <p style="margin-top: 0px;">
+                    <p class="">
                         <?php
                         echo Breadcrumbs::widget([
                             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
                             'options' => [
-                                'class' => 'breadcrumb text-muted text-sm '
+                                'class' => 'breadcrumb  '
                             ]
                         ]);
                         ?>
@@ -48,7 +48,7 @@ use yii\bootstrap4\Breadcrumbs;
     <!-- /.content-header -->
 
     <!-- Main content -->
-    <div class="content">
+    <div class=" content">
 
         <?= $content ?><!-- /.container-fluid -->
     </div>

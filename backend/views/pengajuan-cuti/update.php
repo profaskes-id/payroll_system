@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = 'Tanggapan';
         </p>
     </div>
 
-    <div class='table-container'>
+    <div class="table-container table-responsive">
 
         <?php $form = ActiveForm::begin(); ?>
 
@@ -56,7 +56,7 @@ $this->params['breadcrumbs'][] = 'Tanggapan';
             <div class="col-6">
                 <?= $form->field($model, 'tanggal_selesai')->textInput(['type' => 'date']) ?>
             </div>
-               <div class="col-6">
+            <div class="col-6">
                 <?php
                 $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
                 echo $form->field($model, 'status')->radioList($data, [

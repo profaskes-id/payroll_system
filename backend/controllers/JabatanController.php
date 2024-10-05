@@ -4,15 +4,14 @@ namespace backend\controllers;
 
 use backend\models\MasterKode;
 use backend\models\MasterKodeSearch;
-use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * MasterKodeController implements the CRUD actions for MasterKode model.
+ * JabatanController implements the CRUD actions for MasterKode model.
  */
-class MasterKodeController extends Controller
+class JabatanController extends Controller
 {
     /**
      * @inheritDoc
@@ -22,18 +21,6 @@ class MasterKodeController extends Controller
         return array_merge(
             parent::behaviors(),
             [
-                'access' => [
-                    'class' => \yii\filters\AccessControl::className(),
-                    'rules' => [
-                        [
-                            'allow' => true,
-                            'roles' => ['super_admin'], // Pastikan peran ini ada dalam RBAC Anda
-                            'matchCallback' => function ($rule, $action) {
-                                return Yii::$app->user->can('super_admin'); // Pastikan Anda sudah mengonfigurasi permission ini di RBAC
-                            },
-                        ]
-                    ]
-                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -52,9 +39,8 @@ class MasterKodeController extends Controller
     public function actionIndex()
     {
         $searchModel = new MasterKodeSearch();
+        $searchModel->nama_group = 'jabatan';
         $dataProvider = $searchModel->search($this->request->queryParams);
-        // $dataProvider->pagination->pageSize = 100;
-
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -65,7 +51,7 @@ class MasterKodeController extends Controller
     /**
      * Displays a single MasterKode model.
      * @param string $nama_group Nama Group
-     * @param string $kode Kode
+     * @param int $kode Kode
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -81,7 +67,7 @@ class MasterKodeController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate($nama_group)
     {
         $model = new MasterKode();
 
@@ -95,6 +81,7 @@ class MasterKodeController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'nama_group' => $nama_group
         ]);
     }
 
@@ -102,7 +89,7 @@ class MasterKodeController extends Controller
      * Updates an existing MasterKode model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param string $nama_group Nama Group
-     * @param string $kode Kode
+     * @param int $kode Kode
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -123,7 +110,7 @@ class MasterKodeController extends Controller
      * Deletes an existing MasterKode model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param string $nama_group Nama Group
-     * @param string $kode Kode
+     * @param int $kode Kode
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -138,7 +125,7 @@ class MasterKodeController extends Controller
      * Finds the MasterKode model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param string $nama_group Nama Group
-     * @param string $kode Kode
+     * @param int $kode Kode
      * @return MasterKode the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -148,6 +135,6 @@ class MasterKodeController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 }

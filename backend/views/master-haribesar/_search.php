@@ -21,10 +21,10 @@ use yii\widgets\ActiveForm;
     ]); ?>
 
     <div class="row">
-        <div class="col-5">
+        <div class="col-md-5 col-6">
             <?= $form->field($model, 'tanggal')->textInput(['type' => 'date', 'class' => 'form-control'])->label(false) ?>
         </div>
-        <div class="col-4">
+        <div class="col-md-4 col-6">
             <?php $nama_kode = \yii\helpers\ArrayHelper::map(MasterHaribesar::find()->all(), 'nama_hari', 'nama_hari');
             echo $form->field($model, 'nama_hari')->widget(Select2::classname(), [
                 'data' => $nama_kode,

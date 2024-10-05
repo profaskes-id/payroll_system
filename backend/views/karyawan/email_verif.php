@@ -80,16 +80,14 @@ $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:
                         <p>
                             Dear,
                             <br />
-                            <br />
                             Anda telah di daftarkan dalan sistem payroll profaskes.id, berikut adalah akses masuk ke akun anda
                             <br />
                             <br />
                         </p>
 
-                        <p>Anda Dapat Login Menggunakan token berikut</p>
-                        <p>nomer identitas : <?= $model->nomer_identitas ?></p>
-                        <br>
-                        <?= Yii::getAlias('@root') . '/panel/auto-login/login?token=' . $ciphertext . '&id=' . $model->nomer_identitas ?>
+                        <p>Anda Dapat Login Menggunakan Link berikut</p>
+                        <?= Yii::getAlias('@root') . '/panel/auto-login/login?token=' . $ciphertext . '&id=' . $model->kode_karyawan ?>
+                        <br />
                         <br />
                         harap untuk melakukan penggantian password di profil aplikasi anda demi keamanan akun anda
 

@@ -13,25 +13,19 @@ use yii\widgets\ActiveForm;
 
 <div class="bagian-form table-container">
 
+    <?php
+
+    $id_perusahaan = Yii::$app->request->get('id_perusahaan') ?? $model->id_perusahaan;
+    ?>
+
     <?php $form = ActiveForm::begin(); ?>
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-12">
             <?= $form->field($model, 'nama_bagian')->textInput(['maxlength' => true]) ?>
         </div>
-        <div class="col-md-6">
-            <?php
-            $data = \yii\helpers\ArrayHelper::map(Perusahaan::find()->all(), 'id_perusahaan', 'nama_perusahaan');
-            echo $form->field($model, 'id_perusahaan')->widget(Select2::classname(), [
-                'data' => $data,
-                'language' => 'id',
-                'options' => ['placeholder' => 'Pilih Perusahaan ...'],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ])->label('Perusahaan');
-            ?>
-        </div>
+        <?= $form->field($model, 'id_perusahaan')->hiddenInput(['value' => $id_perusahaan, 'maxlength' => true])->label(false) ?>
+
     </div>
 
 
@@ -42,5 +36,6 @@ use yii\widgets\ActiveForm;
             </span>
         </button>
     </div>
-    <?php ActiveForm::end(); ?>
+</div>
+<?php ActiveForm::end(); ?>
 </div>

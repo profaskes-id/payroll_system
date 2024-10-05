@@ -10,7 +10,6 @@ use Yii;
  * @property int $id_atasan_karyawan
  * @property int $id_atasan
  * @property int $id_karyawan
- * @property int $status
  * @property int|null $di_setting_oleh
  * @property string|null $di_setting_pada
  *
@@ -33,9 +32,9 @@ class AtasanKaryawan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_atasan', 'id_karyawan', 'id_master_lokasi'], 'required'],
-            [['id_atasan', 'id_karyawan', 'status', 'di_setting_oleh', 'id_master_lokasi'], 'integer'],
-            [['di_setting_pada'], 'safe'],
+            [['id_karyawan', 'id_master_lokasi'], 'required'],
+            [['id_atasan', 'id_karyawan', 'di_setting_oleh', 'id_master_lokasi'], 'integer'],
+            [['di_setting_pada', 'id_atasan'], 'safe'],
             [['id_atasan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_atasan' => 'id_karyawan']],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
             [['id_master_lokasi'], 'exist', 'skipOnError' => true, 'targetClass' => MasterLokasi::class, 'targetAttribute' => ['id_master_lokasi' => 'id_master_lokasi']],
@@ -48,10 +47,9 @@ class AtasanKaryawan extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_atasan_karyawan' => 'Id Atasan Karyawan',
-            'id_atasan' => 'Id Atasan',
-            'id_karyawan' => 'Id Karyawan',
-            'status' => 'Status',
+            'id_atasan_karyawan' => ' Atasan Karyawan',
+            'id_atasan' => 'Atasan',
+            'id_karyawan' => 'Karyawan',
             'di_setting_oleh' => 'Di Setting Oleh',
             'di_setting_pada' => 'Di Setting Pada',
             'id_master_lokasi' => 'Id Master Lokasi',

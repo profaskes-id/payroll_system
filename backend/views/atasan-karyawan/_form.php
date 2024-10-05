@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'id_karyawan')->hiddenInput(['value' => $id_karyawan ?? $model->id_karyawan])->label(false) ?>
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-12">
             <?php
             $data = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
             echo $form->field($model, 'id_atasan')->widget(Select2::classname(), [
@@ -35,7 +35,7 @@ use yii\widgets\ActiveForm;
             ])->label('Atasan Karyawan');
             ?>
         </div>
-        <div class="col-md-6">
+        <div class="col-12">
             <?php
             $data = \yii\helpers\ArrayHelper::map(MasterLokasi::find()->all(), 'id_master_lokasi', 'label');
             echo $form->field($model, 'id_master_lokasi')->widget(Select2::classname(), [
@@ -50,20 +50,7 @@ use yii\widgets\ActiveForm;
         </div>
 
 
-        <div class="col-md-6">
-            <?= $form->field($model, 'status')->radioList([
-                0 => 'Inactive',
-                1 => 'Active'
-            ], [
-                'item' => function ($index, $label, $name, $checked, $value) {
-                    $checked = $checked ? 'checked' : '';
-                    return "<label style='margin-right: 20px;'>
-                    <input type='radio' name='{$name}' value='{$value}' {$checked}> 
-                    {$label}
-                </label>";
-                }
-            ]) ?>
-        </div>
+
     </div>
 
 

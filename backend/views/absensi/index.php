@@ -25,7 +25,7 @@ $today = date('Y-m-d');
 <div class="absensi-index position-relative">
 
     <?php $form = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',   'action' => ['absensi/index']]); ?>
-    <div class='table-container'>
+    <div class="table-container table-responsive">
         <div class="row mb-2">
 
 
@@ -35,7 +35,7 @@ $today = date('Y-m-d');
                 $data = \yii\helpers\ArrayHelper::map(Bagian::find()->all(), 'id_bagian', 'nama_bagian');
                 echo $form->field($bagian, 'id_bagian')->widget(Select2::classname(), [
                     'data' => $data,
-                    'options' => ['placeholder' => 'Pilih Divisi ...'],
+                    'options' => ['placeholder' => 'Pilih Bagian ...'],
                     'pluginOptions' => [
                         'allowClear' => true
                     ]
@@ -90,6 +90,12 @@ $today = date('Y-m-d');
                     'value' => function ($model) {
 
                         return $model['karyawan']['nama'];
+                    }
+                ],
+                [
+                    'label' => 'hari',
+                    'value' => function ($model) {
+                        return date('l');
                     }
                 ],
                 [
@@ -162,10 +168,10 @@ $today = date('Y-m-d');
                             } else if ($val[0]['kode_status_hadir'] == 3) {
                                 return "<span class='text-primary'>Sakit</span>";
                             } else {
-                                return "<span class='text-black'>Belum di set</span>";
+                                return "<span class='text-black'>Tidak Hadir</span>";
                             }
                         } else {
-                            return "<span class=' text-black'>Belum di set</span>";
+                            return "<span class=' text-black'>Tidak Hadir</span>";
                         }
                     },
                     'format' => 'raw',

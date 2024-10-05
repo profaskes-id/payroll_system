@@ -29,12 +29,12 @@ use yii\widgets\ActiveForm;
         <div class="inline-flex items-center justify-center w-full mb-4 relative">
             <hr class="w-64 h-px my-1 bg-gray-200 border-0 dark:bg-gray-700">
         </div>
-        <div class="bg-white text-black relative  w-full  rounded-md p-2 min-h-32 mt-2">
-            <div class="flex justify-between items-center">
-                <p class="capitalize  text-gray-500 font-semibold">Dokumentasi Perjalanan</p>
-                <?= Html::a('Delete All', ['pengajuan/delete-dokumentasi', 'id' => $model->id_pengajuan_dinas], ['class' => 'text-rose-500 rounded-md  p-1']) ?>
-            </div>
-            <?php if (!$model->files == []): ?>
+        <?php if (!$model->files == []): ?>
+            <div class="bg-white text-black relative  w-full  rounded-md p-2 min-h-32 mt-2">
+                <div class="flex justify-between items-center">
+                    <p class="capitalize  text-gray-500 font-semibold">Dokumentasi Perjalanan</p>
+                    <?= Html::a('Delete All', ['pengajuan/delete-dokumentasi', 'id' => $model->id_pengajuan_dinas], ['class' => 'text-rose-500 rounded-md  p-1']) ?>
+                </div>
 
                 <?php
                 $data = json_decode($model->files, true);
@@ -44,9 +44,8 @@ use yii\widgets\ActiveForm;
                         <?= Html::a("Preview Dokumentasi {$key}", Yii::getAlias('@root') . '/panel/' . $item, ['target' => '_blank', 'class' => 'text-blue-500']) ?>
                     </p>
                 <?php endforeach ?>
-            <?php else : ?>
-            <?php endif; ?>
-        </div>
+            </div>
+        <?php endif; ?>
 
 
 

@@ -21,7 +21,7 @@
         </div>
 
 
-        <div class='table-container'>
+        <div class="table-container table-responsive">
             <p class="d-flex justify-content-start " style="gap: 10px;">
                 <?= Html::a('Update', ['update', 'id_bagian' => $model->id_bagian,], ['class' => 'add-button']) ?>
                 <?= Html::a('Delete', ['delete', 'id_bagian' => $model->id_bagian,], [

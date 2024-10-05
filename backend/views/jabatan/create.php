@@ -5,8 +5,8 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\MasterKode $model */
 
-$this->title = 'Tambahkan Master Kode';
-$this->params['breadcrumbs'][] = ['label' => 'Master Kode', 'url' => ['index']];
+$this->title = Yii::t('app', 'Tambah Jabatan');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Jabatan'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="master-kode-create">
@@ -16,11 +16,9 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
-
-    <div class="table-container table-responsive">
-        <?= $this->render('_form', [
-            'model' => $model,
-        ]) ?>
-    </div>
+    <?= $this->render('_form', [
+        'model' => $model,
+        'nama_group' => $nama_group
+    ]) ?>
 
 </div>

@@ -21,7 +21,7 @@ use yii\widgets\ActiveForm;
     ]); ?>
 
     <div class="row">
-        <div class="col-5">
+        <div class="col-md-5 col-6">
             <?php $nama_group = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
             echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
                 'data' => $nama_group,
@@ -34,7 +34,7 @@ use yii\widgets\ActiveForm;
             ])->label(false);
             ?>
         </div>
-        <div class="col-4">
+        <div class="col-md-4 col-6">
             <?php $nama_kode = \yii\helpers\ArrayHelper::map(MasterCuti::find()->all(), 'id_master_cuti', 'jenis_cuti');
             // dd($nama_kode);
             echo $form->field($model, 'jenis_cuti')->widget(Select2::classname(), [

@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
 
-    <div class='table-container'>
+    <div class="table-container table-responsive">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'columns' => [
@@ -61,31 +61,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
-                    'label' => 'Atasan',
-                    'format' => 'raw',
-                    'value' => function ($model) {
-                        if (!$model) {
-                            return '<p class="text-danger">(Belum Di Set)</p>';
-                        }
-                        $data = Karyawan::find()->where(['id_karyawan' => $model['id_atasan']])->select(['nama'])->one();
-                        return $data->nama ?? '<p class="text-danger">(Belum Di Set)</p>';
-                    }
-                ],
-                [
-                    'label' => 'Status',
-                    'format' => 'raw',
-                    'value' => function ($model) {
-                        if (!$model) {
-                            return '<p class="text-danger">(Belum Di Set)</p>';
-                        }
-                        if ($model['status'] == 0) {
-                            return '<p class="text-danger">Tidak Aktif</p>';
-                        } else {
-                            return '<p class="text-success">Aktif</p>';
-                        }
-                    }
-                ],
-                [
                     'label' => 'Penampatan',
                     'format' => 'raw',
                     'value' => function ($model) {
@@ -99,6 +74,19 @@ $this->params['breadcrumbs'][] = $this->title;
                         return '<p class="text-danger">(Belum Di Set)</p>';
                     }
                 ],
+                [
+                    'label' => 'Atasan',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        if (!$model) {
+                            return '<p class="text-danger">(Belum Di Set)</p>';
+                        }
+                        $data = Karyawan::find()->where(['id_karyawan' => $model['id_atasan']])->select(['nama'])->one();
+                        return $data->nama ?? '<p class="text-danger">(Belum Di Set)</p>';
+                    }
+                ],
+
+
             ],
         ]); ?>
     </div>

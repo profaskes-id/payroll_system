@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
-    <div class='table-container'>
+    <div class="table-container table-responsive">
 
         <p class="d-flex justify-content-start " style="gap: 10px;">
             <?php // Html::a('Update', ['update', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur], ['class' => 'add-button']) 

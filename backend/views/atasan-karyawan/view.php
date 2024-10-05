@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </p>
     </div>
 
-    <div class="table-container">
+    <div class="table-container table-responsive">
         <p class="d-flex justify-content-start " style="gap: 10px;">
             <?= Html::a('Update', ['update', 'id_atasan_karyawan' => $model->id_atasan_karyawan], ['class' => 'add-button']) ?>
             <?= Html::a('Delete', ['delete', 'id_atasan_karyawan' => $model->id_atasan_karyawan], [
@@ -44,17 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => 'Atasan',
                     'attribute' => 'atasan.nama',
                 ],
-                [
-                    'label' => 'Status',
-                    'format' => 'raw',
-                    'value' => function ($model) {
-                        if ($model->status == 0) {
-                            return '<p class="text-danger m-0 p-0">Tidak Aktif</p>';
-                        } else {
-                            return '<p class="text-success m-0 p-0">Aktif</p>';
-                        }
-                    },
-                ],
+
                 [
                     'label' => 'Di Set Oleh',
                     'value' => function ($model) {

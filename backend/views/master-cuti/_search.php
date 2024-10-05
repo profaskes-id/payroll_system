@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
     ]); ?>
 
     <div class="row">
-        <div class="col-9">
+        <div class="col-md-9 col-12">
             <?php $nama_group = \yii\helpers\ArrayHelper::map(MasterCuti::find()->where(['status' => 1])->all(), 'jenis_cuti', 'jenis_cuti');
             echo $form->field($model, 'jenis_cuti')->widget(Select2::classname(), [
                 'data' => $nama_group,

@@ -19,7 +19,7 @@ use yii\widgets\ActiveForm;
 
 
     <div class="row">
-        <div class="col-9">
+        <div class="col-md-9 col-12">
             <?php $nama_kode = \yii\helpers\ArrayHelper::map(MasterLokasi::find()->all(), 'label', 'label');
             echo $form->field($model, 'label')->widget(Select2::classname(), [
                 'data' => $nama_kode,

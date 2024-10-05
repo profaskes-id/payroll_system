@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </p>
     </div>
 
-    <div class="table-container">
+    <div class="table-container table-responsive">
         <p class="d-inline-block">
             <?= Html::a('Print PDF <i class="fa fa-print"></i>', ['report', 'id_karyawan' => $model->id_karyawan], ['target' => '_blank', 'class' => 'cetak-button']) ?>
         </p>

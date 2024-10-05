@@ -132,7 +132,7 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
             </div>
 
 
-            <div class='table-container'>
+            <div class="table-container table-responsive">
 
                 <div class=" w-full bg-white">
                     <p class="text-bold mt-0">Total Hadir Karyawan Minggu Ini</p>

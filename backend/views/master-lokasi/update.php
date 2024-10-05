@@ -5,11 +5,11 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\MasterLokasi $model */
 
-$this->title = Yii::t('app', 'Update Master Lokasi: {name}', [
+$this->title = Yii::t('app', 'Update Lokasi {name}', [
     'name' => $model->label,
 ]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Master Lokasis'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id_master_lokasi, 'url' => ['view', 'id_master_lokasi' => $model->id_master_lokasi]];
+$this->params['breadcrumbs'][] = ['label' => $model->label, 'url' => ['view', 'id_master_lokasi' => $model->id_master_lokasi]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 <div class="master-lokasi-update">

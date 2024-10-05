@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
         ]); ?>
 
         <div class="row">
-            <div class="col-9">
+            <div class="col-md-9 col-12">
                 <?php $nama_group = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
                 echo $form->field($model, 'id_karyawan')->widget(kartik\select2\Select2::classname(), [
                     'data' => $nama_group,

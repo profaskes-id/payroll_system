@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </p>
     </div>
 
-    <div class='table-container'>
+    <div class="table-container table-responsive">
         <p class="d-flex justify-content-start " style="gap: 10px;">
             <?= Html::a('Tanggapi', ['update', 'id_izin_pulang_cepat' => $model->id_izin_pulang_cepat], ['class' => 'add-button']) ?>
             <?= Html::a('Delete', ['delete', 'id_izin_pulang_cepat' => $model->id_izin_pulang_cepat], [

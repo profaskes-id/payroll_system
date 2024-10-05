@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
 
-    <div class='table-container'>
+    <div class="table-container table-responsive">
 
         <p class="d-flex justify-content-start " style="gap: 10px;">
             <?= Html::a('Update', ['update', 'id_data_pekerjaan' => $model->id_data_pekerjaan], ['class' => 'add-button']) ?>
@@ -67,8 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'label' => 'Gaji Pokok',
                     'value' => function ($model) {
-                    return $model->gaji_pokok;
-
+                        return $model->gaji_pokok;
                     }
                 ],
                 [

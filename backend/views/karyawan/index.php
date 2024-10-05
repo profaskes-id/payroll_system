@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
 
-    <div class="table-container">
+    <div class="table-container table-responsive ">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'columns' => [
@@ -69,7 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
-                    'label' => 'Divisi',
+                    'label' => 'Bagian',
                     'value' => function ($model) {
                         $divisiAktif = [];
                         // return $model->data->nama_kode;
@@ -84,18 +84,26 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
+                    'header' => 'email',
+                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'value' => function ($model) {
+                        return $model->email;
+                    },
+                    'format' => 'raw',
+                ],
+                [
                     'header' => 'Invite',
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'value' => function ($model) {
-                        $isUser = User::find()->where(['email' => $model->email]);
-                        if (!$isUser->exists()) {
+                        if (!$model->is_invite) {
                             return Html::a('<i class="fas fa-user-plus"></i>', ['invite', 'id_karyawan' => $model->id_karyawan], [
                                 'title' => 'Invite',
                                 'data-pjax' => '0',
                             ]);
                         } else {
-                            return "<p>{$isUser->one()->email}</p>";
+                            return "<p class='text-success'>Berhasil</p>";
                         }
                     },
                     'format' => 'raw',

@@ -18,7 +18,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
 
 
-<div class="w-full mx-auto px-5 lg:px-8">
+<div class="w-full mx-auto px-5 lg:px-8 " style="padding-bottom: 100px;">
 
 
 

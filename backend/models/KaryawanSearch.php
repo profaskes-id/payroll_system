@@ -228,7 +228,7 @@ class KaryawanSearch extends Karyawan
                 'k.id_karyawan',
                 'k.nama',
                 'a.id_atasan',
-                'a.status',
+
                 'a.id_master_lokasi',
             ])
             ->from('karyawan k')
@@ -255,7 +255,7 @@ class KaryawanSearch extends Karyawan
                 'k.id_karyawan',
                 'k.nama',
                 'a.id_atasan',
-                'a.status',
+
                 'a.id_master_lokasi'
             ])
             ->from('karyawan k')

@@ -168,16 +168,27 @@ class HomeController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => Absensi::find(),
         ]);
+
+
         $model = new Absensi();
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
         $absensiToday = Absensi::find()->where(['tanggal' => date('Y-m-d'), 'id_karyawan' => $karyawan->id_karyawan])->all();
 
         $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
-        $jamKerjaHari = $jamKerjaKaryawan->jamKerja->jadwalKerjas;
-        $hariIni = date('w') == '0' ? 0 : date('w') - 1;
 
-        // dd($jamKerjaHari, $hariIni);
-        $jamKerjaToday = $jamKerjaHari[$hariIni];
+        if (!$jamKerjaKaryawan) {
+            throw new NotFoundHttpException('Admin Belum Melakukan Settingan Jam Kerja Pada Akun Anda');
+        }
+
+
+        $jamKerjaHari = $jamKerjaKaryawan->jamKerja->jadwalKerjas;
+
+        $hariIni = date('w') == '0' ? 0 : date('w') - 1;
+        if (!$hariIni == 0) {
+            $jamKerjaToday = $jamKerjaHari[$hariIni] ?? null;
+        } else {
+            $jamKerjaToday = null;
+        }
 
 
         $dataJam = [
@@ -185,7 +196,14 @@ class HomeController extends Controller
             'today' => $jamKerjaToday
         ];
 
+
+        // dd($dataJam);
         $isPulangCepat = IzinPulangCepat::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
+
+
+        // apakah sekarang hari kerja
+        // dd($hariIni);
+
 
         $this->layout = 'mobile-main';
         return $this->render('absen-masuk', [

@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </p>
     </div>
 
-    <div class='table-container'>
+    <div class="table-container table-responsive">
 
 
         <div class="w-100">
@@ -58,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class=" w-full d-flex justify-content-between items-center mt-5">
                     <h4>Bagian</h1>
                         <p class="d-flex justify-content-end " style="gap: 10px;">
-                            <?= Html::a('Add new', ['/bagian/create'], ['class' => 'tambah-button']) ?>
+                            <?= Html::a('Add new', ['/bagian/create', 'id_perusahaan' => $model->id_perusahaan], ['class' => 'tambah-button']) ?>
                         </p>
                 </div>
                 <?= GridView::widget([

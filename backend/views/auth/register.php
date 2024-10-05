@@ -27,8 +27,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                     ]); ?>
                     <div class="form-group">
-                        <label for="nomer_identitas">Nomer Identitas </label>
-                        <input readonly value="<?= $nomer_identitas  ?>" type="text" id="nomer_identitas" name="nomer_identitas" class="form-control w-100">
+                        <label for="kode_karyawan">Kode Karyawan </label>
+                        <input readonly value="<?= $kode_karyawan  ?>" type="text" id="kode_karyawan" name="kode_karyawan" class="form-control w-100">
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>

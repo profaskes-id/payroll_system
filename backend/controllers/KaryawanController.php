@@ -143,7 +143,8 @@ class KaryawanController extends Controller
     {
 
         $model = $this->findModel($id_karyawan);
-
+        $model->is_invite = 1;
+        $model->invite_at = date('Y-m-d H:i:s');
 
         // Configure different password hashers via the factory
         $factory = new PasswordHasherFactory([
@@ -155,19 +156,16 @@ class KaryawanController extends Controller
         $passwordHasher = $factory->getPasswordHasher('common');
 
         // Hash a plain password
-        $hash = $passwordHasher->hash(strval($model->nomer_identitas));
+        $hash = $passwordHasher->hash(strval($model->kode_karyawan));
         // Verify that a given plain password matches the hash
         // $passwordHasher->verify($hash, 'wrong'); // returns false
         $ciphertext = $hash;
-        // dd($passwordHasher->verify($hash, strval($model->nomer_identitas))); // returns true (valid)
 
-
-        // $ciphertext = $security->encryptByKey($model->nomer_identitas, $key);
 
         $msgToCheck = $this->renderPartial('@backend/views/karyawan/email_verif', compact('model', 'ciphertext'));
         $sendMsgToCheck = Yii::$app->mailer->compose()
             ->setTo($model->email)
-            ->setSubject('Akses Akun Trial profaskes')
+            ->setSubject('Akses Payroll Profaskes')
             ->setHtmlBody($msgToCheck);
         if ($sendMsgToCheck->send()) {
             Yii::$app->session->setFlash(
@@ -176,6 +174,12 @@ class KaryawanController extends Controller
             );
         }
 
+        if (!$model->save()) {
+            Yii::$app->session->setFlash(
+                'error',
+                'Gagal Update, is Invite , Namun Email Telah Berhasil Terkirim kepada ' . $model->email
+            );
+        }
         return $this->redirect(['index']);
 
         //nik dan hashnik kirim ke email
@@ -229,9 +233,8 @@ class KaryawanController extends Controller
                 $foto != null ? $this->saveImage($model, $foto, 'foto') : $model->foto = null;
                 $lampiranFileIjazah != null ? $this->saveImage($model, $lampiranFileIjazah, 'ijazah_terakhir') : $model->ijazah_terakhir = null;
                 $model->kode_negara = 'indonesia';
-                $model->kode_karyawan = Yii::$app->request->post('Karyawan')['kode_karyawan'];
-
-
+                $model->kode_karyawan = Yii::$app->request->post('Karyawan')['kode_karyawan'] ?? $model->generateAutoCode();
+                $model->nama = strtoupper($model->nama);
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Menamabahkan  Data');
                     return $this->redirect(['index']);

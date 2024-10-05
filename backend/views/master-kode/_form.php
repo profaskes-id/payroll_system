@@ -16,7 +16,7 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <div class="row">
-        <div class="col-6">
+        <div class="col-12">
             <?php
             $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->all(), 'nama_group', 'nama_group');
             echo $form->field($model, 'nama_group')->widget(Select2::classname(), [
@@ -31,22 +31,27 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
 
-        <div class="col-6">
-            <?= $form->field($model, 'kode')->textInput(['maxlength' => true, 'placeholder' => ' Kode Group']) ?>
+        <div class="col-12">
+            <?= $form->field($model, 'kode')->textInput(['maxlength' => true, 'placeholder' => 'Kode']) ?>
         </div>
 
-        <div class="col-4">
+        <div class="col-12">
             <?= $form->field($model, 'nama_kode')->textInput(['maxlength' => true, 'placeholder' => 'Masukan Nama Kode']) ?>
         </div>
-        <div class="col-4">
+        <div class="col-12">
             <?= $form->field($model, 'urutan')->textInput(['maxlength' => true, 'type' => 'number', 'placeholder' => 'Masukan Urutan']) ?>
         </div>
 
-        <div class="col-4">
+        <div class="col-12">
             <?= $form->field($model, 'status')->dropDownList([
                 0 => 'Inactive',
                 1 => 'Active',
-            ], ['prompt' => 'Select status']) ?>
+            ], [
+                'prompt' => 'Select status',
+                'options' => [
+                    1 => ['Selected' => true], // Mengatur default ke Active
+                ],
+            ]) ?>
         </div>
     </div>
 

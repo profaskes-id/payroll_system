@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
-    <div class='table-container'>
+    <div class="table-container table-responsive">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'columns' => [

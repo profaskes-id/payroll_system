@@ -98,10 +98,10 @@ class AtasanKaryawanController extends Controller
                 $model->di_setting_pada = date('Y-m-d H:i:s');
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data ');
-                    return $this->redirect(['view', 'id_karyawan' => $model->id_karyawan]);
+                    return $this->redirect(['index']);
                 }
                 Yii::$app->session->setFlash('error', 'Gagal Menambahkan Data ');
-                return $this->redirect(['view', 'id_karyawan' => $model->id_karyawan]);
+                return $this->redirect(['index']);
             }
         } else {
             $model->loadDefaultValues();
@@ -126,10 +126,10 @@ class AtasanKaryawanController extends Controller
         if ($this->request->isPost && $model->load($this->request->post())) {
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'Berhasil Melakukan Update Data ');
-                return $this->redirect(['view', 'id_karyawan' => $model->id_karyawan]);
+                return $this->redirect(['index']);
             }
             Yii::$app->session->setFlash('error', 'Gagal Melakukan Update Data ');
-            return $this->redirect(['view', 'id_karyawan' => $model->id_karyawan]);
+            return $this->redirect(['index']);
         }
 
         return $this->render('update', [

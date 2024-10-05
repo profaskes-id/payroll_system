@@ -39,19 +39,26 @@ class AutoLoginController extends Controller
 
         $passwordHasher = $factory->getPasswordHasher('common');
         if (Yii::$app->request->isPost) {
-            $nomer_identitas = Yii::$app->request->post('nomer_identitas');
+            $kode_karyawan = Yii::$app->request->post('kode_karyawan');
             $password = Yii::$app->request->post('password');
             // Configure different password hashers via the factory
 
-            if ($passwordHasher->verify($params['token'], $nomer_identitas)) {
 
-                $model = Karyawan::find()->where(['nomer_identitas' => $nomer_identitas])->select(['email', 'nama', 'nomer_identitas'])->one();
+
+            if ($passwordHasher->verify($params['token'], $kode_karyawan)) {
+
+                $model = Karyawan::find()->where(['kode_karyawan' => $kode_karyawan])->select(['email', 'nama', 'nomer_identitas'])->one();
+                $is_user_exist = User::find()->where(['email' => $model->email])->one();
+                if ($is_user_exist) {
+                    return $this->redirect(['/home']);
+                }
                 $user = new User();
                 $user->email = $model->email;
                 $user->newPassword = $password;
                 $user->setRegisterAttributes(2, 1);
+                // dd($user);
                 if ($user->save()) {
-                    Yii::$app->user->login($user);
+                    // Yii::$app->user->login($user);
                     $profil = new Profile();
                     $profil->user_id = $user->id;
                     $profil->full_name = $model->nama;
@@ -68,7 +75,7 @@ class AutoLoginController extends Controller
                             $user->email = $model->email;
                             $user->newPassword = $password;
                             if ($user->save()) {
-                                Yii::$app->user->login($user);
+                                // Yii::$app->user->login($user);
                                 $profil = new Profile();
                                 $profil->user_id = $user->id;
                                 $profil->full_name = $model->nama;
@@ -85,38 +92,12 @@ class AutoLoginController extends Controller
                     }
                 }
             } else {
-                return 'gagal nomer identitas beda';
+                return 'gagal kode karyawan beda';
             }
         }
 
         return $this->render('register', [
-            'nomer_identitas' => $params['id'] ?? null,
+            'kode_karyawan' => $params['id'] ?? null,
         ]);
     }
-
-
-    // public function actionNewPassword($token)
-    // {
-
-    //     // Configure different password hashers via the factory
-    //     $factory = new PasswordHasherFactory([
-    //         'common' => ['algorithm' => 'bcrypt'],
-    //     ]);
-
-    //     // Retrieve the right password hasher by its name
-    //     $passwordHasher = $factory->getPasswordHasher('common');
-
-    //     // Hash a plain password
-    //     // dd($passwordHasher->verify($hash, strval($model->nomer_identitas))); // returns true (valid)
-
-    //     $user = User::find()->where(['access_token' => $token])->one();
-    //     // $user = User::find()->all();
-    //     // dd($user);
-    //     if ($user) {
-    //         Yii::$app->user->login($user);
-    //         return $this->redirect(['/']); // Ganti dengan halaman yang sesuai
-    //     } else {
-    //         return $this->redirect(['/user/login']); // Ganti dengan halaman login atau halaman error
-    //     }
-    // }
 }

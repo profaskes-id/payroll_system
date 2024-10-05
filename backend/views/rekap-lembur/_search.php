@@ -32,7 +32,7 @@ use yii\widgets\ActiveForm;
             ])->label(false);
             ?>
         </div>
-        <div class="col-4">
+        <div class="col-md-4 col-6">
             <?php $nama_kode = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->all(), 'kode', 'nama_kode');
             echo $form->field($model, 'status')->widget(\kartik\select2\Select2::classname(), [
                 'data' => $nama_kode,

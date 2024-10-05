@@ -31,7 +31,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
             <h6 class="text-center col-12">Data Personal</h6>
             <hr class="col-12">
             <div class="col-12  row align-items-start align-items-center justify-items-between ">
-                <div class="p-1 col-6">
+                <div class=" col-12" style="margin-bottom: -20px;">
                     <?= $form->field($model, 'kode_karyawan')->textInput(['id' => 'kode_karyawan', 'readonly' => true, 'value' => $nextKode ?? $model->kode_karyawan])->label('Kode Karyawan') ?>
                 </div>
                 <div class="col-6 mt-3">
@@ -44,10 +44,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
             <div class="col-12 ">
                 <?= $form->field($model, 'nama')->textInput([])->label('Nama Lengkap') ?>
             </div>
-            <div class="col-12 ">
-                <?= $form->field($model, 'nomer_identitas')->textInput(['type' => 'number'])->label('Nomor Identitas') ?>
-            </div>
-            <div class="col-12 ">
+            <div class="col-6 ">
                 <?php
                 $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['jenis-identitas']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
                 echo $form->field($model, 'jenis_identitas')->widget(Select2::classname(), [
@@ -59,6 +56,9 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
                     ],
                 ]);
                 ?>
+            </div>
+            <div class="col-6 ">
+                <?= $form->field($model, 'nomer_identitas')->textInput(['type' => 'number'])->label('Nomor Identitas') ?>
             </div>
             <div class="col-12 ">
                 <?= $form->field($model, 'kode_jenis_kelamin')->radioList(
@@ -281,10 +281,15 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
     const manual_kode = document.querySelector('#manual_kode');
     const kode_karyawan = document.querySelector('#kode_karyawan');
 
-
     manual_kode.addEventListener('click', () => {
-        kode_karyawan.disabled = kode_karyawan.disabled ? false : true;
+        // Jika readonly saat ini, hapus readonly, jika tidak, tambahkan readonly
+        if (kode_karyawan.hasAttribute('readonly')) {
+            kode_karyawan.removeAttribute('readonly');
+        } else {
+            kode_karyawan.setAttribute('readonly', 'readonly');
+        }
     });
+
 
     const is_currnetly_domisili = document.querySelector('#is_currnetly_domisili');
     const domisili = Array.from(document.querySelectorAll('.domisili'));

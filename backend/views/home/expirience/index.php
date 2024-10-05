@@ -9,7 +9,7 @@ $this->title = 'Expirience';
 
 ?>
 
-<div class="container relative mx-auto px-5 min-h-[90dvh]">
+<div class="container relative mx-auto px-3 lg:px-5 min-h-[90dvh]">
     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home', 'title' => 'Data & Riwayat']); ?>
     <section>
         <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
@@ -85,7 +85,7 @@ $this->title = 'Expirience';
                                             </tr>
                                             <tr class=" border-b border-gray-300">
                                                 <th>Jenis Kelamin</th>
-                                                <td><?= $karyawan->kode_jenis_kelamin == 1 ? 'Laki-Laki' : 'Perempuan' ?></td>
+                                                <td><?= $karyawan->kode_jenis_kelamin == 0 ? 'Laki-Laki' : 'Perempuan' ?></td>
                                             </tr>
                                             <tr class=" border-b border-gray-300">
                                                 <th>Tempat Lahir</th>
@@ -166,37 +166,83 @@ $this->title = 'Expirience';
                                             </tr>
                                             <tr class=" border-b border-gray-300">
                                                 <th>Provinsi</th>
-                                                <td><?= $karyawan->provinsidomisili->nama_prop ?></td>
+                                                <td><?php
+                                                    if ($karyawan->is_current_domisili == 0) {
+                                                        echo $karyawan->provinsidomisili->nama_prop;
+                                                    } else {
+                                                        echo $karyawan->provinsiidentitas->nama_prop;
+                                                    }
+                                                    ?>
+                                                </td>
                                             </tr>
                                             <tr class=" border-b border-gray-300">
                                                 <th>Kabupaten</th>
-                                                <td><?= $karyawan->kabupatendomisili->nama_kab ?></td>
+                                                <td><?php
+                                                    if ($karyawan->is_current_domisili == 0) {
+                                                        echo $karyawan->kabupatendomisili->nama_kab;
+                                                    } else {
+                                                        echo $karyawan->kabupatenidentitas->nama_kab;
+                                                    }
+                                                    ?>
+                                                </td>
                                             </tr>
                                             <tr class=" border-b border-gray-300">
                                                 <th>Kecamatan</th>
-                                                <td><?= $karyawan->kecamatandomisili->nama_kec ?></td>
+                                                <td><?php
+                                                    if ($karyawan->is_current_domisili == 0) {
+                                                        echo $karyawan->kecamatandomisili->nama_kec;
+                                                    } else {
+                                                        echo $karyawan->kecamatanidentitas->nama_kec;
+                                                    }
+                                                    ?>
+                                                </td>
                                             </tr>
                                             <tr class=" border-b border-gray-300">
                                                 <th>Alamat Identitas</th>
-                                                <td><?= $karyawan->alamat_domisili ?></td>
+                                                <td><?php
+                                                    if ($karyawan->is_current_domisili == 0) {
+                                                        echo $karyawan->alamat_domisili;
+                                                    } else {
+                                                        echo $karyawan->alamat_identitas;
+                                                    }
+                                                    ?>
+                                                </td>
                                             </tr>
                                             <tr class=" border-b border-gray-300">
                                                 <th>Desa Atau Lurah</th>
-                                                <td><?= $karyawan->desa_lurah_domisili ?></td>
+                                                <td><?php
+                                                    if ($karyawan->is_current_domisili == 0) {
+                                                        echo $karyawan->desa_lurah_domisili;
+                                                    } else {
+                                                        echo $karyawan->desa_lurah_identitas;
+                                                    }
+                                                    ?>
+                                                </td>
                                             </tr>
 
                                             <tr class=" border-b border-gray-300">
                                                 <th>RT</th>
-                                                <td><?= $karyawan->rt_domisili ?></td>
+                                                <td><?php
+                                                    if ($karyawan->is_current_domisili == 0) {
+                                                        echo $karyawan->rt_domisili;
+                                                    } else {
+                                                        echo $karyawan->rt_identitas;
+                                                    }
+                                                    ?>
+                                                </td>
                                             </tr>
-                                            <tr class="border-b border-gray-300">
+                                            <tr class=" border-gray-300">
                                                 <th>RW</th>
-                                                <td><?= $karyawan->rw_domisili ?></td>
+                                                <td><?php
+                                                    if ($karyawan->is_current_domisili == 0) {
+                                                        echo $karyawan->rw_domisili;
+                                                    } else {
+                                                        echo $karyawan->rw_identitas;
+                                                    }
+                                                    ?>
+                                                </td>
                                             </tr>
-                                            <tr class=" ">
-                                                <th>Informasi Lain</th>
-                                                <td><?= $karyawan->informasi_lain ?></td>
-                                            </tr>
+
 
                                         </table>
                                     </div>

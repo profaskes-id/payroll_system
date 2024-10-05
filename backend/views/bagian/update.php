@@ -5,9 +5,9 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\Bagian $model */
 
-$this->title = 'Update Bagian: ' . $model->id_bagian;
+$this->title = 'Update Bagian: ' . $model->nama_bagian;
 $this->params['breadcrumbs'][] = ['label' => 'bagian', 'url' => ['/perusahaan/view', 'id_perusahaan' => $model->perusahaan->id_perusahaan]];
-$this->params['breadcrumbs'][] = ['label' => $model->id_bagian, 'url' => ['view', 'id_bagian' => $model->id_bagian]];
+$this->params['breadcrumbs'][] = ['label' => $model->nama_bagian, 'url' => ['view', 'id_bagian' => $model->id_bagian]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="bagian-update">

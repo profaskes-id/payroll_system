@@ -5,10 +5,12 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\MasterKode $model */
 
-$this->title = 'Update Master Kode: ' . $model->nama_group;
-$this->params['breadcrumbs'][] = ['label' => 'Master Kode', 'url' => ['index']];
+$this->title = Yii::t('app', 'Update Jabatan : {name}', [
+    'name' => $model->nama_kode,
+]);
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Master Kodes'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->nama_group, 'url' => ['view', 'nama_group' => $model->nama_group, 'kode' => $model->kode]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 <div class="master-kode-update">
 
@@ -17,10 +19,8 @@ $this->params['breadcrumbs'][] = 'Update';
             <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
-    <div class="table-container table-responsive">
-        <?= $this->render('_form', [
-            'model' => $model,
-        ]) ?>
-    </div>
+    <?= $this->render('_form', [
+        'model' => $model,
+    ]) ?>
 
 </div>

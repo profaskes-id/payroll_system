@@ -70,15 +70,10 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                 'label' => 'Pengaturan Data',
                                 'icon' => 'th',
                                 'items' => [
-                                    ['label' => 'Perusahaan',  'icon' => 'fa fa-building', 'url' => ['/perusahaan/index'],],
+                                    ['label' => 'Profile Perusahaan',  'icon' => 'fa fa-building', 'url' => ['/perusahaan/index'],],
+                                    ['label' => 'Jabatan',  'icon' => 'fa fa-user-tie', 'url' => ['/jabatan/index'],],
                                     ['label' => 'Karyawan',  'icon' => 'fa fa-users', 'url' => ['/karyawan/index'],],
                                     ['label' => 'Atasan dan Penempatan',  'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index'],],
-                                ],
-                            ],
-                            [
-                                'label' => 'Pengaturan Jam',
-                                'icon' => 'th',
-                                'items' => [
                                     ['label' => 'Jam Kerja',  'icon' => 'fa fa-clock', 'url' => ['/jam-kerja/index'],],
                                     ['label' => 'Jam Kerja Karyawan',  'icon' => 'fa fa-user-clock', 'url' => ['/jam-kerja-karyawan/index'],],
 
@@ -126,19 +121,17 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                 'label' => 'Pengaturan Data',
                                 'icon' => 'th',
                                 'items' => [
-                                    ['label' => 'Perusahaan',  'icon' => 'fa fa-building', 'url' => ['/perusahaan/index'],],
+                                    ['label' => 'Profile Perusahaan',  'icon' => 'fa fa-building', 'url' => ['/perusahaan/index'],],
+                                    ['label' => 'Jabatan',  'icon' => 'fa fa-user-tie', 'url' => ['/jabatan/index'],],
+
                                     ['label' => 'Karyawan',  'icon' => 'fa fa-users', 'url' => ['/karyawan/index'],],
                                     ['label' => 'Atasan dan Penempatan',  'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index'],],
-                                ],
-                            ],
-                            [
-                                'label' => 'Pengaturan Jam',
-                                'icon' => 'th',
-                                'items' => [
                                     ['label' => 'Jam Kerja',  'icon' => 'fa fa-clock', 'url' => ['/jam-kerja/index'],],
                                     ['label' => 'Jam Kerja Karyawan',  'icon' => 'fa fa-user-clock', 'url' => ['/jam-kerja-karyawan/index'],],
+
                                 ],
                             ],
+
                             [
                                 'label' => 'Pengajuan',
                                 'icon' => 'th',

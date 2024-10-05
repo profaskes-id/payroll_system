@@ -18,20 +18,19 @@ use yii\widgets\ActiveForm;
     ]); ?>
 
     <div class="row">
-        <div class="col-5">
+        <div class="col-md-5 col-6">
             <?php $nama_group = \yii\helpers\ArrayHelper::map(MasterKode::find()->all(), 'nama_group', 'nama_group');
             echo $form->field($model, 'nama_group')->widget(Select2::classname(), [
                 'data' => $nama_group,
                 'language' => 'id',
                 'options' => ['placeholder' => 'Cari Nama Group ...'],
                 'pluginOptions' => [
-                    'tags' => true,
                     'allowClear' => true
                 ],
             ])->label(false);
             ?>
         </div>
-        <div class="col-4">
+        <div class="col-md-4 col-6">
             <?php $nama_kode = \yii\helpers\ArrayHelper::map(MasterKode::find()->all(), 'nama_kode', 'nama_kode');
             echo $form->field($model, 'nama_kode')->widget(Select2::classname(), [
                 'data' => $nama_kode,
@@ -62,13 +61,6 @@ use yii\widgets\ActiveForm;
             </div>
         </div>
     </div>
-
-
-
-
-
-
-
     <?php ActiveForm::end(); ?>
 
 </div>

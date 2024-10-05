@@ -14,8 +14,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <div class="mt-10 relative ">
-
+    <div class="mt-10 relative " style="padding-bottom : 100px">
 
         <div class="grid gap-6 mb-6  relative overflow-hidden">
             <div class="col-span-12">

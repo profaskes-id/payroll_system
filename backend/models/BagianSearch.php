@@ -59,6 +59,8 @@ class BagianSearch extends Bagian
         // grid filtering conditions
         $query->andFilterWhere([
             'id_bagian' => $this->id_bagian,
+            'id_perusahaan' => $this->id_perusahaan,
+
         ]);
 
         $query->andFilterWhere(['like', 'nama_bagian', $this->nama_bagian]);

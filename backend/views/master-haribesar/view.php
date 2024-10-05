@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
 
-    <div class="table-container">
+    <div class="table-container table-responsive">
 
         <p class="d-flex justify-content-start " style="gap: 10px;">
             <?= Html::a('Update', ['update', 'kode' => $model->kode], ['class' => 'add-button']) ?>
