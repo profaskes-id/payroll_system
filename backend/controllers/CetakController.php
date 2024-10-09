@@ -114,7 +114,8 @@ class CetakController extends Controller
         $dataPekerjaan = DataPekerjaan::find()->where(['id_data_pekerjaan' => $model['id_data_pekerjaan'], 'id_karyawan' => $model['id_karyawan']])->one();
         $bagian = $dataPekerjaan->bagian;
         $perusahaan = $bagian->perusahaan;
-        $perusahaan = Perusahaan::find()->where(['id_perusahaan' => $dataPekerjaan->bagian->id_perusahaan])->one();
+        $perusahaan = Perusahaan::find()->where(['id_perusahaan' => $dataPekerjaan->bagian->id_perusahaan])->asArray()->one();
+
         $content = $this->renderPartial('_cetak', [
             'model' => $model,
             'karyawan' => $karyawan,

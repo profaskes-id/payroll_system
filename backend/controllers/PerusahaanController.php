@@ -3,6 +3,8 @@
 namespace backend\controllers;
 
 use backend\models\BagianSearch;
+use backend\models\MasterKab;
+use backend\models\MasterProp;
 use backend\models\Perusahaan;
 use backend\models\PerusahaanSearch;
 use yii\web\Controller;
@@ -149,5 +151,13 @@ class PerusahaanController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    public function actionKabupaten($id_prop)
+    {
+        $kabupaten = MasterKab::find()
+            ->where(['kode_prop' => $id_prop])
+            ->all();
+        $dataKabupaten = \yii\helpers\ArrayHelper::map($kabupaten, 'kode_kab', 'nama_kab');
+        return $this->asJson($dataKabupaten);
     }
 }

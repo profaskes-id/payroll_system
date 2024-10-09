@@ -49,15 +49,22 @@ class AbsensiController extends Controller
      */
     public function actionIndex()
     {
+        $tanggalSet = date('Y-m-d');
         $searchModel = new KaryawanSearch();
-        $dataProvider = $searchModel->searchAbsensi(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->searchAbsensi(Yii::$app->request->queryParams, $tanggalSet);
         $absensi = new Absensi();
         $bagian = new Bagian();
-
 
         if (\Yii::$app->request->isPost) {
             // echo "kode jika request adalah POST";
             $param_bagian = Yii::$app->request->post('Bagian')['id_bagian'];
+            $param_tanggal = Yii::$app->request->post('Absensi')['tanggal'];
+            // dd($param_tanggal);
+
+            if ($param_tanggal) {
+                $tanggalSet = $param_tanggal;
+                $dataProvider = $searchModel->searchAbsensi(Yii::$app->request->queryParams, $tanggalSet);
+            }
             if ($param_bagian) {
                 $filteredModels = [];
                 foreach ($dataProvider->models as $model) {
@@ -74,6 +81,7 @@ class AbsensiController extends Controller
             'bagian' => $bagian,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'tanggalSet' => $tanggalSet
         ]);
     }
 

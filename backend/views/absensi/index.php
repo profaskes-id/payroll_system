@@ -28,8 +28,12 @@ $today = date('Y-m-d');
     <div class="table-container table-responsive">
         <div class="row mb-2">
 
+            <div class="col-5">
+                <?= $form->field($absensi, 'tanggal')->textInput(['type' => 'date', 'value' => $tanggalSet ?? $today])->label(false); ?>
+            </div>
 
-            <div class="col-10">
+
+            <div class="col-5">
                 <?php
                 $idBagian = Yii::$app->request->post('Bagian')['id_bagian'] ?? 0;
                 $data = \yii\helpers\ArrayHelper::map(Bagian::find()->all(), 'id_bagian', 'nama_bagian');
@@ -74,7 +78,7 @@ $today = date('Y-m-d');
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'format' => 'raw',
-                    'value' => function ($model) {
+                    'value' => function ($model) use ($tanggalSet) {
                         if ($model['absensi']) {
                             return Html::a('<button  style=" border-radius: 6px !important; background: #488aec50 !important; color:#252525; all:unset;  display: block;">
                                         <span style="margin: 3px 3px !important;display: block; background: #488aec !important; padding: 0px 3px 0.1px !important; border-radius: 6px !important;">
@@ -86,7 +90,7 @@ $today = date('Y-m-d');
                                         <span style="margin: 3px 3px !important;display: block; background: #E9EC48 !important; padding: 0px 3px 0.1px !important; border-radius: 6px !important;">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844l2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565l6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/></svg>
                                          </span>
-                                        </button>', ['create', 'id_karyawan' => $model['karyawan']['id_karyawan'], 'tanggal' => date('Y-m-d'), 'id_jadwal_kerja' => $model['jadwal_kerja']['id_jadwal_kerja'] ?? '-1'],);
+                                        </button>', ['create', 'id_karyawan' => $model['karyawan']['id_karyawan'], 'tanggal' => $tanggalSet, 'id_jadwal_kerja' => $model['jadwal_kerja']['id_jadwal_kerja'] ?? '-1'],);
                         }
                     }
                 ],

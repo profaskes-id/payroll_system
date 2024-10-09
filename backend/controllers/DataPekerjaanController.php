@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\DataPekerjaan;
 use backend\models\DataPekerjaanSearch;
+use backend\models\Karyawan;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -76,7 +77,7 @@ class DataPekerjaanController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate($id_karyawan)
     {
         $model = new DataPekerjaan();
 
@@ -90,16 +91,20 @@ class DataPekerjaanController extends Controller
                 }
 
                 $today = date("Y-m-d"); // get today's date
-                $sampai_date = strtotime($model->sampai); // convert $sampai to timestamp
-                $today_timestamp = strtotime($today); // convert today's date to timestamp
+                dd(Yii::$app->request->post());
+                if ($model->sampai) {
+                    $sampai_date = strtotime($model->sampai); // convert $sampai to timestamp
+                    $today_timestamp = strtotime($today); // convert today's date to timestamp
 
-                if ($sampai_date > $today_timestamp) {
+                    if ($sampai_date > $today_timestamp) {
 
-                    $model->is_aktif = 1;
+                        $model->is_aktif = 1;
+                    } else {
+                        $model->is_aktif = 0;
+                    }
                 } else {
                     $model->is_aktif = 0;
                 }
-
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data Pekerjaan');
                     return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
@@ -111,8 +116,11 @@ class DataPekerjaanController extends Controller
             $model->loadDefaultValues();
         }
 
+        $karyawan_nama = Karyawan::find()->select('nama')->asArray()->where(['id_karyawan' => $id_karyawan])->one();
+
         return $this->render('create', [
             'model' => $model,
+            'karyawan_nama' => $karyawan_nama
         ]);
     }
 
@@ -154,12 +162,16 @@ class DataPekerjaanController extends Controller
             }
 
             $today = date("Y-m-d"); // get today's date
-            $sampai_date = strtotime($model->sampai); // convert $sampai to timestamp
-            $today_timestamp = strtotime($today); // convert today's date to timestamp
+            if ($model->sampai) {
+                $sampai_date = strtotime($model->sampai); // convert $sampai to timestamp
+                $today_timestamp = strtotime($today); // convert today's date to timestamp
 
-            if ($sampai_date > $today_timestamp) {
+                if ($sampai_date > $today_timestamp) {
 
-                $model->is_aktif = 1;
+                    $model->is_aktif = 1;
+                } else {
+                    $model->is_aktif = 0;
+                }
             } else {
                 $model->is_aktif = 0;
             }

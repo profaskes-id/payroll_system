@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\Bagian;
+use backend\models\Tanggal;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Html;
@@ -48,12 +49,57 @@ $this->params['breadcrumbs'][] = $this->title;
                             'headerOptions' => ['style' => 'width: 200px; '],
                             'label' => 'Status Perusahaan',
                             'value' => function ($model) {
-                                return $model->statusPerusahaan->nama_kode;
+                                if ($model->statusPerusahaan) {
+                                    return $model->statusPerusahaan->nama_kode;
+                                } else {
+                                    return "(Belum Di set)";
+                                }
                             }
                         ],
                         'direktur',
+
                         'alamat:ntext',
-                        'logo',
+                        [
+                            'headerOptions' => ['style' => 'width: 200px; '],
+                            'label' => 'Provinsi',
+                            'value' => function ($model) {
+                                if ($model->provinsiPerusahaan) {
+                                    return $model->provinsiPerusahaan->nama_prop;
+                                } else {
+                                    return "(Belum Di set)";
+                                }
+                            }
+                        ],
+                        [
+                            'headerOptions' => ['style' => 'width: 200px; '],
+                            'label' => 'Kabupaten / Kota',
+                            'value' => function ($model) {
+                                if ($model->kabupatenPerusahaan) {
+                                    return $model->kabupatenPerusahaan->nama_kab;
+                                } else {
+                                    return "(Belum Di set)";
+                                }
+                            }
+                        ],
+                        [
+                            'headerOptions' => ['style' => 'width: 200px; '],
+                            'label' => 'Kabupaten / Kota',
+                            'value' => function ($model) {
+                                $tanggal = new Tanggal();
+                                return $tanggal->getIndonesiaFormatTanggal($model->didirikan_pada);
+                            }
+                        ],
+                        [
+                            'headerOptions' => ['style' => 'width: 200px; '],
+                            'label' => 'Logo',
+                            'value' => function ($model) {
+                                if ($model->logo) {
+                                    Html::a(Html::img(Yii::getAlias('@root') . '/images/' . $model->logo, ['alt' => 'logo']), Yii::getAlias('@root') . '/images/' . $model->logo);
+                                } else {
+                                    return "(Belum Di set)";
+                                }
+                            }
+                        ]
                     ],
                 ]) ?>
                 <br />

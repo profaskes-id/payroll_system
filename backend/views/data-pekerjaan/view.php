@@ -73,17 +73,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => $model->jabatanPekerja->nama_kode
                 ],
                 [
-                    'label' => 'Gaji Pokok',
-                    'value' => function ($model) {
-                        return $model->gaji_pokok;
-                    }
-                ],
-                [
-                    'label' => 'Terbilang',
-                    'contentOptions' => ['style' => 'text-transform: capitalize; '],
-                    'value' => $model->terbilang
-                ],
-                [
                     'label' => 'Surat Lamaran Pekerjaan',
                     'format' => 'raw',
                     'value' => function ($model) {

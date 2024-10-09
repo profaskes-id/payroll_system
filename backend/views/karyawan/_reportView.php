@@ -184,15 +184,16 @@ $this->title = 'Report Data Karyawan';
                 [
                     'label' => 'Bagian',
                     'value' => function ($model) {
-                        return $model->bagian->nama_bagian;
+                        // dd($model);
+                        return $model['nama_bagian'];
                     }
                 ],
-                [
-                    'label' => 'Bagian',
-                    'value' => function ($model) {
-                        return $model->jabatanPekerja->nama_kode;
-                    }
-                ],
+                // [
+                //     'label' => 'jabatan',
+                //     'value' => function ($model) {
+                //         return $model->jabatanPekerja->nama_kode;
+                //     }
+                // ],
 
                 [
                     'headerOptions' => ['style' => 'text-align: center;'],
@@ -200,17 +201,18 @@ $this->title = 'Report Data Karyawan';
                     'label' => 'Dari',
                     'value' => function ($model) {
                         $tanggalFormat = new Tanggal();
-                        return $tanggalFormat->getIndonesiaFormatTanggal($model->dari);
+                        // dd($model);
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model['dari']);
                     }
                 ],
                 [
                     'attribute' => 'Sampai',
                     'value' => function ($model) {
-                        if ($model->is_currenty != null) {
+                        if ($model['is_currenty'] != null) {
                             return 'Sekarang';
                         }
                         $tanggalFormat = new Tanggal();
-                        return $tanggalFormat->getIndonesiaFormatTanggal($model->sampai);
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model['sampai']);
                     }
                 ],
                 [
@@ -218,13 +220,13 @@ $this->title = 'Report Data Karyawan';
                     'contentOptions' => ['style' => 'text-align: center;'],
                     'label' => 'Status',
                     'value' => function ($model) {
-                        return $model->statusPekerjaan->nama_kode;
+                        return $model['status_pekerjaan'];
                     }
                 ],
                 [
                     'label' => 'Gaji Pokok',
                     'value' => function ($model) {
-                        return $model->gaji_pokok;
+                        return $model['gaji_pokok'];
                     }
                 ],
 

@@ -52,7 +52,6 @@ class DataPekerjaanSearch extends DataPekerjaan
                 'data_pekerjaan.is_aktif',
                 'data_pekerjaan.is_currenty',
                 'data_pekerjaan.surat_lamaran_pekerjaan',
-                'data_pekerjaan.gaji_pokok',
                 'cetak.id_cetak',
                 'cetak.surat_upload',
                 'bagian.id_bagian',
@@ -69,11 +68,13 @@ class DataPekerjaanSearch extends DataPekerjaan
             ->leftJoin('{{%master_kode}} mk', 'mk.nama_group = "status-pekerjaan" and data_pekerjaan.status = mk.kode');
 
 
+        // dd($query->all());
+
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            // 'sort' => ['defaultOrder' => ['status' => SORT_DESC]],
+            'sort' => ['defaultOrder' => ['is_aktif' => SORT_DESC]],
         ]);
 
         $this->load($params);

@@ -41,8 +41,7 @@ class DataPekerjaan extends \yii\db\ActiveRecord
             [['id_karyawan', 'id_bagian', 'dari', 'status', 'jabatan', 'is_aktif'], 'required'],
             [['id_karyawan', 'id_bagian', 'status', 'is_aktif', 'is_currenty'], 'integer'],
             [['dari', 'sampai', 'selama'], 'safe'],
-            [['gaji_pokok'], 'number'],
-            [['jabatan', 'surat_lamaran_pekerjaan', 'terbilang'], 'string', 'max' => 255],
+            [['jabatan', 'surat_lamaran_pekerjaan',], 'string', 'max' => 255],
             [['id_bagian'], 'exist', 'skipOnError' => true, 'targetClass' => Bagian::class, 'targetAttribute' => ['id_bagian' => 'id_bagian']],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
             [['surat_lamaran_pekerjaan'], 'file', 'extensions' => 'png, jpg, jpeg, pdf', 'maxSize' => 1024 * 1024 * 2],
@@ -66,8 +65,7 @@ class DataPekerjaan extends \yii\db\ActiveRecord
             'is_aktif' => 'Status Jabatan',
             'surat_lamaran_pekerjaan' => 'Surat Lamaran Pekerjaan',
             'is_currenty' => 'Sampai Sekarang',
-            'gaji_pokok' => 'Gaji Pokok',
-            'terbilang' => 'Terbilang',
+
         ];
     }
 

@@ -68,7 +68,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         [
                             'label' => 'Tempat dan Tanggal Lahir',
                             'value' => function ($model) {
-                                return  $model->karyawan->tempat_lahir . ', ' . date('d-M-Y', strtotime($model->karyawan->tanggal_lahir));
+                                $tanggal = new Tanggal();
+                                return  $model->karyawan->tempat_lahir . ', ' . $tanggal->getIndonesiaFormatLong($model->karyawan->tanggal_lahir);
                             }
                         ],
 
@@ -98,26 +99,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'label' => 'Bagian',
                             'value' => $model->dataPekerjaan->bagian->nama_bagian
                         ],
-                        [
-                            'attribute' => 'Dari',
-                            'value' => function ($model) {
-                                if ($model->dataPekerjaan->is_currenty != null) {
-                                    return 'Sekarang';
-                                }
-                                $tanggalFormat = new Tanggal();
-                                return $tanggalFormat->getIndonesiaFormatTanggal($model->dari);
-                            }
-                        ],
-                        [
-                            'attribute' => 'sampai',
-                            'value' => function ($model) {
-                                if ($model->dataPekerjaan->is_currenty != null) {
-                                    return 'Sekarang';
-                                }
-                                $tanggalFormat = new Tanggal();
-                                return $tanggalFormat->getIndonesiaFormatTanggal($model->sampai);
-                            }
-                        ],
+
                         [
                             'attribute' => 'status',
                             'value' => function ($model) {

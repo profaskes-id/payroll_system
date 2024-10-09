@@ -25,30 +25,30 @@ $tanggal = new Tanggal();
         <table class="table table-bordered table-responsive">
             <tr>
                 <th rowspan="3" class="text-center ">Nama dan Kode Karyawan</th>
-                <th rowspan="3" style="vertical-align: middle;" class="text-center ">Bagian </th>
-                <th rowspan="3" style="vertical-align: middle;" class="text-center ">Jabatan </th>
+                <!-- <th rowspan="3" style="vertical-align: middle;" class="text-center ">Bagian </th> -->
+                <!-- <th rowspan="3" style="vertical-align: middle;" class="text-center ">Jabatan </th> -->
             </tr>
             <tr>
-                <th class="text-center" colspan="<?= count($tanggal_bulanan) ?>">
+                <th class="text-center" width="30px" colspan="<?= count($tanggal_bulanan) ?>">
                     <h3>
                         Rekapan Absensi Bulan <?= $tanggal->getBulan($bulan) . ' Tahun ' . $tahun ?>
                     </h3>
                 </th>
             </tr>
-            <tr>
+            <tr class="text-center">
                 <?php foreach ($tanggal_bulanan as $item) : ?>
                     <?php
                     $date = date_create($item . '-' . date('m-Y'));
                     $day_of_week = date_format($date, 'w');
                     ?>
-                    <td <?php if ($day_of_week == 0) echo 'style="background-color: #be123c; color:white;"'; ?>>
+                    <td <?php if ($day_of_week == 0) echo 'style="background-color: #aaa; color:white;"'; ?>>
                         <?= $item ?>
                     </td>
                 <?php endforeach ?>
             </tr>
 
             <?php foreach ($hasil as $karyawan) : ?>
-                <tr>
+                <tr class="text-center">
                     <?php foreach ($karyawan as $key => $data) : ?>
 
                         <?php if ($key == 0) : ?>
@@ -60,7 +60,7 @@ $tanggal = new Tanggal();
                                     <p style="margin: 0; font-size:12px; padding:0;  text-transform: capitalize;"><?= $data['kode_karyawan'] ?></p>
                                 </div>
                             </td>
-                            <td>
+                            <!-- <td>
                                 <div class="">
                                     <p style="margin: 0; font-size:12px; padding:0;  text-transform: capitalize; "><?= $data['bagian'] ?></p>
                                 </div>
@@ -70,7 +70,7 @@ $tanggal = new Tanggal();
                                 <div class="">
                                     <p style="margin: 0; font-size:12px; padding:0;  text-transform: capitalize;"><?= $data['jabatan'] ?></p>
                                 </div>
-                            </td>
+                            </td> -->
 
 
                         <?php else : ?>
@@ -78,22 +78,37 @@ $tanggal = new Tanggal();
                             $date = date_create($tanggal_bulanan[$key - 1]  . '-' . date('m-Y'));
                             $day_of_week = date_format($date, 'w');
                             ?>
-                            <td <?php if ($day_of_week == 0) echo 'style="background-color: #be123c; color:white;"'; ?>>
-                                <?php if ($data !== null && $data['status_hadir'] !== null && $data['jam_masuk_karyawan'] !== null):  ?>
-                                    <?php
-                                    $jamKerjakaryawan = $data['jam_masuk_karyawan'];
-                                    $jamKerjaKantor = $data['jam_masuk_kantor'];
+                            <td <?php if ($day_of_week == 0) echo 'style="background-color: #aaa; color:white;"'; ?>>
+                                <p style="width: 40px; text-align: center; vertical-align: middle;">
+                                    <?php if ($data !== null && $data['status_hadir'] !== null && $data['jam_masuk_karyawan'] !== null): ?>
+                                        <?php
+                                        $jamKerjakaryawan = $data['jam_masuk_karyawan'];
+                                        $jamKerjaKantor = $data['jam_masuk_kantor'];
 
-                                    $jam_masuk_kerja_time = strtotime($jamKerjakaryawan);
-                                    $jam_karyawan_masuk_time = strtotime($jamKerjaKantor);
-                                    ?>
+                                        $jam_masuk_kerja_time = strtotime($jamKerjakaryawan);
+                                        $jam_karyawan_masuk_time = strtotime($jamKerjaKantor);
+                                        ?>
 
-                                    <?php if ($jam_karyawan_masuk_time <= $jam_masuk_kerja_time) : ?>
-                                        <span style='color: red;'><?= $data['status_hadir'] ?></span>
-                                    <?php else :  ?>
-                                        <span style='color: black;'> <?= $data['status_hadir'] ?> </span>
-                                    <?php endif ?>
-                                <?php endif ?>
+                                        <?php if ($jam_karyawan_masuk_time > $jam_masuk_kerja_time) : ?>
+                                            <span style='color: red;'><?= $data['status_hadir'] ?></span><br />
+                                            <?php
+                                            // Hitung selisih waktu
+                                            $selisih_detik = $jam_karyawan_masuk_time - $jam_masuk_kerja_time;
+                                            $menit = floor($selisih_detik / 60);
+                                            $detik = $selisih_detik % 60;
+
+                                            // Tambahkan nol di depan jika kurang dari 10
+                                            $menit = str_pad($menit, 2, '0', STR_PAD_LEFT);
+                                            $detik = str_pad($detik, 2, '0', STR_PAD_LEFT);
+                                            ?>
+                                            <span style='color: red; font-size: 12px; display: flex;'>+<?= $menit ?>:<?= $detik ?></span>
+                                        <?php else : ?>
+                                            <span style='color: black;'><?= $data['status_hadir'] ?></span>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                </p>
+
+
                             </td>
                         <?php endif ?>
 
@@ -102,14 +117,15 @@ $tanggal = new Tanggal();
             <?php endforeach ?>
             <tr>
                 <th style="font-size:11px; background-color: #ffde21; color:#000">Rekapan Hadir</th>
-                <th style="font-size:11px; background-color: #ffde21; color:#fff"></th>
-                <th style="font-size:11px; background-color: #ffde21; color:#fff"></th> <?php foreach ($rekapanAbsensi as $key => $rekapan) :  ?>
+                <!-- <th style="font-size:11px; background-color: #ffde21; color:#fff"></th> -->
+                <!-- <th style="font-size:11px; background-color: #ffde21; color:#fff"></th>  -->
+                <?php foreach ($rekapanAbsensi as $key => $rekapan) :  ?>
                     <?php
-                                                                                            $date = date_create($tanggal_bulanan[$key - 1]  . '-' . $bulan . '-' . $tahun);
-                                                                                            $day_of_week = date_format($date, 'w');
+                    $date = date_create($tanggal_bulanan[$key - 1]  . '-' . $bulan . '-' . $tahun);
+                    $day_of_week = date_format($date, 'w');
                     ?>
                     <?php if ($day_of_week == 0): ?>
-                        <td style="font-weight:600; background-color: #be123c; color:fff"><?= '' ?? '' ?></td>
+                        <td style="font-weight:600; background-color: #aaa; color:fff"><?= '' ?? '' ?></td>
                     <?php else : ?>
                         <td style="font-weight:600; background-color: #ffde21; color:000"><?= $rekapan ?? '0' ?></td>
                     <?php endif; ?>

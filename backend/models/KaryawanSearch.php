@@ -105,128 +105,179 @@ class KaryawanSearch extends Karyawan
     }
 
 
-    public function searchAbsensi($params)
+    // public function searchAbsensi($params)
+    // {
+    //     $query = (new Query())
+    //         ->select([
+    //             'k.id_karyawan',
+    //             'k.kode_karyawan',
+    //             'k.nama AS nama_karyawan',
+    //             'dp.id_data_pekerjaan',
+    //             'dp.id_bagian',
+    //             'a.id_absensi',
+    //             'a.tanggal AS tanggal_absensi',
+    //             'a.jam_masuk',
+    //             'a.jam_pulang',
+    //             'a.kode_status_hadir',
+    //             'a.keterangan AS keterangan_absensi',
+    //             'a.lampiran',
+    //             'jk.id_jam_kerja_karyawan',
+    //             'jk.id_jam_kerja',
+    //             'jk.max_terlambat',
+    //             'j.nama_jam_kerja',
+    //             'j.jenis_shift',
+    //             'wj.id_jadwal_kerja', // Field dari jadwal_kerja
+    //             'wj.nama_hari',
+    //             'wj.jam_masuk AS jam_masuk_jadwal',
+    //             'wj.jam_keluar AS jam_keluar_jadwal',
+    //             'wj.mulai_istirahat',
+    //             'wj.berakhir_istirahat',
+    //             'wj.jumlah_jam',
+    //         ])
+    //         ->from('{{%karyawan}} k')
+    //         ->leftJoin('{{%data_pekerjaan}} dp', 'k.id_karyawan = dp.id_karyawan')
+    //         ->leftJoin('{{%absensi}} a', 'k.id_karyawan = a.id_karyawan')
+    //         ->leftJoin('{{%jam_kerja_karyawan}} jk', 'k.id_karyawan = jk.id_karyawan')
+    //         ->leftJoin('{{%jam_kerja}} j', 'jk.id_jam_kerja = j.id_jam_kerja')
+    //         ->leftJoin('{{%jadwal_kerja}} wj', 'jk.id_jam_kerja = wj.id_jam_kerja');
+
+    //     $results = $query->all();
+    //     $result = [];
+
+
+
+    //     // Mendapatkan hari saat ini (1 = Senin, 0 = Minggu, dst.)
+    //     $currentDayOfWeek = date('w'); // 0 (Minggu) sampai 6 (Sabtu)
+    //     $currentDayOfWeek = $currentDayOfWeek == 0 ? 7 : $currentDayOfWeek; // Mengubah Minggu (0) menjadi 7
+
+    //     foreach ($results as $row) {
+    //         // Initialize karyawan entry if not set
+    //         if (!isset($result[$row['id_karyawan']])) {
+    //             $result[$row['id_karyawan']] = [
+    //                 'karyawan' => [
+    //                     'id_karyawan' => $row['id_karyawan'],
+    //                     'kode_karyawan' => $row['kode_karyawan'],
+    //                     'nama' => $row['nama_karyawan'],
+    //                 ],
+    //                 'data_pekerjaan' => null,
+    //                 'absensi' => [],
+    //                 'jam_kerja' => [],
+    //                 'jadwal_kerja' => [] // Tambahkan untuk jadwal kerja
+    //             ];
+    //         }
+
+    //         // Add data_pekerjaan
+    //         if ($row['id_data_pekerjaan'] && !$result[$row['id_karyawan']]['data_pekerjaan']) {
+    //             $result[$row['id_karyawan']]['data_pekerjaan'] = [
+    //                 'id_data_pekerjaan' => $row['id_data_pekerjaan'],
+    //                 'id_bagian' => $row['id_bagian'],
+    //             ];
+    //         }
+
+    //         // Add absensi
+    //         if ($row['id_absensi']) {
+    //             if ($row['tanggal_absensi'] == date('Y-m-d')) {
+    //                 if (!isset($result[$row['id_karyawan']]['absensi']) || empty($result[$row['id_karyawan']]['absensi'])) {
+    //                     $result[$row['id_karyawan']]['absensi'] = [
+    //                         'id_absensi' => $row['id_absensi'],
+    //                         'tanggal_absensi' => $row['tanggal_absensi'],
+    //                         'jam_masuk' => $row['jam_masuk'],
+    //                         'jam_pulang' => $row['jam_pulang'],
+    //                         'kode_status_hadir' => $row['kode_status_hadir'],
+    //                         'keterangan_absensi' => $row['keterangan_absensi'],
+    //                         'lampiran' => $row['lampiran'],
+    //                     ];
+    //                 }
+    //             }
+    //         }
+
+    //         // Add jam_kerja
+    //         if ($row['id_jam_kerja_karyawan']) {
+    //             if (!isset($result[$row['id_karyawan']]['jam_kerja']) || empty($result[$row['id_karyawan']]['jam_kerja'])) {
+    //                 $result[$row['id_karyawan']]['jam_kerja'] = [
+    //                     'id_jam_kerja_karyawan' => $row['id_jam_kerja_karyawan'],
+    //                     'id_jam_kerja' => $row['id_jam_kerja'],
+    //                     'max_terlambat' => $row['max_terlambat'],
+    //                     'nama_jam_kerja' => $row['nama_jam_kerja'],
+    //                     'jenis_shift' => $row['jenis_shift'],
+    //                 ];
+    //             }
+    //         }
+
+    //         // Add jadwal_kerja (hanya untuk hari ini)
+    //         if ($row['id_jadwal_kerja'] && ($row['nama_hari'] == $currentDayOfWeek)) {
+    //             // Cek jika jadwal kerja sudah ada untuk karyawan ini
+    //             $existingJadwal = $result[$row['id_karyawan']]['jadwal_kerja'] ?? null;
+
+    //             // Jika belum ada, tambahkan jadwal kerja
+    //             if (!$existingJadwal) {
+    //                 $result[$row['id_karyawan']]['jadwal_kerja'] = [
+    //                     'id_jadwal_kerja' => $row['id_jadwal_kerja'],
+    //                     'nama_hari' => $row['nama_hari'],
+    //                     'jam_masuk' => $row['jam_masuk_jadwal'],
+    //                     'jam_keluar' => $row['jam_keluar_jadwal'],
+    //                     // 'mulai_istirahat' => $row['mulai_istirahat'],
+    //                     // 'berakhir_istirahat' => $row['berakhir_istirahat'],
+    //                     'jumlah_jam' => $row['jumlah_jam'],
+    //                 ];
+    //             }
+    //         }
+    //     }
+
+
+
+    //     $dataProvider = new ArrayDataProvider([
+    //         'models' => $result,
+    //         'pagination' => [
+    //             'pageSize' => 10,
+    //         ],
+    //     ]);
+
+    //     return $dataProvider;
+    // }
+
+    public function searchAbsensi($params, $tanggalSet)
     {
-        // $query = (new Query())
-        //     ->select([
-        //         'k.id_karyawan',
-        //         'k.kode_karyawan',
-        //         'k.nama AS nama_karyawan',
-        //         'dp.id_data_pekerjaan',
-        //         'dp.id_bagian',
-        //         'a.id_absensi',
-        //         'a.tanggal AS tanggal_absensi',
-        //         'a.jam_masuk',
-        //         'a.jam_pulang',
-        //         'a.kode_status_hadir',
-        //         'a.keterangan AS keterangan_absensi',
-        //         'a.lampiran',
-        //         'jk.id_jam_kerja_karyawan',
-        //         'jk.id_jam_kerja',
-        //         'jk.max_terlambat',
-        //         'j.nama_jam_kerja',
-        //         'j.jenis_shift',
-        //     ])
-        //     ->from('{{%karyawan}} k')
-        //     ->leftJoin('{{%data_pekerjaan}} dp', 'k.id_karyawan = dp.id_karyawan')
-        //     ->leftJoin('{{%absensi}} a', 'k.id_karyawan = a.id_karyawan')
-        //     ->leftJoin('{{%jam_kerja_karyawan}} jk', 'k.id_karyawan = jk.id_karyawan')
-        //     ->leftJoin('{{%jam_kerja}} j', 'jk.id_jam_kerja = j.id_jam_kerja');
-
-        // $results = $query->all();
-        // $result = [];
-        // foreach ($results as $row) {
-        //     // Initialize karyawan entry if not set
-        //     if (!isset($result[$row['id_karyawan']])) {
-        //         $result[$row['id_karyawan']] = [
-        //             'karyawan' => [
-        //                 'id_karyawan' => $row['id_karyawan'],
-        //                 'kode_karyawan' => $row['kode_karyawan'],
-        //                 'nama' => $row['nama_karyawan'],
-        //             ],
-        //             'data_pekerjaan' => null,
-        //             'absensi' => [],
-        //             'jam_kerja' => [], // Add a new key for jam_kerja
-        //         ];
-        //     }
-
-        //     // Add data_pekerjaan
-        //     if ($row['id_data_pekerjaan'] && !$result[$row['id_karyawan']]['data_pekerjaan']) {
-        //         $result[$row['id_karyawan']]['data_pekerjaan'] = [
-        //             'id_data_pekerjaan' => $row['id_data_pekerjaan'],
-        //             'id_bagian' => $row['id_bagian'],
-        //         ];
-        //     }
-
-        //     // Add absensi
-        //     if ($row['id_absensi']) {
-        //         if ($row['tanggal_absensi'] == date('Y-m-d')) {
-        //             $result[$row['id_karyawan']]['absensi'][] = [
-        //                 'id_absensi' => $row['id_absensi'],
-        //                 'tanggal_absensi' => $row['tanggal_absensi'],
-        //                 'jam_masuk' => $row['jam_masuk'],
-        //                 'jam_pulang' => $row['jam_pulang'],
-        //                 'kode_status_hadir' => $row['kode_status_hadir'],
-        //                 'keterangan_absensi' => $row['keterangan_absensi'],
-        //                 'lampiran' => $row['lampiran'],
-        //             ];
-        //         }
-        //     }
-
-        //     // Add jam_kerja
-        //     if ($row['id_jam_kerja_karyawan']) {
-        //         if (!isset($result[$row['id_karyawan']]['jam_kerja']) || empty($result[$row['id_karyawan']]['jam_kerja'])) {
-        //             $result[$row['id_karyawan']]['jam_kerja'] = [
-        //                 'id_jam_kerja_karyawan' => $row['id_jam_kerja_karyawan'],
-        //                 'id_jam_kerja' => $row['id_jam_kerja'],
-        //                 'max_terlambat' => $row['max_terlambat'],
-        //                 'nama_jam_kerja' => $row['nama_jam_kerja'],
-        //                 'jenis_shift' => $row['jenis_shift'],
-        //             ];
-        //         }
-        //     }
-        // }
-
-
         $query = (new Query())
             ->select([
                 'k.id_karyawan',
                 'k.kode_karyawan',
                 'k.nama AS nama_karyawan',
-                'dp.id_data_pekerjaan',
-                'dp.id_bagian',
-                'a.id_absensi',
+                'MAX(dp.id_data_pekerjaan) AS id_data_pekerjaan',
+                'MAX(dp.id_bagian) AS id_bagian',
+                'MAX(a.id_absensi) AS id_absensi',
                 'a.tanggal AS tanggal_absensi',
-                'a.jam_masuk',
-                'a.jam_pulang',
-                'a.kode_status_hadir',
-                'a.keterangan AS keterangan_absensi',
-                'a.lampiran',
-                'jk.id_jam_kerja_karyawan',
-                'jk.id_jam_kerja',
-                'jk.max_terlambat',
-                'j.nama_jam_kerja',
-                'j.jenis_shift',
-                'wj.id_jadwal_kerja', // Field dari jadwal_kerja
-                'wj.nama_hari',
-                'wj.jam_masuk AS jam_masuk_jadwal',
-                'wj.jam_keluar AS jam_keluar_jadwal',
-                'wj.mulai_istirahat',
-                'wj.berakhir_istirahat',
-                'wj.jumlah_jam',
+                'MAX(a.jam_masuk) AS jam_masuk',
+                'MAX(a.jam_pulang) AS jam_pulang',
+                'MAX(a.kode_status_hadir) AS kode_status_hadir',
+                'MAX(a.keterangan) AS keterangan_absensi',
+                'MAX(a.lampiran) AS lampiran',
+                'MAX(jk.id_jam_kerja_karyawan) AS id_jam_kerja_karyawan',
+                'MAX(jk.id_jam_kerja) AS id_jam_kerja',
+                'MAX(jk.max_terlambat) AS max_terlambat',
+                'MAX(j.nama_jam_kerja) AS nama_jam_kerja',
+                'MAX(j.jenis_shift) AS jenis_shift',
+                'MAX(wj.id_jadwal_kerja) AS id_jadwal_kerja',
+                'MAX(wj.nama_hari) AS nama_hari',
+                'MAX(wj.jam_masuk) AS jam_masuk_jadwal',
+                'MAX(wj.jam_keluar) AS jam_keluar_jadwal',
+                'MAX(wj.mulai_istirahat) AS mulai_istirahat',
+                'MAX(wj.berakhir_istirahat) AS berakhir_istirahat',
+                'MAX(wj.jumlah_jam) AS jumlah_jam',
             ])
             ->from('{{%karyawan}} k')
+            ->leftJoin('{{%absensi}} a', 'k.id_karyawan = a.id_karyawan AND a.tanggal = :tanggal')
             ->leftJoin('{{%data_pekerjaan}} dp', 'k.id_karyawan = dp.id_karyawan')
-            ->leftJoin('{{%absensi}} a', 'k.id_karyawan = a.id_karyawan')
             ->leftJoin('{{%jam_kerja_karyawan}} jk', 'k.id_karyawan = jk.id_karyawan')
             ->leftJoin('{{%jam_kerja}} j', 'jk.id_jam_kerja = j.id_jam_kerja')
-            ->leftJoin('{{%jadwal_kerja}} wj', 'jk.id_jam_kerja = wj.id_jam_kerja'); // Left join dengan jadwal_kerja
+            ->leftJoin('{{%jadwal_kerja}} wj', 'jk.id_jam_kerja = wj.id_jam_kerja')
+            ->groupBy('k.id_karyawan')
+            ->addParams([':tanggal' => $tanggalSet]); // Menambahkan parameter tanggal
 
         $results = $query->all();
         $result = [];
 
-
-
+        $currentDate = $tanggalSet; // Gunakan tanggalSet
         // Mendapatkan hari saat ini (1 = Senin, 0 = Minggu, dst.)
         $currentDayOfWeek = date('w'); // 0 (Minggu) sampai 6 (Sabtu)
         $currentDayOfWeek = $currentDayOfWeek == 0 ? 7 : $currentDayOfWeek; // Mengubah Minggu (0) menjadi 7
@@ -256,20 +307,17 @@ class KaryawanSearch extends Karyawan
             }
 
             // Add absensi
-            if ($row['id_absensi']) {
-                if ($row['tanggal_absensi'] == date('Y-m-d')) {
-                    if (!isset($result[$row['id_karyawan']]['absensi']) || empty($result[$row['id_karyawan']]['absensi'])) {
-                        $result[$row['id_karyawan']]['absensi'] = [
-                            'id_absensi' => $row['id_absensi'],
-                            'tanggal_absensi' => $row['tanggal_absensi'],
-                            'jam_masuk' => $row['jam_masuk'],
-                            'jam_pulang' => $row['jam_pulang'],
-                            'kode_status_hadir' => $row['kode_status_hadir'],
-                            'keterangan_absensi' => $row['keterangan_absensi'],
-                            'lampiran' => $row['lampiran'],
-                        ];
-                    }
-                }
+            if ($row['id_absensi'] && $row['tanggal_absensi'] == $currentDate) {
+                // Tambahkan entri absensi ke array
+                $result[$row['id_karyawan']]['absensi'] = [
+                    'id_absensi' => $row['id_absensi'],
+                    'tanggal_absensi' => $row['tanggal_absensi'],
+                    'jam_masuk' => $row['jam_masuk'],
+                    // 'jam_pulang' => $row['jam_pulang'],
+                    'kode_status_hadir' => $row['kode_status_hadir'],
+                    // 'keterangan_absensi' => $row['keterangan_absensi'],
+                    // 'lampiran' => $row['lampiran'],
+                ];
             }
 
             // Add jam_kerja
@@ -286,7 +334,7 @@ class KaryawanSearch extends Karyawan
             }
 
             // Add jadwal_kerja (hanya untuk hari ini)
-            if ($row['id_jadwal_kerja'] && ($row['nama_hari'] == $currentDayOfWeek)) {
+            if ($row['id_jadwal_kerja']) {
                 // Cek jika jadwal kerja sudah ada untuk karyawan ini
                 $existingJadwal = $result[$row['id_karyawan']]['jadwal_kerja'] ?? null;
 
@@ -305,8 +353,6 @@ class KaryawanSearch extends Karyawan
             }
         }
 
-
-
         $dataProvider = new ArrayDataProvider([
             'models' => $result,
             'pagination' => [
@@ -316,6 +362,7 @@ class KaryawanSearch extends Karyawan
 
         return $dataProvider;
     }
+
 
 
     public function searchJadwalKerja($params)

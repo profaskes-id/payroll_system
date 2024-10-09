@@ -315,19 +315,6 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
 <script>
     $(document).ready(function() {
 
-        // // Toggle disabled state for #kode_karyawan
-        // $('#manual_kode').on('click', function() {
-        //     $('#kode_karyawan').prop('readonly', function(i, val) {
-        //         return !val;
-        //     });
-        // });
-
-        // // Set readonly property based on #is_currnetly_domisili checkbox state
-        // const $domisili = $('.domisili');
-        // $('#is_currnetly_domisili').on('change', function() {
-        //     const isChecked = $(this).is(':checked');
-        //     $domisili.prop('readonly', isChecked).val(isChecked ? '' : $domisili.val());
-        // }).trigger('change'); // Trigger change to set initial state
 
 
         $('#provinsi-identitas').change(function(e) {

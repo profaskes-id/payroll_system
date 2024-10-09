@@ -394,13 +394,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                             'headerOptions' => ['style' => 'width: 3%; text-align: center;'],
                                             'contentOptions' => ['style' => 'width: 3%; text-align: center;'],
                                             'format' => 'raw',
-                                            'label' => 'Download Kontrak',
+                                            'label' => 'Draft Kontrak',
                                             'value' => function ($model) {
                                                 if ($model['is_aktif'] == 1) {
                                                     if ($model['id_cetak']) {
-                                                        return Html::a('<button class="btn btn-primary"><i class="fas fa-download"></i></button></button>', ['/cetak/view', 'id_cetak' => $model['id_cetak']]);
+                                                        return Html::a('<button class="btn btn-primary"><i class="fa fa-eye"></i></button></button>', ['/cetak/view', 'id_cetak' => $model['id_cetak']]);
                                                     } else {
-                                                        return Html::a('<button class="btn btn-primary"><i class="fas fa-download"></i></button></button>', ['/cetak/create', 'id_karyawan' => $model['id_karyawan'], 'id_data_pekerjaan' => $model['id_data_pekerjaan']]);
+                                                        return Html::a('<button class="btn btn-primary"><i class="fa fa-plus"></i></button></button>', ['/cetak/create', 'id_karyawan' => $model['id_karyawan'], 'id_data_pekerjaan' => $model['id_data_pekerjaan']]);
                                                     }
                                                 } else {
                                                     return '<span class=""></span>';
@@ -411,7 +411,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             'headerOptions' => ['style' => 'width: 3%; text-align: center;'],
                                             'contentOptions' => ['style' => 'width: 3%; text-align: center;'],
                                             'format' => 'raw',
-                                            'label' => 'Upload Kontrak',
+                                            'label' => 'Fix Kontrak',
                                             'value' => function ($model) {
                                                 if ($model['is_aktif'] == 1) {
                                                     if ($model['id_cetak']) {

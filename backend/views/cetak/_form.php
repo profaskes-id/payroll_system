@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -94,7 +95,10 @@ use yii\widgets\ActiveForm;
             </div>
 
             <div class="col-12">
-                <?= $form->field($model, 'tempat_dan_tanggal_surat')->textInput(['maxlength' => true, 'placeholder' => 'Tempat dan Tanggal', 'value' => "Indonesia " . date('d F Y', strtotime($pekerjaan->dari))]) ?>
+                <?php
+                $tanggal = new Tanggal();
+                ?>
+                <?= $form->field($model, 'tempat_dan_tanggal_surat')->textInput(['maxlength' => true, 'placeholder' => 'Tempat dan Tanggal', 'value' =>    implode(' ', array_slice(explode(' ', $perusahaan->kabupatenPerusahaan->nama_kab), 1)) . ', ' .  $tanggal->getIndonesiaFormatTanggal($pekerjaan->dari)]) ?>
             </div>
 
 

@@ -59,26 +59,26 @@ $tanggal = new Tanggal;
                     </h3>
                 </th>
             </tr>
-            <tr>
+            <tr class="text-center" style="vertical-align: middle;">
                 <?php foreach ($tanggal_bulanan as $item) : ?>
                     <?php
                     $date = date_create($item . '-' . $bulan . '-' . $tahun);
                     $day_of_week = date_format($date, 'w');
                     ?>
-                    <td <?php if ($day_of_week == 0) echo 'style="background-color: #be123c; color:white;"'; ?>>
+                    <td <?php if ($day_of_week == 0) echo 'style="background-color: #aaa; color:white;"'; ?>>
                         <?= $item ?>
                     </td>
                 <?php endforeach ?>
             </tr>
 
             <?php foreach ($hasil as $karyawan) : ?>
-                <tr>
+                <tr style="vertical-align: middle;">
                     <?php foreach ($karyawan as $key => $data) : ?>
 
                         <?php if ($key == 0) : ?>
                             <td>
                                 <?php $text  = strtolower($data['nama']); ?>
-                                <div class="d-flex flex-column">
+                                <div class=" d-flex flex-column">
                                     <p style="margin: 0; padding:0;  text-transform: capitalize;  font-weight: bold"><?= $text ?></p>
 
                                     <p style="margin: 0; padding:0;  text-transform: capitalize;"><?= $data['kode_karyawan'] ?></p>
@@ -102,10 +102,9 @@ $tanggal = new Tanggal;
                             $date = date_create($tanggal_bulanan[$key - 1]  . '-' . $bulan . '-' . $tahun);
                             $day_of_week = date_format($date, 'w');
                             ?>
-                            <td <?php if ($day_of_week == 0) echo 'style="background-color: #be123c; color:white;"'; ?>>
-
-                                <p>
-                                    <?php if ($data !== null && $data['status_hadir'] !== null && $data['jam_masuk_karyawan'] !== null):  ?>
+                            <td <?php if ($day_of_week == 0) echo 'style="background-color: #aaa; color:white;"'; ?>>
+                                <p style="width: 40px; text-align: center; vertical-align: middle;">
+                                    <?php if ($data !== null && $data['status_hadir'] !== null && $data['jam_masuk_karyawan'] !== null): ?>
                                         <?php
                                         $jamKerjakaryawan = $data['jam_masuk_karyawan'];
                                         $jamKerjaKantor = $data['jam_masuk_kantor'];
@@ -114,16 +113,26 @@ $tanggal = new Tanggal;
                                         $jam_karyawan_masuk_time = strtotime($jamKerjaKantor);
                                         ?>
 
-                                        <?php if ($jam_karyawan_masuk_time <= $jam_masuk_kerja_time) : ?>
-                                            <span style='color: red;'><?= $data['status_hadir'] ?></span>
-                                        <?php else :  ?>
-                                            <span style='color: black;'> <?= $data['status_hadir'] ?> </span>
-                                        <?php endif ?>
+                                        <?php if ($jam_karyawan_masuk_time > $jam_masuk_kerja_time) : ?>
+                                            <span style='color: red;'><?= $data['status_hadir'] ?></span><br />
+                                            <?php
+                                            // Hitung selisih waktu
+                                            $selisih_detik = $jam_karyawan_masuk_time - $jam_masuk_kerja_time;
+                                            $menit = floor($selisih_detik / 60);
+                                            $detik = $selisih_detik % 60;
 
-                                    <?php else :  ?>
-                                    <?php endif ?>
-
+                                            // Tambahkan nol di depan jika kurang dari 10
+                                            $menit = str_pad($menit, 2, '0', STR_PAD_LEFT);
+                                            $detik = str_pad($detik, 2, '0', STR_PAD_LEFT);
+                                            ?>
+                                            <span style='color: red; font-size: 12px; display: flex;'>+<?= $menit ?>:<?= $detik ?></span>
+                                        <?php else : ?>
+                                            <span style='color: black;'><?= $data['status_hadir'] ?></span>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
                                 </p>
+
+
 
                             <?php endif ?>
                             </td>
@@ -141,7 +150,7 @@ $tanggal = new Tanggal;
                     $day_of_week = date_format($date, 'w');
                     ?>
                     <?php if ($day_of_week == 0): ?>
-                        <td style="font-weight:600; background-color: #be123c; color:fff"><?= '' ?? '' ?></td>
+                        <td style="font-weight:600; background-color: #aaa; color:fff"><?= '' ?? '' ?></td>
                     <?php else : ?>
                         <td style="font-weight:600; background-color: #ffde21; color:000"><?= $rekapan ?? '0' ?></td>
                     <?php endif; ?>

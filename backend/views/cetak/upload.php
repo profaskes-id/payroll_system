@@ -10,9 +10,7 @@ use yii\widgets\ActiveForm;
 
 
 <?php
-$this->title = Yii::t('app', 'Upload Surat kontrak : {name}', [
-    'name' => $model->karyawan->nama,
-]);
+$this->title = Yii::t('app', 'Surat Perjanjian Kontrak Kerja');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Cetaks'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->karyawan->nama, 'url' => ['view', 'id_cetak' => $model->id_cetak]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
@@ -38,30 +36,48 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 <div class=" table-container">
     <div class="">
 
-
-        <div class="mb-5">
-            <?php if ($model->surat_upload): ?>
-                <a href="<?= Yii::getAlias('@root/panel/' . $model->surat_upload) ?>" target="_blank">
-                    preview
-                </a>
-            <?php else: ?>
-                <p>Belum Di Upload</p>
-            <?php endif; ?>
-        </div>
-
+        <?php if ($model->surat_upload): ?>
+            <h5>Perbarui Surat Perjanjian Kontrak Kerja ( <?= $model->karyawan->nama ?> )</h5>
+        <?php else: ?>
+            <h5>Upload Surat Perjanjian Kontrak Kerja</h5>
+        <?php endif; ?>
         <div class="">
-            <?= $form->field($model, 'surat_upload')->fileInput(['class' => 'form-control', 'maxlength' => true]) ?>
+            <?= $form->field($model, 'surat_upload')->fileInput(['class' => 'form-control', 'maxlength' => true])->label('Surat Kontrak Kerja') ?>
         </div>
+
+
+        <?php if ($model->surat_upload): ?>
+            <div class="col-md-6 form-group">
+                <button class="add-button" type="submit">
+                    <span>
+                        Update
+                    </span>
+                </button>
+            </div>
+        <?php else: ?>
+            <div class="col-md-6 form-group">
+                <button class="add-button" type="submit">
+                    <span>
+                        Save
+                    </span>
+                </button>
+            </div> <?php endif; ?>
+
     </div>
 
-    <div class="col-md-6"></div>
 
-    <div class="col-md-6 form-group">
-        <button class="add-button" type="submit">
-            <span>
-                Save
-            </span>
-        </button>
+</div>
+<div class='table-container mt-5'>
+
+    <div class="mb-5">
+        <h5>Surat Perjanjian Kontrak Kerja <?= $model->karyawan->nama ?></h5>
+        <?php if ($model->surat_upload): ?>
+            <a href="<?= Yii::getAlias('@root/panel/' . $model->surat_upload) ?>" target="_blank">
+                Klik Untuk Lihat Surat Kontrak
+            </a>
+        <?php else: ?>
+            <p>Belum Di Upload</p>
+        <?php endif; ?>
     </div>
 </div>
 

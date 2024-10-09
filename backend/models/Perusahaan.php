@@ -29,10 +29,11 @@ class Perusahaan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nama_perusahaan', 'status_perusahaan', 'alamat', 'direktur'], 'required'],
+            [['nama_perusahaan', 'status_perusahaan', 'provinsi', 'kabupaten_kota', 'alamat', 'direktur'], 'required'],
             [['status_perusahaan'], 'integer'],
             [['alamat', 'bidang_perusahaan'], 'string'],
-            [['nama_perusahaan', 'direktur', 'logo'], 'string', 'max' => 255],
+            [['didirikan_pada'], 'safe'],
+            [['nama_perusahaan', 'provinsi', 'kabupaten_kota', 'direktur', 'logo'], 'string', 'max' => 255],
         ];
     }
 
@@ -45,10 +46,13 @@ class Perusahaan extends \yii\db\ActiveRecord
             'id_perusahaan' => 'Id Perusahaan',
             'nama_perusahaan' => 'Nama Perusahaan',
             'status_perusahaan' => 'Status Perusahaan',
-            'alamat' => 'Alamat Perusahaan',
+            'provinsi' => 'Provinsi',
+            'kabupaten_kota' => 'Kabupatan Kota',
+            'alamat' => 'Alamat',
             'direktur' => 'Direktur',
             'logo' => 'Logo',
-            'bidang_perusahaan' => 'Bidang Usaha',
+            'bidang_perusahaan' => 'Bidang Perusahaan',
+            'didirikan_pada' => 'Didirikan Pada',
         ];
     }
 
@@ -65,5 +69,22 @@ class Perusahaan extends \yii\db\ActiveRecord
     public function getStatusPerusahaan()
     {
         return $this->hasOne(MasterKode::class, ['kode' => 'status_perusahaan'])->onCondition(['nama_group' => 'status-perusahaan']);
+    }
+    public function getProvinsi()
+    {
+        return $this->hasOne(MasterProp::class, ['kode_prop'  => 'provinsi']);
+    }
+    public function getKabupatenkota()
+    {
+        return $this->hasOne(MasterKab::class, ['kode_kab'  => 'kabupaten_kota']);
+    }
+
+    public function getProvinsiPerusahaan()
+    {
+        return $this->hasOne(MasterProp::class, ['kode_prop'  => 'provinsi']);
+    }
+    public function getKabupatenPerusahaan()
+    {
+        return $this->hasOne(MasterKab::class, ['kode_kab'  => 'kabupaten_kota']);
     }
 }

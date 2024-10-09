@@ -1,3 +1,9 @@
+<?php
+
+use backend\models\Tanggal;
+
+$tanggalFormat = new Tanggal();
+?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -9,11 +15,11 @@
 </head>
 
 <body>
-    <div class="container mt-5 content">
-        <h3 class="text-center">PERJANJIAN KERJA WAKTU TERTENTU</h3>
-        <p class="text-center"><?= $model['nomor_surat'] ?></p>
+    <div class="container mt-5 content p-">
+        <h3 class="text-center " style="text-decoration: underline;">PERJANJIAN KERJA WAKTU TERTENTU</h3>
+        <p class="text-center">Nomor : <?= $model['nomor_surat'] ?></p>
         <p>Perjanjian ini adalah antara:</p>
-        <p><strong><?= $model['nama_penanda_tangan'] ?></strong>, dalam hal ini bertindak atas jabatannya sebagai <?= $model['jabatan_penanda_tangan'] ?> <?= $perusahaan['nama_perusahaan'] ?>, sebuah perusahaan yang bergerak di bidang jasa penyedia aplikasi kesehatan <?= $perusahaan['nama_perusahaan'] ?> yang berkedudukan di <?= $perusahaan['alamat'] ?>, Untuk selanjutnya disebut sebagai <strong>PIHAK PERTAMA</strong>.</p>
+        <p><strong><?= $model['nama_penanda_tangan'] ?></strong>, dalam hal ini bertindak atas jabatannya sebagai <?= $model['jabatan_penanda_tangan'] ?> <?= $perusahaan['nama_perusahaan'] ?>, sebuah perusahaan yang bergerak di bidang <?= $perusahaan['bidang_perusahaan'] ?>. <?= $perusahaan['nama_perusahaan'] ?> yang berkedudukan di <?= $perusahaan['alamat'] ?>, Untuk selanjutnya disebut sebagai <strong>PIHAK PERTAMA</strong>.</p>
 
         <p>Dengan:</p>
         <p>
@@ -26,7 +32,7 @@
             <tr>
                 <td>Tempat, Tgl Lahir:</td>
                 <td style="vertical-align: top; text-align:center; width:25px;">:</td>
-                <td style="text-transform: capitalize;"><?= $karyawan['tempat_lahir'] ?>, <?= date('d F Y', strtotime($karyawan['tanggal_lahir'])) ?></td>
+                <td style="text-transform: capitalize;"><?= $karyawan['tempat_lahir']  ?>, <?= $tanggalFormat->getIndonesiaFormatTanggal($karyawan['tanggal_lahir']);  ?></td>
             </tr>
             <tr>
                 <td>Nomor Identitias</td>
@@ -41,7 +47,7 @@
             <tr>
                 <td>Jenis Kelamin</td>
                 <td style="vertical-align: top; text-align:center; width:25px;">:</td>
-                <td><?= $karyawan->kode_jenis_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan' ?></td>
+                <td><?= $karyawan->kode_jenis_kelamin == 'L' || $karyawan->kode_jenis_kelamin == '1' ? 'Laki-Laki' : 'Perempuan' ?></td>
             </tr>
             <tr>
                 <td>Status Menikah</td>
@@ -77,9 +83,9 @@
             <tr class="pb-5">
                 <td class="w-25" style="vertical-align: top !important;">MASA KONTRAK</td>
                 <td class="w-25" style="vertical-align: top; width:30px; text-align:center;"><strong>:</strong></td>
-                <td>Mulai dari <?= date('d F Y', strtotime($dataPekerjaan['dari'])) ?> sampai dengan
+                <td>Mulai dari <?= $tanggalFormat->getIndonesiaFormatTanggal($dataPekerjaan['dari']) ?> sampai dengan
                     <?php if ($dataPekerjaan['sampai']) :  ?>
-                        <?= date('d F Y', strtotime($dataPekerjaan['sampai'])) ?>.
+                        <?= $tanggalFormat->getIndonesiaFormatTanggal($dataPekerjaan['sampai']) ?>.
                     <?php else :  ?>
                         <?= 'Sekarang' ?>
                     <?php endif; ?>
@@ -96,20 +102,20 @@
                 <td class="w-25" style="vertical-align: top !important;">HAK PIHAK KEDUA</td>
                 <td class="w-25" style="vertical-align: top; width:30px; text-align:center;"><strong>:</strong></td>
                 <td>
-                    <ul style="padding-left: 20px;">
+                    <ol style="padding-left: 20px;">
                         <li>Mendapat gaji pokok, transport tunjangan jabatan, bonus kinerja.</li>
                         <li>Mendapat fasilitas BPJS Kesehatan dan BPJS Ketenagakerjaan.</li>
                         <li>Mendapat tunjangan hari raya keagamaan sebesar 1 (satu) bulan gaji. Apabila pihak kedua masa kerjanya belum mencapai 1 (satu) tahun pada saat hari raya keagamaan dibayarkan, berhak mendapatkan 1/12 (seperduabelas) dari tunjangan hari raya untuk setiap bulan masa kerja.</li>
                         <li>Bekerja WFH mendapatkan potongan sesuai ketentuan perusahaan.</li>
                         <li>Pajak yang timbul atas gaji ditanggung oleh karyawan.</li>
-                    </ul>
+                    </ol>
                 </td>
             </tr>
-            <tr class="pb-5">
+            <tr class=" py-5">
                 <td class="w-25" style="vertical-align: top !important;">KEWAJIBAN PIHAK KEDUA</td>
                 <td class="w-25" style="vertical-align: top; width:30px; text-align:center;"><strong>:</strong></td>
                 <td>
-                    <ul type="square">
+                    <ol>
                         <li>Hadir di kantor sesuai waktu & jam kerja yang berlaku di perusahaan.</li>
                         <li>Menjalankan pekerjaan sesuai uraian tugas, tanggungjawab dan wewenang yang diberikan.</li>
                         <li>Menjaga nama baik dan rahasia perusahaan.</li>
@@ -118,24 +124,24 @@
                         <li>Menjaga kerahasiaan data medis berdasarkan Peraturan Menteri Kesehatan Nomor 24 tahun 2022 tentang Rekam Medis.</li>
                         <li>Dilarang mengikat hubungan kerja dengan perusahaan lain.</li>
                         <li>Dilarang menerima komisi dari pembelian atau jasa untuk kepentingan pribadi.</li>
-                    </ul>
+                    </ol>
                 </td>
             </tr>
             <tr class="pb-5">
                 <td class="w-25" style="vertical-align: top !important;">PEMUTUSAN HUBUNGAN KERJA</td>
                 <td class="w-25" style="vertical-align: top; width:30px; text-align:center;"><strong>:</strong></td>
                 <td>
-                    <ul type="disc">
+                    <ol>
                         <li>Pihak pertama maupun pihak kedua dapat melakukan pemutusan hubungan kerja sewaktu-waktu dengan pemberitahuan 30 (tiga puluh) hari sebelumnya.</li>
                         <li>Pemutusan hubungan kerja yang tidak sesuai prosedur maka akan membatalkan hak-hak para Pihak.</li>
-                    </ul>
+                    </ol>
                 </td>
             </tr>
             <tr class="pb-5">
                 <td class="w-25" style="vertical-align: top;">IJIN MENINGGALKAN KERJA</td>
                 <td class="w-25" style="vertical-align: top; width:30px; text-align:center;"><strong>:</strong></td>
                 <td>
-                    <ul>
+                    <ol>
                         <li>Pihak kedua boleh meninggalkan kerja tanpa pemotongan gaji untuk keperluan:</li>
                         <ul>
                             <li>Sakit yang dibuktikan dengan surat dokter.</li>
@@ -146,7 +152,7 @@
                             <li>Anggota keluarga dalam satu rumah meninggal dunia: 1 (satu) hari kerja.</li>
                         </ul>
                         <li>Meninggalkan kerja di luar kepentingan di atas dapat diperoleh jika ada kepentingan yang sangat mendesak dengan dilakukan pemotongan gaji sesuai jumlah hari ketidakhadiran.</li>
-                    </ul>
+                    </ol>
                 </td>
             </tr>
         </table>

@@ -4,8 +4,7 @@ use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var backend\models\DataPekerjaan $model */
-
-$this->title = 'Tambah Data Pekerjaan';
+$this->title = 'Tambah Data Pekerjaan' . ' ' . $karyawan_nama['nama'];
 $this->params['breadcrumbs'][] = ['label' => 'Data pekerjaan', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
