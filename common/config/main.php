@@ -5,8 +5,11 @@ return [
         '@npm'   => '@vendor/npm-asset',
     ],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
+    'name' => 'Admin Panel',
+    'timeZone' => 'Asia/Jakarta',
+    'language' => 'id_ID',
     'components' => [
- 'assetManager' => [
+        'assetManager' => [
             'bundles' => [
                 'kartik\select2\Select2' => [
                     'bsDependencyEnabled' => false,

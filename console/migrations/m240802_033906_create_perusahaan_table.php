@@ -16,6 +16,10 @@ class m240802_033906_create_perusahaan_table extends Migration
             'id_perusahaan' => $this->primaryKey(),
             'nama_perusahaan' => $this->string()->notNull(),
             'status_perusahaan' => $this->integer()->notNull(),
+            'alamat' => $this->text()->notNull(),
+            'direktur' => $this->string()->notNull(),
+            'logo' => $this->string()->null(),
+            'bidang_perusahaan' => $this->text()->null(),
         ]);
     }
 

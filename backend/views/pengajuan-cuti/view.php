@@ -1,6 +1,7 @@
 <?php
 
 use amnah\yii2\user\models\User;
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -50,19 +51,25 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'label' => 'Diajukan Pada',
                     'value' => function ($model) {
-                        return date('d-m-Y', strtotime($model->tanggal_pengajuan));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_pengajuan);
+                        // return date('d-m-Y', strtotime($model->tanggal_pengajuan));
                     }
                 ],
                 [
                     'label' => 'Tanggal Mulai Cuti',
                     'value' => function ($model) {
-                        return date('d-m-Y', strtotime($model->tanggal_mulai));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_mulai);
+                        // return date('d-m-Y', strtotime($model->tanggal_mulai));
                     }
                 ],
                 [
                     'label' => 'Tanggal Selesai Cuti',
                     'value' => function ($model) {
-                        return date('d-m-Y', strtotime($model->tanggal_selesai));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_selesai);
+                        // return date('d-m-Y', strtotime($model->tanggal_selesai));
                     }
                 ],
                 'alasan_cuti:ntext',

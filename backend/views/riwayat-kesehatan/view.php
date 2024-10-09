@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -44,7 +45,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'label' => 'Tanggal',
                     'value' => function ($model) {
-                        return date('d M Y', strtotime($model->tanggal));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal);
+                        // return date('d M Y', strtotime($model->tanggal));
                     }
                 ],
                 [

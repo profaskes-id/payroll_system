@@ -40,13 +40,40 @@ class DataPekerjaanSearch extends DataPekerjaan
      */
     public function search($params)
     {
-        $query = DataPekerjaan::find();
+        $query = DataPekerjaan::find()
+            ->select([
+                'data_pekerjaan.id_data_pekerjaan',
+                'data_pekerjaan.id_karyawan',
+                'data_pekerjaan.id_bagian',
+                'data_pekerjaan.dari',
+                'data_pekerjaan.sampai',
+                'data_pekerjaan.status',
+                'data_pekerjaan.jabatan',
+                'data_pekerjaan.is_aktif',
+                'data_pekerjaan.is_currenty',
+                'data_pekerjaan.surat_lamaran_pekerjaan',
+                'data_pekerjaan.gaji_pokok',
+                'cetak.id_cetak',
+                'cetak.surat_upload',
+                'bagian.id_bagian',
+                'bagian.nama_bagian',
+                'karyawan.id_karyawan',
+                'mk.nama_kode as status_pekerjaan',
+
+            ])
+            ->asArray()
+            ->where(['data_pekerjaan.id_karyawan' => $this->id_karyawan])
+            ->leftJoin('{{%cetak}} cetak', 'data_pekerjaan.id_data_pekerjaan = cetak.id_data_pekerjaan and data_pekerjaan.id_karyawan = cetak.id_karyawan')
+            ->leftJoin('{{%karyawan}} karyawan', 'data_pekerjaan.id_karyawan = karyawan.id_karyawan')
+            ->leftJoin('{{%bagian}} bagian', 'data_pekerjaan.id_bagian = bagian.id_bagian')
+            ->leftJoin('{{%master_kode}} mk', 'mk.nama_group = "status-pekerjaan" and data_pekerjaan.status = mk.kode');
+
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => ['defaultOrder' => ['id_data_pekerjaan' => SORT_DESC]],
+            // 'sort' => ['defaultOrder' => ['status' => SORT_DESC]],
         ]);
 
         $this->load($params);
@@ -60,7 +87,7 @@ class DataPekerjaanSearch extends DataPekerjaan
         // grid filtering conditions
         $query->andFilterWhere([
             'id_data_pekerjaan' => $this->id_data_pekerjaan,
-            'id_karyawan' => $this->id_karyawan,
+            // 'id_karyawan' => $this->id_karyawan,
             'id_bagian' => $this->id_bagian,
             'dari' => $this->dari,
             'sampai' => $this->sampai,
@@ -69,6 +96,7 @@ class DataPekerjaanSearch extends DataPekerjaan
 
         $query->andFilterWhere(['like', 'status', $this->status])
             ->andFilterWhere(['like', 'jabatan', $this->jabatan]);
+
 
         return $dataProvider;
     }

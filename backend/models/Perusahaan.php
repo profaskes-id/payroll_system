@@ -29,9 +29,10 @@ class Perusahaan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['nama_perusahaan', 'status_perusahaan'], 'required'],
+            [['nama_perusahaan', 'status_perusahaan', 'alamat', 'direktur'], 'required'],
             [['status_perusahaan'], 'integer'],
-            [['nama_perusahaan'], 'string', 'max' => 255],
+            [['alamat', 'bidang_perusahaan'], 'string'],
+            [['nama_perusahaan', 'direktur', 'logo'], 'string', 'max' => 255],
         ];
     }
 
@@ -44,6 +45,10 @@ class Perusahaan extends \yii\db\ActiveRecord
             'id_perusahaan' => 'Id Perusahaan',
             'nama_perusahaan' => 'Nama Perusahaan',
             'status_perusahaan' => 'Status Perusahaan',
+            'alamat' => 'Alamat Perusahaan',
+            'direktur' => 'Direktur',
+            'logo' => 'Logo',
+            'bidang_perusahaan' => 'Bidang Usaha',
         ];
     }
 

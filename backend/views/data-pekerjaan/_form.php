@@ -66,7 +66,7 @@ use yii\widgets\ActiveForm;
         </div>
 
         <div class="col-md-4">
-            <?= $form->field($model, 'dari')->textInput(['type' => 'date']) ?>
+            <?= $form->field($model, 'dari')->textInput(['type' => 'date', 'id' => 'dari']) ?>
         </div>
 
         <div class="col-md-4">
@@ -95,24 +95,18 @@ use yii\widgets\ActiveForm;
         </div>
 
 
-        <div class="col-md-6">
+        <div class="col-12">
             <?= $form->field($model, 'surat_lamaran_pekerjaan')->fileInput(['class' => 'form-control'])->label('Surat Lamaran Pekerjaan <sup>(opsional)<sup>') ?>
 
         </div>
         <div class="col-md-6 ">
-            <?= $form->field($model, 'gaji_pokok')->textInput(['format' => 'currency', 'class' => 'form-control'])->label('Gaji Pokok Karyawan') ?>
+            <?= $form->field($model, 'gaji_pokok')->textInput(['id' => 'gaji_pokok',  'class' => 'form-control'])->label('Gaji Pokok Karyawan') ?>
         </div>
-        <!-- <div class="col-md-6 ">
-            <? // $form->field($model, 'terbilang')->textInput(['class' => 'form-control'])->label('Terbilang') 
-            ?>
-        </div> -->
+        <div class="col-md-6 ">
+            <?= $form->field($model, 'terbilang')->textInput(['id' => 'terbilang', 'class' => 'form-control'])->label('Terbilang') ?>
+        </div>
 
-        <div class="col-md-6">
-            <?= $form->field($model, 'is_aktif')->radioList(
-                [0 => 'Tidak Aktif', 1 => 'Aktif'], // Daftar opsi
-                ['itemOptions' => ['labelOptions' => ['style' => 'margin-right: 20px;']]] // Opsi tambahan, misalnya style
-            )->label('Status Aktif') ?>
-        </div>
+
     </div>
 
 
@@ -128,12 +122,100 @@ use yii\widgets\ActiveForm;
 
 </div>
 
+
+
+<script>
+    const gajiPokokInput = document.querySelector('#gaji_pokok');
+    const terbilangInput = document.querySelector('#terbilang');
+
+    gajiPokokInput.addEventListener('input', (e) => {
+        const value = e.target.value.replace(/[^\d]/g, ''); // remove non-numeric characters
+        const formattedValue = formatCurrency(value); // format as Indonesian currency
+        e.target.value = formattedValue;
+
+        const terbilangValue = convertToTerbilang(value); // convert to text representation
+        terbilangInput.value = terbilangValue;
+    });
+
+    function formatCurrency(value) {
+        return value.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // add dots as thousand separators
+    }
+
+    function convertToTerbilang(value) {
+        const numbers = [
+            '', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima', 'Enam', 'Tujuh', 'Delapan', 'Sembilan'
+        ];
+        const levels = ['', 'Ribu', 'Juta', 'Milyar', 'Triliun'];
+
+        let result = '';
+        let level = 0;
+        let temp = value;
+
+        while (temp > 0) {
+            const remainder = temp % 1000;
+            temp = Math.floor(temp / 1000);
+            result = convertToTerbilangLevel(remainder) + ' ' + levels[level] + ' ' + result;
+            level++;
+        }
+
+        return result.trim();
+    }
+
+    function convertToTerbilangLevel(value) {
+        if (value === 0) return '';
+        if (value === 1) return 'Se';
+
+        let result = '';
+        const hundreds = Math.floor(value / 100);
+        value %= 100;
+        const tens = Math.floor(value / 10);
+        value %= 10;
+
+        if (hundreds > 0) {
+            result += numbers[hundreds] + 'ratus ';
+        }
+
+        if (tens > 1) {
+            result += numbers[tens] + 'puluh ';
+        } else if (tens === 1) {
+            result += 'Sepuluh ';
+        }
+
+        if (value > 0) {
+            result += numbers[value];
+        }
+
+        return result.trim();
+    }
+</script>
 <script>
     const manual_kode = document.querySelector('#manual_kode');
     const kode_sampai = document.querySelector('#kode_sampai');
     const is_currenty = document.querySelector('#is_currenty');
     const sampai = document.querySelector('.selama');
     const selama = Array.from(document.querySelectorAll('input[name="DataPekerjaan[selama]"]'));
+    const dari = document.querySelector('#dari');
+
+    function addMonthOrYear(dateString, month, year) {
+        // Parse the input date string into a Date object
+        const date = new Date(dateString);
+
+        // Add the specified month(s)
+        date.setMonth(date.getMonth() + month);
+
+        // Add the specified year(s) if provided
+        if (year) {
+            date.setFullYear(date.getFullYear() + year);
+        }
+
+        // Return the resulting date as a string in the format "YYYY-MM-DD"
+        return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
+    }
+
+    // Helper function to pad a single digit with a zero
+    function padZero(num) {
+        return (num < 10 ? '0' : '') + num;
+    }
 
     manual_kode.addEventListener('click', () => {
         kode_sampai.disabled = kode_sampai.disabled ? false : true;
@@ -147,18 +229,21 @@ use yii\widgets\ActiveForm;
     });
 
     sampai.addEventListener('change', (e) => {
-
-        console.info(e.target.value)
-        if (e.target.value == 1) {
-            kode_sampai.value = '2023-12-31';
+        console.info()
+        if (e.target.value == 0) {
+            kode_sampai.value = '';
         } else if (e.target.value == 1) {
-            kode_sampai.value = '2024-12-31';
+            const result = addMonthOrYear(dari.value, 3);
+            kode_sampai.value = result;
+        } else if (e.target.value == 2) {
+            const result = addMonthOrYear(dari.value, 6);
+            kode_sampai.value = result;
         } else if (e.target.value == 3) {
-            kode_sampai.value = '2021-11-31';
+            const result = addMonthOrYear(dari.value, 0, 1); // Output: "2025-06-02"
+            kode_sampai.value = result;
         }
         is_currenty.value = kode_sampai.disabled ? 1 : 0;
         manual_kode.checked = false;
         kode_sampai.disabled = false;
-        // alert('Sampai Sekarang');
     });
 </script>

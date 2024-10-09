@@ -25,12 +25,26 @@ use yii\widgets\ActiveForm;
             echo $form->field($model, 'status_perusahaan')->widget(Select2::classname(), [
                 'data' => $pendidikan,
                 'language' => 'id',
-                'options' => ['placeholder' => 'Pilih Jenjang Pedidikan ...'],
+                'options' => ['placeholder' => 'Pilih Status Perusahaan ...'],
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
             ]);
-            ?> </div>
+            ?>
+        </div>
+        <div class="col-md-6">
+            <?= $form->field($model, 'direktur')->textInput(['maxlength' => true])->label('Nama Direktur') ?>
+        </div>
+        <div class="col-md-6 ">
+            <?= $form->field($model, 'logo')->fileInput(['maxlength' => true, 'class' => 'form-control'])->label('Logo') ?>
+        </div>
+        <div class="col-md-6 ">
+            <?= $form->field($model, 'alamat')->textarea(['maxlength' => true, 'row' => 5])->label('Alamat') ?>
+        </div>
+
+        <div class="col-md-6 ">
+            <?= $form->field($model, 'bidang_perusahaan')->textarea(['maxlength' => true, 'row' => 5, 'class' => 'form-control'])->label('Bidang Usaha') ?>
+        </div>
     </div>
 
     <div class="form-group">

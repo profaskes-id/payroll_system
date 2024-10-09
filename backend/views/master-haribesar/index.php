@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\MasterHaribesar;
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -57,7 +58,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['text-align: center;'],
                     'attribute' => 'Tanggal',
                     'value' => function ($model) {
-                        return date('d-M-Y', strtotime($model->tanggal));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal);
+                        // return date('d-M-Y', strtotime($model->tanggal));
                     }
                 ],
                 'nama_hari:ntext',

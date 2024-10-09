@@ -45,11 +45,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attributes' => [
                         'nama_perusahaan',
                         [
+                            'headerOptions' => ['style' => 'width: 200px; '],
                             'label' => 'Status Perusahaan',
                             'value' => function ($model) {
                                 return $model->statusPerusahaan->nama_kode;
                             }
                         ],
+                        'direktur',
+                        'alamat:ntext',
+                        'logo',
                     ],
                 ]) ?>
                 <br />
@@ -78,6 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             }
                         ],
                         'nama_bagian',
+
                     ],
                 ]); ?>
             </div>

@@ -120,7 +120,7 @@ class RekapAbsensiController extends Controller
             // set mPDF properties on the fly
             'options' => ['title' => 'Report Rekap Absensi ' . date('F')],
             'methods' => [
-                'SetHeader' => ['Data Rekap Absensi ' . date('F')],
+                // 'SetHeader' => ['Data Rekap Absensi ' . date('F')],
                 'SetFooter' => ['{PAGENO}'],
             ]
         ]);
@@ -171,13 +171,30 @@ class RekapAbsensiController extends Controller
         // dd($tanggal_bulanan);
 
         // Mengambil data karyawan
-        $dataKaryawan = Karyawan::find()->select(['id_karyawan', 'nama'])->asArray()->orderBy(['nama' => SORT_ASC])->all();
+        $dataKaryawan = Karyawan::find()->select(['karyawan.id_karyawan', 'karyawan.nama', 'karyawan.kode_karyawan', 'bg.id_bagian', 'bg.nama_bagian', 'dp.jabatan', 'mk.nama_kode as jabatan'])
+            ->asArray()
+            ->leftJoin('{{%data_pekerjaan}} dp', 'dp.id_karyawan = dp.id_karyawan')
+            ->leftJoin('{{%bagian}} bg', 'dp.id_bagian = bg.id_bagian')
+            ->leftJoin('{{%master_kode}} mk', 'mk.nama_group = "jabatan" and dp.jabatan = mk.kode')
+            ->orderBy(['nama' => SORT_ASC])
+            ->all();
 
-        // Buat array hasil
+        // dd($dataKaryawan[0]->dataPekerjaans[0]->bagian);
+        // Buat array hasild
         $hasil = [];
         $totalHari = date('t', mktime(0, 0, 0, $bulan, 1, $tahun));
         foreach ($dataKaryawan as $karyawan) {
-            $karyawanData = [$karyawan['nama']];
+
+            $karyawanData = [
+                [
+                    "id_karyawan" => ["id_karyawan"],
+                    "nama" =>   $karyawan["nama"],
+                    "kode_karyawan" =>  $karyawan["kode_karyawan"],
+                    "id_bagian" => $karyawan["id_bagian"],
+                    "bagian" => $karyawan["nama_bagian"],
+                    "jabatan" => $karyawan["jabatan"],
+                ],
+            ];
             for ($i = 1; $i <= $totalHari; $i++) {
                 $tanggal = date('Y-m-d', mktime(0, 0, 0, $bulan, $i, $tahun));
                 $statusHadir = null; // Default jika tidak ada data
@@ -222,13 +239,8 @@ class RekapAbsensiController extends Controller
                 $rekapanAbsensi[$tanggal] = 0; // Isi 0 jika tidak ada kehadiran
             }
         }
-
         // Mengurutkan array berdasarkan tanggal
         ksort($rekapanAbsensi);
-
-
-
-
         return ['tanggal_bulanan' => $tanggal_bulanan, 'hasil' => $hasil, 'rekapanAbsensi' => $rekapanAbsensi];
     }
 

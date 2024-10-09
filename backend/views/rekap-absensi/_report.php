@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\Absensi;
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -12,22 +13,29 @@ use yii\grid\GridView;
 
 $this->title = 'Rekap Absensi';
 $this->params['breadcrumbs'][] = $this->title;
+$tanggal = new Tanggal();
+
 ?>
-<div class="absensi-index position-relative">
 
 
-    <h2>Data Rekapan Absnesi</h2>
-    <h4>Bulan : <?= date('F') ?></h4>
-    <h4>tahun : <?= date('Y') ?></h4>
-
-
-
+<div style="font-size: 12px" class=" absensi-index position-relative">
 
     <div class="table-container table-responsive">
 
         <table class="table table-bordered table-responsive">
             <tr>
-                <th>Nama</th>
+                <th rowspan="3" class="text-center ">Nama dan Kode Karyawan</th>
+                <th rowspan="3" style="vertical-align: middle;" class="text-center ">Bagian </th>
+                <th rowspan="3" style="vertical-align: middle;" class="text-center ">Jabatan </th>
+            </tr>
+            <tr>
+                <th class="text-center" colspan="<?= count($tanggal_bulanan) ?>">
+                    <h3>
+                        Rekapan Absensi Bulan <?= $tanggal->getBulan($bulan) . ' Tahun ' . $tahun ?>
+                    </h3>
+                </th>
+            </tr>
+            <tr>
                 <?php foreach ($tanggal_bulanan as $item) : ?>
                     <?php
                     $date = date_create($item . '-' . date('m-Y'));
@@ -45,9 +53,25 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <?php if ($key == 0) : ?>
                             <td>
-                                <?php $text  = strtolower($data); ?>
-                                <span style="text-transform: capitalize;"><?= $text ?></span>
+                                <?php $text  = strtolower($data['nama']); ?>
+                                <div class="d-flex flex-column">
+                                    <p style="margin: 0; font-size:12px; padding:0;  text-transform: capitalize;  font-weight: bold"><?= $text ?></p>
+
+                                    <p style="margin: 0; font-size:12px; padding:0;  text-transform: capitalize;"><?= $data['kode_karyawan'] ?></p>
+                                </div>
                             </td>
+                            <td>
+                                <div class="">
+                                    <p style="margin: 0; font-size:12px; padding:0;  text-transform: capitalize; "><?= $data['bagian'] ?></p>
+                                </div>
+                            </td>
+                            <td>
+
+                                <div class="">
+                                    <p style="margin: 0; font-size:12px; padding:0;  text-transform: capitalize;"><?= $data['jabatan'] ?></p>
+                                </div>
+                            </td>
+
 
                         <?php else : ?>
                             <?php
@@ -77,11 +101,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 </tr>
             <?php endforeach ?>
             <tr>
-                <th style="font-size:11px; background-color: #ffde21; color:000">Rekapan Hadir</th>
-                <?php foreach ($rekapanAbsensi as $key => $rekapan) :  ?>
+                <th style="font-size:11px; background-color: #ffde21; color:#000">Rekapan Hadir</th>
+                <th style="font-size:11px; background-color: #ffde21; color:#fff"></th>
+                <th style="font-size:11px; background-color: #ffde21; color:#fff"></th> <?php foreach ($rekapanAbsensi as $key => $rekapan) :  ?>
                     <?php
-                    $date = date_create($tanggal_bulanan[$key - 1]  . '-' . $bulan . '-' . $tahun);
-                    $day_of_week = date_format($date, 'w');
+                                                                                            $date = date_create($tanggal_bulanan[$key - 1]  . '-' . $bulan . '-' . $tahun);
+                                                                                            $day_of_week = date_format($date, 'w');
                     ?>
                     <?php if ($day_of_week == 0): ?>
                         <td style="font-weight:600; background-color: #be123c; color:fff"><?= '' ?? '' ?></td>

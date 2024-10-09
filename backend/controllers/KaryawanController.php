@@ -4,7 +4,9 @@ namespace backend\controllers;
 
 use amnah\yii2\user\models\Profile;
 use amnah\yii2\user\models\User;
+use backend\models\Bagian;
 use backend\models\DataKeluargaSearch;
+use backend\models\DataPekerjaan;
 use backend\models\DataPekerjaanSearch;
 use backend\models\Karyawan;
 use backend\models\KaryawanSearch;
@@ -135,6 +137,9 @@ class KaryawanController extends Controller
             'KesehatanProvider' => $KesehatanProvider,
         ]);
     }
+
+
+
 
 
 

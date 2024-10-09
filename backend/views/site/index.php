@@ -4,6 +4,7 @@ use backend\models\IzinPulangCepat;
 use backend\models\PengajuanCuti;
 use backend\models\PengajuanDinas;
 use backend\models\PengajuanLembur;
+use backend\models\Tanggal;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Html;
@@ -42,38 +43,13 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
 
 <div class="flex justify-between items-center mb-5">
     <p class="text-gray-500 font-medium ">Lihat Rekapan Absensi Hari Ini</p>
-    <div class="flex space-x-2 items-center -mt-10">
+    <div class="flex space-x-2 items-center">
 
         <?php
-        $hari = [
-            'Sunday' => 'Minggu',
-            'Monday' => 'Senin',
-            'Tuesday' => 'Selasa',
-            'Wednesday' => 'Rabu',
-            'Thursday' => 'Kamis',
-            'Friday' => 'Jumat',
-            'Saturday' => 'Sabtu'
-        ];
-
-        $bulan = [
-            'January' => 'Januari',
-            'February' => 'Februari',
-            'March' => 'Maret',
-            'April' => 'April',
-            'May' => 'Mei',
-            'June' => 'Juni',
-            'July' => 'Juli',
-            'August' => 'Agustus',
-            'September' => 'September',
-            'October' => 'Oktober',
-            'November' => 'November',
-            'December' => 'Desember'
-        ];
-        $tanggal = date('l, d F Y');
-        $tanggal = str_replace(array_keys($hari), array_values($hari), $tanggal);
-        $tanggal = str_replace(array_keys($bulan), array_values($bulan), $tanggal);
-        echo "<p>$tanggal</p>";
+        $tanggal = new Tanggal();
+        $result = $tanggal->getIndonesiaFormatLong(date('l, d F Y'));
         ?>
+        <p><?= $result ?></p>
 
 
         <div class="grid place-items-center w-12 h-12 bg-gray-200 rounded-full ">
@@ -88,11 +64,14 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
 
     </div>
 </div>
+
+
 <section class="mt-6 grid grid-cols-1 lg:grid-cols-12 justify-center  lg:gap-4">
     <div class="col-span-8">
+
         <div class="grid grid-cols-1 gap-y-3">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 px-2 place-items-center  p-1 rounded-md">
-                <div class="w-full h-[150px] rounded-md p-5 bg-white ">
+                <div class="w-full h-[80px] rounded-md p-2 bg-white ">
                     <div class="flex items-start justify-start space-x-5">
                         <?= Html::img('@root/images/icons/users.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>
                         <div>
@@ -101,7 +80,7 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
                         </div>
                     </div>
                 </div>
-                <div class="w-full h-[150px] rounded-md p-5 text-white bg-sky-500">
+                <div class="w-full h-[80px] rounded-md p-2 text-white bg-sky-500">
                     <div class="flex  items-start justify-start space-x-5">
                         <?= Html::img('@root/images/icons/hadir.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>
                         <div>
@@ -110,7 +89,7 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
                         </div>
                     </div>
                 </div>
-                <div class="w-full h-[150px] rounded-md p-5 text-white bg-sky-500">
+                <div class="w-full h-[80px] rounded-md p-2 text-white bg-sky-500">
                     <div class="flex  items-start justify-start space-x-5">
                         <?= Html::img('@root/images/icons/tanpa-keterangan.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>
                         <div>
@@ -119,7 +98,7 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
                         </div>
                     </div>
                 </div>
-                <div class="w-full h-[150px] rounded-md p-5 bg-white ">
+                <div class="w-full h-[80px] rounded-md p-2 bg-white ">
                     <div class="flex  items-start justify-start space-x-5">
                         <?= Html::img('@root/images/icons/izin.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>
                         <div>
@@ -128,13 +107,13 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
                         </div>
                     </div>
                 </div>
-                <!-- <div class="w-full h-[150px] bg-teal-500"></div> -->
+                <!-- <div class="w-full h-[80px] bg-teal-500"></div> -->
             </div>
 
 
             <div class="table-container table-responsive">
 
-                <div class=" w-full bg-white">
+                <div class=" w-full bg-white ">
                     <p class="text-bold mt-0">Total Hadir Karyawan Minggu Ini</p>
                     <div id="chart"></div>
                 </div>
@@ -147,7 +126,7 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
             <p class="-mt-2 text-gray-500 mb-3">Menunggu Ditanggapi</p>
             <div class="grid grid-cols-6 gap-10">
                 <div class="col-span-6">
-                    <div class="w-full h-[150px] rounded-md p-5 text-white bg-yellow-400">
+                    <div class="w-full h-[80px] rounded-md p-2 text-white bg-yellow-400/80">
                         <div class="flex  items-start justify-start space-x-5">
                             <?= Html::img('@root/images/icons/hadir.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>
                             <div>
@@ -159,7 +138,7 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
 
                 </div>
                 <div class="col-span-6">
-                    <div class="w-full h-[150px] rounded-md p-5 text-white bg-teal-500">
+                    <div class="w-full h-[80px] rounded-md p-2 text-white bg-teal-500/60">
                         <div class="flex  items-start justify-start space-x-5">
                             <?= Html::img('@root/images/icons/hadir.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>
                             <div>
@@ -170,7 +149,7 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
                     </div>
                 </div>
                 <div class="col-span-6">
-                    <div class="w-full h-[150px] rounded-md p-5 text-white bg-rose-500">
+                    <div class="w-full h-[80px] rounded-md p-2 text-white bg-rose-500/70">
                         <div class="flex  items-start justify-start space-x-5">
                             <?= Html::img('@root/images/icons/hadir.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>
                             <div>
@@ -182,7 +161,7 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
 
                 </div>
                 <div class="col-span-6">
-                    <div class="w-full h-[150px] rounded-md p-5 text-white bg-orange-500">
+                    <div class="w-full h-[80px] rounded-md p-2 text-white bg-orange-500/80">
                         <div class="flex  items-start justify-start space-x-5">
                             <?= Html::img('@root/images/icons/hadir.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>
                             <div>

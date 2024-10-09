@@ -184,7 +184,7 @@ class HomeController extends Controller
 
         $jamKerjaHari = $jamKerjaKaryawan->jamKerja->jadwalKerjas;
 
-        $hariIni = date('w') == '0' ? 0 : date('w') - 1;
+        $hariIni = date('w') == '0' ? 0 : date('w');
         if ($hariIni != 0) {
             $hariBesar = MasterHaribesar::find()->select('tanggal')->asArray()->all();
 

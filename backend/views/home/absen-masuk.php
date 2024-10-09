@@ -90,82 +90,89 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= $this->render('@backend/views/components/fragment/_time'); ?>
 
 
-                    <?php if ($jamKerjaToday): ?>
-                        <div class="flex flex-col lg:flex-row space-y-3 lg:space-y-0 justify-center items-center">
-                            <div class="w-full ">
-                                <p class="  text-xs text-center mt-2 -mb-3 capitalize">Lokasi Anda</p>
-                                <a href="/panel/home/your-location">
-                                    <div class="capitalize flex justify-around items-center bg-sky-500/10 p-1 text-[13px] w-[80%] mx-auto mt-3 rounded-full">
-                                        <p>lat : <span id="latitude"></span></p>
-                                        <p>long : <span id="longitude"></span></p>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="w-full ">
-                                <p class="text-xs text-center mt-2 -mb-3">Jam Kerja </p>
-                                <div class="capitalize flex justify-around items-center bg-orange-500/10 p-1 text-[13px] w-[80%] mx-auto mt-3 rounded-full">
-                                    <p><?= date('g:i A', strtotime($jamKerjaToday->jam_masuk ?? '00:00:00')) ?></p>
-                                    <p>S/D</p>
-                                    <p><?= date('g:i A', strtotime($jamKerjaToday->jam_keluar ?? '00:00:00')) ?></p>
+                    <?php //if ($jamKerjaToday): 
+                    ?>
+                    <div class="flex flex-col lg:flex-row space-y-3 lg:space-y-0 justify-center items-center">
+                        <div class="w-full ">
+                            <p class="  text-xs text-center mt-2 -mb-3 capitalize">Lokasi Anda</p>
+                            <a href="/panel/home/your-location">
+                                <div class="capitalize flex justify-around items-center bg-sky-500/10 p-1 text-[13px] w-[80%] mx-auto mt-3 rounded-full">
+                                    <p>lat : <span id="latitude"></span></p>
+                                    <p>long : <span id="longitude"></span></p>
                                 </div>
+                            </a>
+                        </div>
+                        <div class="w-full ">
+                            <p class="text-xs text-center mt-2 -mb-3">Jam Kerja </p>
+                            <div class="capitalize flex justify-around items-center bg-orange-500/10 p-1 text-[13px] w-[80%] mx-auto mt-3 rounded-full">
+                                <p><?= date('g:i A', strtotime($jamKerjaToday->jam_masuk ?? '00:00:00')) ?></p>
+                                <p>S/D</p>
+                                <p><?= date('g:i A', strtotime($jamKerjaToday->jam_keluar ?? '00:00:00')) ?></p>
                             </div>
                         </div>
-                    <?php else: ?>
-                        <p class="text-gray-500 mt-10 text-center">Sekarang bukan Hari Kerja</p>
-                    <?php endif; ?>
+                    </div>
+                    <?php // else: 
+                    ?>
+                    <!-- <p class="text-gray-500 mt-10 text-center">Sekarang bukan Hari Kerja</p> -->
+                    <?php // endif; 
+                    ?>
                     <div class="mt-10 grid place-items-center">
 
 
 
 
-                        <?php if ($jamKerjaToday): ?>
-                            <?php if (count($absensiToday) > 0) : ?>
-                                <?php if (empty($absensiToday[0]->jam_pulang)) : ?>
-                                    <?php $formAbsen = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',  'action' => ['home/absen-pulang']]); ?>
+                        <?php // if ($jamKerjaToday): 
+                        ?>
+                        <?php if (count($absensiToday) > 0) : ?>
+                            <?php if (empty($absensiToday[0]->jam_pulang)) : ?>
+                                <?php $formAbsen = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',  'action' => ['home/absen-pulang']]); ?>
 
-                                    <div class="grid place-items-center border border-[#D51405]/10 p-3 rounded-full">
-                                        <button class="all-none border border-[#D51405]/50 p-3 rounded-full disabled:opacity-50" disabled data-modal-target="popup-modal-keluar" data-modal-toggle="popup-modal-keluar" type="button" id="pulang-button">
-                                            <div class=" flex relative  w-[225px] h-[225px] bg-gradient-to-r from-[#CE1705] to-[#EF0802] shadow-2xl shadow-[#D51405] rounded-full  ">
-                                                <?= Html::img('@root/images/icons/click.svg', ['alt' => 'absen', 'class' => ' w-full  h-full -mt-3 object-cover scale-[0.7] ']) ?>
-                                                <p class=" font-normal text-white absolute m-0 bottom-5 left-1/2 -translate-x-1/2">Absen Pulang</p>
-                                            </div>
-                                        </button>
-                                    </div>
-                                    <p class="text-xs my-5 text-gray-500 " id="message">Absen Pulang Aktif Hanya Saat Jam Pulang</p>
-                                    <?php ActiveForm::end(); ?>
-                                <?php else : ?>
-                                    <button class="all-none" type="button" disabled>
-                                        <div class="flex relative  w-[225px] h-[225px] bg-gradient-to-r from-[#686161] to-[#2b2b2b] shadow-2xl shadow-[#9b9b9b] rounded-full  ">
+                                <div class="grid place-items-center border border-[#D51405]/10 p-3 rounded-full">
+                                    <button class="all-none border border-[#D51405]/50 p-3 rounded-full disabled:opacity-50" disabled data-modal-target="popup-modal-keluar" data-modal-toggle="popup-modal-keluar" type="button" id="pulang-button">
+                                        <div class=" flex relative  w-[225px] h-[225px] bg-gradient-to-r from-[#CE1705] to-[#EF0802] shadow-2xl shadow-[#D51405] rounded-full  ">
                                             <?= Html::img('@root/images/icons/click.svg', ['alt' => 'absen', 'class' => ' w-full  h-full -mt-3 object-cover scale-[0.7] ']) ?>
-                                            <p class=" font-normal text-white absolute m-0 bottom-5 left-1/2 -translate-x-1/2">Selesai</p>
-                                        </div>
-                                    </button>
-                                <?php endif ?>
-
-
-                            <?php else : ?>
-                                <?php $formAbsen = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',  'action' => ['home/absen-masuk']]); ?>
-                                <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'latitude'])->label(false) ?>
-                                <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'longitude'])->label(false) ?>
-
-                                <div class="grid place-items-center border border-[#EB5A2B]/10 p-4 rounded-full">
-                                    <button class="all-none border border-[#EB5A2B]/50 p-4 rounded-full" data-modal-target="popup-modal" data-modal-toggle="popup-modal" type="button">
-                                        <div class=" flex relative w-[225px] h-[225px] bg-gradient-to-r from-[#EB5A2B] to-[#EA792B] shadow-2xl shadow-[#EB5A2B] rounded-full  ">
-                                            <?= Html::img('@root/images/icons/click.svg', ['alt' => 'absen', 'class' => ' w-full  h-full -mt-3 object-cover scale-[0.7] ']) ?>
-                                            <p class=" font-normal text-white absolute m-0 bottom-5 left-1/2 -translate-x-1/2">Absen Masuk</p>
+                                            <p class=" font-normal text-white absolute m-0 bottom-5 left-1/2 -translate-x-1/2">Absen Pulang</p>
                                         </div>
                                     </button>
                                 </div>
+                                <p class="text-xs my-5 text-gray-500 " id="message">Absen Pulang Aktif Hanya Saat Jam Pulang</p>
                                 <?php ActiveForm::end(); ?>
+                            <?php else : ?>
+                                <button class="all-none" type="button" disabled>
+                                    <div class="flex relative  w-[225px] h-[225px] bg-gradient-to-r from-[#686161] to-[#2b2b2b] shadow-2xl shadow-[#9b9b9b] rounded-full  ">
+                                        <?= Html::img('@root/images/icons/click.svg', ['alt' => 'absen', 'class' => ' w-full  h-full -mt-3 object-cover scale-[0.7] ']) ?>
+                                        <p class=" font-normal text-white absolute m-0 bottom-5 left-1/2 -translate-x-1/2">Selesai</p>
+                                    </div>
+                                </button>
                             <?php endif ?>
+
+
                         <?php else : ?>
-                            <button class="all-none" type="button" disabled>
-                                <div class="flex relative  w-[225px] h-[225px] bg-gradient-to-r from-[#686161] to-[#2b2b2b] shadow-2xl shadow-[#9b9b9b] rounded-full  ">
-                                    <?= Html::img('@root/images/icons/click.svg', ['alt' => 'absen', 'class' => ' w-full  h-full -mt-3 object-cover scale-[0.7] ']) ?>
-                                    <p class=" font-normal text-white absolute m-0 bottom-5 left-1/2 -translate-x-1/2">Tidak Jam Kerja</p>
-                                </div>
-                            </button>
+                            <?php $formAbsen = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',  'action' => ['home/absen-masuk']]); ?>
+                            <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'latitude'])->label(false) ?>
+                            <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'longitude'])->label(false) ?>
+
+                            <div class="grid place-items-center border border-[#EB5A2B]/10 p-4 rounded-full">
+                                <button class="all-none border border-[#EB5A2B]/50 p-4 rounded-full" data-modal-target="popup-modal" data-modal-toggle="popup-modal" type="button">
+                                    <div class=" flex relative w-[225px] h-[225px] bg-gradient-to-r from-[#EB5A2B] to-[#EA792B] shadow-2xl shadow-[#EB5A2B] rounded-full  ">
+                                        <?= Html::img('@root/images/icons/click.svg', ['alt' => 'absen', 'class' => ' w-full  h-full -mt-3 object-cover scale-[0.7] ']) ?>
+                                        <p class=" font-normal text-white absolute m-0 bottom-5 left-1/2 -translate-x-1/2">Absen Masuk</p>
+                                    </div>
+                                </button>
+                            </div>
+                            <?php ActiveForm::end(); ?>
                         <?php endif ?>
+                        <?php //  else : 
+                        ?>
+                        <!-- <button class="all-none" type="button" disabled>
+                            <div class="flex relative  w-[225px] h-[225px] bg-gradient-to-r from-[#686161] to-[#2b2b2b] shadow-2xl shadow-[#9b9b9b] rounded-full  ">
+                                <?php // Html::img('@root/images/icons/click.svg', ['alt' => 'absen', 'class' => ' w-full  h-full -mt-3 object-cover scale-[0.7] ']) 
+                                ?>
+                                <p class=" font-normal text-white absolute m-0 bottom-5 left-1/2 -translate-x-1/2">Tidak Jam Kerja</p>
+                            </div>
+                        </button> -->
+                        <!-- <?php //endif 
+                                ?> -->
 
                     </div>
                 </div>

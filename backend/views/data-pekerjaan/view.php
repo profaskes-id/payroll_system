@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -44,14 +45,21 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => 'Bagian',
                     'value' => $model->bagian->nama_bagian
                 ],
-                'dari',
+                [
+                    'attribute' => 'Dari',
+                    'value' => function ($model) {
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->dari);
+                    }
+                ],
                 [
                     'attribute' => 'sampai',
                     'value' => function ($model) {
                         if ($model->is_currenty != null) {
                             return 'Sekarang';
                         }
-                        return date('d-m-Y', strtotime($model->sampai));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->sampai);
                     }
                 ],
                 [

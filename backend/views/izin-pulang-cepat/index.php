@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\IzinPulangCepat;
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -68,7 +69,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => ' text-align: center;'],
                     'label' => 'Tanggal',
                     'value' => function ($model) {
-                        return date('d-m-Y', strtotime($model->tanggal));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal);
                     }
                 ],
                 [

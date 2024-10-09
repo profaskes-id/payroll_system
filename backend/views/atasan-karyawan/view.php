@@ -1,6 +1,7 @@
 <?php
 
 use amnah\yii2\user\models\User;
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -55,7 +56,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'label' => 'Di Set Pada',
                     'value' => function ($model) {
-                        return date('d-M-Y - H:i', strtotime($model->di_setting_pada));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->di_setting_pada);
+                        // return date('d-M-Y - H:i', strtotime($model->di_setting_pada));
                     },
                 ],
                 [

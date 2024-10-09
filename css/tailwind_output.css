@@ -1269,10 +1269,6 @@ input:checked + .toggle-bg {
   margin-top: -0.25rem;
 }
 
-.-mt-10 {
-  margin-top: -2.5rem;
-}
-
 .-mt-2 {
   margin-top: -0.5rem;
 }
@@ -1523,6 +1519,26 @@ input:checked + .toggle-bg {
 
 .h-screen {
   height: 100vh;
+}
+
+.h-\[100px\] {
+  height: 100px;
+}
+
+.h-\[80px\] {
+  height: 80px;
+}
+
+.h-\[500px\] {
+  height: 500px;
+}
+
+.h-\[300px\] {
+  height: 300px;
+}
+
+.h-\[340px\] {
+  height: 340px;
 }
 
 .max-h-\[200px\] {
@@ -1945,6 +1961,12 @@ input:checked + .toggle-bg {
   margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
 }
 
+.space-y-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+}
+
 .divide-y > :not([hidden]) ~ :not([hidden]) {
   --tw-divide-y-reverse: 0;
   border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
@@ -2127,6 +2149,11 @@ input:checked + .toggle-bg {
 
 .bg-\[\#39B973\]\/10 {
   background-color: rgb(57 185 115 / 0.1);
+}
+
+.bg-\[\#6e62e5\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(110 98 229 / var(--tw-bg-opacity));
 }
 
 .bg-\[\#e3f9ff\] {
@@ -2362,6 +2389,39 @@ input:checked + .toggle-bg {
   background-color: rgb(253 253 234 / var(--tw-bg-opacity));
 }
 
+.bg-black {
+  --tw-bg-opacity: 1;
+  background-color: rgb(39 39 39 / var(--tw-bg-opacity));
+}
+
+.bg-yellow-400\/50 {
+  background-color: rgb(227 160 8 / 0.5);
+}
+
+.bg-yellow-400\/80 {
+  background-color: rgb(227 160 8 / 0.8);
+}
+
+.bg-teal-500\/90 {
+  background-color: rgb(6 148 162 / 0.9);
+}
+
+.bg-teal-500\/80 {
+  background-color: rgb(6 148 162 / 0.8);
+}
+
+.bg-teal-500\/60 {
+  background-color: rgb(6 148 162 / 0.6);
+}
+
+.bg-rose-500\/70 {
+  background-color: rgb(244 63 94 / 0.7);
+}
+
+.bg-orange-500\/80 {
+  background-color: rgb(255 90 31 / 0.8);
+}
+
 .bg-gradient-to-r {
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
 }
@@ -2507,6 +2567,11 @@ input:checked + .toggle-bg {
   padding-bottom: 1.25rem;
 }
 
+.py-1\.5 {
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+}
+
 .pb-2 {
   padding-bottom: 0.5rem;
 }
@@ -2521,6 +2586,10 @@ input:checked + .toggle-bg {
 
 .pb-32 {
   padding-bottom: 8rem;
+}
+
+.pb-5 {
+  padding-bottom: 1.25rem;
 }
 
 .ps-1\.5 {

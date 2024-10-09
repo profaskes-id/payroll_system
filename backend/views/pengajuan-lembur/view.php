@@ -1,6 +1,7 @@
 <?php
 
 use amnah\yii2\user\models\User;
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -61,7 +62,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         'label' => 'Tanggal',
                         'value' => function ($model) {
-                            return date('d-m-Y', strtotime($model->tanggal));
+                            $tanggalFormat = new Tanggal();
+                            return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal);
+                            // return date('d-m-Y', strtotime($model->tanggal));
                         }
 
                     ],
@@ -82,7 +85,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             if ($model->status == 0) {
                                 return '<span class="text-warning">Menuggu Tanggapan</span>';
                             }
-                            return date('d-m-Y', strtotime($model->disetujui_pada)) ?? '<span class="text-danger">-</span>';
+                            $tanggalFormat = new Tanggal();
+                            return $tanggalFormat->getIndonesiaFormatTanggal($model->disetujui_pada) ?? '-';
+                            // return date('d-m-Y', strtotime($model->disetujui_pada)) ?? '<span class="text-danger">-</span>';
                         },
                         "format" => 'raw',
                     ],

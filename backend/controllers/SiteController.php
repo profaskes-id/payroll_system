@@ -98,21 +98,30 @@ class SiteController extends Controller
             }
 
             $absensi = Absensi::find()
-                ->select(['id_karyawan', 'tanggal'])
+                ->asArray()
+                ->select(['tanggal'])
                 ->where(['kode_status_hadir' => 'H'])
                 ->andWhere(['>=', 'tanggal', date('Y-m-d', strtotime('-7 days'))])
-                ->orderBy('tanggal')
+                ->orderBy('tanggal ASC')
                 ->all();
 
+            // dd($absensi);
             foreach ($absensi as $absen) {
-                $tanggal = date('d-m-Y', strtotime($absen->tanggal));
-                if (!isset($dates[$tanggal])) {
-                    $dates[$tanggal] = [];
+                // dd($absen);
+                $tanggal_var = date('d-m-Y', strtotime($absen['tanggal']));
+                if (!isset($dates[$tanggal_var])) {
+                    $dates[$tanggal_var] = [];
                 }
-                $dates[$tanggal][] = $absen;
+                $dates[$tanggal_var][] = $absen;
             }
 
+            uksort($dates, function ($a, $b) {
+                return strtotime($a) - strtotime($b);
+            });
+
+
             $datesAsJson = Json::encode($dates);
+
 
 
             return $this->render('index', compact('datesAsJson', 'TotalKaryawan', 'TotalData', 'TotalDataBelum', 'TotalIzin', 'totalPengumuman', 'pengajuanLembur', 'pengajuanCuti', 'pengajuanDinas', 'pengajuanPulangCepat'));

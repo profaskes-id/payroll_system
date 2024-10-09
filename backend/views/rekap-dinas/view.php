@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -43,13 +44,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'label' => 'Tanggal Mulai',
                     'value' => function ($model) {
-                        return date('d-M-Y', strtotime($model->tanggal_mulai));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_mulai);
+                        // return date('d-M-Y', strtotime($model->tanggal_mulai));
                     }
                 ],
                 [
                     'label' => 'Tanggal Mulai',
                     'value' => function ($model) {
-                        return date('d-M-Y', strtotime($model->tanggal_selesai));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_selesai);
+                        // return date('d-M-Y', strtotime($model->tanggal_selesai));
                     }
                 ],
                 'estimasi_biaya',

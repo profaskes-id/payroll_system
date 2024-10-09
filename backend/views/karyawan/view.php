@@ -6,6 +6,7 @@ use backend\models\PengalamanKerja;
 use backend\models\RiwayatKesehatan;
 use backend\models\RiwayatPelatihan;
 use backend\models\RiwayatPendidikan;
+use backend\models\Tanggal;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\helpers\Html;
@@ -86,7 +87,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 },
                                                 'format' => 'raw',
                                             ],
-                                            'nomer_identitas',
+                                            [
+                                                'label' => 'Nomor Identitas',
+                                                'value' => function ($model) {
+                                                    return $model->nomer_identitas;
+                                                }
+                                            ],
                                             [
 
                                                 'label' => 'Jenis Identitas',
@@ -105,12 +111,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                             [
                                                 'label' => 'Tanggal Lahir',
                                                 'value' => function ($model) {
-                                                    return date('d-M-Y', strtotime($model->tanggal_lahir));
+                                                    $tanggalFormat = new Tanggal();
+                                                    return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_lahir);
                                                 }
                                             ],
                                             [
                                                 'attribute' => 'nomer_telepon',
-                                                'label' => 'Nomer Telepon',
+                                                'label' => 'Nomor Telepon',
                                             ],
                                             [
                                                 'attribute' => 'email',
@@ -225,7 +232,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 </div>
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-3">
+                                        <div class="col-6 col-md-3">
                                             <?= DetailView::widget([
                                                 'model' => $model,
                                                 'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
@@ -244,7 +251,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 ],
                                             ]) ?>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-6 col-md-3">
                                             <?= DetailView::widget([
                                                 'model' => $model,
                                                 'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
@@ -263,7 +270,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                                             ]) ?>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-6 col-md-3">
                                             <?= DetailView::widget([
                                                 'model' => $model,
                                                 'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
@@ -282,7 +289,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 ],
                                             ]) ?>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-6 col-md-3">
                                             <?= DetailView::widget([
                                                 'model' => $model,
                                                 'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
@@ -313,64 +320,115 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <?= Html::a('Add new', ['/data-pekerjaan/create', 'id_karyawan' => $model->id_karyawan], ['class' => 'tambah-button']) ?>
                             </div>
 
-                            <?= GridView::widget([
-                                'dataProvider' => $pekerjaandataProvider,
-                                'columns' => [
-                                    [
-                                        'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                        'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                        'class' => 'yii\grid\SerialColumn'
-                                    ],
-                                    [
-                                        'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                                        'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                                        'class' => ActionColumn::className(),
-                                        'urlCreator' => function ($action, DataPekerjaan $model, $key, $index, $column) {
-                                            return Url::toRoute(['data-pekerjaan/view/', 'id_data_pekerjaan' => $model->id_data_pekerjaan]);
-                                        }
-                                    ],
-                                    [
-                                        'label' => 'Bagian',
-                                        'value' => function ($model) {
-                                            return $model->bagian->nama_bagian;
-                                        }
-                                    ],
+                            <div class="table-responsive">
 
-                                    [
-                                        'headerOptions' => ['style' => 'text-align: center;'],
-                                        'contentOptions' => ['style' => 'text-align: center;'],
-                                        'label' => 'Dari',
-                                        'value' => function ($model) {
-                                            return date('d-m-Y', strtotime($model->dari));
-                                        }
-                                    ],
-                                    [
-                                        'headerOptions' => ['style' => 'text-align: center;'],
-                                        'contentOptions' => ['style' => 'text-align: center;'],
-                                        'attribute' => 'status',
-                                        'value' => function ($model) {
-                                            return $model->statusPekerjaan->nama_kode;
-                                        }
-                                    ],
-                                    [
-                                        'label' => 'Gaji Pokok',
-                                        'value' => function ($model) {
-                                            return $model->gaji_pokok;
-                                        }
-                                    ],
+                                <?= GridView::widget([
+                                    'dataProvider' => $pekerjaandataProvider,
+                                    'columns' => [
+                                        [
+                                            'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                                            'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
+                                            'class' => 'yii\grid\SerialColumn'
+                                        ],
+                                        [
+                                            'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                                            'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                                            'class' => ActionColumn::className(),
+                                            'urlCreator' => function ($action, $model) {
+                                                return Url::toRoute(['/data-pekerjaan/view/', 'id_data_pekerjaan' => $model['id_data_pekerjaan']]);
+                                            }
+                                        ],
 
-                                    [
-                                        'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
-                                        'contentOptions' => ['style' => 'width: 10%; text-align: center;'],
-                                        'label' => 'Aktif',
-                                        'format' => 'html',
-                                        'value' => function ($model) {
-                                            return $model->is_aktif ? '<span class="text-success">YA</span>' : '<span class="text-danger">Tidak</span>';
-                                        }
-                                    ],
+                                        [
+                                            'label' => 'Bagian',
+                                            'value' => function ($model) {
+                                                return $model['nama_bagian'];
+                                            }
+                                        ],
 
-                                ],
-                            ]); ?>
+
+                                        [
+                                            'headerOptions' => ['style' => 'text-align: center;'],
+                                            'contentOptions' => ['style' => 'text-align: center;'],
+                                            'label' => 'Dari',
+                                            'value' => function ($model) {
+                                                $tanggalFormat = new Tanggal();
+                                                return $tanggalFormat->getIndonesiaFormatTanggal($model['dari']);
+                                                // return date('d-m-Y', strtotime($model['dari']));
+                                            }
+                                        ],
+                                        [
+                                            'headerOptions' => ['style' => 'text-align: center;'],
+                                            'contentOptions' => ['style' => 'text-align: center;'],
+                                            'label' => 'Sampai',
+                                            'value' => function ($model) {
+                                                if ($model['is_currenty'] == 1) {
+                                                    return 'sekarang';
+                                                }
+                                                $tanggalFormat = new Tanggal();
+                                                return $tanggalFormat->getIndonesiaFormatTanggal($model['sampai']);
+                                                // return date('d-m-Y', strtotime($model['sampai']));
+                                            }
+                                        ],
+                                        [
+                                            'headerOptions' => ['style' => 'text-align: center;'],
+                                            'contentOptions' => ['style' => 'text-align: center;'],
+                                            'attribute' => 'status',
+                                            'value' => function ($model) {
+                                                return $model['status_pekerjaan'];
+                                            }
+                                        ],
+
+
+                                        [
+                                            'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
+                                            'contentOptions' => ['style' => 'width: 10%; text-align: center;'],
+                                            'label' => 'Aktif',
+                                            'format' => 'html',
+                                            'value' => function ($model) {
+                                                return $model['is_aktif'] == 1 ? '<span class="text-success">YA</span>' : '<span class="text-danger">Tidak</span>';
+                                            }
+                                        ],
+
+                                        [
+                                            'headerOptions' => ['style' => 'width: 3%; text-align: center;'],
+                                            'contentOptions' => ['style' => 'width: 3%; text-align: center;'],
+                                            'format' => 'raw',
+                                            'label' => 'Download Kontrak',
+                                            'value' => function ($model) {
+                                                if ($model['is_aktif'] == 1) {
+                                                    if ($model['id_cetak']) {
+                                                        return Html::a('<button class="btn btn-primary"><i class="fas fa-download"></i></button></button>', ['/cetak/view', 'id_cetak' => $model['id_cetak']]);
+                                                    } else {
+                                                        return Html::a('<button class="btn btn-primary"><i class="fas fa-download"></i></button></button>', ['/cetak/create', 'id_karyawan' => $model['id_karyawan'], 'id_data_pekerjaan' => $model['id_data_pekerjaan']]);
+                                                    }
+                                                } else {
+                                                    return '<span class=""></span>';
+                                                }
+                                            }
+                                        ],
+                                        [
+                                            'headerOptions' => ['style' => 'width: 3%; text-align: center;'],
+                                            'contentOptions' => ['style' => 'width: 3%; text-align: center;'],
+                                            'format' => 'raw',
+                                            'label' => 'Upload Kontrak',
+                                            'value' => function ($model) {
+                                                if ($model['is_aktif'] == 1) {
+                                                    if ($model['id_cetak']) {
+                                                        if ($model['surat_upload']) {
+                                                            return Html::a('<button class="btn btn-warning"><i class="fas fa-edit"></i></button></button>', ['/cetak/upload', 'id_cetak' => $model['id_cetak']]);
+                                                        }
+                                                        return Html::a('<button class="btn btn-success"><i class="fas fa-upload"></i></button></button>', ['/cetak/upload', 'id_cetak' => $model['id_cetak']]);
+                                                    }
+                                                    return '<span class=""></span>';
+                                                }
+                                                return '<span class=""></span>';
+                                            }
+                                        ]
+
+                                    ],
+                                ]); ?>
+                            </div>
 
                         </div>
                         <div class="tab-pane fade" id="custom-tabs-one-profile" role="tabpanel" aria-labelledby="custom-tabs-one-profile-tab">
@@ -397,15 +455,27 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ],
                                     'perusahaan',
                                     'posisi',
-                                    'masuk_pada',
-                                    'keluar_pada',
+                                    [
+                                        'label' => "masuk pada",
+                                        'value' => function ($model) {
+                                            $tanggalFormat = new Tanggal();
+                                            return $tanggalFormat->getIndonesiaFormatTanggal($model->masuk_pada);
+                                        }
+                                    ],
+                                    [
+                                        'label' => "masuk pada",
+                                        'value' => function ($model) {
+                                            $tanggalFormat = new Tanggal();
+                                            return $tanggalFormat->getIndonesiaFormatTanggal($model->keluar_pada);
+                                        }
+                                    ]
 
 
                                 ],
                             ]); ?>
 
                         </div>
-                        <div class="tab-pane fade" id="custom-tabs-one-messages" role="tabpanel" aria-labelledby="custom-tabs-one-messages-tab">
+                        <div class="tab-pane fade " id="custom-tabs-one-messages" role="tabpanel" aria-labelledby="custom-tabs-one-messages-tab">
 
                             <p class="d-flex justify-content-end " style="gap: 10px;">
                                 <?= Html::a('Add new', ['/riwayat-pendidikan/create', 'id_karyawan' => $model->id_karyawan], ['class' => 'tambah-button']) ?>
@@ -505,8 +575,20 @@ $this->params['breadcrumbs'][] = $this->title;
                                         }
                                     ],
                                     'judul_pelatihan',
-                                    'tanggal_mulai',
-                                    'tanggal_selesai',
+                                    [
+                                        'label' => "Tanggal Mulai",
+                                        'value' => function ($model) {
+                                            $tanggalFormat = new Tanggal();
+                                            return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_mulai);
+                                        }
+                                    ],
+                                    [
+                                        'label' => "Tanggal Selesai",
+                                        'value' => function ($model) {
+                                            $tanggalFormat = new Tanggal();
+                                            return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_selesai);
+                                        }
+                                    ]
                                 ],
                             ]); ?>
                         </div>

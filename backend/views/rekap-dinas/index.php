@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\PengajuanDinas;
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -60,7 +61,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => ' text-align: center;'],
                     'label' => 'Tanggal Mulai',
                     'value' => function ($model) {
-                        return date('d-m-Y', strtotime($model->tanggal_mulai));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_mulai);
+                        // return date('d-m-Y', strtotime($model->tanggal_mulai));
                     }
                 ],
                 [
@@ -68,7 +71,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => ' text-align: center;'],
                     'label' => 'Tanggal Selesai',
                     'value' => function ($model) {
-                        return date('d-m-Y', strtotime($model->tanggal_selesai));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_selesai);
+                        // return date('d-m-Y', strtotime($model->tanggal_selesai));
                     }
                 ],
                 //'estimasi_biaya',

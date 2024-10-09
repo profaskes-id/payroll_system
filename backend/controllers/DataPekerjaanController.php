@@ -84,6 +84,22 @@ class DataPekerjaanController extends Controller
             if ($model->load($this->request->post())) {
                 $lampiranFilesuratLamaranPekerjaan = UploadedFile::getInstance($model, 'surat_lamaran_pekerjaan');
                 $lampiranFilesuratLamaranPekerjaan != null ? $this->saveImage($model, $lampiranFilesuratLamaranPekerjaan, 'surat_lamaran_pekerjaan') : $model->surat_lamaran_pekerjaan = null;
+
+                if ($model->is_currenty == 1) {
+                    $model->is_aktif = 1;
+                }
+
+                $today = date("Y-m-d"); // get today's date
+                $sampai_date = strtotime($model->sampai); // convert $sampai to timestamp
+                $today_timestamp = strtotime($today); // convert today's date to timestamp
+
+                if ($sampai_date > $today_timestamp) {
+
+                    $model->is_aktif = 1;
+                } else {
+                    $model->is_aktif = 0;
+                }
+
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data Pekerjaan');
                     return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
@@ -130,6 +146,22 @@ class DataPekerjaanController extends Controller
                 } else {
                     $model->$key = $oldPost[$key];
                 }
+            }
+
+
+            if ($model->is_currenty == 1) {
+                $model->is_aktif = 1;
+            }
+
+            $today = date("Y-m-d"); // get today's date
+            $sampai_date = strtotime($model->sampai); // convert $sampai to timestamp
+            $today_timestamp = strtotime($today); // convert today's date to timestamp
+
+            if ($sampai_date > $today_timestamp) {
+
+                $model->is_aktif = 1;
+            } else {
+                $model->is_aktif = 0;
             }
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'Berhasil Melakukan Upadte Data Pekerjaan');

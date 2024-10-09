@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\Tanggal;
 use yii\grid\GridView;
 
 use yii\widgets\DetailView;
@@ -46,7 +47,8 @@ $this->title = 'Report Data Karyawan';
                         [
                             'label' => 'Tanggal Lahir',
                             'value' => function ($model) {
-                                return date('d-M-Y', strtotime($model->tanggal_lahir));
+                                $tanggalFormat = new Tanggal();
+                                return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_lahir);
                             }
                         ],
                         [
@@ -197,7 +199,8 @@ $this->title = 'Report Data Karyawan';
                     'contentOptions' => ['style' => 'text-align: center;'],
                     'label' => 'Dari',
                     'value' => function ($model) {
-                        return date('d-m-Y', strtotime($model->dari));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->dari);
                     }
                 ],
                 [
@@ -206,7 +209,8 @@ $this->title = 'Report Data Karyawan';
                         if ($model->is_currenty != null) {
                             return 'Sekarang';
                         }
-                        return date('d-m-Y', strtotime($model->sampai));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->sampai);
                     }
                 ],
                 [
@@ -253,7 +257,9 @@ $this->title = 'Report Data Karyawan';
                     'contentOptions' => ['style' => ' text-align: center;'],
                     'label' => 'Masuk Pada',
                     'value' => function ($model) {
-                        return date('d-m-Y', strtotime($model->masuk_pada));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->masuk_pada);
+                        // return date('d-m-Y', strtotime($model->masuk_pada));
                     }
                 ],
                 [
@@ -261,7 +267,9 @@ $this->title = 'Report Data Karyawan';
                     'contentOptions' => ['style' => ' text-align: center;'],
                     'label' => 'Keluar Pada',
                     'value' => function ($model) {
-                        return date('d-m-Y', strtotime($model->keluar_pada));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->keluar_pada);
+                        // return date('d-m-Y', strtotime($model->keluar_pada));
                     }
                 ],
 
@@ -298,7 +306,7 @@ $this->title = 'Report Data Karyawan';
                     'contentOptions' => ['style' => ' text-align: center;'],
                     'label' => 'Tahun Masuk',
                     'value' => function ($model) {
-                        return date('d-m-Y', strtotime($model->tahun_masuk));
+                        return date('Y', strtotime($model->tahun_masuk));
                     }
                 ],
                 [
@@ -306,7 +314,7 @@ $this->title = 'Report Data Karyawan';
                     'contentOptions' => ['style' => ' text-align: center;'],
                     'label' => 'Tahun Keluar',
                     'value' => function ($model) {
-                        return date('d-m-Y', strtotime($model->tahun_keluar));
+                        return date('Y', strtotime($model->tahun_keluar));
                     }
                 ],
             ],
@@ -374,7 +382,9 @@ $this->title = 'Report Data Karyawan';
                     'contentOptions' => ['style' => ' text-align: center;'],
                     'label' => 'Tanggal Mulai',
                     'value' => function ($model) {
-                        return date('d-m-Y', strtotime($model->tanggal_mulai));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_mulai);
+                        // return date('d-m-Y', strtotime($model->tanggal_mulai));
                     }
                 ],
 
@@ -383,7 +393,9 @@ $this->title = 'Report Data Karyawan';
                     'contentOptions' => ['style' => ' text-align: center;'],
                     'label' => 'Tanggal Selesai',
                     'value' => function ($model) {
-                        return date('d-m-Y', strtotime($model->tanggal_selesai));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_selesai);
+                        // return date('d-m-Y', strtotime($model->tanggal_selesai));
                     }
                 ],
             ],
@@ -415,7 +427,9 @@ $this->title = 'Report Data Karyawan';
                     'contentOptions' => ['style' => ' text-align: center;'],
                     'label' => 'Tanggal',
                     'value' => function ($model) {
-                        return date('d-m-Y', strtotime($model->tanggal));
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal);
+                        // return date('d-m-Y', strtotime($model->tanggal));
                     }
                 ],
 

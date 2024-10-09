@@ -55,8 +55,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 // 'nama_group',
                 'nama_kode',
-                'kode',
-                'urutan',
+
+                [
+                    'label' => "Kode",
+                    'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 10%; text-align: center;'],
+                    'value' => function ($model) {
+                        return $model->kode;
+                    }
+                ],
+                [
+                    'label' => "Urutan",
+                    'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 10%; text-align: center;'],
+                    'value' => function ($model) {
+                        return $model->urutan;
+                    }
+                ],
                 [
                     'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 10%; text-align: center;'],

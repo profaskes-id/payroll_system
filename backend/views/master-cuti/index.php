@@ -56,7 +56,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 'jenis_cuti',
                 'deskripsi_singkat:ntext',
-                'total_hari_pertahun',
+                [
+                    'headerOptions' => ['style' => 'width: 15%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 15%; text-align: center;'],
+                    'label' => 'Total Hari Pertahun',
+                    'value' => 'total_hari_pertahun',
+                ],
                 [
                     'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 10%; text-align: center;'],

@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -51,7 +52,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => 'Ditanggapi Pada',
                     'value' => function ($model) {
                         if ($model->disetujui_pada) {
-                            return date('d-M-Y', strtotime($model->disetujui_pada));
+                            $tanggalFormat = new Tanggal();
+                            return $tanggalFormat->getIndonesiaFormatTanggal($model->disetujui_pada);
                         } else {
                             return '-';
                         }
