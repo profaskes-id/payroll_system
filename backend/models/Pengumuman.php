@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use amnah\yii2\user\models\User;
 use Yii;
 
 /**
@@ -52,5 +53,10 @@ class Pengumuman extends \yii\db\ActiveRecord
             'update_pada' => 'Update Pada',
             'dibuat_oleh' => 'Dibuat Oleh',
         ];
+    }
+
+    public function getDibuatOleh()
+    {
+        return $this->hasOne(User::className(), ['id' => 'dibuat_oleh']);
     }
 }

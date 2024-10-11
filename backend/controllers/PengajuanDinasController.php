@@ -123,8 +123,17 @@ class PengajuanDinasController extends Controller
      */
     public function actionDelete($id_pengajuan_dinas)
     {
-        $this->findModel($id_pengajuan_dinas)->delete();
+        $model = $this->findModel($id_pengajuan_dinas);
+        $files = json_decode($model->files, true);
 
+        if ($files) {
+            foreach ($files as $file) {
+                if (file_exists(Yii::getAlias('@webroot') . '/' . $file)) {
+                    unlink(Yii::getAlias('@webroot') . '/' . $file);
+                }
+            }
+        }
+        $model->delete();
         return $this->redirect(['index']);
     }
 

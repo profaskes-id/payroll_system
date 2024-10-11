@@ -20,6 +20,12 @@ return [
         ],
     ],
     'components' => [
+        'formatter' => [
+            'class' => 'yii\i18n\Formatter',
+            'currencyCode' => 'IDR', // Kode mata uang untuk Indonesia
+            'decimalSeparator' => ',', // Pemisah desimal
+            'thousandSeparator' => '.', // Pemisah ribuan
+        ],
         'mpdf' => [
             'class' => '\kartik\mpdf\Pdf',
             'format' => 'A4-L',

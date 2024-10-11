@@ -190,7 +190,6 @@ class HomeController extends Controller
 
             // Ambil tanggal hari ini
             $tanggalHariIni = date('Y-m-d'); // Sesuaikan format tanggal dengan format yang digunakan di database
-
             // Cek jika tanggal hari ini ada dalam daftar hari besar
             $adaHariBesar = false;
             foreach ($hariBesar as $hari) {
@@ -203,7 +202,7 @@ class HomeController extends Controller
             if ($adaHariBesar) {
                 $jamKerjaToday = null;
             } else {
-                $jamKerjaToday = $jamKerjaHari[$hariIni] ?? null;
+                $jamKerjaToday = $jamKerjaHari[$hariIni - 1] ?? null;
             }
         } else {
             $jamKerjaToday = null;
@@ -215,6 +214,7 @@ class HomeController extends Controller
             'karyawan' => $jamKerjaKaryawan,
             'today' => $jamKerjaToday
         ];
+
 
         $isPulangCepat = IzinPulangCepat::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
 

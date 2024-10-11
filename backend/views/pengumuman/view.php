@@ -39,7 +39,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'deskripsi:ntext',
                 'dibuat_pada',
                 'update_pada',
-                'dibuat_oleh',
+                [
+                    'attribute' => 'dibuat_oleh',
+                    'value' => function ($model) {
+                        return $model->dibuatOleh->username;
+                    }
+                ]
             ],
         ]) ?>
 

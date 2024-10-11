@@ -57,8 +57,17 @@ $this->params['breadcrumbs'][] = $this->title;
                         // return date('d-m-Y', strtotime($model->tanggal_selesai));
                     }
                 ],
-                'estimasi_biaya',
-                'biaya_yang_disetujui',
+                [
+                    'attribute' => 'estimasi_biaya',
+                    'format' => 'currency', // Format currency untuk otomatis
+                    'contentOptions' => ['style' => 'text-align: left;'], // Align text ke kanan
+                ],
+                [
+                    'attribute' => 'biaya_yang_disetujui',
+                    'format' => 'currency', // Format currency untuk otomatis
+                    'contentOptions' => ['style' => 'text-align: left;'], // Align text ke kanan
+                ],
+
                 [
                     'attribute' => 'Ditanggapi Oleh',
                     'value' => function ($model) {
@@ -76,9 +85,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         if ($model->status == 0) {
                             return '<span class="text-warning">Menuggu Tanggapan</span>';
                         }
+
                         $tanggalFormat = new Tanggal();
                         return $tanggalFormat->getIndonesiaFormatTanggal($model->disetujui_pada) ?? '-';
-                        // return date('d-m-Y', strtotime($model->disetujui_pada)) ?? '<span class="text-danger">-</span>';
                     },
                     "format" => 'raw',
                 ],

@@ -40,6 +40,8 @@ class RiwayatPelatihan extends \yii\db\ActiveRecord
             [['deskripsi'], 'string'],
             [['judul_pelatihan', 'penyelenggara', 'sertifikat'], 'string', 'max' => 255],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
+            [['sertifikat'], 'file', 'extensions' => 'png, jpg, jpeg, pdf', 'maxSize' => 1024 * 1024 * 4],
+
         ];
     }
 

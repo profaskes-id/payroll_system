@@ -92,9 +92,15 @@ $this->params['breadcrumbs'][] = $this->title;
                         [
                             'headerOptions' => ['style' => 'width: 200px; '],
                             'label' => 'Logo',
+                            'format' => 'raw',
                             'value' => function ($model) {
                                 if ($model->logo) {
-                                    Html::a(Html::img(Yii::getAlias('@root') . '/images/' . $model->logo, ['alt' => 'logo']), Yii::getAlias('@root') . '/images/' . $model->logo);
+                                    return
+                                        Html::a(
+                                            Html::img(Yii::getAlias('@root') . '/panel/' . $model->logo, ['width' => 100, 'alt' => 'logo']),
+                                            Yii::getAlias('@root') . '/panel/' . $model->logo,
+                                            ['target' => '_blank']
+                                        );
                                 } else {
                                     return "(Belum Di set)";
                                 }

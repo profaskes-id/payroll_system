@@ -7,9 +7,13 @@ use backend\models\MasterKab;
 use backend\models\MasterProp;
 use backend\models\Perusahaan;
 use backend\models\PerusahaanSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
+
+use function PHPSTORM_META\type;
 
 /**
  * PerusahaanController implements the CRUD actions for Perusahaan model.
@@ -91,8 +95,16 @@ class PerusahaanController extends Controller
         $model = new Perusahaan();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_perusahaan' => $model->id_perusahaan]);
+            $lampiranFile = UploadedFile::getInstance($model, 'logo');
+            if ($model->load($this->request->post())) {
+                $this->saveImage($model, $lampiranFile, 'logo');
+
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data Perusahaan');
+                    return $this->redirect(['view', 'id_perusahaan' => $model->id_perusahaan]);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal Menambahkan Data Perusahaan');
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -114,8 +126,31 @@ class PerusahaanController extends Controller
     {
         $model = $this->findModel($id_perusahaan);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_perusahaan' => $model->id_perusahaan]);
+        $oldPost = $model->attributes;
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $lampiranFileLogo = UploadedFile::getInstance($model, 'logo');
+            $data = [
+                'logo' => $lampiranFileLogo,
+            ];
+
+            foreach ($data as $key => $value) {
+                if ($value != null) {
+                    $this->saveImage($model, $value, $key);
+                    if ($oldPost[$key]) {
+                        $this->deleteImage($oldPost[$key]);
+                    }
+                } else {
+                    $model->$key = $oldPost[$key];
+                }
+            }
+
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Berhasil Mengupdate Data Perusahaan');
+                return $this->redirect(['view', 'id_perusahaan' => $model->id_perusahaan]);
+            } else {
+                Yii::$app->session->setFlash('error', 'Gagal Mengupdate Data Perusahaan');
+            }
         }
 
         return $this->render('update', [
@@ -132,7 +167,14 @@ class PerusahaanController extends Controller
      */
     public function actionDelete($id_perusahaan)
     {
-        $this->findModel($id_perusahaan)->delete();
+        $model = $this->findModel($id_perusahaan);
+
+        $this->deleteImage($model->logo);
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Berhasil Menghapus Data Perusahaan');
+        } else {
+            Yii::$app->session->setFlash('error', 'Gagal Menghapus Data Perusahaan');
+        }
 
         return $this->redirect(['index']);
     }
@@ -159,5 +201,42 @@ class PerusahaanController extends Controller
             ->all();
         $dataKabupaten = \yii\helpers\ArrayHelper::map($kabupaten, 'kode_kab', 'nama_kab');
         return $this->asJson($dataKabupaten);
+    }
+
+    public function saveImage($model, $uploadedFile, $type)
+    {
+        // if ($type !== 'surat_upload' && $type !== 0) {
+        //     return false;
+        // }
+        $uploadsDir = Yii::getAlias('@webroot/uploads/logo/');
+
+        if (!$uploadedFile) {
+            return false;
+        }
+
+        if (!is_dir($uploadsDir)) {
+            mkdir($uploadsDir, 0777, true);
+        }
+
+        $fileName = $uploadsDir . '/' . uniqid() . '.' . $uploadedFile->extension;
+
+        if ($uploadedFile->saveAs($fileName)) {
+            $model->{$type} = 'uploads/' . $type . '/' . basename($fileName);
+            return true;
+        } else {
+            Yii::$app->session->setFlash('error', 'Failed to save the uploaded file.');
+            return false;
+        }
+    }
+
+    public function deleteImage($oldThumbnail)
+    {
+        $filePath = Yii::getAlias('@webroot') . '/' . $oldThumbnail;
+        if ($oldThumbnail && file_exists($filePath)) {
+            unlink($filePath);
+            return true;
+        } else {
+            return true;
+        }
     }
 }

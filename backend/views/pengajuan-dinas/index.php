@@ -86,12 +86,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
-                    'headerOptions' => ['style' => 'text-align: center;'],
-                    'contentOptions' => ['style' => 'text-align: center;'],
-                    'label' => 'Estimasi Biaya',
-                    'value' => function ($model) {
-                        return $model->estimasi_biaya;
-                    }
+
+                    'attribute' => 'estimasi_biaya',
+                    'format' => 'currency', // Format currency untuk otomatis
+                    'contentOptions' => ['style' => 'text-align: left;'], // Align text ke kanan
                 ],
                 [
                     'headerOptions' => ['style' => 'text-align: center;'],

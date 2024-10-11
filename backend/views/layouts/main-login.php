@@ -27,7 +27,7 @@ $this->registerCssFile('https://code.ionicframework.com/ionicons/2.0.1/css/ionic
 
 <body class="d-flex justify-content-center  align-items-center">
     <?php $this->beginBody() ?>
-    <div class="login-box">
+    <div class="login-box ">
         <!-- /.login-logo -->
 
         <?= $content ?>

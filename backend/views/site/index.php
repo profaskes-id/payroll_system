@@ -55,9 +55,9 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
         <div class="grid place-items-center w-12 h-12 bg-gray-200 rounded-full ">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
                 <g fill="none">
-                    <path stroke="black" stroke-width="1.5" d="M2 12c0-3.771 0-5.657 1.172-6.828S6.229 4 10 4h4c3.771 0 5.657 0 6.828 1.172S22 8.229 22 12v2c0 3.771 0 5.657-1.172 6.828S17.771 22 14 22h-4c-3.771 0-5.657 0-6.828-1.172S2 17.771 2 14z" />
-                    <path stroke="black" stroke-linecap="round" stroke-width="1.5" d="M7 4V2.5M17 4V2.5M2.5 9h19" opacity="0.5" />
-                    <path fill="black" d="M18 17a1 1 0 1 1-2 0a1 1 0 0 1 2 0m0-4a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-5 4a1 1 0 1 1-2 0a1 1 0 0 1 2 0m0-4a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-5 4a1 1 0 1 1-2 0a1 1 0 0 1 2 0m0-4a1 1 0 1 1-2 0a1 1 0 0 1 2 0" />
+                    <path stroke="white" stroke-width="1.5" d="M2 12c0-3.771 0-5.657 1.172-6.828S6.229 4 10 4h4c3.771 0 5.657 0 6.828 1.172S22 8.229 22 12v2c0 3.771 0 5.657-1.172 6.828S17.771 22 14 22h-4c-3.771 0-5.657 0-6.828-1.172S2 17.771 2 14z" />
+                    <path stroke="white" stroke-linecap="round" stroke-width="1.5" d="M7 4V2.5M17 4V2.5M2.5 9h19" opacity="0.5" />
+                    <path fill="white" d="M18 17a1 1 0 1 1-2 0a1 1 0 0 1 2 0m0-4a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-5 4a1 1 0 1 1-2 0a1 1 0 0 1 2 0m0-4a1 1 0 1 1-2 0a1 1 0 0 1 2 0m-5 4a1 1 0 1 1-2 0a1 1 0 0 1 2 0m0-4a1 1 0 1 1-2 0a1 1 0 0 1 2 0" />
                 </g>
             </svg>
         </div>
@@ -120,15 +120,18 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
             </div>
         </div>
     </div>
-    <div class="col-span-4">
+    <div class="col-span-4 py-5">
         <div class="grid grid-col-1 gap-y-3 table-container">
             <h1 class="text-bold mt-0" style="font-size:22px;">Pengajuan Karyawan</h1>
             <p class="-mt-2 text-gray-500 mb-3">Menunggu Ditanggapi</p>
             <div class="grid grid-cols-6 gap-10">
                 <div class="col-span-6">
-                    <div class="w-full h-[80px] rounded-md p-2 text-white bg-yellow-400/80">
+                    <div class="w-full h-[80px] rounded-md p-2 text-white bg-teal-400/70">
                         <div class="flex  items-start justify-start space-x-5">
-                            <?= Html::img('@root/images/icons/hadir.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="50px" height="50px" viewBox="0 0 24 24">
+                                <path fill="white" d="M9.052 4.5C9 5.078 9 5.804 9 6.722v10.556c0 .918 0 1.644.052 2.222H8c-2.357 0-3.536 0-4.268-.732C3 18.035 3 16.857 3 14.5v-5c0-2.357 0-3.536.732-4.268S5.643 4.5 8 4.5z" opacity="0.5" />
+                                <path fill="white" fill-rule="evenodd" d="M9.707 2.409C9 3.036 9 4.183 9 6.476v11.048c0 2.293 0 3.44.707 4.067s1.788.439 3.95.062l2.33-.406c2.394-.418 3.591-.627 4.302-1.505c.711-.879.711-2.149.711-4.69V8.948c0-2.54 0-3.81-.71-4.689c-.712-.878-1.91-1.087-4.304-1.504l-2.328-.407c-2.162-.377-3.243-.565-3.95.062m3.043 8.545c0-.434-.336-.785-.75-.785s-.75.351-.75.784v2.094c0 .433.336.784.75.784s.75-.351.75-.784z" clip-rule="evenodd" />
+                            </svg>
                             <div>
                                 <p class="font-bold text-3xl"><?= $pengajuanPulangCepat ?> <span class="font-normal text-whitetext-base">Orang</span></p>
                                 <p class="text-base text-white">Pengajuan Pulang Cepat</p>
@@ -138,9 +141,12 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
 
                 </div>
                 <div class="col-span-6">
-                    <div class="w-full h-[80px] rounded-md p-2 text-white bg-teal-500/60">
+                    <div class="w-full h-[80px] rounded-md p-2 text-white bg-emerald-500/60">
                         <div class="flex  items-start justify-start space-x-5">
-                            <?= Html::img('@root/images/icons/hadir.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>
+
+                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24">
+                                <path fill="white" fill-rule="evenodd" d="M4.172 3.172C3 4.343 3 6.229 3 10v4c0 3.771 0 5.657 1.172 6.828S7.229 22 11 22h2c3.771 0 5.657 0 6.828-1.172S21 17.771 21 14v-4c0-3.771 0-5.657-1.172-6.828S16.771 2 13 2h-2C7.229 2 5.343 2 4.172 3.172M8 9.25a.75.75 0 0 0 0 1.5h8a.75.75 0 0 0 0-1.5zm0 4a.75.75 0 0 0 0 1.5h5a.75.75 0 0 0 0-1.5z" clip-rule="evenodd" />
+                            </svg>
                             <div>
                                 <p class="font-bold text-3xl"><?= $pengajuanCuti ?> <span class="font-normal text-whitetext-base">Orang</span></p>
                                 <p class="text-base text-white">Pengajuan Cuti</p>
@@ -151,7 +157,9 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
                 <div class="col-span-6">
                     <div class="w-full h-[80px] rounded-md p-2 text-white bg-rose-500/70">
                         <div class="flex  items-start justify-start space-x-5">
-                            <?= Html::img('@root/images/icons/hadir.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24">
+                                <path fill="white" fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12m11-5a1 1 0 1 0-2 0v3.764a3 3 0 0 0 1.658 2.683l2.895 1.447a1 1 0 1 0 .894-1.788l-2.894-1.448a1 1 0 0 1-.553-.894z" clip-rule="evenodd" />
+                            </svg>
                             <div>
                                 <p class="font-bold text-3xl"><?= $pengajuanLembur ?> <span class="font-normal text-whitetext-base">Orang</span></p>
                                 <p class="text-base text-white">Pengajuan Lembur</p>
@@ -163,7 +171,9 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
                 <div class="col-span-6">
                     <div class="w-full h-[80px] rounded-md p-2 text-white bg-orange-500/80">
                         <div class="flex  items-start justify-start space-x-5">
-                            <?= Html::img('@root/images/icons/hadir.svg', ["alt" => 'users', 'class' => 'w-[50px] h-[50px]']) ?>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24">
+                                <path fill="white" d="M3 21v-2h18v2zm1.75-5L1 9.75l2.4-.65l2.8 2.35l3.5-.925l-5.175-6.9l2.9-.775L14.9 9.125l4.25-1.15q.8-.225 1.513.187t.937 1.213t-.187 1.513t-1.213.937z" />
+                            </svg>
                             <div>
                                 <p class="font-bold text-3xl"><?= $pengajuanDinas ?> <span class="font-normal text-whitetext-base">Orang</span></p>
                                 <p class="text-base text-white">Pengajuan Dinas</p>
@@ -175,31 +185,6 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
                 </div>
 
             </div>
-            <!-- <div class="h-[400px] w-full bg-gray-400">
-                <div class="max-w-md mx-auto p-4 pt-6 lg:p-6 lg:p-12">
-                    <div class="flex justify-center mb-4">
-                        <h2 id="month-year"></h2>
-                    </div>
-                    <div class="overflow-hidden rounded-lg shadow-md">
-                        <table id="calendar-table" class="w-full">
-                            <thead id="calendar-head">
-                                <tr>
-
-
-                                    <th>Sun</th>
-                                    <th>Mon</th>
-                                    <th>Tue</th>
-                                    <th>Wed</th>
-                                    <th>Thu</th>
-                                    <th>Fri</th>
-                                    <th>Sat</th>
-                                </tr>
-                            </thead>
-                            <tbody id="calendar-body" class="bg-white w-[300px] "></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div> -->
         </div>
     </div>
 

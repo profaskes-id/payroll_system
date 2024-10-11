@@ -38,6 +38,8 @@ class RiwayatKesehatan extends \yii\db\ActiveRecord
             [['tanggal'], 'safe'],
             [['nama_pengecekan', 'surat_dokter'], 'string', 'max' => 255],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
+            [['surat_dokter'], 'file', 'extensions' => 'png, jpg, jpeg, pdf', 'maxSize' => 1024 * 1024 * 2],
+
         ];
     }
 

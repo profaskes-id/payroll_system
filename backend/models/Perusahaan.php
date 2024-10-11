@@ -34,6 +34,8 @@ class Perusahaan extends \yii\db\ActiveRecord
             [['alamat', 'bidang_perusahaan'], 'string'],
             [['didirikan_pada'], 'safe'],
             [['nama_perusahaan', 'provinsi', 'kabupaten_kota', 'direktur', 'logo'], 'string', 'max' => 255],
+            [['logo'], 'file', 'extensions' => 'png, jpg, jpeg', 'maxSize' => 1024 * 1024 * 2],
+
         ];
     }
 

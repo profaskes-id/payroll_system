@@ -91,19 +91,16 @@ class DataPekerjaanController extends Controller
                 }
 
                 $today = date("Y-m-d"); // get today's date
-                dd(Yii::$app->request->post());
                 if ($model->sampai) {
                     $sampai_date = strtotime($model->sampai); // convert $sampai to timestamp
                     $today_timestamp = strtotime($today); // convert today's date to timestamp
-
                     if ($sampai_date > $today_timestamp) {
-
                         $model->is_aktif = 1;
                     } else {
                         $model->is_aktif = 0;
                     }
                 } else {
-                    $model->is_aktif = 0;
+                    $model->is_aktif = 1;
                 }
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data Pekerjaan');
@@ -173,7 +170,7 @@ class DataPekerjaanController extends Controller
                     $model->is_aktif = 0;
                 }
             } else {
-                $model->is_aktif = 0;
+                $model->is_aktif = 1;
             }
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'Berhasil Melakukan Upadte Data Pekerjaan');

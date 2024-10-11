@@ -4,12 +4,12 @@ namespace backend\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\PengajuanDinas;
+use backend\models\MasterGaji;
 
 /**
- * RekapDinasSearch represents the model behind the search form of `backend\models\PengajuanDinas`.
+ * MasterGajiSearch represents the model behind the search form of `backend\models\MasterGaji`.
  */
-class RekapDinasSearch extends PengajuanDinas
+class MasterGajiSearch extends MasterGaji
 {
     /**
      * {@inheritdoc}
@@ -17,9 +17,8 @@ class RekapDinasSearch extends PengajuanDinas
     public function rules()
     {
         return [
-            [['id_pengajuan_dinas', 'id_karyawan', 'disetujui_oleh', 'status'], 'integer'],
-            [['keterangan_perjalanan', 'tanggal_mulai', 'tanggal_selesai', 'disetujui_pada'], 'safe'],
-            [['estimasi_biaya', 'biaya_yang_disetujui'], 'number'],
+            [['id_gaji', 'id_karyawan'], 'integer'],
+            [['nominal_gaji'], 'number'],
         ];
     }
 
@@ -41,8 +40,7 @@ class RekapDinasSearch extends PengajuanDinas
      */
     public function search($params)
     {
-        $query = PengajuanDinas::find()->where(['<>', 'status', 0]);
-
+        $query = MasterGaji::find();
 
         // add conditions that should always apply here
 
@@ -60,18 +58,11 @@ class RekapDinasSearch extends PengajuanDinas
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id_pengajuan_dinas' => $this->id_pengajuan_dinas,
+            'id_gaji' => $this->id_gaji,
             'id_karyawan' => $this->id_karyawan,
-            'tanggal_mulai' => $this->tanggal_mulai,
-            'tanggal_selesai' => $this->tanggal_selesai,
-            'estimasi_biaya' => $this->estimasi_biaya,
-            'biaya_yang_disetujui' => $this->biaya_yang_disetujui,
-            'disetujui_oleh' => $this->disetujui_oleh,
-            'disetujui_pada' => $this->disetujui_pada,
-            'status' => $this->status,
+            'nominal_gaji' => $this->nominal_gaji,
         ]);
 
-        $query->andFilterWhere(['like', 'keterangan_perjalanan', $this->keterangan_perjalanan]);
 
         return $dataProvider;
     }

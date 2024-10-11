@@ -56,8 +56,8 @@ class DataPekerjaan extends \yii\db\ActiveRecord
     {
         return [
             'id_data_pekerjaan' => 'Id Data Pekerjaan',
-            'id_karyawan' => 'Id Karyawan',
-            'id_bagian' => 'Id Bagian',
+            'id_karyawan' => ' Karyawan',
+            'id_bagian' => 'Bagian',
             'dari' => 'Dari',
             'sampai' => 'Sampai',
             'status' => 'Status Karyawan',

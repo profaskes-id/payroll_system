@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\MasterCuti;
 use backend\models\MasterCutiSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -21,19 +22,22 @@ class MasterCutiController extends Controller
         return array_merge(
             parent::behaviors(),
             [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
                 'access' => [
                     'class' => \yii\filters\AccessControl::className(),
                     'rules' => [
                         [
                             'allow' => true,
-                            'roles' => ['@'],
-                        ],
+                            'roles' => ['super_admin'], // Pastikan peran ini ada dalam RBAC Anda
+                            'matchCallback' => function ($rule, $action) {
+                                return Yii::$app->user->can('super_admin'); // Pastikan Anda sudah mengonfigurasi permission ini di RBAC
+                            },
+                        ]
+                    ]
+                ],
+                'verbs' => [
+                    'class' => VerbFilter::className(),
+                    'actions' => [
+                        'delete' => ['POST'],
                     ],
                 ],
             ]

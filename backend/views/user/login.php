@@ -15,16 +15,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row justify-content-center align-items-center">
         <div class="col-12">
             <div class="wrap">
-                <?= Html::img('@root/images/banner/banner-image-2.jpg', ['class' => 'img', 'style' => 'position:relative; left:-200px']) ?>
                 <div class="login-wrap p-4 px-md-5 pt-md-4">
-
-
+                    <?= Html::img('@root/images/profaskes.png', ['width' => '250px', 'class' => 'mb-4 mx-auto', 'alt' => 'banner']) ?>
                     <?php $form = ActiveForm::begin([
                         'id' => 'login-form',
-                        'fieldConfig' => [
-                            // 'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-7\">{error}</div>",
-                            // 'labelOptions' => ['class' => 'col-lg-2 control-label'],
-                        ],
+                        'fieldConfig' => [],
                     ]); ?>
                     <div class="form-group ">
                         <?= $form->field($model, 'email')->textInput(['class' => 'form-control w-100']) ?>
@@ -42,7 +37,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             </div>
                         </div>
                         <?php ActiveForm::end(); ?>
-                        <!-- <p class="text-center">Belum Punya Akun ? <a data-toggle="tab" href="/klinik-member" style="color: #1e70b8; text-decoration: underline;">Daftar Sekarang</a></p> -->
                     </div>
                 </div>
             </div>

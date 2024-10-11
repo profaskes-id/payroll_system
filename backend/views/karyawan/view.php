@@ -362,11 +362,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                             'contentOptions' => ['style' => 'text-align: center;'],
                                             'label' => 'Sampai',
                                             'value' => function ($model) {
-                                                if ($model['is_currenty'] == 1) {
-                                                    return 'sekarang';
-                                                }
+                                                // dd($model);
                                                 $tanggalFormat = new Tanggal();
-                                                return $tanggalFormat->getIndonesiaFormatTanggal($model['sampai']);
+                                                if ($model['sampai']) {
+                                                    return $tanggalFormat->getIndonesiaFormatTanggal($model['sampai']);
+                                                }
+                                                return '';
                                                 // return date('d-m-Y', strtotime($model['sampai']));
                                             }
                                         ],

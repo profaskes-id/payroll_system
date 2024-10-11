@@ -103,37 +103,49 @@ $tanggal = new Tanggal;
                             $day_of_week = date_format($date, 'w');
                             ?>
                             <td <?php if ($day_of_week == 0) echo 'style="background-color: #aaa; color:white;"'; ?>>
-                                <p style="width: 40px; text-align: center; vertical-align: middle;">
+                                <p style="width: 50px; padding:0;  text-align: center; vertical-align: middle;">
                                     <?php if ($data !== null && $data['status_hadir'] !== null && $data['jam_masuk_karyawan'] !== null): ?>
                                         <?php
-                                        $jamKerjakaryawan = $data['jam_masuk_karyawan'];
-                                        $jamKerjaKantor = $data['jam_masuk_kantor'];
-
-                                        $jam_masuk_kerja_time = strtotime($jamKerjakaryawan);
-                                        $jam_karyawan_masuk_time = strtotime($jamKerjaKantor);
+                                        $jamKerjakaryawan = $data['jam_masuk_karyawan']; //karyawan masuj
+                                        $jamKerjaKantor = $data['jam_masuk_kantor']; // jam kantor
+                                        $karyawan_absen_pada = strtotime($jamKerjakaryawan);
+                                        $jam_kantor_masuk = strtotime($jamKerjaKantor);
                                         ?>
 
-                                        <?php if ($jam_karyawan_masuk_time > $jam_masuk_kerja_time) : ?>
-                                            <span style='color: red;'><?= $data['status_hadir'] ?></span><br />
+                                        <?php if ($karyawan_absen_pada > $jam_kantor_masuk) : ?>
+                                            <span style='color: red;'>H</span><br />
                                             <?php
                                             // Hitung selisih waktu
-                                            $selisih_detik = $jam_karyawan_masuk_time - $jam_masuk_kerja_time;
+                                            $selisih_detik = $karyawan_absen_pada - $jam_kantor_masuk;
                                             $menit = floor($selisih_detik / 60);
                                             $detik = $selisih_detik % 60;
+                                            $jam = floor($menit / 60); // Hitung jam
+
+
+                                            $menit = $menit % 60;
+
+                                            if ($menit < 0) {
+                                                $menit  = 0;
+                                            }
+                                            if ($jam < 0) {
+                                                $jam = 0;
+                                            }
 
                                             // Tambahkan nol di depan jika kurang dari 10
                                             $menit = str_pad($menit, 2, '0', STR_PAD_LEFT);
                                             $detik = str_pad($detik, 2, '0', STR_PAD_LEFT);
+                                            $jam = str_pad($jam, 2, '0', STR_PAD_LEFT);
+                                            if ($jam > 0) {
+                                                echo "<span style='color: red; font-size: 12px; justify-content:center; align-items:center; display: flex;'>+{$jam}:{$menit}:{$detik}</span>";
+                                            } else {
+                                                echo "<span style='color: red; font-size: 12px; justify-content:center; align-items:center; display: flex;'>+{$menit}:{$detik}</span>";
+                                            }
                                             ?>
-                                            <span style='color: red; font-size: 12px; display: flex;'>+<?= $menit ?>:<?= $detik ?></span>
                                         <?php else : ?>
                                             <span style='color: black;'><?= $data['status_hadir'] ?></span>
                                         <?php endif; ?>
                                     <?php endif; ?>
                                 </p>
-
-
-
                             <?php endif ?>
                             </td>
 

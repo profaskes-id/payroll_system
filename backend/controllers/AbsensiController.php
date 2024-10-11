@@ -118,7 +118,8 @@ class AbsensiController extends Controller
         $model = new Absensi();
         $karyawan = Yii::$app->request->get('id_karyawan');
         $jadwalKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan])->one();
-        if (!$jadwalKerjaKaryawan) {
+        $atasanKaryawan = AtasanKaryawan::find()->where(['id_karyawan' => $karyawan])->one();
+        if (!$jadwalKerjaKaryawan || !$atasanKaryawan) {
 
             Yii::$app->session->setFlash('error', 'Mohon Untuk Menambahkan Data Jadwal Kerja Terlebih Dahulu');
             return $this->redirect(['index']);

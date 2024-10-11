@@ -117,40 +117,14 @@ use yii\widgets\ActiveForm;
 
 
 <script>
-    const gajiPokokInput = document.querySelector('#gaji_pokok');
-    const terbilangInput = document.querySelector('#terbilang');
-
-    gajiPokokInput.addEventListener('input', (e) => {
-        const value = e.target.value.replace(/[^\d]/g, ''); // remove non-numeric characters
-        const formattedValue = formatCurrency(value); // format as Indonesian currency
-        e.target.value = formattedValue;
-    });
-
-    function formatCurrency(value) {
-        return value.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // add dots as thousand separators
-    }
-</script>
-<script>
-    // const manual_kode = document.querySelector('#manual_kode');
     const kode_sampai = document.querySelector('#kode_sampai');
     const is_currenty = document.querySelector('#is_currenty');
     const sampai = document.querySelector('.selama');
-    const selama = Array.from(document.querySelectorAll('input[name="DataPekerjaan[selama]"]'));
     const dari = document.querySelector('#dari');
 
-    function addMonthOrYear(dateString, month, year) {
-        // Parse the input date string into a Date object
+    function addDays(dateString, days) {
         const date = new Date(dateString);
-
-        // Add the specified month(s)
-        date.setMonth(date.getMonth() + month);
-
-        // Add the specified year(s) if provided
-        if (year) {
-            date.setFullYear(date.getFullYear() + year);
-        }
-
-        // Return the resulting date as a string in the format "YYYY-MM-DD"
+        date.setDate(date.getDate() + days); // Menambahkan jumlah hari ke tanggal
         return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
     }
 
@@ -159,29 +133,17 @@ use yii\widgets\ActiveForm;
         return (num < 10 ? '0' : '') + num;
     }
 
-    // manual_kode.addEventListener('click', () => {
-    //     kode_sampai.disabled = kode_sampai.disabled ? false : true;
-    //     is_currenty.value = kode_sampai.disabled ? 1 : 0;
-    //     kode_sampai.value = '';
-    //     selama.map((item) => {
-    //         item.disabled = item.disabled ? false : true;
-    //         // item.value = '0';
-    //     });
-
-    // });
-
     sampai.addEventListener('change', (e) => {
-
         if (e.target.value == 0) {
             kode_sampai.value = '';
         } else if (e.target.value == 1) {
-            const result = addMonthOrYear(dari.value, 3);
+            const result = addDays(dari.value, 30 * 3); // Tambah 30 hari
             kode_sampai.value = result;
         } else if (e.target.value == 2) {
-            const result = addMonthOrYear(dari.value, 6);
+            const result = addDays(dari.value, 30 * 6); // Tambah 60 hari
             kode_sampai.value = result;
         } else if (e.target.value == 3) {
-            const result = addMonthOrYear(dari.value, 0, 1); // Output: "2025-06-02"
+            const result = addDays(dari.value, 30 * 12); // Tambah 1 tahun (365 hari)
             kode_sampai.value = result;
         }
         // is_currenty.value = kode_sampai.disabled ? 1 : 0;

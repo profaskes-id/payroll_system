@@ -317,6 +317,7 @@ $dataTodayJson = json_encode($dataToday, JSON_PRETTY_PRINT);
 
     submitButton.addEventListener('click', function() {
 
+
         function getWaktuSaatIni() {
             const sekarang = new Date();
             return {
@@ -333,8 +334,10 @@ $dataTodayJson = json_encode($dataToday, JSON_PRETTY_PRINT);
         } = getWaktuSaatIni();
 
 
+
         const [batasJam, batasMenit, batasDetik] = jam_masuk.split(':').map(Number);
         const [maximalTelatJam, maximalTelatbatasMenit, maximalTelatbatasDetik] = max_telat.split(':').map(Number);
+        return;
 
         function isSebelumBatas(jam, menit, detik) {
             if (jam < batasJam) return true;

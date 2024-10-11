@@ -57,8 +57,16 @@ $this->params['breadcrumbs'][] = $this->title;
                         // return date('d-M-Y', strtotime($model->tanggal_selesai));
                     }
                 ],
-                'estimasi_biaya',
-                'biaya_yang_disetujui',
+                [
+                    'attribute' => 'estimasi_biaya',
+                    'format' => 'currency', // Format currency untuk otomatis
+                    'contentOptions' => ['style' => 'text-align: left;'], // Align text ke kanan
+                ],
+                [
+                    'attribute' => 'biaya_yang_disetujui',
+                    'format' => 'currency', // Format currency untuk otomatis
+                    'contentOptions' => ['style' => 'text-align: left;'], // Align text ke kanan
+                ],
                 [
                     'label' => 'Disetujui Oleh',
                     'value' => function ($model) {
@@ -68,7 +76,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'label' => 'Disetujui Pada',
                     'value' => function ($model) {
-                        return date('d-m-Y H:i', strtotime($model->disetujui_pada));
+                        $tanggalFormat = new Tanggal();
+                        if ($model->disetujui_pada == null) {
+                            return "Belum Di set";
+                        }
+                        return $tanggalFormat->getIndonesiaFormatLong($model->disetujui_pada);
                     }
                 ],
 
@@ -86,7 +98,29 @@ $this->params['breadcrumbs'][] = $this->title;
                             return "<span class='text-danger'>master kode tidak aktif</span>";
                         }
                     }
+                ],
+                [
+                    'label' => 'Dokumentasi',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        if ($model->status != 0) {
+                            if ($model->files != null) {
+                                $files = json_decode($model->files, true);
+                                if ($files) {
+                                    $output = '<ul>';
+                                    foreach ($files as $key => $file) {
+                                        $key++;
+                                        $output .= '<li>' . Html::a("Dokumentasi {$key}",  '/panel/' . $file, ['target' => '_blank']) . '</li>';
+                                    }
+                                    $output .= '</ul>';
+                                    return $output; // Kembalikan output yang sudah diformat
+                                }
+                            }
+                        }
+                        return ''; // Kembalikan string kosong jika tidak ada file
+                    }
                 ]
+
             ],
         ]) ?>
 
