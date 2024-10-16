@@ -3,6 +3,7 @@
 use backend\models\Absensi;
 use backend\models\Bagian;
 use backend\models\Karyawan;
+use backend\models\Tanggal;
 use kartik\select2\Select2;
 use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
@@ -29,7 +30,7 @@ $today = date('Y-m-d');
         <div class="row mb-2">
 
             <div class="col-5">
-                <?= $form->field($absensi, 'tanggal')->textInput(['type' => 'date', 'value' => $tanggalSet ?? $today])->label(false); ?>
+                <?= $form->field($absensi, 'tanggal')->textInput(['type' => 'date',  'value' => $tanggalSet ?? $today])->label(false); ?>
             </div>
 
 
@@ -101,14 +102,20 @@ $today = date('Y-m-d');
                     }
                 ],
                 [
+
                     'label' => 'Hari',
-                    'value' => function ($model) {
-                        return date('l');
+                    'contentOptions' => ['style' => 'width: 15%; text-align: center;'],
+                    'headerOptions' => ['style' => 'width: 15%; text-align: center;'],
+                    'value' => function ($model) use ($tanggalSet) {
+
+                        $nama_hari = date('l', strtotime($tanggalSet ?? date('Y-m-d')));
+                        $tanggal = new Tanggal();
+                        return $tanggal->getIndonesiaHari($nama_hari);
                     }
                 ],
                 [
-                    'headerOptions' => ['style' => 'width: 15%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 15%; text-align: center;'],
+                    'headerOptions' => ['style' => 'width: 15%; text-align: center;'],
                     'label' => 'Jam Masuk',
                     'format' => 'raw',
                     'value' => function ($model) {

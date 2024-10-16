@@ -260,6 +260,16 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
         </div>
 
 
+        <div class="col-12 col-md-4">
+            <?= $form->field($model, 'is_aktif')->radioList(
+                [
+                    0 => 'Resign',
+                    1 => 'Aktif',
+                ], // Daftar opsi
+                ['class' => 'selama', 'itemOptions' => ['labelOptions' => ['style' => 'margin-right: 20px;',]]] // Opsi tambahan, misalnya style
+            )->label('Apakah Aktif ') ?>
+        </div>
+
 
     </div>
     <div class="form-group">

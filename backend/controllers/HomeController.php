@@ -75,7 +75,10 @@ class HomeController extends Controller
 
 
         $this->layout = 'mobile-main';
-        $karyawan = Karyawan::findOne(['email' => Yii::$app->user->identity->email]);
+        $karyawan = Karyawan::find()->where(['email' => Yii::$app->user->identity->email, 'is_aktif' => 1])->one();
+        if (!$karyawan) {
+            return "anda tidak terdaftar, silahkan hubungi administrator";
+        }
         // dd($karyawan);
         $pengumuman = Pengumuman::find()->orderBy(['dibuat_pada' => SORT_DESC])->limit(5)->all();
         $absensi = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
@@ -172,7 +175,7 @@ class HomeController extends Controller
 
 
         $model = new Absensi();
-        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email, 'is_aktif' => 1])->one();
         $absensiToday = Absensi::find()->where(['tanggal' => date('Y-m-d'), 'id_karyawan' => $karyawan->id_karyawan])->all();
 
         $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();

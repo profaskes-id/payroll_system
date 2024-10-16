@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="table-container table-responsive">
         <p class="d-flex justify-content-start " style="gap: 10px;">
-            <?= Html::a('cetak', ['kontrak-download', 'id_cetak' => $model->id_cetak,], ['class' => 'cetak-button']) ?>
+            <?= Html::a('cetak', ['kontrak-download', 'id_cetak' => $model->id_cetak,], ['class' => 'cetak-button', 'target' => '_blank']) ?>
             <?= Html::a('Update', ['update', 'id_cetak' => $model->id_cetak,], ['class' => 'add-button']) ?>
             <?= Html::a('Delete', ['delete', 'id_cetak' => $model->id_cetak,], [
                 'class' => 'reset-button',

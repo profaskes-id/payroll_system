@@ -208,9 +208,6 @@ $this->title = 'Report Data Karyawan';
                 [
                     'attribute' => 'Sampai',
                     'value' => function ($model) {
-                        if ($model['is_currenty'] != null) {
-                            return 'Sekarang';
-                        }
                         $tanggalFormat = new Tanggal();
                         return $tanggalFormat->getIndonesiaFormatTanggal($model['sampai']);
                     }

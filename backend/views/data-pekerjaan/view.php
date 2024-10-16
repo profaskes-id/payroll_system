@@ -55,10 +55,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'sampai',
                     'value' => function ($model) {
-                        if ($model->is_currenty != null) {
-                            return 'Sekarang';
-                        }
                         $tanggalFormat = new Tanggal();
+                        if ($model->sampai == null) {
+                            return '-';
+                        }
                         return $tanggalFormat->getIndonesiaFormatTanggal($model->sampai);
                     }
                 ],

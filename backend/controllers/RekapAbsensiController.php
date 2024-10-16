@@ -71,6 +71,7 @@ class RekapAbsensiController extends Controller
             $bulan = date('m');
             $tahun = date('Y');
             $data = $this->RekapData();
+            // dd($data);
         }
 
         return $this->render('index', [
@@ -144,9 +145,6 @@ class RekapAbsensiController extends Controller
         }
 
 
-
-        // dd($bulan, $tahun);
-        // Buat tanggal awal dan akhir bulan
         $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, 1, $tahun));
         $lastDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, date('t', mktime(0, 0, 0, $bulan, 1, $tahun)), $tahun));
 
@@ -156,12 +154,13 @@ class RekapAbsensiController extends Controller
             ->asArray()
             ->leftJoin('{{%jam_kerja_karyawan}} jkk', 'absensi.id_karyawan = jkk.id_karyawan')
             ->leftJoin('{{%jadwal_kerja}} jdk', 'jkk.id_jam_kerja = jdk.id_jam_kerja')
+            // ->leftJoin('{{%karyawan}} k', 'absensi.id_karyawan = k.id_karyawan')
             ->where(['jdk.nama_hari' => date('l', strtotime('absensi.tanggal'))])
             ->where(['>=', 'tanggal', $firstDayOfMonth])
             ->andWhere(['<=', 'tanggal', $lastDayOfMonth])
+            // ->andWhere(['k.is_aktif' => 1])
             ->all();
 
-        // dd($absensi);
         // Buat array tanggal bulanan
         $tanggal_bulanan = array();
         for ($i = 1; $i <= date('t', mktime(0, 0, 0, $bulan, 1, $tahun)); $i++) {
@@ -170,18 +169,20 @@ class RekapAbsensiController extends Controller
         // dd($tanggal_bulanan);
 
         // Mengambil data karyawan
-        $dataKaryawan = Karyawan::find()->select(['karyawan.id_karyawan', 'karyawan.nama', 'karyawan.kode_karyawan', 'bg.id_bagian', 'bg.nama_bagian', 'dp.jabatan', 'mk.nama_kode as jabatan'])
+        $dataKaryawan = Karyawan::find()
+            ->select(['karyawan.id_karyawan', 'karyawan.nama', 'karyawan.kode_karyawan', 'bg.id_bagian', 'bg.nama_bagian', 'dp.jabatan', 'mk.nama_kode as jabatan'])
             ->asArray()
-            ->leftJoin('{{%data_pekerjaan}} dp', 'dp.id_karyawan = dp.id_karyawan')
+            ->where(['karyawan.is_aktif' => 1])
+            ->leftJoin('{{%data_pekerjaan}} dp', 'karyawan.id_karyawan = dp.id_karyawan')
             ->leftJoin('{{%bagian}} bg', 'dp.id_bagian = bg.id_bagian')
             ->leftJoin('{{%master_kode}} mk', 'mk.nama_group = "jabatan" and dp.jabatan = mk.kode')
             ->orderBy(['nama' => SORT_ASC])
             ->all();
 
-        // dd($dataKaryawan[0]->dataPekerjaans[0]->bagian);
-        // Buat array hasild
         $hasil = [];
+
         $totalHari = date('t', mktime(0, 0, 0, $bulan, 1, $tahun));
+        $totalHadir = 0;
         foreach ($dataKaryawan as $karyawan) {
 
             $karyawanData = [
@@ -201,6 +202,7 @@ class RekapAbsensiController extends Controller
                 $jamMasukKantor = null; // Default jika tidak ada data
                 foreach ($absensi as $record) {
                     if ($record['id_karyawan'] == $karyawan['id_karyawan'] && $record['tanggal'] == $tanggal) {
+                        if ($record['kode_status_hadir'] == 'H') $totalHadir++;
                         $statusHadir = $record['kode_status_hadir'];
                         $jamMasukKaryawan = $record['jam_masuk'];
                         $jamMasukKantor = $record['jam_masuk_kerja'];
@@ -210,11 +212,21 @@ class RekapAbsensiController extends Controller
                 $karyawanData[] = [
                     'status_hadir' => $statusHadir,
                     'jam_masuk_karyawan' => $jamMasukKaryawan,
-                    'jam_masuk_kantor' => $jamMasukKantor
+                    'jam_masuk_kantor' => $jamMasukKantor,
                 ]; // Wrap status hadir in an array
             }
+            $karyawanData[] = [
+                'status_hadir' => null,
+                'jam_masuk_karyawan' => null,
+                'jam_masuk_kantor' => null,
+                'total_hadir' => $totalHadir
+            ];
+
+
             $hasil[] = $karyawanData;
+            $totalHadir = 0;
         }
+
 
 
 
@@ -222,13 +234,18 @@ class RekapAbsensiController extends Controller
         $tanggalBulan = range(1, date('t', strtotime("$tahun-$bulan-01"))); // Mendapatkan semua tanggal dalam bulan
 
         // Ambil data kehadiran dalam satu query
-        $dataAbsensiHadir = Absensi::find()->where(['kode_status_hadir' => 'H'])
+        $dataAbsensiHadir = Absensi::find()
+            ->select(['absensi.id_absensi', 'absensi.tanggal', 'absensi.kode_status_hadir'])
+            ->asArray()
+            ->leftJoin('{{%karyawan}} k', 'absensi.id_karyawan = k.id_karyawan')
+            ->where(['kode_status_hadir' => 'H'])
+            ->andWhere(['k.is_aktif' => 1])
             ->andWhere(['between', 'tanggal', "$tahun-$bulan-01", "$tahun-$bulan-" . date('t', strtotime("$tahun-$bulan-01"))])
             ->all();
 
-        // Hitung kehadiran dan simpan dalam array
+
         foreach ($dataAbsensiHadir as $absensi) {
-            $tanggal = date('j', strtotime($absensi->tanggal)); // Ambil tanggal dari record absensi
+            $tanggal = date('j', strtotime($absensi['tanggal'])); // Ambil tanggal dari record absensi
             $rekapanAbsensi[$tanggal] = isset($rekapanAbsensi[$tanggal]) ? $rekapanAbsensi[$tanggal] + 1 : 1;
         }
 
@@ -238,6 +255,16 @@ class RekapAbsensiController extends Controller
                 $rekapanAbsensi[$tanggal] = 0; // Isi 0 jika tidak ada kehadiran
             }
         }
+        $totalAbsensiHadir = Absensi::find()
+            ->leftJoin('{{%karyawan}} k', 'absensi.id_karyawan = k.id_karyawan')
+            ->where(['kode_status_hadir' => 'H'])
+            ->andWhere(['between', 'tanggal', "$tahun-$bulan-01", "$tahun-$bulan-" . date('t', strtotime("$tahun-$bulan-01"))])
+            ->andWhere(['k.is_aktif' => 1])
+            ->count();
+
+
+        $rekapanAbsensi[] = $totalAbsensiHadir;
+
         // Mengurutkan array berdasarkan tanggal
         ksort($rekapanAbsensi);
         return ['tanggal_bulanan' => $tanggal_bulanan, 'hasil' => $hasil, 'rekapanAbsensi' => $rekapanAbsensi];

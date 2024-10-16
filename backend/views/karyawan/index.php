@@ -84,11 +84,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
-                    'header' => 'email',
+                    'header' => 'Aktif',
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'value' => function ($model) {
-                        return $model->email;
+                        // return $model->email;
+                        return $model->is_aktif == 1 ? '<span class="text-success">Aktif</span>' : '<span class="text-danger">Resign</span>';
                     },
                     'format' => 'raw',
                 ],
@@ -97,6 +98,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'value' => function ($model) {
+                        if (!$model->is_aktif == 1) {
+                            return '<span class="text-danger">Resign</span>';
+                        }
                         if (!$model->is_invite) {
                             return Html::a('<i class="fas fa-user-plus"></i>', ['invite', 'id_karyawan' => $model->id_karyawan], [
                                 'title' => 'Invite',

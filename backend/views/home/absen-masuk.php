@@ -48,6 +48,8 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
     </div>
+
+
     <div id="popup-modal-keluar" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-md max-h-full">
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -337,7 +339,7 @@ $dataTodayJson = json_encode($dataToday, JSON_PRETTY_PRINT);
 
         const [batasJam, batasMenit, batasDetik] = jam_masuk.split(':').map(Number);
         const [maximalTelatJam, maximalTelatbatasMenit, maximalTelatbatasDetik] = max_telat.split(':').map(Number);
-        return;
+
 
         function isSebelumBatas(jam, menit, detik) {
             if (jam < batasJam) return true;
@@ -354,6 +356,7 @@ $dataTodayJson = json_encode($dataToday, JSON_PRETTY_PRINT);
         }
 
         const alasanTerlambat = document.querySelector('#alasanTerlambat');
+
         if (isSebelumBatas(jam, menit, detik)) {
             form.submit();
         } else if (isTerlambat(jam, menit, detik)) {

@@ -48,11 +48,15 @@ $this->params['breadcrumbs'][] = $this->title;
                         'format' => 'raw',
                         'value' => function ($model) {
                             $poinArray = json_decode($model->pekerjaan ?? []);
-                            $finalValue = [];
-                            foreach ($poinArray as $item) {
-                                $finalValue[] = "<li style='margin-left: 20px'>$item</li>";
+                            if ($poinArray) {
+                                $finalValue = [];
+                                foreach ($poinArray as $item) {
+                                    $finalValue[] = "<li style='margin-left: 20px'>$item</li>";
+                                }
+                                return implode('', $finalValue);
+                            } else {
+                                return 'belum di set';
                             }
-                            return implode('', $finalValue);
                         }
                     ],
 
@@ -82,8 +86,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'attribute' => 'Ditanggapi Pada',
                         'value' => function ($model) {
+
                             if ($model->status == 0) {
                                 return '<span class="text-warning">Menuggu Tanggapan</span>';
+                            }
+                            if ($model->disetujui_pada == null) {
+                                return '<span class="text-success">-</span>';
                             }
                             $tanggalFormat = new Tanggal();
                             return $tanggalFormat->getIndonesiaFormatTanggal($model->disetujui_pada) ?? '-';
@@ -106,6 +114,12 @@ $this->params['breadcrumbs'][] = $this->title;
                             }
                         },
                     ],
+                    [
+                        'label' => 'Catatan Admin',
+                        'value' => function ($model) {
+                            return $model->catatan_admin ?? '-';
+                        }
+                    ]
                 ],
             ]) ?>
 

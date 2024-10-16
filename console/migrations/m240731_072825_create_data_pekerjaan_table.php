@@ -21,7 +21,6 @@ class m240731_072825_create_data_pekerjaan_table extends Migration
             'status' => $this->integer()->notNull(),
             'jabatan' => $this->string()->notNull(), // Position
             'is_aktif' => $this->integer()->notNull(),
-            'is_currenty' => $this->smallInteger()->notNull()->defaultValue(0),
             'surat_lamaran_pekerjaan' => $this->string()->null(),
         ]);
 

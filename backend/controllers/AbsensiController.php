@@ -127,7 +127,7 @@ class AbsensiController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                $model->keterangan  = 'Absen Di set Oleh : ' . Yii::$app->user->identity->username ?? '';
+                $model->keterangan  = $model->keterangan ?? ' ' . '(Absen Di set Oleh : ' . Yii::$app->user->identity->username ?? '' . ")";
                 $model->save();
                 return $this->redirect(['view', 'id_absensi' => $model->id_absensi]);
             }

@@ -14,12 +14,12 @@ $tanggalFormat = new Tanggal();
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
-<body>
-    <div class="container mt-5 content p-">
+<body class="text-justify" style="text-align: justify !important;">
+    <div class="container mt-5 content ">
         <h3 class="text-center " style="text-decoration: underline;">PERJANJIAN KERJA WAKTU TERTENTU</h3>
         <p class="text-center">Nomor : <?= $model['nomor_surat'] ?></p>
         <p>Perjanjian ini adalah antara:</p>
-        <p><strong><?= $model['nama_penanda_tangan'] ?></strong>, dalam hal ini bertindak atas jabatannya sebagai <?= $model['jabatan_penanda_tangan'] ?> <?= $perusahaan['nama_perusahaan'] ?>, sebuah perusahaan yang bergerak di bidang <?= $perusahaan['bidang_perusahaan'] ?>. <?= $perusahaan['nama_perusahaan'] ?> yang berkedudukan di <?= $perusahaan['alamat'] ?>, Untuk selanjutnya disebut sebagai <strong>PIHAK PERTAMA</strong>.</p>
+        <p class="text-justify"><strong><?= $model['nama_penanda_tangan'] ?></strong>, dalam hal ini bertindak atas jabatannya sebagai <?= $model['jabatan_penanda_tangan'] ?> <?= $perusahaan['nama_perusahaan'] ?>, sebuah perusahaan yang bergerak di bidang <?= $perusahaan['bidang_perusahaan'] ?>. <?= $perusahaan['nama_perusahaan'] ?> yang berkedudukan di <?= $perusahaan['alamat'] ?>, Untuk selanjutnya disebut sebagai <strong>PIHAK PERTAMA</strong>.</p>
 
         <p>Dengan:</p>
         <p>
@@ -72,7 +72,7 @@ $tanggalFormat = new Tanggal();
 
             Untuk selanjutnya disebut sebagai <strong>PIHAK KEDUA</strong>.
         </p>
-        <h5 class="my-5">Dengan ini pihak pertama menerima pihak kedua untuk bekerja di <?= $perusahaan['nama_perusahaan'] ?> dengan kondisi-kondisi sebagai berikut:</h5>
+        <h5 class="my-5 text-justify">Dengan ini pihak pertama menerima pihak kedua untuk bekerja di <?= $perusahaan['nama_perusahaan'] ?> dengan kondisi-kondisi sebagai berikut:</h5>
 
         <table class="">
             <tr class="pb-5">
@@ -80,10 +80,10 @@ $tanggalFormat = new Tanggal();
                 <td class="w-25" style="vertical-align: top; width:30px; text-align:center;"><strong>:</strong></td>
                 <td>Karyawan PKWT</td>
             </tr>
-            <tr class="pb-5">
+            <tr class="text-justify pb-5">
                 <td class="w-25" style="vertical-align: top !important;">MASA KONTRAK</td>
                 <td class="w-25" style="vertical-align: top; width:30px; text-align:center;"><strong>:</strong></td>
-                <td>Mulai dari <?= $tanggalFormat->getIndonesiaFormatTanggal($dataPekerjaan['dari']) ?> sampai dengan
+                <td class="text-justify">Mulai dari <?= $tanggalFormat->getIndonesiaFormatTanggal($dataPekerjaan['dari']) ?> sampai dengan
                     <?php if ($dataPekerjaan['sampai']) :  ?>
                         <?= $tanggalFormat->getIndonesiaFormatTanggal($dataPekerjaan['sampai']) ?>.
                     <?php else :  ?>
@@ -95,19 +95,19 @@ $tanggalFormat = new Tanggal();
             <tr class="pb-5">
                 <td class="w-25" style="vertical-align: top !important;">POSISI</td>
                 <td class="w-25" style="vertical-align: top; width:30px; text-align:center;"><strong>:</strong></td>
-                <td>Technical Support </td>
+                <td><?= $dataPekerjaan->jabatanPekerja->nama_kode ?? '' ?></td>
             </tr>
 
             <tr class="pb-5">
                 <td class="w-25" style="vertical-align: top !important;">HAK PIHAK KEDUA</td>
                 <td class="w-25" style="vertical-align: top; width:30px; text-align:center;"><strong>:</strong></td>
                 <td>
-                    <ol style="padding-left: 20px;">
-                        <li>Mendapat gaji pokok, transport tunjangan jabatan, bonus kinerja.</li>
-                        <li>Mendapat fasilitas BPJS Kesehatan dan BPJS Ketenagakerjaan.</li>
-                        <li>Mendapat tunjangan hari raya keagamaan sebesar 1 (satu) bulan gaji. Apabila pihak kedua masa kerjanya belum mencapai 1 (satu) tahun pada saat hari raya keagamaan dibayarkan, berhak mendapatkan 1/12 (seperduabelas) dari tunjangan hari raya untuk setiap bulan masa kerja.</li>
-                        <li>Bekerja WFH mendapatkan potongan sesuai ketentuan perusahaan.</li>
-                        <li>Pajak yang timbul atas gaji ditanggung oleh karyawan.</li>
+                    <ol style="padding-left: 20px;" style="text-align: justify;">
+                        <li style="text-align: justify;">Mendapat gaji pokok, transport tunjangan jabatan, bonus kinerja.</li>
+                        <li style="text-align: justify;">Mendapat fasilitas BPJS Kesehatan dan BPJS Ketenagakerjaan.</li>
+                        <li style="text-align: justify; ">Mendapat tunjangan hari raya keagamaan sebesar 1 (satu) bulan gaji. Apabila pihak kedua masa kerjanya belum mencapai 1 (satu) tahun pada saat hari raya keagamaan dibayarkan, berhak mendapatkan 1/12 (seperduabelas) dari tunjangan hari raya untuk setiap bulan masa kerja.</li>
+                        <li style="text-align: justify;">Bekerja WFH mendapatkan potongan sesuai ketentuan perusahaan.</li>
+                        <li style="text-align: justify;">Pajak yang timbul atas gaji ditanggung oleh karyawan.</li>
                     </ol>
                 </td>
             </tr>
@@ -115,15 +115,15 @@ $tanggalFormat = new Tanggal();
                 <td class="w-25" style="vertical-align: top !important;">KEWAJIBAN PIHAK KEDUA</td>
                 <td class="w-25" style="vertical-align: top; width:30px; text-align:center;"><strong>:</strong></td>
                 <td>
-                    <ol>
-                        <li>Hadir di kantor sesuai waktu & jam kerja yang berlaku di perusahaan.</li>
-                        <li>Menjalankan pekerjaan sesuai uraian tugas, tanggungjawab dan wewenang yang diberikan.</li>
-                        <li>Menjaga nama baik dan rahasia perusahaan.</li>
-                        <li>Mematuhi kode etik yang berlaku di perusahaan.</li>
-                        <li>Menjaga kerahasiaan data publik sesuai UU nomor 27 Tahun 2022 tentang Perlindungan data pribadi.</li>
-                        <li>Menjaga kerahasiaan data medis berdasarkan Peraturan Menteri Kesehatan Nomor 24 tahun 2022 tentang Rekam Medis.</li>
-                        <li>Dilarang mengikat hubungan kerja dengan perusahaan lain.</li>
-                        <li>Dilarang menerima komisi dari pembelian atau jasa untuk kepentingan pribadi.</li>
+                    <ol style="text-align: justify;">
+                        <li style="text-align: justify;">Hadir di kantor sesuai waktu & jam kerja yang berlaku di perusahaan.</li>
+                        <li style="text-align: justify;">Menjalankan pekerjaan sesuai uraian tugas, tanggungjawab dan wewenang yang diberikan.</li>
+                        <li style="text-align: justify;">Menjaga nama baik dan rahasia perusahaan.</li>
+                        <li style="text-align: justify;">Mematuhi kode etik yang berlaku di perusahaan.</li>
+                        <li style="text-align: justify;">Menjaga kerahasiaan data publik sesuai UU nomor 27 Tahun 2022 tentang Perlindungan data pribadi.</li>
+                        <li style="text-align: justify;">Menjaga kerahasiaan data medis berdasarkan Peraturan Menteri Kesehatan Nomor 24 tahun 2022 tentang Rekam Medis.</li>
+                        <li style="text-align: justify;">Dilarang mengikat hubungan kerja dengan perusahaan lain.</li>
+                        <li style="text-align: justify;">Dilarang menerima komisi dari pembelian atau jasa untuk kepentingan pribadi.</li>
                     </ol>
                 </td>
             </tr>
@@ -157,11 +157,11 @@ $tanggalFormat = new Tanggal();
             </tr>
         </table>
 
-        <p>Hal-hal lain yang tidak dinyatakan dalam kesepakatan kerja ini mengikuti peraturan <?= $perusahaan['nama_perusahaan'] ?> dan sesuai dengan peraturan ketenagakerjaan yang berlaku.</p>
+        <p class="text-justify">Hal-hal lain yang tidak dinyatakan dalam kesepakatan kerja ini mengikuti peraturan <?= $perusahaan['nama_perusahaan'] ?> dan sesuai dengan peraturan ketenagakerjaan yang berlaku.</p>
 
-        <p>Kedua belah pihak dengan ini menyatakan persetujuan atas persyaratan yang tercantum dalam kesepakatan kerja ini.</p>
+        <p class="text-justify">Kedua belah pihak dengan ini menyatakan persetujuan atas persyaratan yang tercantum dalam kesepakatan kerja ini.</p>
 
-        <p class="text-left"><?= $model['tempat_dan_tanggal_surat'] ?></p>
+        <p class="text-left text-uppercase"><?= $model['tempat_dan_tanggal_surat'] ?></p>
 
         <br>
         <table class="w-100 table ">

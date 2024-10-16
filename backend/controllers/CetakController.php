@@ -133,6 +133,7 @@ class CetakController extends Controller
             'bagian' => $bagian
         ]);
 
+
         // setup kartik\mpdf\Pdf component
         $pdf = new Pdf([
             // set to use core fonts only
@@ -148,10 +149,9 @@ class CetakController extends Controller
             // format content from your own css file if needed or use the
             // enhanced bootstrap css built by Krajee for mPDF formatting 
             'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
-            // any css to be embedded if required
             'cssInline' => '.kv-heading-1{font-size:15px}',
-            // set mPDF properties on the fly
             'options' => ['title' => 'Report Rekap Absensi ' . date('F')],
+            'filename' => "SURAT-PERJANJIAN-KONTRAK-KERJA-" . strtoupper($karyawan->nama) . ".pdf",
             'methods' => [
                 // 'SetHeader' => ['Data Rekap Absensi ' . date('F')],
                 // 'SetFooter' => ['{PAGENO}'],
@@ -233,6 +233,7 @@ class CetakController extends Controller
     public function actionDelete($id_cetak)
     {
         $model = $this->findModel($id_cetak);
+        $this->deleteImage($model['surat_upload']);
         $model->delete();
         return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
     }

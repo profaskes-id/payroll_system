@@ -80,7 +80,18 @@ class PengajuanDinasController extends Controller
         $model = new PengajuanDinas();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            if ($model->load($this->request->post())) {
+
+                if ($model['status'] == Yii::$app->params['disetujui']) {
+                    $model->disetujui_oleh = Yii::$app->user->identity->id;
+                    $model->disetujui_pada = date('Y-m-d H:i:s');
+                    $model->biaya_yang_disetujui = $model->estimasi_biaya;
+                }
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data ');
+                } else {
+                    Yii::$app->session->setFlash('error', 'gagal Menambahkan Data ');
+                }
                 return $this->redirect(['view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]);
             }
         } else {
@@ -124,12 +135,15 @@ class PengajuanDinasController extends Controller
     public function actionDelete($id_pengajuan_dinas)
     {
         $model = $this->findModel($id_pengajuan_dinas);
-        $files = json_decode($model->files, true);
+        if ($model->files != null) {
 
-        if ($files) {
-            foreach ($files as $file) {
-                if (file_exists(Yii::getAlias('@webroot') . '/' . $file)) {
-                    unlink(Yii::getAlias('@webroot') . '/' . $file);
+            $files = json_decode($model->files, true);
+
+            if ($files) {
+                foreach ($files as $file) {
+                    if (file_exists(Yii::getAlias('@webroot') . '/' . $file)) {
+                        unlink(Yii::getAlias('@webroot') . '/' . $file);
+                    }
                 }
             }
         }

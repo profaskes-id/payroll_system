@@ -266,6 +266,7 @@ class KaryawanSearch extends Karyawan
                 'MAX(wj.jumlah_jam) AS jumlah_jam',
             ])
             ->from('{{%karyawan}} k')
+            ->where(['k.is_aktif' => 1])
             ->leftJoin('{{%absensi}} a', 'k.id_karyawan = a.id_karyawan AND a.tanggal = :tanggal')
             ->leftJoin('{{%data_pekerjaan}} dp', 'k.id_karyawan = dp.id_karyawan')
             ->leftJoin('{{%jam_kerja_karyawan}} jk', 'k.id_karyawan = jk.id_karyawan')

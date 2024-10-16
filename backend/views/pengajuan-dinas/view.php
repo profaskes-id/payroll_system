@@ -106,6 +106,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     },
                 ],
+                [
+                    'label' => 'Catatan Admin',
+                    'value' => function ($model) {
+                        return $model->catatan_admin ?? '-';
+                    }
+                ]
             ],
         ]) ?>
 

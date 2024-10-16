@@ -20,11 +20,10 @@ use yii\widgets\ActiveForm;
         <?php $id_karyawan = Yii::$app->request->get('id_karyawan'); ?>
 
         <?= $form->field($model, 'id_karyawan')->hiddenInput(['value' => $id_karyawan ?? $model->id_karyawan])->label(false) ?>
-        <?= $form->field($model, 'is_currenty')->hiddenInput(['id' => 'is_currenty', 'value' => 1])->label(false) ?>
 
 
 
-        <div class="col-6">
+        <div class="col-12">
             <?php
             $data = \yii\helpers\ArrayHelper::map(Bagian::find()->all(), 'id_bagian', 'nama_bagian');
             echo $form->field($model, 'id_bagian')->widget(Select2::classname(), [
@@ -38,7 +37,7 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
 
-        <div class=" col-md-6">
+        <div class=" col-12">
             <?php
             $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['jabatan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
             echo $form->field($model, 'jabatan')->widget(Select2::classname(), [
@@ -51,7 +50,7 @@ use yii\widgets\ActiveForm;
             ]);
             ?>
         </div>
-        <div class="col-md-6">
+        <div class="col-12">
             <?php
             $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pekerjaan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
             echo $form->field($model, 'status')->widget(Select2::classname(), [
@@ -65,22 +64,23 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
 
-        <div class="col-md-6">
-            <?= $form->field($model, 'dari')->textInput(['type' => 'date', 'id' => 'dari']) ?>
+        <div class="col-12 col-md-4">
+            <?= $form->field($model, 'dari')->textInput(['type' => 'date', 'id' => 'dari',  'max' => '2100-12-31']) ?>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-12 col-md-4">
             <?= $form->field($model, 'selama')->radioList(
                 [
                     1 => '3 Bulan',
                     2 => '6 Bulan',
                     3 => '1 Tahun',
                 ], // Daftar opsi
-                ['class' => 'selama', 'itemOptions' => ['labelOptions' => ['style' => 'margin-right: 20px;',]]] // Opsi tambahan, misalnya style
+                ['class' => 'selama', 'itemOptions' => ['labelOptions' => ['style' => 'margin-right: 20px;', 'max' => '2100-12-31']]] // Opsi tambahan, misalnya style
             )->label('Selama ') ?>
         </div>
 
-        <div class="col-md-6 row align-items-center">
+
+        <div class="col-12 col-md-4 row align-items-center">
             <div class="p-1 col-12">
                 <?= $form->field($model, 'sampai')->textInput(['id' => 'kode_sampai', 'type' => 'date',])->label('sampai') ?>
             </div>
@@ -93,12 +93,20 @@ use yii\widgets\ActiveForm;
         </div>
 
 
-        <div class="col-12">
+        <div class="col-12 col-md-6">
             <?= $form->field($model, 'surat_lamaran_pekerjaan')->fileInput(['class' => 'form-control'])->label('Surat Lamaran Pekerjaan <sup>(opsional)<sup>') ?>
 
         </div>
 
-
+        <div class="col-12 col-md-6 ">
+            <?= $form->field($model, 'is_aktif')->radioList(
+                [
+                    0 => 'Tidak Aktif',
+                    1 => 'Aktif',
+                ],
+                ['class' => 'selama', 'itemOptions' => ['labelOptions' => ['style' => 'margin-right: 20px;',]]] // Opsi tambahan, misalnya style
+            )->label('Selama ') ?>
+        </div>
     </div>
 
 
@@ -118,35 +126,47 @@ use yii\widgets\ActiveForm;
 
 <script>
     const kode_sampai = document.querySelector('#kode_sampai');
-    const is_currenty = document.querySelector('#is_currenty');
-    const sampai = document.querySelector('.selama');
     const dari = document.querySelector('#dari');
-
-    function addDays(dateString, days) {
-        const date = new Date(dateString);
-        date.setDate(date.getDate() + days); // Menambahkan jumlah hari ke tanggal
-        return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
-    }
-
-    // Helper function to pad a single digit with a zero
-    function padZero(num) {
-        return (num < 10 ? '0' : '') + num;
-    }
+    const sampai = document.querySelector('.selama');
 
     sampai.addEventListener('change', (e) => {
-        if (e.target.value == 0) {
-            kode_sampai.value = '';
-        } else if (e.target.value == 1) {
-            const result = addDays(dari.value, 30 * 3); // Tambah 30 hari
-            kode_sampai.value = result;
-        } else if (e.target.value == 2) {
-            const result = addDays(dari.value, 30 * 6); // Tambah 60 hari
-            kode_sampai.value = result;
-        } else if (e.target.value == 3) {
-            const result = addDays(dari.value, 30 * 12); // Tambah 1 tahun (365 hari)
-            kode_sampai.value = result;
+        console.info(e.target.value)
+        const startDate = new Date(dari.value);
+        let endDate;
+        if (e.target.value == 1) { // Tambah 3 bulan
+            endDate = addMonths(startDate, 3);
+        } else if (e.target.value == 2) { // Tambah 6 bulan
+            endDate = addMonths(startDate, 6);
+        } else if (e.target.value == 3) { // Tambah 1 tahun
+            endDate = addMonths(startDate, 12);
         }
-        // is_currenty.value = kode_sampai.disabled ? 1 : 0;
-        // manual_kode.checked = false;
+
+        // Menghitung akhir bulan dari endDate
+        if (endDate) {
+            const month = endDate.getMonth();
+            const year = endDate.getFullYear();
+
+            // Menghitung tanggal terakhir di bulan itu
+            const lastDateOfMonth = new Date(year, month, 0).getDate();
+
+            // Mengatur kode_sampai sesuai dengan jumlah hari di bulan
+            kode_sampai.value = `${year}-${(month ).toString().padStart(2, '0')}-${lastDateOfMonth}`;
+        }
     });
+
+    // Fungsi untuk menambah bulan
+    function addMonths(date, months) {
+        const newDate = new Date(date);
+        // Menyimpan tanggal asli
+        const originalDate = newDate.getDate();
+
+        newDate.setMonth(newDate.getMonth() + months);
+
+        // Memastikan tanggal tidak melampaui tanggal terakhir bulan baru
+        if (newDate.getDate() < originalDate) {
+            newDate.setDate(0); // Mengatur ke tanggal terakhir bulan sebelumnya
+        }
+
+        return newDate;
+    }
 </script>

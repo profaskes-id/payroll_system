@@ -39,7 +39,7 @@ class DataPekerjaan extends \yii\db\ActiveRecord
     {
         return [
             [['id_karyawan', 'id_bagian', 'dari', 'status', 'jabatan', 'is_aktif'], 'required'],
-            [['id_karyawan', 'id_bagian', 'status', 'is_aktif', 'is_currenty'], 'integer'],
+            [['id_karyawan', 'id_bagian', 'status', 'is_aktif'], 'integer'],
             [['dari', 'sampai', 'selama'], 'safe'],
             [['jabatan', 'surat_lamaran_pekerjaan',], 'string', 'max' => 255],
             [['id_bagian'], 'exist', 'skipOnError' => true, 'targetClass' => Bagian::class, 'targetAttribute' => ['id_bagian' => 'id_bagian']],
@@ -64,7 +64,6 @@ class DataPekerjaan extends \yii\db\ActiveRecord
             'jabatan' => 'Jabatan',
             'is_aktif' => 'Status Jabatan',
             'surat_lamaran_pekerjaan' => 'Surat Lamaran Pekerjaan',
-            'is_currenty' => 'Sampai Sekarang',
 
         ];
     }

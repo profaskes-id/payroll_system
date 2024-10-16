@@ -50,7 +50,6 @@ class DataPekerjaanSearch extends DataPekerjaan
                 'data_pekerjaan.status',
                 'data_pekerjaan.jabatan',
                 'data_pekerjaan.is_aktif',
-                'data_pekerjaan.is_currenty',
                 'data_pekerjaan.surat_lamaran_pekerjaan',
                 'cetak.id_cetak',
                 'cetak.surat_upload',

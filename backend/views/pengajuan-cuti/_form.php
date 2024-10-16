@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
 
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-12">
             <?php
             $data = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
             echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
@@ -31,7 +31,7 @@ use yii\widgets\ActiveForm;
             ])->label('Karyawan');
             ?>
         </div>
-        <div class="col-md-6">
+        <div class="col-12">
             <?php
             $data = \yii\helpers\ArrayHelper::map(MasterCuti::find()->all(), 'id_master_cuti', 'jenis_cuti');
             echo $form->field($model, 'jenis_cuti')->widget(Select2::classname(), [
@@ -45,11 +45,11 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-12">
             <?= $form->field($model, 'tanggal_mulai')->textInput(['type' => 'date']) ?>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-12">
             <?= $form->field($model, 'tanggal_selesai')->textInput(['type' => 'date']) ?>
         </div>
 

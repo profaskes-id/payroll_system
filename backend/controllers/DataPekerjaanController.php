@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\Cetak;
 use backend\models\DataPekerjaan;
 use backend\models\DataPekerjaanSearch;
 use backend\models\Karyawan;
@@ -86,22 +87,6 @@ class DataPekerjaanController extends Controller
                 $lampiranFilesuratLamaranPekerjaan = UploadedFile::getInstance($model, 'surat_lamaran_pekerjaan');
                 $lampiranFilesuratLamaranPekerjaan != null ? $this->saveImage($model, $lampiranFilesuratLamaranPekerjaan, 'surat_lamaran_pekerjaan') : $model->surat_lamaran_pekerjaan = null;
 
-                if ($model->is_currenty == 1) {
-                    $model->is_aktif = 1;
-                }
-
-                $today = date("Y-m-d"); // get today's date
-                if ($model->sampai) {
-                    $sampai_date = strtotime($model->sampai); // convert $sampai to timestamp
-                    $today_timestamp = strtotime($today); // convert today's date to timestamp
-                    if ($sampai_date > $today_timestamp) {
-                        $model->is_aktif = 1;
-                    } else {
-                        $model->is_aktif = 0;
-                    }
-                } else {
-                    $model->is_aktif = 1;
-                }
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data Pekerjaan');
                     return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
@@ -154,24 +139,6 @@ class DataPekerjaanController extends Controller
             }
 
 
-            if ($model->is_currenty == 1) {
-                $model->is_aktif = 1;
-            }
-
-            $today = date("Y-m-d"); // get today's date
-            if ($model->sampai) {
-                $sampai_date = strtotime($model->sampai); // convert $sampai to timestamp
-                $today_timestamp = strtotime($today); // convert today's date to timestamp
-
-                if ($sampai_date > $today_timestamp) {
-
-                    $model->is_aktif = 1;
-                } else {
-                    $model->is_aktif = 0;
-                }
-            } else {
-                $model->is_aktif = 1;
-            }
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'Berhasil Melakukan Upadte Data Pekerjaan');
                 return $this->redirect(['/karyawan/view', 'id_karyawan' => $model->id_karyawan]);
@@ -195,6 +162,12 @@ class DataPekerjaanController extends Controller
     public function actionDelete($id_data_pekerjaan)
     {
         $model = $this->findModel($id_data_pekerjaan);
+        $cetakData = Cetak::find()->where(['id_data_pekerjaan' => $model->id_data_pekerjaan])->one();
+
+        if ($cetakData && $cetakData->surat_upload) {
+            $this->deleteImage($cetakData->surat_upload);
+        }
+
         if ($this->deleteImage($model->surat_lamaran_pekerjaan)) {
             if ($model->delete()) {
                 Yii::$app->session->setFlash('success', 'Berhasil Menghapus Data Pekerjaan');

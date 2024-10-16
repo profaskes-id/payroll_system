@@ -81,4 +81,19 @@ class Tanggal extends \yii\db\ActiveRecord
 
         return $tanggal;
     }
+
+    public function getIndonesiaHari($params)
+    {
+        $hari = [
+            'Sunday' => 'Minggu',
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu'
+        ];
+
+        return $hari[$params];
+    }
 }

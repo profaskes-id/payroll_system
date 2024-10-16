@@ -112,6 +112,7 @@ class KaryawanController extends Controller
 
 
 
+
         return $this->render('view', [
 
             'model' => $this->findModel($id_karyawan),
@@ -452,6 +453,9 @@ class KaryawanController extends Controller
         $PekerjaansearchModel->id_karyawan = $id_karyawan;
         $PekerjaansearchModel->is_aktif = 1;
         $pekrjaandataProvider = $PekerjaansearchModel->search($this->request->queryParams);
+
+
+
 
         $PelatihansearchModel = new RiwayatPelatihanSearch();
         $PelatihansearchModel->id_karyawan = $id_karyawan;

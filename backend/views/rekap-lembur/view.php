@@ -47,11 +47,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                     'value' => function ($model) {
                         $poinArray = json_decode($model->pekerjaan ?? []);
-                        $finalValue = [];
-                        foreach ($poinArray as $item) {
-                            $finalValue[] = "<li style='margin-left: 20px'>$item</li>";
+                        if ($poinArray) {
+                            $finalValue = [];
+                            foreach ($poinArray as $item) {
+                                $finalValue[] = "<li style='margin-left: 20px'>$item</li>";
+                            }
+                            return implode('', $finalValue);
+                        } else {
+                            return 'belum di set';
                         }
-                        return implode('', $finalValue);
                     }
                 ],
                 [

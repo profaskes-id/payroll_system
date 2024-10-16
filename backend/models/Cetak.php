@@ -42,7 +42,7 @@ class Cetak extends \yii\db\ActiveRecord
             [['nomor_surat', 'tempat_dan_tanggal_surat', 'nama_penanda_tangan', 'jabatan_penanda_tangan', 'surat_upload'], 'string', 'max' => 255],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
             [['id_data_pekerjaan'], 'exist', 'skipOnError' => true, 'targetClass' => DataPekerjaan::class, 'targetAttribute' => ['id_data_pekerjaan' => 'id_data_pekerjaan']],
-            [['surat_upload'], 'file', 'extensions' => 'png, jpg, jpeg, pdf', 'maxSize' => 1024 * 1024 * 2],
+            [['surat_upload'], 'file', 'extensions' => 'pdf', 'maxSize' => 1024 * 1024 * 2],
         ];
     }
 

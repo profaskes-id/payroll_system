@@ -66,6 +66,7 @@ class m240731_070402_create_karyawan_table extends Migration
 
             'is_invite' => $this->smallInteger()->notNull()->defaultValue(0),
             'invite_at' => $this->date()->null(),
+            'is_aktif' => $this->smallInteger()->notNull()->defaultValue(1),
         ]);
     }
 

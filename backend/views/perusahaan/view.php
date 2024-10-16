@@ -91,6 +91,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'headerOptions' => ['style' => 'width: 200px; '],
+                            'label' => 'Bidang Perusahaan',
+                            'value' => function ($model) {
+                                return $model['bidang_perusahaan'] ?? "(Belum Di set)";
+                            }
+                        ],
+                        [
+                            'headerOptions' => ['style' => 'width: 200px; '],
                             'label' => 'Logo',
                             'format' => 'raw',
                             'value' => function ($model) {

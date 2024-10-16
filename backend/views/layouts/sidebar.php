@@ -79,6 +79,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
 
                                 ],
                             ],
+                            ['label' => 'Absensi',  'icon' => 'fa fa-user-check', 'url' => ['/absensi/index'],],
                             [
                                 'label' => 'Pengajuan',
                                 'icon' => 'th',
@@ -98,7 +99,6 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                     ['label' => 'Rekap dinas',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-dinas/index'],],
                                 ],
                             ],
-                            ['label' => 'Absensi',  'icon' => 'fa fa-user-check', 'url' => ['/absensi/index'],],
                             ['label' => 'Pengumuman',  'icon' => 'fa fa-bullhorn', 'url' => ['/pengumuman/index'],],
                             [
                                 'label' => 'Pulang Cepat <span class="right badge badge-warning">' . $jumlahPulangCepatToday . '</span>',
@@ -131,6 +131,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
 
                                 ],
                             ],
+                            ['label' => 'Absensi',  'icon' => 'fa fa-user-check', 'url' => ['/absensi/index'],],
 
                             [
                                 'label' => 'Pengajuan',
@@ -153,7 +154,6 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
 
                                 ],
                             ],
-                            ['label' => 'Absensi',  'icon' => 'fa fa-user-check', 'url' => ['/absensi/index'],],
                             ['label' => 'Pengumuman',  'icon' => 'fa fa-bullhorn', 'url' => ['/pengumuman/index'],],
                             ['label' => 'Pulang Cepat',  'icon' => 'fa fa-clock ', 'url' => ['/izin-pulang-cepat/index'],],
 

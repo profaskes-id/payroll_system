@@ -84,8 +84,18 @@ class PengajuanLemburController extends Controller
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $model->pekerjaan = json_encode(Yii::$app->request->post('pekerjaan'));
-                $model->disetujui_oleh = Yii::$app->user->identity->id;
-                $model->save();
+                // $model->disetujui_oleh = Yii::$app->user->identity->id;
+                if ($model->status == Yii::$app->params['disetujui']) {
+                    $model->disetujui_oleh = Yii::$app->user->identity->id;
+                    $model->disetujui_pada = date('Y-m-d H:i:s');
+                }
+
+
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Pengajuan Lembur Berhasil Ditambahkan');
+                } else {
+                    Yii::$app->session->setFlash('error', 'Pengajuan Lembur Gagal Ditambahkan');
+                }
                 return $this->redirect(['view', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur]);
             }
         } else {

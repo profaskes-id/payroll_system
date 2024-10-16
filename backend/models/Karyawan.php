@@ -74,7 +74,7 @@ class Karyawan extends \yii\db\ActiveRecord
     {
         return [
             [['kode_karyawan', 'nama', 'nomer_identitas', 'jenis_identitas', 'kode_jenis_kelamin', 'tempat_lahir', 'tanggal_lahir', 'status_nikah', 'agama', 'email', 'nomer_telepon', 'kode_negara', 'kode_provinsi_identitas', 'kode_kabupaten_kota_identitas', 'kode_kecamatan_identitas', 'desa_lurah_identitas', 'alamat_identitas'], 'required'],
-            [['jenis_identitas', 'kode_jenis_kelamin', 'status_nikah', 'is_current_domisili',  'agama', 'is_invite'], 'integer'],
+            [['jenis_identitas', 'status_nikah', 'is_current_domisili',  'agama', 'is_invite', 'is_aktif'], 'integer'],
             [['tanggal_lahir', 'kode_provinsi_domisili', 'kode_kabupaten_kota_domisili', 'kode_kecamatan_domisili', 'desa_lurah_domisili', 'invite_at'], 'safe'],
             [['alamat_identitas', 'alamat_domisili', 'informasi_lain'], 'string'],
             [['kode_karyawan', 'nama', 'nomer_identitas', 'tempat_lahir', 'agama', 'suku', 'email', 'nomer_telepon', 'foto', 'ktp', 'cv', 'ijazah_terakhir', 'kode_negara', 'kode_provinsi_identitas', 'kode_kabupaten_kota_identitas', 'kode_kecamatan_identitas', 'desa_lurah_identitas', 'rt_identitas', 'rw_identitas', 'kode_post_identitas', 'kode_provinsi_domisili', 'kode_kabupaten_kota_domisili', 'kode_kecamatan_domisili', 'desa_lurah_domisili', 'rt_domisili', 'rw_domisili', 'kode_post_domisili'], 'string', 'max' => 255],
@@ -129,6 +129,8 @@ class Karyawan extends \yii\db\ActiveRecord
             'informasi_lain' => 'Informasi Lain',
             'is_invite' => 'Is Invite',
             'invite_at' => 'Invite At',
+            'is_aktif' => 'Apakah Aktif',
+
         ];
     }
 

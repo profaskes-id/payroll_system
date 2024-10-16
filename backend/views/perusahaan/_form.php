@@ -42,9 +42,13 @@ $dataKabupaten = \yii\helpers\ArrayHelper::map(\backend\models\MasterKab::find()
             <?= $form->field($model, 'direktur')->textInput(['maxlength' => true])->label('Nama Direktur') ?>
         </div>
         <div class="col-md-6 ">
-            <?= $form->field($model, 'logo')->fileInput(['maxlength' => true, 'class' => 'form-control'])->label('Logo') ?>
+            <?= $form->field($model, 'logo')->fileInput(['maxlength' => true, 'class' => 'form-control'])->label('Logo Perusahaan') ?>
         </div>
-        <div class="col-12">
+        <div class="col-12 ">
+            <?= $form->field($model, 'alamat')->textarea(['maxlength' => true, 'row' => 5])->label('Alamat') ?>
+        </div>
+
+        <div class="col-md-6">
             <?php
             echo $form->field($model, 'provinsi')->widget(Select2::classname(), [
                 'data' => $dataProvinsi,
@@ -56,7 +60,7 @@ $dataKabupaten = \yii\helpers\ArrayHelper::map(\backend\models\MasterKab::find()
             ])->label('Provinsi');
             ?>
         </div>
-        <div class="col-12">
+        <div class="col-md-6">
             <?php
             echo $form->field($model, 'kabupaten_kota')->widget(Select2::classname(), [
                 'data' => $dataKabupaten,
@@ -68,12 +72,9 @@ $dataKabupaten = \yii\helpers\ArrayHelper::map(\backend\models\MasterKab::find()
             ])->label('Kabupaten/Kota');
             ?>
         </div>
-        <div class="col-md-6 ">
-            <?= $form->field($model, 'alamat')->textarea(['maxlength' => true, 'row' => 5])->label('Alamat') ?>
-        </div>
 
         <div class="col-md-6 ">
-            <?= $form->field($model, 'bidang_perusahaan')->textarea(['maxlength' => true, 'row' => 5, 'class' => 'form-control'])->label('Bidang Usaha') ?>
+            <?= $form->field($model, 'bidang_perusahaan')->textarea(['maxlength' => true, 'row' => 1, 'class' => 'form-control'])->label('Bidang Usaha') ?>
         </div>
         <div class="col-md-6 ">
             <?= $form->field($model, 'didirikan_pada')->textInput(['maxlength' => true, 'type' => 'date', 'class' => 'form-control'])->label('Didirikan Pada') ?>
