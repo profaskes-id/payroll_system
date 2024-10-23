@@ -24,7 +24,7 @@ class RekapAbsensiController extends Controller
     public function beforeAction($action)
     {
         if ($action->id == 'index' || $action->id == 'report') {
-            // Menonaktifkan CSRF verification untuk aksi 'view'
+
             $this->enableCsrfValidation = false;
         }
         return parent::beforeAction($action);
@@ -71,8 +71,8 @@ class RekapAbsensiController extends Controller
             $bulan = date('m');
             $tahun = date('Y');
             $data = $this->RekapData();
-            // dd($data);
         }
+
 
         return $this->render('index', [
             'bulan' => $bulan,
@@ -80,6 +80,8 @@ class RekapAbsensiController extends Controller
             'hasil' => $data['hasil'],
             'rekapanAbsensi' => $data['rekapanAbsensi'],
             'tanggal_bulanan' => $data['tanggal_bulanan'],
+            'karyawanTotal' => $data['karyawanTotal'],
+            'keterlambatanPerTanggal' => $data['keterlambatanPerTanggal'],
 
         ]);
     }
@@ -90,38 +92,37 @@ class RekapAbsensiController extends Controller
         $tahun = date('Y');
         $data = $this->RekapData();
 
-
-
-        // MASUKAN KE PDF
         $content = $this->renderPartial('_report', [
             'bulan' => $bulan,
             'tahun' => $tahun,
             'hasil' => $data['hasil'],
             'rekapanAbsensi' => $data['rekapanAbsensi'],
             'tanggal_bulanan' => $data['tanggal_bulanan'],
+            'karyawanTotal' => $data['karyawanTotal'],
+            'keterlambatanPerTanggal' => $data['keterlambatanPerTanggal'],
         ]);
 
-        // setup kartik\mpdf\Pdf component
+
         $pdf = new Pdf([
-            // set to use core fonts only
+
             'mode' => Pdf::MODE_CORE,
-            // A4 paper format
+
             'format' => Pdf::FORMAT_A4,
-            // portrait orientation
+
             'orientation' => Pdf::ORIENT_LANDSCAPE,
-            // stream to browser inline
+
             'destination' => Pdf::DEST_BROWSER,
-            // your html content input
+
             'content' => $content,
-            // format content from your own css file if needed or use the
-            // enhanced bootstrap css built by Krajee for mPDF formatting 
+
+
             'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
-            // any css to be embedded if required
+
             'cssInline' => '.kv-heading-1{font-size:18px}',
-            // set mPDF properties on the fly
+
             'options' => ['title' => 'Report Rekap Absensi ' . date('F')],
             'methods' => [
-                // 'SetHeader' => ['Data Rekap Absensi ' . date('F')],
+
                 'SetFooter' => ['{PAGENO}'],
             ]
         ]);
@@ -130,45 +131,58 @@ class RekapAbsensiController extends Controller
     }
 
 
-
-
     public function RekapData($params = null)
     {
-        // Jika params tidak null, maka ambil bulan dan tahun dari params
+
+        //! mengambil parameter
         if ($params != null) {
             $bulan = $params['bulan'];
             $tahun = $params['tahun'];
         } else {
-            // Jika params null, maka ambil bulan dan tahun sekarang
+
             $bulan = date('m');
             $tahun = date('Y');
         }
 
-
+        // !inisiasi awaldan akhir bulan
         $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, 1, $tahun));
         $lastDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, date('t', mktime(0, 0, 0, $bulan, 1, $tahun)), $tahun));
 
-        // Mengambil data absensi bulan ini
+
+        // ! Get total karyawan
+        $karyawanTotal = Karyawan::find()->where(['is_aktif' => 1])->count();
+
+
+        //! get all absensi
         $absensi = Absensi::find()
-            ->select(['absensi.id_karyawan', 'absensi.tanggal', 'absensi.jam_masuk', 'absensi.kode_status_hadir', 'absensi.jam_masuk', 'jkk.id_jam_kerja',   'jdk.jam_masuk AS jam_masuk_kerja', 'jdk.nama_hari'])
+            ->select([
+                'absensi.id_karyawan',
+                'absensi.jam_masuk',
+                'absensi.tanggal',
+                'absensi.is_lembur',
+                'absensi.kode_status_hadir',
+                'jkk.id_jam_kerja',
+                'jdk.id_jam_kerja',
+                'jdk.jam_masuk as jam_masuk_kerja',
+                'jdk.nama_hari'
+            ])
             ->asArray()
-            ->leftJoin('{{%jam_kerja_karyawan}} jkk', 'absensi.id_karyawan = jkk.id_karyawan')
-            ->leftJoin('{{%jadwal_kerja}} jdk', 'jkk.id_jam_kerja = jdk.id_jam_kerja')
-            // ->leftJoin('{{%karyawan}} k', 'absensi.id_karyawan = k.id_karyawan')
-            ->where(['jdk.nama_hari' => date('l', strtotime('absensi.tanggal'))])
-            ->where(['>=', 'tanggal', $firstDayOfMonth])
-            ->andWhere(['<=', 'tanggal', $lastDayOfMonth])
-            // ->andWhere(['k.is_aktif' => 1])
+            ->leftJoin('jam_kerja_karyawan jkk', 'jkk.id_karyawan = absensi.id_karyawan')
+            ->leftJoin('jadwal_kerja jdk', 'jkk.id_jam_kerja = jdk.id_jam_kerja AND jdk.nama_hari = DAYOFWEEK(absensi.tanggal) - 1')
+            ->andWhere(['>=', 'absensi.tanggal', $firstDayOfMonth])
+            ->andWhere(['<=', 'absensi.tanggal', $lastDayOfMonth])
             ->all();
 
-        // Buat array tanggal bulanan
+
+
+        //    ! get all data tanggal awal dan akhir bulan
         $tanggal_bulanan = array();
         for ($i = 1; $i <= date('t', mktime(0, 0, 0, $bulan, 1, $tahun)); $i++) {
             $tanggal_bulanan[] = date('d', mktime(0, 0, 0, $bulan, $i, $tahun));
         }
-        // dd($tanggal_bulanan);
 
-        // Mengambil data karyawan
+
+        //! get karyawan data
         $dataKaryawan = Karyawan::find()
             ->select(['karyawan.id_karyawan', 'karyawan.nama', 'karyawan.kode_karyawan', 'bg.id_bagian', 'bg.nama_bagian', 'dp.jabatan', 'mk.nama_kode as jabatan'])
             ->asArray()
@@ -181,59 +195,122 @@ class RekapAbsensiController extends Controller
 
         $hasil = [];
 
+        // !masukan absensi ke karyawan
         $totalHari = date('t', mktime(0, 0, 0, $bulan, 1, $tahun));
+        $totalTerlambat = 0;
         $totalHadir = 0;
-        foreach ($dataKaryawan as $karyawan) {
+        $detikTerlambat = 0;
+        $totalTidakHadir = 0; // Variabel untuk menyimpan total tidak hadir
 
+        // Array untuk menyimpan total terlambat per tanggal
+        $keterlambatanPerTanggal = array_fill(1, $totalHari, 0);
+
+        foreach ($dataKaryawan as $karyawan) {
             $karyawanData = [
                 [
-                    "id_karyawan" => ["id_karyawan"],
-                    "nama" =>   $karyawan["nama"],
-                    "kode_karyawan" =>  $karyawan["kode_karyawan"],
+                    "id_karyawan" => $karyawan["id_karyawan"],
+                    "nama" => $karyawan["nama"],
+                    "kode_karyawan" => $karyawan["kode_karyawan"],
                     "id_bagian" => $karyawan["id_bagian"],
                     "bagian" => $karyawan["nama_bagian"],
                     "jabatan" => $karyawan["jabatan"],
                 ],
             ];
+
             for ($i = 1; $i <= $totalHari; $i++) {
                 $tanggal = date('Y-m-d', mktime(0, 0, 0, $bulan, $i, $tahun));
-                $statusHadir = null; // Default jika tidak ada data
-                $jamMasukKaryawan = null; // Default jika tidak ada data
-                $jamMasukKantor = null; // Default jika tidak ada data
-                foreach ($absensi as $record) {
-                    if ($record['id_karyawan'] == $karyawan['id_karyawan'] && $record['tanggal'] == $tanggal) {
-                        if ($record['kode_status_hadir'] == 'H') $totalHadir++;
-                        $statusHadir = $record['kode_status_hadir'];
-                        $jamMasukKaryawan = $record['jam_masuk'];
-                        $jamMasukKantor = $record['jam_masuk_kerja'];
-                        break;
+                $absensiRecord = array_filter($absensi, function ($record) use ($karyawan, $tanggal) {
+                    return $record['id_karyawan'] == $karyawan['id_karyawan'] && $record['tanggal'] == $tanggal;
+                });
+
+                $statusHadir = null;
+                $is_lembur = 0;
+                $jamMasukKaryawan = null;
+                $jamMasukKantor = null;
+
+                if (!empty($absensiRecord)) {
+                    $record = array_values($absensiRecord)[0]; // Ambil record pertama
+                    $statusHadir = $record['kode_status_hadir'];
+                    $is_lembur = $record['is_lembur'];
+                    $jamMasukKaryawan = $record['jam_masuk'];
+                    $jamMasukKantor = $record['jam_masuk_kerja'];
+
+                    if ($statusHadir == 'H') {
+                        $jamMasuk = strtotime($record['jam_masuk']);
+                        $jamMasukKerja = strtotime($record['jam_masuk_kerja'] ?? "08:00:00");
+
+                        if ($jamMasuk > $jamMasukKerja && $record['is_lembur'] == 0) {
+                            $totalTerlambat++;
+                            $selisihDetik = $jamMasuk - $jamMasukKerja;
+                            $detikTerlambat += $selisihDetik;
+
+                            // Tambahkan ke keterlambatan per tanggal
+                            $keterlambatanPerTanggal[$i]++;
+                        }
+                        $totalHadir++;
+                    }
+                } else {
+                    // Jika tidak ada record absensi, anggap sebagai tidak hadir
+                    if ($i <= date('j')) { // Pastikan hanya untuk hari yang sudah berlalu
+                        $totalTidakHadir++;
                     }
                 }
+
+                // Jika status hadir tidak termasuk H, S, DL, C
+                if ($i <= date('j') && !in_array($statusHadir, ['H', 'S', 'DL', 'C'])) {
+                    $totalTidakHadir++;
+                }
+
                 $karyawanData[] = [
                     'status_hadir' => $statusHadir,
+                    'is_lembur' => $is_lembur,
                     'jam_masuk_karyawan' => $jamMasukKaryawan,
                     'jam_masuk_kantor' => $jamMasukKantor,
-                ]; // Wrap status hadir in an array
+                    'total_terlambat_hari_ini' => $keterlambatanPerTanggal[$i] ?? 0, // Tambahkan info keterlambatan per tanggal
+                ];
             }
+
+            // Tambahkan total ke karyawanData
             $karyawanData[] = [
                 'status_hadir' => null,
                 'jam_masuk_karyawan' => null,
                 'jam_masuk_kantor' => null,
-                'total_hadir' => $totalHadir
+                'total_hadir' => $totalHadir,
             ];
+            $karyawanData[] = [
+                'status_hadir' => null,
+                'jam_masuk_karyawan' => null,
+                'jam_masuk_kantor' => null,
+                'total_terlambat' => $totalTerlambat,
+            ];
+            $karyawanData[] = [
+                'status_hadir' => null,
+                'jam_masuk_karyawan' => null,
+                'jam_masuk_kantor' => null,
+                'detik_terlambat' => $detikTerlambat,
+            ];
+            // $karyawanData[] = [
+            //     'status_hadir' => null,
+            //     'jam_masuk_karyawan' => null,
+            //     'jam_masuk_kantor' => null,
+            //     'total_tidak_hadir' => $totalTidakHadir, // Tambahkan total tidak hadir
+            // ];
 
-
+            // dd($karyawanData);
             $hasil[] = $karyawanData;
+
+            // Reset variabel untuk karyawan berikutnya
+            $totalTerlambat = 0;
             $totalHadir = 0;
+            $detikTerlambat = 0;
+            $totalTidakHadir = 0; // Reset total tidak hadir
         }
 
 
 
-
         $rekapanAbsensi = [];
-        $tanggalBulan = range(1, date('t', strtotime("$tahun-$bulan-01"))); // Mendapatkan semua tanggal dalam bulan
+        $tanggalBulan = range(1, date('t', strtotime("$tahun-$bulan-01")));
 
-        // Ambil data kehadiran dalam satu query
         $dataAbsensiHadir = Absensi::find()
             ->select(['absensi.id_absensi', 'absensi.tanggal', 'absensi.kode_status_hadir'])
             ->asArray()
@@ -245,14 +322,14 @@ class RekapAbsensiController extends Controller
 
 
         foreach ($dataAbsensiHadir as $absensi) {
-            $tanggal = date('j', strtotime($absensi['tanggal'])); // Ambil tanggal dari record absensi
+            $tanggal = date('j', strtotime($absensi['tanggal']));
             $rekapanAbsensi[$tanggal] = isset($rekapanAbsensi[$tanggal]) ? $rekapanAbsensi[$tanggal] + 1 : 1;
         }
 
-        // Pastikan setiap tanggal terisi, jika tidak ada kehadiran, isi dengan 0
+
         foreach ($tanggalBulan as $tanggal) {
             if (!isset($rekapanAbsensi[$tanggal])) {
-                $rekapanAbsensi[$tanggal] = 0; // Isi 0 jika tidak ada kehadiran
+                $rekapanAbsensi[$tanggal] = 0;
             }
         }
         $totalAbsensiHadir = Absensi::find()
@@ -261,13 +338,20 @@ class RekapAbsensiController extends Controller
             ->andWhere(['between', 'tanggal', "$tahun-$bulan-01", "$tahun-$bulan-" . date('t', strtotime("$tahun-$bulan-01"))])
             ->andWhere(['k.is_aktif' => 1])
             ->count();
-
-
         $rekapanAbsensi[] = $totalAbsensiHadir;
-
-        // Mengurutkan array berdasarkan tanggal
         ksort($rekapanAbsensi);
-        return ['tanggal_bulanan' => $tanggal_bulanan, 'hasil' => $hasil, 'rekapanAbsensi' => $rekapanAbsensi];
+
+
+
+
+        return [
+            'tanggal_bulanan' => $tanggal_bulanan,
+            'hasil' => $hasil,
+            'rekapanAbsensi' => $rekapanAbsensi,
+            'karyawanTotal' => $karyawanTotal,
+            'keterlambatanPerTanggal' => $keterlambatanPerTanggal,
+
+        ];
     }
 
 
@@ -288,11 +372,7 @@ class RekapAbsensiController extends Controller
         ]);
     }
 
-    /**
-     * Creates a new Absensi model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
+
     public function actionCreate()
     {
         $model = new Absensi();
@@ -309,6 +389,7 @@ class RekapAbsensiController extends Controller
             'model' => $model,
         ]);
     }
+
 
     /**
      * Updates an existing Absensi model.

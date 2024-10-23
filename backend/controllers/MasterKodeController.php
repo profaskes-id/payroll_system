@@ -86,8 +86,14 @@ class MasterKodeController extends Controller
         $model = new MasterKode();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['index']);
+            if ($model->load($this->request->post())) {
+
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Master Kode Telah Tersimpan');
+                    return $this->redirect(['index']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Master Kode gagal Tersimpan');
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -110,8 +116,14 @@ class MasterKodeController extends Controller
     {
         $model = $this->findModel($nama_group, $kode);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Master Kode Telah Tersimpan');
+                return $this->redirect(['index']);
+            } else {
+                Yii::$app->session->setFlash('error', 'Master Kode gagal Tersimpan');
+            }
         }
 
         return $this->render('update', [
@@ -129,7 +141,15 @@ class MasterKodeController extends Controller
      */
     public function actionDelete($nama_group, $kode)
     {
-        $this->findModel($nama_group, $kode)->delete();
+        $model = $this->findModel($nama_group, $kode);
+
+
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Master Kode berhasil Dihapus');
+            return $this->redirect(['index']);
+        } else {
+            Yii::$app->session->setFlash('error', 'Master Kode gagal Dihapus');
+        }
 
         return $this->redirect(['index']);
     }

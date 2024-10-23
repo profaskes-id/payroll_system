@@ -1,5 +1,7 @@
 <?php
 
+use backend\models\Perusahaan;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -13,16 +15,29 @@ use yii\widgets\ActiveForm;
 <div class="master-lokasi-form table-container">
 
     <?php $form = ActiveForm::begin(); ?>
-
     <div class="row">
-        <div class="col-12 col-md-6">
-            <?= $form->field($model, 'label')->textInput(['maxlength' => true]) ?>
+
+        <div class="col-md-6">
+            <?php
+            $data = \yii\helpers\ArrayHelper::map(Perusahaan::find()->all(), 'nama_perusahaan', 'nama_perusahaan');
+            echo $form->field($model, 'label')->widget(Select2::classname(), [
+                'data' => $data,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Pilih Perusahaan ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ])->label('Perusahaan');
+            ?>
         </div>
 
         <div class="col-12 col-md-6">
             <?= $form->field($model, 'alamat')->textInput(['maxlength' => true]) ?>
         </div>
 
+        <div class="col-12 ">
+            <?= $form->field($model, 'radius')->textInput(['type' => 'number'])->label('Radius Absensi Yang Diperbolehkan') ?>
+        </div>
         <div class="col-12 col-md-6">
             <?= $form->field($model, 'longtitude')->textInput(['readonly' => 'true', "id" => "lng"]) ?>
         </div>
@@ -30,6 +45,7 @@ use yii\widgets\ActiveForm;
         <div class="col-12 col-md-6">
             <?= $form->field($model, 'latitude')->textInput(['readonly' => 'true', 'id' => "lat"]) ?>
         </div>
+
     </div>
 
     <div class="form-group">

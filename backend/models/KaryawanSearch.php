@@ -249,6 +249,8 @@ class KaryawanSearch extends Karyawan
                 'a.tanggal AS tanggal_absensi',
                 'MAX(a.jam_masuk) AS jam_masuk',
                 'MAX(a.jam_pulang) AS jam_pulang',
+                'MAX(a.longitude) AS long',
+                'MAX(a.latitude) AS lat',
                 'MAX(a.kode_status_hadir) AS kode_status_hadir',
                 'MAX(a.keterangan) AS keterangan_absensi',
                 'MAX(a.lampiran) AS lampiran',
@@ -264,6 +266,9 @@ class KaryawanSearch extends Karyawan
                 'MAX(wj.mulai_istirahat) AS mulai_istirahat',
                 'MAX(wj.berakhir_istirahat) AS berakhir_istirahat',
                 'MAX(wj.jumlah_jam) AS jumlah_jam',
+                'MAX(msl.longtitude) AS penempatan_longtitude',
+                'MAX(msl.latitude) AS penempatan_latitude',
+
             ])
             ->from('{{%karyawan}} k')
             ->where(['k.is_aktif' => 1])
@@ -272,6 +277,8 @@ class KaryawanSearch extends Karyawan
             ->leftJoin('{{%jam_kerja_karyawan}} jk', 'k.id_karyawan = jk.id_karyawan')
             ->leftJoin('{{%jam_kerja}} j', 'jk.id_jam_kerja = j.id_jam_kerja')
             ->leftJoin('{{%jadwal_kerja}} wj', 'jk.id_jam_kerja = wj.id_jam_kerja')
+            ->leftJoin('{{%atasan_karyawan}} atsk', 'k.id_karyawan = atsk.id_karyawan')
+            ->leftJoin('{{%master_lokasi}} msl', 'atsk.id_master_lokasi = msl.id_master_lokasi')
             ->groupBy('k.id_karyawan')
             ->addParams([':tanggal' => $tanggalSet]); // Menambahkan parameter tanggal
 
@@ -314,6 +321,10 @@ class KaryawanSearch extends Karyawan
                     'id_absensi' => $row['id_absensi'],
                     'tanggal_absensi' => $row['tanggal_absensi'],
                     'jam_masuk' => $row['jam_masuk'],
+                    'long' => $row['long'],
+                    'lat' => $row['lat'],
+                    'penempatan_long' => $row['penempatan_longtitude'],
+                    'penempatan_lat' => $row['penempatan_latitude'],
                     // 'jam_pulang' => $row['jam_pulang'],
                     'kode_status_hadir' => $row['kode_status_hadir'],
                     // 'keterangan_absensi' => $row['keterangan_absensi'],

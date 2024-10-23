@@ -51,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
-                    'label' => 'Surat Dokter',
+                    'label' => 'Surat Keterangan Dokter',
                     'format' => 'raw',
                     'value' => function ($model) {
                         if ($model->surat_dokter) {

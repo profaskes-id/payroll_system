@@ -28,7 +28,7 @@ $tanggal = new Tanggal();
                 <th rowspan="3" style="vertical-align: middle;" class="text-center ">Bagian dan jabatan </th>
             </tr>
             <tr>
-                <th class="text-center" colspan="<?= count($tanggal_bulanan) + 1  ?>">
+                <th class="text-center" colspan="<?= count($tanggal_bulanan) + 3  ?>">
                     <h3>
                         Rekapan Absensi Bulan <?= $tanggal->getBulan($bulan) . ' Tahun ' . $tahun ?>
                     </h3>
@@ -48,7 +48,9 @@ $tanggal = new Tanggal();
                         <?= $item ?>
                     </td>
                 <?php endforeach ?>
-                <td>Total</td>
+                <td>Hadir</td>
+                <td>Terlamat</td>
+                <td>Total Terlambat</td>
             </tr>
 
             <?php foreach ($hasil as $karyawan) : ?>
@@ -56,7 +58,7 @@ $tanggal = new Tanggal();
                     <?php foreach ($karyawan as $key => $data) : ?>
 
                         <?php if ($key == 0) : ?>
-                            <td>
+                            <td style="width: 150px;">
                                 <?php $text  = strtolower($data['nama']); ?>
                                 <div class=" d-flex flex-column">
                                     <p style="margin: 0; padding:0;  text-transform: capitalize;  font-weight: bold"><?= $text ?></p>
@@ -64,8 +66,8 @@ $tanggal = new Tanggal();
                                     <p style="margin: 0; padding:0;  text-transform: capitalize;"><?= $data['kode_karyawan'] ?></p>
                                 </div>
                             </td>
-                            <td>
-                                <div class="">
+                            <td style="width: 100px;">
+                                <div>
                                     <p style="margin: 0; padding:0;  text-transform: capitalize; "><?= $data['bagian'] ?></p>
                                     <p style="margin: 0; padding:0;  text-transform: capitalize;"><?= $data['jabatan'] ?></p>
                                 </div>
@@ -83,6 +85,21 @@ $tanggal = new Tanggal();
                             <td <?php if ($day_of_week == 0) echo 'style="background-color: #aaa; color:white;"'; ?>>
                                 <p style="width: 20px; padding:0;  text-align: center; vertical-align: middle;">
                                     <?php if ($key == (count($karyawan) - 1)): ?>
+
+                                        <?php
+                                        $jam = floor($data['detik_terlambat'] / 3600); // Menghitung jam
+                                        $menit = floor(($data['detik_terlambat'] % 3600) / 60); // Menghitung menit
+                                        $detik = $data['detik_terlambat'] % 60; // Menghitung detik
+
+                                        $formattedTime = sprintf('%02d:%02d:%02d', $jam, $menit, $detik);
+                                        ?>
+
+                                        <span style="font-weight:600; text-align:center; "><?= $formattedTime ?></span>
+                                    <?php endif; ?>
+                                    <?php if ($key == (count($karyawan) - 2)): ?>
+                                        <?= $data['total_terlambat'] ?>
+                                    <?php endif; ?>
+                                    <?php if ($key == (count($karyawan) - 3)): ?>
                                         <?= $data['total_hadir'] ?>
                                     <?php endif; ?>
                                     <?php if ($data !== null && $data['status_hadir'] !== null && $data['jam_masuk_karyawan'] !== null): ?>

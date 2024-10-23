@@ -82,7 +82,7 @@ use yii\widgets\ActiveForm;
 
         <div class="col-12 col-md-4 row align-items-center">
             <div class="p-1 col-12">
-                <?= $form->field($model, 'sampai')->textInput(['id' => 'kode_sampai', 'type' => 'date',])->label('sampai') ?>
+                <?= $form->field($model, 'is_aktif')->textInput(['id' => 'kode_sampai', 'type' => 'date',])->label('is_aktif') ?>
             </div>
             <div class="col-5 mt-3">
                 <!-- <label for="manual_kode">

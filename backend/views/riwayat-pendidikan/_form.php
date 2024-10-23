@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
 
         <?= $form->field($model, 'id_karyawan')->hiddenInput(['value' => $id_karyawan ?? $model->id_karyawan])->label(false) ?>
 
-        <div class="col-md-6">
+        <div class="col-12">
             <?php
             $pendidikan = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['jenjang-pendidikan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
             echo $form->field($model, 'jenjang_pendidikan')->widget(Select2::classname(), [
@@ -34,15 +34,15 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-12">
             <?= $form->field($model, 'institusi')->textInput(['maxlength' => true]) ?>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-12">
             <?= $form->field($model, 'tahun_masuk')->textInput() ?>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-12">
             <?= $form->field($model, 'tahun_keluar')->textInput() ?>
         </div>
     </div>

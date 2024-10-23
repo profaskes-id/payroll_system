@@ -201,15 +201,20 @@ $this->title = 'Report Data Karyawan';
                     'label' => 'Dari',
                     'value' => function ($model) {
                         $tanggalFormat = new Tanggal();
-                        // dd($model);
-                        return $tanggalFormat->getIndonesiaFormatTanggal($model['dari']);
+                        if ($model['dari']) {
+                            return $tanggalFormat->getIndonesiaFormatTanggal($model['dari']);
+                        }
+                        return '';
                     }
                 ],
                 [
                     'attribute' => 'Sampai',
                     'value' => function ($model) {
                         $tanggalFormat = new Tanggal();
-                        return $tanggalFormat->getIndonesiaFormatTanggal($model['sampai']);
+                        if ($model['sampai']) {
+                            return $tanggalFormat->getIndonesiaFormatTanggal($model['sampai']);
+                        }
+                        return '';
                     }
                 ],
                 [
@@ -220,12 +225,7 @@ $this->title = 'Report Data Karyawan';
                         return $model['status_pekerjaan'];
                     }
                 ],
-                [
-                    'label' => 'Gaji Pokok',
-                    'value' => function ($model) {
-                        return $model['gaji_pokok'];
-                    }
-                ],
+
 
 
             ],
@@ -257,7 +257,10 @@ $this->title = 'Report Data Karyawan';
                     'label' => 'Masuk Pada',
                     'value' => function ($model) {
                         $tanggalFormat = new Tanggal();
-                        return $tanggalFormat->getIndonesiaFormatTanggal($model->masuk_pada);
+                        if ($model['masuk_pada']) {
+                            return $tanggalFormat->getIndonesiaFormatTanggal($model['masuk_pada']);
+                        }
+                        return '';
                         // return date('d-m-Y', strtotime($model->masuk_pada));
                     }
                 ],
@@ -267,7 +270,10 @@ $this->title = 'Report Data Karyawan';
                     'label' => 'Keluar Pada',
                     'value' => function ($model) {
                         $tanggalFormat = new Tanggal();
-                        return $tanggalFormat->getIndonesiaFormatTanggal($model->keluar_pada);
+                        if ($model['keluar_pada']) {
+                            return $tanggalFormat->getIndonesiaFormatTanggal($model['keluar_pada']);
+                        }
+                        return '';
                         // return date('d-m-Y', strtotime($model->keluar_pada));
                     }
                 ],
@@ -382,7 +388,10 @@ $this->title = 'Report Data Karyawan';
                     'label' => 'Tanggal Mulai',
                     'value' => function ($model) {
                         $tanggalFormat = new Tanggal();
-                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_mulai);
+                        if ($model['tanggal_mulai']) {
+                            return $tanggalFormat->getIndonesiaFormatTanggal($model['tanggal_mulai']);
+                        }
+                        return '';
                         // return date('d-m-Y', strtotime($model->tanggal_mulai));
                     }
                 ],
@@ -393,7 +402,11 @@ $this->title = 'Report Data Karyawan';
                     'label' => 'Tanggal Selesai',
                     'value' => function ($model) {
                         $tanggalFormat = new Tanggal();
-                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_selesai);
+                        $tanggalFormat = new Tanggal();
+                        if ($model['tanggal_selesai']) {
+                            return $tanggalFormat->getIndonesiaFormatTanggal($model['tanggal_selesai']);
+                        }
+                        return '';
                         // return date('d-m-Y', strtotime($model->tanggal_selesai));
                     }
                 ],
@@ -427,7 +440,10 @@ $this->title = 'Report Data Karyawan';
                     'label' => 'Tanggal',
                     'value' => function ($model) {
                         $tanggalFormat = new Tanggal();
-                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal);
+                        if ($model['tanggal']) {
+                            return $tanggalFormat->getIndonesiaFormatTanggal($model['tanggal']);
+                        }
+                        return '';
                         // return date('d-m-Y', strtotime($model->tanggal));
                     }
                 ],

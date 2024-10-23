@@ -18,6 +18,8 @@ class m240930_044701_create_master_lokasi_table extends Migration
             'alamat' => $this->string()->notNull(),
             'longtitude' => $this->double()->notNull(),
             'latitude' => $this->double()->notNull(),
+            'radius' => $this->integer()->notNull()->defaultValue(0),
+
         ]);
     }
 

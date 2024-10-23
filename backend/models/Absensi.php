@@ -38,9 +38,9 @@ class Absensi extends \yii\db\ActiveRecord
     {
         return [
             [['id_karyawan', 'tanggal', 'kode_status_hadir'], 'required'],
-            [['id_karyawan'], 'integer'],
+            [['id_karyawan', 'is_lembur'], 'integer'],
             [['tanggal', 'jam_masuk', 'jam_pulang'], 'safe'],
-            [['keterangan', 'alasan_terlambat'], 'string'],
+            [['keterangan', 'alasan_terlambat', 'alasan_terlalu_jauh'], 'string'],
             [['latitude', 'longitude'], 'number'],
             [['lampiran'], 'string', 'max' => 255],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
@@ -66,6 +66,7 @@ class Absensi extends \yii\db\ActiveRecord
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
             'alasan_terlambat' => 'Alasan Terlambat',
+            'is_lembur' => 'Apakah Lembur',
         ];
     }
 

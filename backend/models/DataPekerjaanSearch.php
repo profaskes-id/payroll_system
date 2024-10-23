@@ -60,7 +60,7 @@ class DataPekerjaanSearch extends DataPekerjaan
 
             ])
             ->asArray()
-            ->where(['data_pekerjaan.id_karyawan' => $this->id_karyawan])
+            ->where(['data_pekerjaan.id_karyawan' => $this->id_karyawan, 'data_pekerjaan.is_aktif' => 1])
             ->leftJoin('{{%cetak}} cetak', 'data_pekerjaan.id_data_pekerjaan = cetak.id_data_pekerjaan and data_pekerjaan.id_karyawan = cetak.id_karyawan')
             ->leftJoin('{{%karyawan}} karyawan', 'data_pekerjaan.id_karyawan = karyawan.id_karyawan')
             ->leftJoin('{{%bagian}} bagian', 'data_pekerjaan.id_bagian = bagian.id_bagian')

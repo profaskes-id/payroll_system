@@ -79,7 +79,7 @@ class PengajuanController extends \yii\web\Controller
 
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
 
-        $pengajuanCuti = PengajuanCuti::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal_pengajuan' => SORT_ASC, 'status' => SORT_ASC,])->all();
+        $pengajuanCuti = PengajuanCuti::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal_pengajuan' => SORT_DESC, 'status' => SORT_ASC,])->all();
         return $this->render('/home/pengajuan/cuti/index', compact('pengajuanCuti'));
     }
 
@@ -141,7 +141,7 @@ class PengajuanController extends \yii\web\Controller
             ->all();
 
         // Filter jenis cuti berdasarkan kode jenis kelamin
-        if ($karyawan->kode_jenis_kelamin == L) { // Laki-laki
+        if ($karyawan->kode_jenis_kelamin == 'L') {
             $jenisCuti = array_filter($jenisCuti, function ($cuti) {
                 return $cuti->jenis_cuti !== 'Cuti Hamil';
             });
@@ -162,7 +162,7 @@ class PengajuanController extends \yii\web\Controller
     {
         $this->layout = 'mobile-main';
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
-        $pengajuanLembur = PengajuanLembur::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal' => SORT_ASC, 'status' => SORT_ASC,])->all();
+        $pengajuanLembur = PengajuanLembur::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal' => SORT_DESC, 'status' => SORT_ASC,])->all();
         return $this->render('/home/pengajuan/lembur/index', compact('pengajuanLembur'));
     }
 
@@ -179,6 +179,7 @@ class PengajuanController extends \yii\web\Controller
                 $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
                 $model->id_karyawan = $karyawan->id_karyawan;
                 $model->pekerjaan = json_encode(Yii::$app->request->post('pekerjaan'));
+                $model->tanggal = date('Y-m-d H:i:s');
                 $model->status = 0;
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
@@ -244,7 +245,7 @@ class PengajuanController extends \yii\web\Controller
     {
         $this->layout = 'mobile-main';
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
-        $pengajuanDinas = PengajuanDinas::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal_mulai' => SORT_ASC, 'status' => SORT_ASC,])->all();
+        $pengajuanDinas = PengajuanDinas::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal_mulai' => SORT_DESC, 'status' => SORT_ASC,])->all();
         return $this->render('/home/pengajuan/dinas/index', compact('pengajuanDinas'));
     }
 
@@ -286,7 +287,6 @@ class PengajuanController extends \yii\web\Controller
     {
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
         $model = PengajuanDinas::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
-        // dd(Yii::$app->request->post('PengajuanDinas'));
         $files = $model->files;
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {

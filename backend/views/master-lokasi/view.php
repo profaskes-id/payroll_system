@@ -39,10 +39,24 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= DetailView::widget([
             'model' => $model,
             'attributes' => [
-                'label',
+                [
+                    'label' => 'Perusahaan',
+                    'value' => function ($model) {
+                        return $model->label;
+                    }
+                ],
                 'alamat',
                 'longtitude',
                 'latitude',
+                [
+                    'label' => "radius Absensi",
+                    'value' => function ($model) {
+                        if ($model->radius == null) {
+                            $model->radius = 0;
+                        }
+                        return $model->radius . " meter";
+                    }
+                ]
             ],
         ]) ?>
 

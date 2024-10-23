@@ -53,10 +53,24 @@ $this->params['breadcrumbs'][] = $this->title;
                         return Url::toRoute([$action, 'id_master_lokasi' => $model->id_master_lokasi]);
                     }
                 ],
-                'label',
+                [
+                    'label' => 'Perusahaan',
+                    'value' => function ($model) {
+                        return $model->label;
+                    }
+                ],
                 'alamat',
                 'longtitude',
                 'latitude',
+                [
+                    'label' => "radius Absensi",
+                    'value' => function ($model) {
+                        if ($model->radius == null) {
+                            $model->radius = 0;
+                        }
+                        return $model->radius . " meter";
+                    }
+                ]
             ],
         ]); ?>
 

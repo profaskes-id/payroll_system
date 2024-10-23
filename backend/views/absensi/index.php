@@ -22,6 +22,25 @@ $this->params['breadcrumbs'][] = $this->title;
 $today = date('Y-m-d');
 ?>
 
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<script>
+    function getDistance(latitude_now, longitude_now, latitude_penempatan, longitude_penempatan, idElement) {
+        if (!idElement) {
+            return false;
+        } else {
+
+            let from = L.latLng(latitude_now, longitude_now);
+            let to = L.latLng(latitude_penempatan, longitude_penempatan);
+            let distance = from.distanceTo(to); // Jarak dalam meter
+            idElement.innerHTML = distance.toFixed(0) + ' Meter';
+
+        }
+    }
+</script>
+
 <?php Pjax::begin(); ?>
 <div class="absensi-index position-relative">
 
@@ -184,7 +203,33 @@ $today = date('Y-m-d');
                     },
                     'format' => 'raw',
                 ],
+                [
+                    'headerOptions' => ['style' => 'width: 100px; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 100px; text-align: center;'],
+                    'label' => 'Jarak',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        if (!$model['absensi']) {
+                            return '-';
+                        }
 
+                        // Ambil nilai parameter dari model
+                        $longitud_absensi = $model['absensi']['long'];
+                        $latitude_absensi = $model['absensi']['lat'];
+                        $penempatan_longitude = strval($model['absensi']['penempatan_long']);
+                        $penempatan_latitude = strval($model['absensi']['penempatan_lat']);
+
+                        // Buat span dengan ID yang unik dan script untuk menghitung jarak
+                        $spanId = uniqid('distance_');
+                        $script = "
+                            <script>
+                                 getDistance($latitude_absensi, $longitud_absensi, $penempatan_latitude, $penempatan_longitude , $spanId);
+                            </script>
+                        ";
+
+                        return "<span id='$spanId' style='cursor: pointer;'>Belum Di Set</span>" . $script;
+                    }
+                ],
             ],
         ]); ?>
     </div>
@@ -196,8 +241,17 @@ $today = date('Y-m-d');
 
 
 
+
+
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
+
+
+
+
+
         // Ambil elemen input dengan ID tanggal-input
         var tanggalInput = document.getElementById('tanggal-input');
         var bagian = document.getElementById('bagian-input');

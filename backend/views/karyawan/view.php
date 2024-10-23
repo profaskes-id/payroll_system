@@ -112,7 +112,10 @@
                                                     'label' => 'Tanggal Lahir',
                                                     'value' => function ($model) {
                                                         $tanggalFormat = new Tanggal();
-                                                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_lahir);
+                                                        if ($model['tanggal_lahir']) {
+                                                            return $tanggalFormat->getIndonesiaFormatTanggal($model['tanggal_lahir']);
+                                                        }
+                                                        return '';
                                                     }
                                                 ],
                                                 [
@@ -365,7 +368,10 @@
                                                 'label' => 'Dari',
                                                 'value' => function ($model) {
                                                     $tanggalFormat = new Tanggal();
-                                                    return $tanggalFormat->getIndonesiaFormatTanggal($model['dari']);
+                                                    if ($model['dari']) {
+                                                        return $tanggalFormat->getIndonesiaFormatTanggal($model['dari']);
+                                                    }
+                                                    return '';
                                                     // return date('d-m-Y', strtotime($model['dari']));
                                                 }
                                             ],
@@ -472,14 +478,20 @@
                                             'label' => "masuk pada",
                                             'value' => function ($model) {
                                                 $tanggalFormat = new Tanggal();
-                                                return $tanggalFormat->getIndonesiaFormatTanggal($model->masuk_pada);
+                                                if ($model['masuk_pada']) {
+                                                    return $tanggalFormat->getIndonesiaFormatTanggal($model['masuk_pada']);
+                                                }
+                                                return '';
                                             }
                                         ],
                                         [
                                             'label' => "masuk pada",
                                             'value' => function ($model) {
                                                 $tanggalFormat = new Tanggal();
-                                                return $tanggalFormat->getIndonesiaFormatTanggal($model->keluar_pada);
+                                                if ($model['keluar_pada']) {
+                                                    return $tanggalFormat->getIndonesiaFormatTanggal($model['keluar_pada']);
+                                                }
+                                                return '';
                                             }
                                         ]
 

@@ -20,11 +20,11 @@ use yii\widgets\ActiveForm;
         <?= $form->field($model, 'id_karyawan')->hiddenInput(['value' => $id_karyawan ?? $model->id_karyawan])->label(false) ?>
 
 
-        <div class="col-md-6">
+        <div class="col-12">
             <?= $form->field($model, 'nama_anggota_keluarga')->textInput(['maxlength' => true]) ?>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-12">
             <?php
             $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['hubungan-keluarga']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
             echo $form->field($model, 'hubungan')->widget(Select2::classname(), [
@@ -38,11 +38,11 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-12">
             <?= $form->field($model, 'pekerjaan')->textInput(['maxlength' => true]) ?>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-12">
             <?= $form->field($model, 'tahun_lahir')->textInput(['type' => 'number']) ?>
         </div>
     </div>

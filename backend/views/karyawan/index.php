@@ -94,9 +94,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                 ],
                 [
-                    'header' => 'Invite',
-                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                    'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'header' => 'User Aktif',
+                    'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 10%; text-align: center;'],
                     'value' => function ($model) {
                         if (!$model->is_aktif == 1) {
                             return '<span class="text-danger">Resign</span>';
@@ -107,7 +107,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'data-pjax' => '0',
                             ]);
                         } else {
-                            return "<p class='text-success'>Berhasil</p>";
+                            return "<p class='text-success'>Aktif</p>";
                         }
                     },
                     'format' => 'raw',

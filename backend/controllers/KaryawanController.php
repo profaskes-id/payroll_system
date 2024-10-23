@@ -451,7 +451,6 @@ class KaryawanController extends Controller
 
         $PekerjaansearchModel = new DataPekerjaanSearch();
         $PekerjaansearchModel->id_karyawan = $id_karyawan;
-        $PekerjaansearchModel->is_aktif = 1;
         $pekrjaandataProvider = $PekerjaansearchModel->search($this->request->queryParams);
 
 

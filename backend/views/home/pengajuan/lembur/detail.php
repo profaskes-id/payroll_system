@@ -51,6 +51,9 @@ use amnah\yii2\user\models\User;
                 <?php endif ?>
             </ul>
             <hr class="my-2">
+            <p class="capitalize  text-gray-500 text-sm">Catatan Admin : </p>
+            <p><?= $model['catatan_admin']  ?? '-' ?></p>
+            <hr class="my-2">
             <p class="capitalize  text-gray-500 text-sm">Jam Lembur</p>
             <div class="flex space-x-3 text-gray-500 text-sm">
                 <p><?= date('H:i', strtotime($model['jam_mulai'])) ?></p>

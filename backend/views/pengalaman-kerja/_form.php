@@ -21,18 +21,18 @@ use yii\widgets\ActiveForm;
 
 
 
-        <div class="col-md-6">
+        <div class="col-12">
             <?= $form->field($model, 'perusahaan')->textInput(['maxlength' => true])->label('Nama Perusahaan') ?>
         </div>
-        <div class="col-md-6">
+        <div class="col-12">
             <?= $form->field($model, 'posisi')->textInput(['maxlength' => true]) ?>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-12">
             <?= $form->field($model, 'masuk_pada')->textInput(["min" => "1900-01-01", "max" => "2100-12-31", "step" => "year", 'type' => 'date']) ?>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-12">
             <?= $form->field($model, 'keluar_pada')->textInput(["min" => "1900-01-01", "max" => "2100-12-31", "step" => "year", 'type' => 'date']) ?>
         </div>
     </div>

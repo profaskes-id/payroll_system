@@ -17,6 +17,10 @@ use yii\widgets\ActiveForm;
             <p class="capitalize  text-gray-500 text-sm">Alasan Cuti</p>
             <p><?= $model['keterangan_perjalanan'] ?></p>
             <hr class="my-2">
+            <p class="capitalize  text-gray-500 text-sm">Catatan Admin : </p>
+            <p><?= $model['catatan_admin']  ?? '-' ?></p>
+            <hr class="my-2">
+            <hr class="my-2">
             <p class="capitalize  text-gray-500 text-sm">diajukan pada</p>
             <div class="flex space-x-3 text-gray-500 text-sm">
                 <p><?= date('d-m-Y', strtotime($model['tanggal_mulai']))

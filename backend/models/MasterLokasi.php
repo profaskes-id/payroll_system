@@ -33,6 +33,7 @@ class MasterLokasi extends \yii\db\ActiveRecord
         return [
             [['label', 'alamat', 'longtitude', 'latitude'], 'required'],
             [['longtitude', 'latitude'], 'number'],
+            [['radius'], 'integer'],
             [['label', 'alamat'], 'string', 'max' => 255],
         ];
     }
@@ -48,6 +49,7 @@ class MasterLokasi extends \yii\db\ActiveRecord
             'alamat' => 'Alamat',
             'longtitude' => 'Longtitude',
             'latitude' => 'Latitude',
+            'radius' => 'Radius',
         ];
     }
 
