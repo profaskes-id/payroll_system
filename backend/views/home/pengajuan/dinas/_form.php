@@ -7,7 +7,7 @@ $this->title = 'Pengajuan Dinas Luar';
 
 $form = ActiveForm::begin(); ?>
 
-<div style="padding-bottom: 100px;">
+<div class="relative min-h-[85dvh]">
 
 
     <div class="mb-5">
@@ -27,11 +27,12 @@ $form = ActiveForm::begin(); ?>
         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">Keterangan Perjalanan</label>
         <?= $form->field($model, 'keterangan_perjalanan')->textarea(['required' => true, 'rows' => '10',  'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '])->label(false) ?>
     </div>
-    <div class="col-span-12">
+    <div class=" absolute bottom-0 left-0 right-0">
         <div class="">
             <?= $this->render('@backend/views/components/element/_submit-button', ['text' => 'Submit']); ?>
         </div>
     </div>
+
 
 </div>
 

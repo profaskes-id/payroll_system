@@ -8,7 +8,9 @@ use backend\models\MasterKode;
 use backend\models\PengajuanCuti;
 use backend\models\PengajuanDinas;
 use backend\models\PengajuanLembur;
+use backend\models\PengajuanWfh;
 use backend\models\RekapCuti;
+use DateTime;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
@@ -166,7 +168,6 @@ class PengajuanController extends \yii\web\Controller
         return $this->render('/home/pengajuan/lembur/index', compact('pengajuanLembur'));
     }
 
-
     public function actionLemburCreate()
     {
 
@@ -240,7 +241,7 @@ class PengajuanController extends \yii\web\Controller
     }
 
 
-    //pengajuan dinas
+    //?==============pengajuan dinas
     public function actionDinas()
     {
         $this->layout = 'mobile-main';
@@ -351,5 +352,96 @@ class PengajuanController extends \yii\web\Controller
             Yii::$app->session->setFlash('error', ' Gagal Melakukan hapus file.');
             return $this->redirect(['/pengajuan/dinas']);
         }
+    }
+
+    // ? ==========Pengajuan WFH=========
+    public function actionWfh()
+    {
+        $this->layout = 'mobile-main';
+        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+        $pengajuanWfh = PengajuanWfh::find()->asArray()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['status' => SORT_ASC,])->all();
+        return $this->render('/home/pengajuan/wfh/index', compact('pengajuanWfh'));
+    }
+
+    public function actionWfhCreate()
+    {
+
+        $this->layout = 'mobile-main';
+        $model = new PengajuanWfh();
+
+        $poinArray = [];
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+                $model->id_karyawan = $karyawan->id_karyawan;
+                $tanggalArray = [];
+                $startDate = new DateTime($model->tanggal_mulai);
+                $endDate = new DateTime($model->tanggal_selesai);
+
+
+                while ($startDate <= $endDate) {
+                    $tanggalArray[] = $startDate->format('Y-m-d');
+                    $startDate->modify('+1 day');
+                }
+
+
+                $model->tanggal_array = json_encode($tanggalArray);
+
+
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
+                    return $this->redirect(['/pengajuan/wfh']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal Membuat Pengajuan');
+                    return $this->redirect(['/pengajuan/wfh']);
+                }
+            }
+        }
+
+        return $this->render('home/pengajuan/wfh/create', compact('model'));
+    }
+    public function actionWfhUpdate($id)
+    {
+
+        $pengajuanWfh = PengajuanWfh::find()->where(['id_pengajuan_wfh' => $id])->one();
+        // $poinArray = json_decode($pengajuanWfh->pekerjaan);
+        if ($this->request->isPost) {
+            if ($pengajuanWfh->load($this->request->post())) {
+                // $pengajuanWfh->pekerjaan = json_encode(Yii::$app->request->post('pekerjaan'));
+                if ($pengajuanWfh->save()) {
+                    Yii::$app->session->setFlash('success', 'Berhasil Mengubah Pengajuan');
+                    return $this->redirect(['/pengajuan/wfh']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal , Pastikan data yang anda masukkan benar');
+                }
+            }
+        }
+
+        $this->layout = 'mobile-main';
+        return $this->render('home/pengajuan/wfh/update', [
+            'model' => $pengajuanWfh,
+            // 'poinArray' => $poinArray
+        ]);
+    }
+
+    public function actionWfhDetail($id)
+    {
+        $this->layout = 'mobile-main';
+        $model = PengajuanWfh::find()->where(['id_pengajuan_wfh' => $id])->one();
+        // $poinArray = json_decode($model->pekerjaan);
+        return $this->render('home/pengajuan/wfh/detail', compact('model',));
+    }
+
+    public function actionWfhDelete()
+    {
+        $id = Yii::$app->request->post('id');
+        $model = PengajuanWfh::find()->where(['id_pengajuan_wfh' => $id])->one();
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Berhasil Menghapus Pengajuan');
+            return $this->redirect(['/pengajuan/wfh']);
+        }
+
+        Yii::$app->session->setFlash('error', 'Gagal Menghapus Pengajuan');
+        return $this->redirect(['/pengajuan/wfh']);
     }
 }

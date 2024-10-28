@@ -7,7 +7,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\Absensi $model */
 
-$this->title = 'Create Absensi';
+$this->title = 'Izin Tidak Hadir ';
 $this->params['breadcrumbs'][] = ['label' => 'Absensi', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 
-    <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home/absen-masuk', 'title' => 'Absensi']); ?>
+    <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home/absen-masuk', 'title' => 'Izin Tidak Absen']); ?>
     <section class="grid grid-cols-12 justify-center mt-2 gap-y-10">
 
 

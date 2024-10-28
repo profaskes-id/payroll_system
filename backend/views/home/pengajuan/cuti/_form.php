@@ -6,7 +6,7 @@ use yii\helpers\ArrayHelper;
 
 $form = ActiveForm::begin(); ?>
 
-<div style="padding-bottom: 100px;">
+<div class="relative min-h-[85dvh]">
 
 
     <div class="my-4 grid grid-cols-2 gap-5">

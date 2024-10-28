@@ -118,15 +118,36 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= $this->render('@backend/views/components/fragment/_time'); ?>
 
                     <?php if ($jamKerjaToday): ?>
+
+                        <style>
+                            .moving-text {
+                                display: flex;
+                                animation: move 10s linear infinite;
+                            }
+
+                            @keyframes move {
+                                0% {
+                                    transform: translateX(100%);
+                                }
+
+                                100% {
+                                    transform: translateX(-100%);
+                                }
+                            }
+                        </style>
                         <div class="flex flex-col lg:flex-row space-y-3 lg:space-y-0 justify-center items-center">
                             <div class="w-full ">
                                 <p class="  text-xs text-center mt-2 -mb-3 capitalize">Lokasi Anda</p>
-                                <a href="/panel/home/your-location">
-                                    <div class="capitalize flex justify-around items-center bg-sky-500/10 p-1 text-[13px] w-[80%] mx-auto mt-3 rounded-full">
-                                        <p>lat : <span id="latitude"></span></p>
-                                        <p>long : <span id="longitude"></span></p>
-                                    </div>
-                                </a>
+                                <div class="bg-sky-500/10 rounded-full p-1 overflow-hidden max-w-[80dvw]  mt-3 mx-auto">
+                                    <a href="/panel/home/your-location">
+                                        <div class="">
+                                            <div class="moving-text capitalize flex justify-around items-center text-[12px] ">
+                                                <p>lat : <span id="latitude"></span></p>
+                                                <p>long : <span id="longitude"></span></p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                             <div class="w-full ">
                                 <p class="text-xs text-center mt-2 -mb-3">Jam Kerja </p>

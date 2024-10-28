@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\MasterKode;
+use backend\models\Tanggal;
 use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -73,24 +74,109 @@ $masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['stat
                             <li class="py-3">
                                 <div class="flex items-center space-x-4 justify-between">
                                     <div class="flex items-center space-x-4 justify-between">
-                                        <?php if (strtolower($value->statusHadir->nama_kode) == 'hadir') : ?>
-                                            <div class="flex-shrink-0 w-[15px] h-[15px] rounded-xl bg-lime-500 grid place-items-center">
+                                        <?php if (strtolower($value['is_lembur'])) : ?>
+                                            <div class="flex-shrink-0 w-[15px] h-[15px] rounded-xl bg-emerald-500 grid place-items-center">
                                             </div>
-                                        <?php elseif (strtolower($value->statusHadir->nama_kode) == 'sakit') : ?>
-                                            <div class="flex-shrink-0 w-[15px] h-[15px] rounded-xl bg-blue-500 grid place-items-center">
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                    lembur
+                                                </p>
+                                                <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                                                    <?php
+                                                    $tanggalFormat = new Tanggal();
+                                                    echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                    ?>
+                                                </p>
                                             </div>
-                                        <?php elseif (strtolower($value->statusHadir->nama_kode) == 'izin') : ?>
-                                            <div class="flex-shrink-0 w-[15px] h-[15px] rounded-xl bg-yellow-300 grid place-items-center">
+                                        <?php elseif (strtolower($value['is_wfh'])) : ?>
+                                            <div class="flex-shrink-0 w-[15px] h-[15px] rounded-xl bg-emerald-500 grid place-items-center">
                                             </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                    Work From Home
+                                                </p>
+                                                <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                                                    <?php
+                                                    $tanggalFormat = new Tanggal();
+                                                    echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                    ?>
+                                                </p>
+                                            </div>
+                                        <?php else :  ?>
+                                            <?php if (strtolower($value['kode_status_hadir']) == 'h') : ?>
+                                                <div class="flex-shrink-0 w-[15px] h-[15px] rounded-xl bg-lime-500 grid place-items-center">
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                        Hadir
+                                                    </p>
+                                                    <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                                                        <?php
+                                                        $tanggalFormat = new Tanggal();
+                                                        echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                        ?>
+                                                    </p>
+                                                </div>
+                                            <?php elseif (strtolower($value['kode_status_hadir']) == 's') : ?>
+                                                <div class="flex-shrink-0 w-[15px] h-[15px] rounded-xl bg-blue-500 grid place-items-center">
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                        Sakit
+                                                    </p>
+                                                    <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                                                        <?php
+                                                        $tanggalFormat = new Tanggal();
+                                                        echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                        ?>
+                                                    </p>
+                                                </div>
+                                            <?php elseif (strtolower($value['kode_status_hadir']) == 'i') : ?>
+                                                <div class="flex-shrink-0 w-[15px] h-[15px] rounded-xl bg-yellow-300 grid place-items-center">
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                        Izin
+                                                    </p>
+                                                    <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                                                        <?php
+                                                        $tanggalFormat = new Tanggal();
+                                                        echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                        ?>
+                                                    </p>
+                                                </div>
+                                            <?php elseif (strtolower($value['kode_status_hadir']) == 'dl') : ?>
+                                                <div class="flex-shrink-0 w-[15px] h-[15px] rounded-xl bg-violet-500 grid place-items-center">
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                        Dinas Luar
+                                                    </p>
+                                                    <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                                                        <?php
+                                                        $tanggalFormat = new Tanggal();
+                                                        echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                        ?>
+                                                    </p>
+                                                </div>
+                                            <?php elseif (strtolower($value['kode_status_hadir']) == 'c') : ?>
+                                                <div class="flex-shrink-0 w-[15px] h-[15px] rounded-xl bg-gray-200 border grid place-items-center">
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                        Cuti
+                                                    </p>
+                                                    <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                                                        <?php
+                                                        $tanggalFormat = new Tanggal();
+                                                        echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                        ?>
+                                                    </p>
+                                                </div>
+                                            <?php endif ?>
                                         <?php endif ?>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                <?= $value->statusHadir->nama_kode ?>
-                                            </p>
-                                            <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-                                                <?= date('d-M-Y', strtotime($value['tanggal'])) ?>
-                                            </p>
-                                        </div>
+
+
                                     </div>
                                     <div class="inline-flex items-center text-base  text-[#373737] ">
 
@@ -122,7 +208,7 @@ $masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['stat
                                 </div>
                                 <div id="accordion-collapse-body-<?= $key ?>" class="hidden" aria-labelledby="accordion-collapse-heading-<?= $key ?>">
                                     <p class="text-sm font-normal text-gray-500 mt-2 px-8">
-                                        <?= $value->keterangan  ?? 'Tidak Ada Keterangan' ?>
+                                        <?= $value['keterangan']  ?? 'Tidak Ada Keterangan' ?>
                                     </p>
                                 </div>
                             </li>

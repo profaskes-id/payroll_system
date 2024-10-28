@@ -160,6 +160,7 @@ class RekapAbsensiController extends Controller
                 'absensi.jam_masuk',
                 'absensi.tanggal',
                 'absensi.is_lembur',
+                'absensi.is_wfh',
                 'absensi.kode_status_hadir',
                 'jkk.id_jam_kerja',
                 'jdk.id_jam_kerja',
@@ -225,13 +226,15 @@ class RekapAbsensiController extends Controller
 
                 $statusHadir = null;
                 $is_lembur = 0;
+                $is_wfh = 0;
                 $jamMasukKaryawan = null;
                 $jamMasukKantor = null;
 
                 if (!empty($absensiRecord)) {
-                    $record = array_values($absensiRecord)[0]; // Ambil record pertama
+                    $record = array_values($absensiRecord)[0];
                     $statusHadir = $record['kode_status_hadir'];
                     $is_lembur = $record['is_lembur'];
+                    $is_wfh = $record['is_wfh'];
                     $jamMasukKaryawan = $record['jam_masuk'];
                     $jamMasukKantor = $record['jam_masuk_kerja'];
 
@@ -239,7 +242,7 @@ class RekapAbsensiController extends Controller
                         $jamMasuk = strtotime($record['jam_masuk']);
                         $jamMasukKerja = strtotime($record['jam_masuk_kerja'] ?? "08:00:00");
 
-                        if ($jamMasuk > $jamMasukKerja && $record['is_lembur'] == 0) {
+                        if ($jamMasuk > $jamMasukKerja && $record['is_lembur'] == 0 && $record['is_wfh'] == 0) {
                             $totalTerlambat++;
                             $selisihDetik = $jamMasuk - $jamMasukKerja;
                             $detikTerlambat += $selisihDetik;
@@ -264,6 +267,7 @@ class RekapAbsensiController extends Controller
                 $karyawanData[] = [
                     'status_hadir' => $statusHadir,
                     'is_lembur' => $is_lembur,
+                    'is_wfh' => $is_wfh,
                     'jam_masuk_karyawan' => $jamMasukKaryawan,
                     'jam_masuk_kantor' => $jamMasukKantor,
                     'total_terlambat_hari_ini' => $keterlambatanPerTanggal[$i] ?? 0, // Tambahkan info keterlambatan per tanggal
@@ -289,12 +293,12 @@ class RekapAbsensiController extends Controller
                 'jam_masuk_kantor' => null,
                 'detik_terlambat' => $detikTerlambat,
             ];
-            // $karyawanData[] = [
-            //     'status_hadir' => null,
-            //     'jam_masuk_karyawan' => null,
-            //     'jam_masuk_kantor' => null,
-            //     'total_tidak_hadir' => $totalTidakHadir, // Tambahkan total tidak hadir
-            // ];
+            $karyawanData[] = [
+                'status_hadir' => null,
+                'jam_masuk_karyawan' => null,
+                'jam_masuk_kantor' => null,
+                'total_tidak_hadir' => max($totalTidakHadir, 0),
+            ];
 
             // dd($karyawanData);
             $hasil[] = $karyawanData;
@@ -339,8 +343,12 @@ class RekapAbsensiController extends Controller
             ->andWhere(['k.is_aktif' => 1])
             ->count();
         $rekapanAbsensi[] = $totalAbsensiHadir;
+        $rekapanAbsensi[] = 0;
         ksort($rekapanAbsensi);
 
+
+
+        $keterlambatanPerTanggal[] = 0;
 
 
 

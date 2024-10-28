@@ -38,7 +38,7 @@ class Absensi extends \yii\db\ActiveRecord
     {
         return [
             [['id_karyawan', 'tanggal', 'kode_status_hadir'], 'required'],
-            [['id_karyawan', 'is_lembur'], 'integer'],
+            [['id_karyawan', 'is_lembur', 'is_wfh'], 'integer'],
             [['tanggal', 'jam_masuk', 'jam_pulang'], 'safe'],
             [['keterangan', 'alasan_terlambat', 'alasan_terlalu_jauh'], 'string'],
             [['latitude', 'longitude'], 'number'],
@@ -67,6 +67,7 @@ class Absensi extends \yii\db\ActiveRecord
             'longitude' => 'Longitude',
             'alasan_terlambat' => 'Alasan Terlambat',
             'is_lembur' => 'Apakah Lembur',
+            'is_wfh' => 'Apakah WFH',
         ];
     }
 

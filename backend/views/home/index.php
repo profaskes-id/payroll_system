@@ -144,47 +144,42 @@ function getShortDescription($description, $wordLimit = 5)
     <div class="w-[70px] h-[5px] bg-gray-300 rounded-full -mt-20 lg:-mt-20 mx-auto"></div>
 
 
-    <div class="grid grid-cols-12 pb-20  gap-2 w-full mt-5 min-w-screen   px-5">
+    <div class="grid grid-cols-12  mb-20  gap-2 w-full mt-5 min-w-screen   px-5 relative">
 
-        <?php if ($absensi) : ?>
-            <?php if ($absensi->jam_pulang != null): ?>
-                <a href="/panel/home/view?id_user=<?= Yii::$app->user->identity->id ?>" class="  col-span-6   ">
-                    <div class=" flex justify-center items-center flex-col bg-gray-800 py-5 max-h-[200px] rounded-[50px] ">
-                        <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
-                            <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/touch.png" alt="touch" width="40px" height="40px">
+        <div class="w-[120px]  aspect-square bg-[#fff] rounded-full absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border-[10px] border-white overflow-hidden    ">
+            <?php if ($absensi) : ?>
+                <?php if ($absensi->jam_pulang != null): ?>
+                    <a href="/panel/home/view?id_user=<?= Yii::$app->user->identity->id ?>" class="  col-span-6   ">
+                        <div class=" flex justify-center items-center flex-col bg-gray-800  w-full h-full rounded-[50px] ">
+                            <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/touch.png" alt="touch" width="80px" height="80px">
                         </div>
-                        <div class="flex flex-col justify-center items-center py-2.5 space-y-3">
-                            <p class="text-white font-semibold text-sm"><span class="text-gray-300 text-sm">Jam Masuk : </span><?php echo date('H:i', strtotime($absensi->jam_masuk)) ?></p>
-                            <p class="text-white font-semibold text-sm"><span class="text-gray-300 text-sm">Jam Pulang : </span><?php echo date('H:i', strtotime($absensi->jam_pulang)) ?></p>
+                    </a>
+                <?php else : ?>
+                    <a href="/panel/home/absen-masuk" class="  col-span-6   ">
+                        <div class=" flex justify-center items-center flex-col bg-[#ff7c7c] w-full h-full rounded-[50px] ">
+                            <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/touch.png" alt="touch" width="80px" height="80px">
                         </div>
-                    </div>
-                </a>
+                    </a>
+                <?php endif; ?>
             <?php else : ?>
                 <a href="/panel/home/absen-masuk" class="  col-span-6   ">
-                    <div class=" flex justify-center items-center flex-col bg-[#ff7c7c] py-5 max-h-[200px] rounded-[50px] ">
-                        <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
-                            <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/touch.png" alt="touch" width="40px" height="40px">
-                        </div>
-                        <div class="flex flex-col justify-center items-center py-2.5 space-y-3">
-                            <p class="text-white font-semibold text-sm"><span class="text-gray-100 text-sm">Jam Masuk : </span><strong><?php echo date('H:i', strtotime($absensi->jam_masuk)) ?></strong></p>
-                            <p class="text-white font-semibold text-sm"><span class="text-gray-100 text-sm">Jam Pulang : </span><strong>-</strong></p>
-                        </div>
+                    <div class=" flex justify-center text-white items-center  bg-[#fc6a03]  w-full h-full rounded-[50px] ">
+                        <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/touch.png" alt="touch" width="80px" height="80px">
+
                     </div>
                 </a>
             <?php endif; ?>
-        <?php else : ?>
-            <a href="/panel/home/absen-masuk" class="  col-span-6   ">
-                <div class=" flex justify-center text-white items-center flex-col bg-[#fc6a03]/80 py-5 max-h-[200px] rounded-[50px] ">
-                    <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
-                        <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/touch.png" alt="touch" width="40px" height="40px">
-                    </div>
-                    <div class="flex flex-col justify-center items-center py-1">
-                        <p class="text-white font-semibold text-center py-2 text-[15px]">Segera isi Abensi anda Sekarang</p>
-                    </div>
-                </div>
-            </a>
-        <?php endif; ?>
+        </div>
 
+
+        <a href="/panel/pengajuan/wfh" class="  col-span-6   ">
+            <div class=" flex justify-center items-center flex-col bg-[#ede8fe] py-5 max-h-[200px] rounded-[50px] ">
+                <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
+                    <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/wfh.svg" alt="calendar" width="40px" height="40px">
+                </div>
+                <p class=" font-semibold text-black/80 mt-5 mb-1 flex flex-col justify-center items-center"><span>Pengajuan</span> <span>WFH</span></p>
+            </div>
+        </a>
         <a href="/panel/pengajuan/cuti" class="  col-span-6   ">
             <div class=" flex justify-center items-center flex-col bg-[#f2fee8] py-5 max-h-[200px] rounded-[50px] ">
                 <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
@@ -194,7 +189,7 @@ function getShortDescription($description, $wordLimit = 5)
             </div>
         </a>
         <a href="/panel/pengajuan/lembur" class="  col-span-6  ">
-            <div class=" flex-col col-span-6 bg-[#e3f9ff] py-5 max-h-[200px] rounded-[50px] flex justify-center items-center">
+            <div class=" flex-col col-span-6 bg-[#ffe3e3] py-5 max-h-[200px] rounded-[50px] flex justify-center items-center">
                 <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                     <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/alarm.png" alt="calendar" width="30px" height="30px">
                 </div>
@@ -202,7 +197,7 @@ function getShortDescription($description, $wordLimit = 5)
             </div>
         </a>
         <a href="/panel/pengajuan/dinas" class="  col-span-6  ">
-            <div class=" flex-col col-span-6 bg-[#fdf6eb] py-5 max-h-[200px] rounded-[50px] flex justify-center items-center">
+            <div class=" flex-col col-span-6 bg-[#ebeefd] py-5 max-h-[200px] rounded-[50px] flex justify-center items-center">
                 <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                     <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/building.png" alt="building" width="30px" height="30px">
                 </div>

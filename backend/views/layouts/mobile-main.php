@@ -120,11 +120,15 @@
 <body class="w-full  mx-auto relative">
 
     <section class="grid grid-cols-11">
-        <div class="col-span-11">
+        <?php if (!(
+            str_contains($this->context->action->id, 'create') ||
+            str_contains($this->context->action->id, 'update')
+        )): ?>
             <div class="xl:hidden fixed bottom-0 left-0 right-0 w-full z-[999]">
                 <?= $this->render('@backend/views/components/_footer'); ?>
             </div>
-        </div>
+            </div>
+        <?php endif ?>
         <div class="col-span-11 xl:col-span-2 ">
             <div class="hidden xl:block fixed bottom-0 left-0 right-0 w-full">
                 <?= $this->render('@backend/views/components/_sidebar-desktop'); ?>

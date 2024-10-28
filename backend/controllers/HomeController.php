@@ -8,11 +8,14 @@ use backend\models\AtasanKaryawan;
 use backend\models\DataKeluarga;
 use backend\models\DataPekerjaan;
 use backend\models\IzinPulangCepat;
+use backend\models\JadwalKerja;
+use backend\models\JamKerja;
 use backend\models\JamKerjaKaryawan;
 use backend\models\Karyawan;
 use backend\models\MasterHaribesar;
 use backend\models\PengajuanCuti;
 use backend\models\PengajuanLembur;
+use backend\models\PengajuanWfh;
 use backend\models\PengalamanKerja;
 use backend\models\Pengumuman;
 use backend\models\RiwayatKesehatan;
@@ -122,14 +125,17 @@ class HomeController extends Controller
         if (!$user) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-        $karyawan = Karyawan::find()->where(['email' => $user->email])->one();
+        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => $user->email])->asArray()->one();
         $tanggalSatuBulanLalu = (new \DateTime())->modify('-1 month')->format('Y-m-d');
 
         $absensi = Absensi::find()
-            ->where(['id_karyawan' => $karyawan->id_karyawan])
+            ->asArray()
+            ->select(['tanggal', 'jam_masuk', 'jam_pulang', 'keterangan', 'kode_status_hadir', 'is_lembur', 'is_wfh'])
+            ->where(['id_karyawan' => $karyawan['id_karyawan']])
             ->andWhere(['>=', 'tanggal', $tanggalSatuBulanLalu])
             ->orderBy(['tanggal' => SORT_DESC])
             ->all();
+
         return $this->render('view', [
             'absensi' => $absensi,
         ]);
@@ -156,6 +162,7 @@ class HomeController extends Controller
     }
     public function actionAbsenMasuk()
     {
+        $this->layout = 'mobile-main';
         $model = new Absensi();
         $isTerlambatActive = false;
         if ($this->request->isPost) {
@@ -166,6 +173,7 @@ class HomeController extends Controller
             $model->kode_status_hadir = "H";
             $model->jam_masuk = date('H:i:s');
             $model->is_lembur = Yii::$app->request->post('Absensi')['is_lembur'] ?? 0;
+            $model->is_wfh = Yii::$app->request->post('Absensi')['is_wfh'] ?? 0;
             $model->keterangan = $model->is_lembur ? 'Lembur' : 'Hadir';
             $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
             $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
@@ -195,25 +203,20 @@ class HomeController extends Controller
 
         $lembur = PengajuanLembur::find()->asArray()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
 
-        $hasilLembur = []; // Array untuk menyimpan hasil yang memenuhi syarat
+        $hasilLembur = [];
 
         if ($lembur) {
             foreach ($lembur as $l) {
 
-                if (isset($l['tanggal']) && $l['tanggal'] >= date('Y-m-d')) { // Memeriksa apakah tanggal lebih besar atau sama dengan hari ini
-                    $hasilLembur[] = $l; // Menyimpan data l yang memenuhi syarat
+                if (isset($l['tanggal']) && $l['tanggal'] >= date('Y-m-d')) {
+                    $hasilLembur[] = $l;
                 }
             }
         }
 
-
-
-
         if (!$jamKerjaKaryawan) {
             throw new NotFoundHttpException('Admin Belum Melakukan Settingan Jam Kerja Pada Akun Anda');
         }
-
-
         $jamKerjaHari = $jamKerjaKaryawan->jamKerja->jadwalKerjas;
 
         $hariIni = date('w') == '0' ? 0 : date('w');
@@ -221,8 +224,7 @@ class HomeController extends Controller
             $hariBesar = MasterHaribesar::find()->select('tanggal')->asArray()->all();
 
             // Ambil tanggal hari ini
-            $tanggalHariIni = date('Y-m-d'); // Sesuaikan format tanggal dengan format yang digunakan di database
-            // Cek jika tanggal hari ini ada dalam daftar hari besar
+            $tanggalHariIni = date('Y-m-d');
             $adaHariBesar = false;
             foreach ($hariBesar as $hari) {
                 if ($hari['tanggal'] === $tanggalHariIni) {
@@ -240,23 +242,76 @@ class HomeController extends Controller
             $jamKerjaToday = null;
         }
 
-
-
-
         $dataJam = [
             'karyawan' => $jamKerjaKaryawan,
             'today' => $jamKerjaToday,
             'lembur' => $hasilLembur,
         ];
-
-
-
-
         $isPulangCepat = IzinPulangCepat::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
 
+        if (isset($dataJam['lembur'])) {
 
-        $this->layout = 'mobile-main';
-        return $this->render('absen-masuk', [
+
+            $tanggalHariIni = date('Y-m-d'); // Format tanggal hari ini (asumsi format tanggal dalam array sama)
+            $adaLemburHariIni = false;
+
+            foreach ($dataJam['lembur'] as $lembur) {
+                if (isset($lembur['tanggal']) && $lembur['tanggal'] == $tanggalHariIni) {
+                    $adaLemburHariIni = true;
+                    break;
+                }
+            }
+
+
+
+            if ($adaLemburHariIni && !$jamKerjaToday) {
+                return $this->render('absensi/absen-lembur', [
+                    'model' => $model,
+                    'absensiToday' => $absensiToday,
+                    'dataProvider' => $dataProvider,
+                    'jamKerjaKaryawan' => $jamKerjaKaryawan,
+                    'dataJam' => $dataJam,
+                    // 'isTerlambatActive' => $isTerlambatActive,
+                    'isPulangCepat' => $isPulangCepat,
+                    // 'jamKerjaToday' => $jamKerjaToday,
+                    // 'masterLokasi' => $masterLokasi,
+                ]);
+            }
+        }
+
+
+        // wfh
+        $wfhData = $this->wfhData($karyawan->id_karyawan);
+        $today = date('Y-m-d'); // Ambil tanggal hari ini
+        $is_wfh = false; // Inisialisasi is_wfh
+
+
+        foreach ($wfhData  as $data) {
+            $tanggalArray = json_decode($data['tanggal_array'], true);
+            if (!empty($tanggalArray)) {
+                if (in_array($today, $tanggalArray)) {
+                    $is_wfh = true;
+                    break;
+                }
+            }
+        }
+
+        if ($is_wfh) {
+            return $this->render('absensi/absen-wfh', [
+                'model' => $model,
+                'absensiToday' => $absensiToday,
+                'dataProvider' => $dataProvider,
+                'jamKerjaKaryawan' => $jamKerjaKaryawan,
+                'dataJam' => $dataJam,
+                'isTerlambatActive' => $isTerlambatActive,
+                'isPulangCepat' => $isPulangCepat,
+                'jamKerjaToday' => $jamKerjaToday,
+                'masterLokasi' => $masterLokasi,
+            ]);
+        }
+
+
+        return $this->render('absensi/absen-masuk', [
             'model' => $model,
             'absensiToday' => $absensiToday,
             'dataProvider' => $dataProvider,
@@ -267,6 +322,7 @@ class HomeController extends Controller
             'jamKerjaToday' => $jamKerjaToday,
             'masterLokasi' => $masterLokasi,
         ]);
+
 
 
         return $this->redirect(['absen-masuk']);
@@ -311,8 +367,6 @@ class HomeController extends Controller
     }
 
 
-
-
     public function actionAbsenPulang()
     {
 
@@ -342,10 +396,24 @@ class HomeController extends Controller
 
             if ($model->load($this->request->post())) {
                 $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+                $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
+                if ($jamKerjaKaryawan->jamKerja) {
+                    $hariIni = date('w') == '0' ? 0 : date('w');
+                    $jadwalKeja = JadwalKerja::find()->asArray()->where(['id_jam_kerja' => $jamKerjaKaryawan->id_jam_kerja, 'nama_hari' => $hariIni])->one();
+                    if ($jadwalKeja) {
+                        $model->jam_masuk = $jadwalKeja['jam_masuk'];
+                        $model->jam_pulang = $jadwalKeja['jam_keluar'];
+                    } else {
+                        $model->jam_masuk = "00:00:00";
+                        $model->jam_pulang = "00:00:00";;
+                    }
+                } else {
+                    Yii::$app->session->setFlash('error', 'Jam Kerja Anda Belum di Set');
+                }
+
                 $model->id_karyawan = $karyawan->id_karyawan;
                 $model->tanggal = date('Y-m-d');
-                $model->jam_masuk = date('H:i:s');
-                $model->jam_pulang = date('H:i:s');
+
                 $model->kode_status_hadir = Yii::$app->request->post('statusHadir');
                 $this->saveImage($model, $lampiranFile, 'lampiran');
                 if ($model->save()) {
@@ -807,5 +875,31 @@ class HomeController extends Controller
         } else {
             return true;
         }
+    }
+
+    public function wfhData($id_karyawan)
+    {
+        $wfhData = PengajuanWfh::find()->asArray()->where(['id_karyawan' => $id_karyawan, 'status' => 1])->all();
+        $today = date('Y-m-d'); // Ambil tanggal hari ini
+
+        $result = [];
+
+        foreach ($wfhData as $data) {
+            // Decode tanggal_array
+            $tanggalArray = json_decode($data['tanggal_array'], true);
+
+            // Pastikan tanggal_array tidak kosong
+            if (!empty($tanggalArray)) {
+                // Cek apakah ada tanggal yang lebih besar atau sama dengan hari ini
+                foreach ($tanggalArray as $tanggal) {
+                    if ($tanggal >= $today) {
+                        $result[] = $data; // Simpan data yang memenuhi syarat
+                        break; // Keluar dari loop setelah menemukan tanggal yang sesuai
+                    }
+                }
+            }
+        }
+
+        return $result;
     }
 }

@@ -5,7 +5,7 @@ use yii\helpers\Html;
 
 $form = ActiveForm::begin(); ?>
 
-<div style="padding-bottom: 100px;">
+<div class="relative min-h-[85dvh]">
 
     <div class="mb-5">
         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">Tanggal</label>
@@ -36,63 +36,59 @@ $form = ActiveForm::begin(); ?>
             </div>
         <?php endforeach; ?>
     </div>
-    <button class="bg-green-500 my-3 text-white block w-full py-2 rounded-md" type="button" id="add-item">Tambah Item</button>
-
-    <?php if ($model->isNewRecord) : ?>
-        <div class="col-span-12 pt-20">
-        <?php else: ?>
-            <div class="col-span-12 pt-5">
-            <?php endif; ?>
-
-
-            <div class="">
-                <?= $this->render('@backend/views/components/element/_submit-button', ['text' => 'Submit']); ?>
-            </div>
-            </div>
-
+    <button class="bg-green-500 relative z-40  mt-5 mb-3 text-white block w-full py-3 rounded-md" type="button" id="add-item">Tambah Item</button>
+    <div class="h-[80px] w-full"></div>
+    <div class=" absolute bottom-0 left-0 right-0">
+        <div class="">
+            <?= $this->render('@backend/views/components/element/_submit-button', ['text' => 'Submit']); ?>
         </div>
+    </div>
 
-        <?php ActiveForm::end(); ?>
+</div>
+
+</div>
+
+<?php ActiveForm::end(); ?>
 
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                const addItemButton = document.getElementById("add-item");
-                const itemsContainer = document.getElementById("items-container");
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const addItemButton = document.getElementById("add-item");
+        const itemsContainer = document.getElementById("items-container");
 
-                let itemCount = <?= count($poinArray) ?>; // Menghitung jumlah item dari PHP
+        let itemCount = <?= count($poinArray) ?>; // Menghitung jumlah item dari PHP
 
-                addItemButton.addEventListener("click", function() {
-                    itemCount++; // Menambah jumlah item
+        addItemButton.addEventListener("click", function() {
+            itemCount++; // Menambah jumlah item
 
-                    const newItem = document.createElement("div");
-                    newItem.classList.add("item", "flex", 'space-x-2', 'mt-2');
+            const newItem = document.createElement("div");
+            newItem.classList.add("item", "flex", 'space-x-2', 'mt-2');
 
-                    const input = document.createElement("textarea");
-                    input.rows = "1";
-                    input.name = "pekerjaan[]";
-                    input.classList.add('w-[90%]', 'border-gray', 'rounded-md');
-                    input.placeholder = "Pekerjaan";
+            const input = document.createElement("textarea");
+            input.rows = "1";
+            input.name = "pekerjaan[]";
+            input.classList.add('w-[90%]', 'border-gray', 'rounded-md');
+            input.placeholder = "Pekerjaan";
 
-                    const removeButton = document.createElement("button");
-                    removeButton.type = "button";
-                    removeButton.classList.add("remove-item", "p-2", "bg-red-500", 'text-white', 'rounded-md');
-                    removeButton.innerHTML = "<svg xmlns='http: //www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24'><path fill='white' d='M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z'/></svg>";
-                    removeButton.addEventListener("click", function() {
-                        newItem.remove(); // Menghapus item saat tombol "Remove" ditekan
-                    });
-
-                    newItem.appendChild(input);
-                    newItem.appendChild(removeButton);
-                    itemsContainer.appendChild(newItem);
-                });
-
-                // Menghapus item saat tombol "Remove" ditekan (untuk item yang sudah ada)
-                itemsContainer.addEventListener("click", function(event) {
-                    if (event.target.classList.contains("remove-item")) {
-                        event.target.parentNode.remove();
-                        itemCount--; // Mengurangi jumlah item saat item dihapus
-                    }
-                });
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.classList.add("remove-item", "p-2", "bg-red-500", 'text-white', 'rounded-md');
+            removeButton.innerHTML = "<svg xmlns='http: //www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24'><path fill='white' d='M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z'/></svg>";
+            removeButton.addEventListener("click", function() {
+                newItem.remove(); // Menghapus item saat tombol "Remove" ditekan
             });
-        </script>
+
+            newItem.appendChild(input);
+            newItem.appendChild(removeButton);
+            itemsContainer.appendChild(newItem);
+        });
+
+        // Menghapus item saat tombol "Remove" ditekan (untuk item yang sudah ada)
+        itemsContainer.addEventListener("click", function(event) {
+            if (event.target.classList.contains("remove-item")) {
+                event.target.parentNode.remove();
+                itemCount--; // Mengurangi jumlah item saat item dihapus
+            }
+        });
+    });
+</script>

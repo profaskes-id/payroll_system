@@ -50,7 +50,7 @@ $tanggal = new Tanggal;
                 <th rowspan="3" style="vertical-align: middle;" class="text-center ">Bagian & Jabatan</th>
             </tr>
             <tr>
-                <th class="text-center" colspan="<?= count($tanggal_bulanan) + 3  ?>">
+                <th class="text-center" colspan="<?= count($tanggal_bulanan) + 4  ?>">
                     <h3>
                         Rekapan Absensi Bulan <?= $tanggal->getBulan($bulan) . ' Tahun ' . $tahun ?>
                     </h3>
@@ -73,6 +73,7 @@ $tanggal = new Tanggal;
                 <td>Total Hadir</td>
                 <td>Jumlah Terlambat</td>
                 <td>Total Telambat</td>
+                <td>tidak hadir</td>
             </tr>
 
             <tbody>
@@ -102,7 +103,6 @@ $tanggal = new Tanggal;
 
                             <?php else : ?>
 
-
                                 <?php
                                 if (!isset($tanggal_bulanan[$key - 1])) {
                                     $day_of_week = 1;
@@ -114,7 +114,11 @@ $tanggal = new Tanggal;
 
                                 <td <?php if ($day_of_week == 0) echo 'style="background-color: #aaa; color:white;"'; ?>>
                                     <p style=" width: 50px; padding:0;  text-align: center; vertical-align: middle;">
+
                                         <?php if ($key == (count($karyawan) - 1)): ?>
+                                            <?php echo $data['total_tidak_hadir'] ?>
+                                        <?php endif; ?>
+                                        <?php if ($key == (count($karyawan) - 2)): ?>
 
                                             <?php
                                             $jam = floor($data['detik_terlambat'] / 3600); // Menghitung jam
@@ -126,10 +130,10 @@ $tanggal = new Tanggal;
 
                                             <span style="font-weight:600; text-align:center; "><?= $formattedTime ?></span>
                                         <?php endif; ?>
-                                        <?php if ($key == (count($karyawan) - 2)): ?>
+                                        <?php if ($key == (count($karyawan) - 3)): ?>
                                             <?= $data['total_terlambat'] ?>
                                         <?php endif; ?>
-                                        <?php if ($key == (count($karyawan) - 3)): ?>
+                                        <?php if ($key == (count($karyawan) - 4)): ?>
                                             <?= $data['total_hadir'] ?>
                                         <?php endif; ?>
                                         <?php if ($data !== null && $data['status_hadir'] !== null && $data['jam_masuk_karyawan'] !== null): ?>
@@ -147,9 +151,13 @@ $tanggal = new Tanggal;
                                                 <span style='color: black;'><?= $data['status_hadir'] ?></span><br />
                                                 <span style='color: black;'>Lembur</span><br />
 
+                                            <?php elseif ($data['is_wfh'] == 1) : ?>
+                                                <span style='color: blue; font-weight:700;'><?= $data['status_hadir'] ?></span><br />
+                                                <span style='color: blue; font-weight:700;'>WFH</span><br />
+
 
                                             <?php elseif ($karyawan_absen_pada > $jam_kantor_masuk) : ?>
-                                                <span style='color: red;'>H</span><br />
+                                                <span style='color: red;'><?= $data['status_hadir'] ?></span><br />
                                                 <?php
                                                 $selisih_detik = $karyawan_absen_pada - $jam_kantor_masuk;
                                                 $menit = floor($selisih_detik / 60);

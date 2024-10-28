@@ -72,10 +72,25 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
-                    'label' => 'Keterangan',
+                    'label' => 'Keterangan Tidak Hadir',
                     'format' => 'raw',
                     'value' => function ($model) {
-                        return $model->keterangan;
+                        return $model->keterangan ?? '-';
+                    }
+                ],
+                [
+                    'label' => 'Alasan Terlambat',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+
+                        return $model->alasan_terlambat ?? '-';
+                    }
+                ],
+                [
+                    'label' => 'Alasan Isi Absens terlalu jauh',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        return $model->alasan_terlalu_jauh ?? '-';
                     }
                 ],
                 [

@@ -64,6 +64,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                     ['label' => 'Master Hari Besar',  'icon' => 'fa fa-calendar-day', 'url' => ['/master-haribesar/index'],],
                                     ['label' => 'Master Lokasi',  'icon' => 'fa fa-map-marker', 'url' => ['/master-lokasi/index'],],
                                     ['label' => 'Master Gaji',  'icon' => 'fa fa-money-bill-alt', 'url' => ['/master-gaji/index'],],
+                                    ['label' => 'Total Hari Kerja',  'icon' => 'fas fa-briefcase', 'url' => ['/total-hari-kerja/index'],],
                                 ],
                             ],
                             [
@@ -84,6 +85,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                 'label' => 'Pengajuan',
                                 'icon' => 'th',
                                 'items' => [
+                                    ['label' => 'Pengajuan WFH',  'icon' => 'fa fa-laptop-house', 'url' => ['/pengajuan-wfh/index'],],
                                     ['label' => 'Pengajuan Cuti',  'icon' => 'fa fa-paper-plane', 'url' => ['/pengajuan-cuti/index'],],
                                     ['label' => 'Pengajuan lembur',  'icon' => 'fa fa-hourglass', 'url' => ['/pengajuan-lembur/index'],],
                                     ['label' => 'Pengajuan Dinas',  'icon' => 'fa fa-map-marker-alt', 'url' => ['/pengajuan-dinas/index'],],
@@ -97,6 +99,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                     ['label' => 'Rekap Cuti',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-cuti/index'],],
                                     ['label' => 'Rekap Lembur',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-lembur/index'],],
                                     ['label' => 'Rekap dinas',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-dinas/index'],],
+                                    // ['label' => 'Rekap WFH',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-wfh/index'],],
                                 ],
                             ],
                             ['label' => 'Pengumuman',  'icon' => 'fa fa-bullhorn', 'url' => ['/pengumuman/index'],],
