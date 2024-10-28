@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\JamKerja;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -15,25 +16,52 @@ use yii\widgets\ActiveForm;
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'id_total_hari_kerja') ?>
+    <div class="row">
+        <div class="col-md-5 col-6">
+            <?php $nama_group = \yii\helpers\ArrayHelper::map(JamKerja::find()->all(), 'id_jam_kerja', 'id_jam_kerja');
+            echo $form->field($model, 'id_jam_kerja')->widget(kartik\select2\Select2::classname(), [
+                'data' => $nama_group,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Cari id Jam kerja ...'],
+                'pluginOptions' => [
+                    'tags' => true,
+                    'allowClear' => true
+                ],
+            ])->label(false);
+            ?>
+        </div>
+        <div class="col-md-4 col-6">
+            <?php $nama_group = \yii\helpers\ArrayHelper::map(JamKerja::find()->all(), 'nama_jam_kerja', 'nama_jam_kerja');
+            echo $form->field($model, 'nama_jam_kerja')->widget(kartik\select2\Select2::classname(), [
+                'data' => $nama_group,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Cari Nama Jam Kerja ...'],
+                'pluginOptions' => [
+                    'tags' => true,
+                    'allowClear' => true
+                ],
+            ])->label(false);
+            ?>
+        </div>
 
-    <?= $form->field($model, 'id_jam_kerja') ?>
+        <div class="col-3">
+            <div class="form-group d-flex items-center w-100  justify-content-around">
+                <button class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+                    <i class="fas fa-search"></i>
+                    <span>
+                        Search
+                    </span>
+                </button>
 
-    <?= $form->field($model, 'total_hari') ?>
-
-    <?= $form->field($model, 'bulan') ?>
-
-    <?= $form->field($model, 'tahun') ?>
-
-    <?php // echo $form->field($model, 'keterangan') ?>
-
-    <?php // echo $form->field($model, 'is_aktif') ?>
-
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-outline-secondary']) ?>
+                <a class="reset-button" href="<?= \yii\helpers\Url::to(['index']) ?>">
+                    <i class="fas fa-undo"></i>
+                    <span>
+                        Reset
+                    </span>
+                </a>
+            </div>
+        </div>
     </div>
-
     <?php ActiveForm::end(); ?>
 
 </div>

@@ -5,6 +5,7 @@ use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
+$id_jamkerja_byget = Yii::$app->request->get('id_jam_kerja') ?? $model->id_jam_kerja;
 /** @var yii\web\View $this */
 /** @var backend\models\TotalHariKerja $model */
 /** @var yii\widgets\ActiveForm $form */
@@ -15,21 +16,10 @@ use yii\widgets\ActiveForm;
     <div class="col-md-7 total-hari-kerja-form table-container">
 
         <?php $form = ActiveForm::begin(); ?>
+        <?= $form->field($model, 'id_jam_kerja')->hiddenInput(['value' => intval($id_jamkerja_byget)])->label(false) ?>
 
         <div class="row">
-            <div class="col-12">
-                <?php
-                $data = \yii\helpers\ArrayHelper::map(JamKerjaHelper::getJamKerjaData(), 'id_jam_kerja', 'nama_jam_kerja');
-                echo $form->field($model, 'id_jam_kerja')->widget(Select2::classname(), [
-                    'data' => $data,
-                    'language' => 'id',
-                    'options' => ['placeholder' => 'Pilih Jam Kerja ...'],
-                    'pluginOptions' => [
-                        'allowClear' => true
-                    ],
-                ])->label('Jam Kerja');
-                ?>
-            </div>
+
 
             <div class="col-12">
                 <?= $form->field($model, 'total_hari')->textInput(['maxlength' => true, 'type' => 'number']) ?>
@@ -53,10 +43,7 @@ use yii\widgets\ActiveForm;
                 ], ['prompt' => 'Pilih Bulan']) ?>
             </div>
             <div class="col-md-6">
-                <?= $form->field($model, 'tahun')->dropDownList(
-                    array_combine(range(date('Y'), 2100), range(date('Y'), 2100)),
-                    ['prompt' => 'Pilih Tahun']
-                ) ?> </div>
+                <?= $form->field($model, 'tahun')->textInput(['value' => date('Y'),  'type' => 'number']) ?> </div>
 
 
             <div class="col-12">
@@ -106,6 +93,16 @@ use yii\widgets\ActiveForm;
             '11' => 'November',
             '12' => 'Desember',
         ];
+
+        $daysInIndonesian = [
+            '1' => 'Senin',
+            '2' => 'Selasa',
+            '3' => 'Rabu',
+            '4' => 'Kamis',
+            '5' => 'Jumat',
+            '6' => 'Sabtu',
+            '7' => 'Minggu'
+        ];
         ?>
         <?php
         foreach ($holidaysGroupedByMonth as $month => $holidayList) {
@@ -115,19 +112,22 @@ use yii\widgets\ActiveForm;
         ?>
             <h5>
                 <?= $monthName ?>
-                <span class="badge badge-primary " style="font-size: 10px; transform: translateY(-5px);"><?= $totalHolidays ?></span> <!-- Badge untuk total hari -->
+                <span class="badge badge-primary" style="font-size: 10px; transform: translateY(-5px);"><?= $totalHolidays ?></span> <!-- Badge untuk total hari -->
             </h5>
 
             <ul>
                 <?php
                 foreach ($holidayList as $holiday) {
-                ?>
-                    <li style="margin-top: -3px;">
-                        <?php
-                        echo date('d-m-Y', strtotime($holiday['tanggal'])) . " - Libur: " . $holiday['nama_hari'] . "<br>";
-                        ?>
-                    </li>
-                <?php
+                    $dayOfWeek = date('N', strtotime($holiday['tanggal'])); // Dapatkan hari dalam angka
+                    $formattedDate = date('d-m-Y', strtotime($holiday['tanggal']));
+                    $dayName = $daysInIndonesian[$dayOfWeek]; // Dapatkan nama hari dalam Bahasa Indonesia
+
+                    // Cek apakah hari tersebut adalah Sabtu
+                    if ($dayOfWeek == '6') {
+                        echo "<li style='margin-top: -3px; color: red;'>$dayName, $formattedDate - Libur: " . $holiday['nama_hari'] . "</li>";
+                    } else {
+                        echo "<li style='margin-top: -3px;'>$dayName, $formattedDate - Libur: " . $holiday['nama_hari'] . "</li>";
+                    }
                 }
                 ?>
             </ul>
@@ -135,5 +135,6 @@ use yii\widgets\ActiveForm;
         }
         ?>
     </div>
+
 
 </section>

@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /** @var backend\models\TotalHariKerja $model */
 
 $this->title = Yii::t('app', 'Tambah Total Hari Kerja');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Total Hari Kerjas'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Total Hari Kerja'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="total-hari-kerja-create">

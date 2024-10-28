@@ -88,14 +88,17 @@ class TotalHariKerja extends \yii\db\ActiveRecord
             // Ambil bulan dari tanggal
             $month = date('m', strtotime($holiday['tanggal']));
 
-            // Tambahkan libur ke dalam array bulan yang sesuai
-            if (!isset($holidaysByMonth[$month])) {
-                $holidaysByMonth[$month] = [];
+            // Cek apakah tanggal tersebut bukan hari Minggu
+            if (date('N', strtotime($holiday['tanggal'])) !== '7') {
+                // Tambahkan libur ke dalam array bulan yang sesuai
+                if (!isset($holidaysByMonth[$month])) {
+                    $holidaysByMonth[$month] = [];
+                }
+                $holidaysByMonth[$month][] = [
+                    'tanggal' => $holiday['tanggal'],
+                    'nama_hari' => $holiday['nama_hari'],
+                ];
             }
-            $holidaysByMonth[$month][] = [
-                'tanggal' => $holiday['tanggal'],
-                'nama_hari' => $holiday['nama_hari'],
-            ];
         }
 
         return $holidaysByMonth;

@@ -1,6 +1,11 @@
 <?php
 
+use backend\models\JamKerja;
+use backend\models\TotalHariKerja;
+use yii\grid\ActionColumn;
+use yii\grid\GridView;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
@@ -22,64 +27,87 @@ $months = [
     'Desember',
 ];
 
-$this->title = $model->jamKerja->nama_jam_kerja . ' - ' . $months[$model->bulan - 1];
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Total Hari Kerjas'), 'url' => ['index']];
+$id_jamkerja_byget = Yii::$app->request->get('id_jam_kerja');
+$jamkerja = JamKerja::find()->where(['id_jam_kerja' => $id_jamkerja_byget])->one();
+$this->title = "Total Hari Kerja - " . $jamkerja['nama_jam_kerja'];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Total Hari Kerja'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+
 ?>
 <div class="total-hari-kerja-view">
+
 
     <div class="costume-container">
         <p class="">
             <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
-
-    <div style="margin: 0 !important; padding: 0 !important">
-        <div class="table-container table-responsive">
-            <p class="d-flex justify-content-start " style="gap: 10px;">
-                <?= Html::a('Update', ['update', 'id_total_hari_kerja' => $model->id_total_hari_kerja], ['class' => 'add-button']) ?>
-                <?= Html::a('Delete', ['delete', 'id_total_hari_kerja' => $model->id_total_hari_kerja], [
-                    'class' => 'reset-button',
-                    'data' => [
-                        'confirm' => 'Are you sure you want to delete this item?',
-                        'method' => 'post',
-                    ],
-                ]) ?>
+    <div class='table-container'>
+        <br>
+        <div class="d-flex align-items-center justify-content-between">
+            <p class="d-flex justify-content-end " style="gap: 10px;">
+                <?= Html::a('Add new', ['/total-hari-kerja/create', 'id_jam_kerja' => $id_jamkerja_byget], ['class' => 'tambah-button']) ?>
             </p>
-
-
-            <?= DetailView::widget([
-                'model' => $model,
-                'attributes' => [
+        </div>
+        <?= GridView::widget(
+            [
+                'dataProvider' => $model,
+                'columns' => [
                     [
-                        'label' => 'Jam Kerja',
-                        'value' => $model->jamKerja->nama_jam_kerja
+                        'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                        'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
+                        'class' => 'yii\grid\SerialColumn'
                     ],
-                    'total_hari',
                     [
+                        'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                        'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                        'class' => ActionColumn::className(),
+                        'urlCreator' => function ($patam, $model, $key, $index, $column) {
+
+                            return Url::toRoute(['total-hari-kerja/detail', 'id_total_hari_kerja' => $model['id_total_hari_kerja']]);
+                        }
+                    ],
+                    [
+                        'attribute' => 'Total Hari',
+                        'headerOptions' => ['style' => 'width: 100px; text-align: center;'],
+                        'contentOptions' => ['style' => 'width: 100px; text-align: center;'],
+                        'value' => function ($model) {
+                            return $model['total_hari'];
+                        }
+                    ],
+                    [
+                        'headerOptions' => ['style' => 'width: 100px; text-align: center;'],
+                        'contentOptions' => ['style' => 'width: 100px; text-align: center;'],
                         'attribute' => 'bulan',
                         'value' => function ($model) use ($months) {
-
-
-                            return $months[$model->bulan - 1];
+                            return $months[$model['bulan'] - 1];
                         }
                     ],
-                    'tahun',
-                    'keterangan',
                     [
-                        'attribute' => 'status',
+                        'attribute' => 'tahun',
+                        'headerOptions' => ['style' => 'width: 100px; text-align: center;'],
+                        'contentOptions' => ['style' => 'width: 100px; text-align: center;'],
                         'value' => function ($model) {
-                            if ($model->is_aktif == 1) {
-                                return "Aktif";
+                            return $model['tahun'];
+                        }
+                    ],
+
+                    [
+                        'headerOptions' => ['style' => 'width: 100px; text-align: center;'],
+                        'contentOptions' => ['style' => 'width: 100px; text-align: center;'],
+                        'attribute' => 'status',
+                        'format' => 'raw',
+                        'value' => function ($model) {
+                            if ($model['is_aktif'] == 1) {
+                                return "<span class='text-success'>Aktif</span>";
                             } else {
-                                return "Tidak Aktif";
+                                return "<span class='text-danger'>Tidak Aktif</span>";
                             }
                         }
-                    ]
+                    ],
                 ],
-            ]) ?>
-
-        </div>
+            ],
+        ); ?>
     </div>
 </div>

@@ -2,6 +2,8 @@
 
 namespace backend\controllers;
 
+use backend\models\JamKerja;
+use backend\models\JamKerjaSearch;
 use backend\models\MasterHaribesar;
 use backend\models\TotalHariKerja;
 use backend\models\TotalHariKerjaSearch;
@@ -49,7 +51,7 @@ class TotalHariKerjaController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new TotalHariKerjaSearch();
+        $searchModel = new JamKerjaSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -64,10 +66,30 @@ class TotalHariKerjaController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id_total_hari_kerja)
+    public function actionDetail($id_total_hari_kerja)
     {
+
+        $model = $this->findModel($id_total_hari_kerja);
+        return $this->render('detail', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionView($id_jam_kerja, $jenis_shift)
+    {
+
+        $model = TotalHariKerja::find()
+            ->asArray()
+            ->select(['total_hari_kerja.*', 'jam_kerja.id_jam_kerja', 'jam_kerja.nama_jam_kerja', 'jam_kerja.jenis_shift'])
+            ->join('INNER JOIN', 'jam_kerja', 'total_hari_kerja.id_jam_kerja = jam_kerja.id_jam_kerja')
+            ->where(['total_hari_kerja.id_jam_kerja' => $id_jam_kerja, 'jam_kerja.jenis_shift' => $jenis_shift])
+            ->all();
+
+        $dataProvider = new \yii\data\ArrayDataProvider([
+            'allModels' => $model,
+        ]);
         return $this->render('view', [
-            'model' => $this->findModel($id_total_hari_kerja),
+            'model' => $dataProvider,
         ]);
     }
 
@@ -83,8 +105,19 @@ class TotalHariKerjaController extends Controller
         $holidaysGroupedByMonth = TotalHariKerja::getHolidaysByMonth();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_total_hari_kerja' => $model->id_total_hari_kerja]);
+            if ($model->load($this->request->post())) {
+                $jamKerja = JamKerja::find()->where(['id_jam_kerja' => $model->id_jam_kerja])->one();
+                if ($jamKerja == null) {
+                    Yii::$app->session->setFlash('error', 'Jam Kerja Tidak Ditemukan');
+                    return $this->redirect(['index']);
+                }
+
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Total Hari Kerja Berhasil');
+                    return $this->redirect(['view', 'id_jam_kerja' => $jamKerja->id_jam_kerja, 'jenis_shift' => $jamKerja->jenis_shift]);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Total Hari Kerja Gagal Disimpan');
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -110,9 +143,16 @@ class TotalHariKerjaController extends Controller
 
         if ($this->request->isPost && $model->load($this->request->post())) {
 
+            $jamKerja = JamKerja::find()->where(['id_jam_kerja' => $model->id_jam_kerja])->one();
+            if ($jamKerja == null) {
+                Yii::$app->session->setFlash('error', 'Jam Kerja Tidak Ditemukan');
+                return $this->redirect(['index']);
+            }
+
+
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'Data Berhasil Ditambahkan');
-                return $this->redirect(['view', 'id_total_hari_kerja' => $model->id_total_hari_kerja]);
+                return $this->redirect(['view', 'id_jam_kerja' => $model->id_jam_kerja, 'jenis_shift' => $jamKerja->jenis_shift]);
             } else {
                 Yii::$app->session->setFlash('success', 'Data Gagal Ditambahkan');
             }
@@ -133,7 +173,20 @@ class TotalHariKerjaController extends Controller
      */
     public function actionDelete($id_total_hari_kerja)
     {
-        $this->findModel($id_total_hari_kerja)->delete();
+        $model =  $this->findModel($id_total_hari_kerja);
+        $jamKerja = JamKerja::find()->where(['id_jam_kerja' => $model->id_jam_kerja])->one();
+        if ($jamKerja == null) {
+            Yii::$app->session->setFlash('error', 'Jam Kerja Tidak Ditemukan');
+            return $this->redirect(['index']);
+        }
+
+
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Data Berhasil Dihapus');
+            return $this->redirect(['view', 'id_jam_kerja' => $jamKerja->id_jam_kerja, 'jenis_shift' => $jamKerja->jenis_shift]);
+        } else {
+            Yii::$app->session->setFlash('error', 'Data Gagal Dihapus');
+        }
 
         return $this->redirect(['index']);
     }
