@@ -6,6 +6,10 @@ use backend\models\Absensi;
 use backend\models\AbsensiSearch;
 use backend\models\AtasanKaryawan;
 use backend\models\Karyawan;
+use backend\models\TotalHariKerja;
+use DateInterval;
+use DateTime;
+use Exception;
 use kartik\mpdf\Pdf;
 use Yii;
 use yii\web\Controller;
@@ -61,6 +65,8 @@ class RekapAbsensiController extends Controller
     public function actionIndex()
     {
 
+
+
         if (Yii::$app->request->isPost) {
 
             $query =  $this->RekapData(Yii::$app->request->post());
@@ -88,6 +94,10 @@ class RekapAbsensiController extends Controller
 
     public function actionReport()
     {
+
+
+        // Data input
+
         $bulan = date('m');
         $tahun = date('Y');
         $data = $this->RekapData();
@@ -131,8 +141,61 @@ class RekapAbsensiController extends Controller
     }
 
 
+    // public function getJumlahHariKerja($param = 1, $bulan = null, $tahun = null)
+    // {
+    //     if ($bulan === null) {
+    //         $bulan = date('m');
+    //     }
+    //     if ($tahun === null) {
+    //         $tahun = date('Y');
+    //     }
+
+    //     $model = TotalHariKerja::find()->asArray()->where(['is_aktif' => 1, 'id_jam_kerja' => $param, 'bulan' => $bulan, 'tahun' => $tahun])->one();
+    //     return $model;
+    // }
+
+    function getTanggalKerjaSampaiHariIni($work_days_type = 5)
+    {
+        // ?megambil hariyang terlewati dari sekarang
+        $result = [];
+        $current_month = date('m');
+        $current_year = date('Y');
+        $current_day = date('d');
+
+        // Define holiday days based on work days type
+        $holiday_days = match ($work_days_type) {
+            4 => [5, 6, 0], // Friday(5), Saturday(6), Sunday(0)
+            5 => [6, 0],    // Saturday(6), Sunday(0)
+            6 => [0],       // Sunday(0) only
+            default => throw new Exception("Invalid work days type")
+        };
+
+        // Loop through dates from 1st until current day
+        for ($i = 1; $i <= $current_day; $i++) {
+            $date = mktime(0, 0, 0, $current_month, $i, $current_year);
+            $day = date('w', $date); // Get day number (0=Sunday, 6=Saturday)
+
+            // Add date to result if it's not a holiday
+            if (!in_array($day, $holiday_days)) {
+                $result[] = date('Y-m-d', $date);
+            }
+        }
+
+        return $result;
+    }
+
+
+
+
+
+
     public function RekapData($params = null)
     {
+
+
+
+
+
 
         //! mengambil parameter
         if ($params != null) {
@@ -175,7 +238,6 @@ class RekapAbsensiController extends Controller
             ->all();
 
 
-
         //    ! get all data tanggal awal dan akhir bulan
         $tanggal_bulanan = array();
         for ($i = 1; $i <= date('t', mktime(0, 0, 0, $bulan, 1, $tahun)); $i++) {
@@ -185,9 +247,23 @@ class RekapAbsensiController extends Controller
 
         //! get karyawan data
         $dataKaryawan = Karyawan::find()
-            ->select(['karyawan.id_karyawan', 'karyawan.nama', 'karyawan.kode_karyawan', 'bg.id_bagian', 'bg.nama_bagian', 'dp.jabatan', 'mk.nama_kode as jabatan'])
+            ->select([
+                'karyawan.id_karyawan',
+                'karyawan.nama',
+                'karyawan.kode_karyawan',
+                'bg.id_bagian',
+                'bg.nama_bagian',
+                'dp.jabatan',
+                'mk.nama_kode as jabatan',
+                'thk.total_hari',
+                'jk.nama_jam_kerja',
+            ])
             ->asArray()
             ->where(['karyawan.is_aktif' => 1])
+            ->leftJoin('jam_kerja_karyawan jkk', 'jkk.id_karyawan = karyawan.id_karyawan')
+            ->leftJoin('jadwal_kerja jdk', 'jkk.id_jam_kerja = jdk.id_jam_kerja')
+            ->leftJoin('total_hari_kerja thk', 'thk.id_jam_kerja = jkk.id_jam_kerja AND thk.bulan = MONTH(CURRENT_DATE()) AND thk.tahun = YEAR(CURRENT_DATE())')
+            ->leftJoin('jam_kerja jk', 'jk.id_jam_kerja = thk.id_jam_kerja')
             ->leftJoin('{{%data_pekerjaan}} dp', 'karyawan.id_karyawan = dp.id_karyawan')
             ->leftJoin('{{%bagian}} bg', 'dp.id_bagian = bg.id_bagian')
             ->leftJoin('{{%master_kode}} mk', 'mk.nama_group = "jabatan" and dp.jabatan = mk.kode')
@@ -197,16 +273,19 @@ class RekapAbsensiController extends Controller
         $hasil = [];
 
         // !masukan absensi ke karyawan
+
+
         $totalHari = date('t', mktime(0, 0, 0, $bulan, 1, $tahun));
         $totalTerlambat = 0;
         $totalHadir = 0;
         $detikTerlambat = 0;
         $totalTidakHadir = 0; // Variabel untuk menyimpan total tidak hadir
 
-        // Array untuk menyimpan total terlambat per tanggal
         $keterlambatanPerTanggal = array_fill(1, $totalHari, 0);
 
         foreach ($dataKaryawan as $karyawan) {
+            $totalHariKerja = $karyawan["total_hari"];
+            $nama_jam_kerja = $karyawan["nama_jam_kerja"];
             $karyawanData = [
                 [
                     "id_karyawan" => $karyawan["id_karyawan"],
@@ -246,22 +325,10 @@ class RekapAbsensiController extends Controller
                             $totalTerlambat++;
                             $selisihDetik = $jamMasuk - $jamMasukKerja;
                             $detikTerlambat += $selisihDetik;
-
-                            // Tambahkan ke keterlambatan per tanggal
-                            $keterlambatanPerTanggal[$i]++;
+                            $keterlambatanPerTanggal[$i] = ($keterlambatanPerTanggal[$i] ?? 0) + 1;
                         }
                         $totalHadir++;
                     }
-                } else {
-                    // Jika tidak ada record absensi, anggap sebagai tidak hadir
-                    if ($i <= date('j')) { // Pastikan hanya untuk hari yang sudah berlalu
-                        $totalTidakHadir++;
-                    }
-                }
-
-                // Jika status hadir tidak termasuk H, S, DL, C
-                if ($i <= date('j') && !in_array($statusHadir, ['H', 'S', 'DL', 'C'])) {
-                    $totalTidakHadir++;
                 }
 
                 $karyawanData[] = [
@@ -293,6 +360,51 @@ class RekapAbsensiController extends Controller
                 'jam_masuk_kantor' => null,
                 'detik_terlambat' => $detikTerlambat,
             ];
+
+            //ambil data bulan ini yang sudah terlewati
+            $string = $nama_jam_kerja;
+            $work_days_type = match (true) {
+                str_contains($string, "4") => 4,
+                str_contains($string, "5") => 5,
+                str_contains($string, "6") => 6,
+                default => throw new Exception("Invalid work days type")
+            };
+
+
+            $today = new DateTime();
+            $today->modify('+1 day');
+            $currentMonth = $today->format('m');
+            $currentYear = $today->format('Y');
+            $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
+            $validDates = [];
+            $tomorrowDay = (int)$today->format('d');
+
+            for ($day = $tomorrowDay; $day <= $daysInMonth; $day++) {
+                $date = new DateTime("$currentYear-$currentMonth-$day");
+                $string = $nama_jam_kerja;
+                $work_days_type = match (true) {
+                    str_contains($string, "4") => 4,
+                    str_contains($string, "5") => 5,
+                    str_contains($string, "6") => 6,
+                    default => throw new Exception("Invalid work days type")
+                };
+                $dayOfWeek = $date->format('N');
+
+                if ($work_days_type === 5 && ($dayOfWeek == 6 || $dayOfWeek == 7)) {
+                    continue;
+                }
+                if ($work_days_type === 6 && $dayOfWeek == 7) {
+                    continue;
+                }
+                if ($work_days_type === 4 && ($dayOfWeek == 5 || $dayOfWeek == 6 || $dayOfWeek == 7)) {
+                    continue;
+                }
+
+                $validDates[] = $date->format('Y-m-d');
+            }
+
+            $totalTidakHadir = ($totalHariKerja  - $totalHadir) - count($validDates);
+
             $karyawanData[] = [
                 'status_hadir' => null,
                 'jam_masuk_karyawan' => null,
@@ -300,7 +412,6 @@ class RekapAbsensiController extends Controller
                 'total_tidak_hadir' => max($totalTidakHadir, 0),
             ];
 
-            // dd($karyawanData);
             $hasil[] = $karyawanData;
 
             // Reset variabel untuk karyawan berikutnya
@@ -344,11 +455,11 @@ class RekapAbsensiController extends Controller
             ->count();
         $rekapanAbsensi[] = $totalAbsensiHadir;
         $rekapanAbsensi[] = 0;
+
         ksort($rekapanAbsensi);
 
-
-
         $keterlambatanPerTanggal[] = 0;
+
 
 
 

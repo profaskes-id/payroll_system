@@ -25,6 +25,7 @@ class m240731_075545_create_absensi_table extends Migration
             'longitude' => $this->decimal(9, 6)->defaultValue(null), // Longitude with decimal precision
             'alasan_terlambat' => $this->text()->defaultValue(null), // Status description (nullable)
             'is_lembur' => $this->smallInteger()->defaultValue(0), // Status description (nullable)
+            'is_wfh' => $this->smallInteger()->defaultValue(0), // Status description (nullable)
         ]);
 
         // Create index for foreign key to karyawan

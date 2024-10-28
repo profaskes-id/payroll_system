@@ -45,36 +45,39 @@ $tanggal = new Tanggal;
     <div class="table-container table-responsive">
 
         <table class="table table-bordered table-responsive">
-            <tr>
-                <th rowspan="3" class="text-center ">Nama dan Kode Karyawan</th>
-                <th rowspan="3" style="vertical-align: middle;" class="text-center ">Bagian & Jabatan</th>
-            </tr>
-            <tr>
-                <th class="text-center" colspan="<?= count($tanggal_bulanan) + 4  ?>">
-                    <h3>
-                        Rekapan Absensi Bulan <?= $tanggal->getBulan($bulan) . ' Tahun ' . $tahun ?>
-                    </h3>
-                </th>
-            </tr>
-            <tr class="text-center" style="vertical-align: middle;">
-                <?php foreach ($tanggal_bulanan as $key => $item) : ?>
-                    <?php
-                    if (!isset($tanggal_bulanan[$key - 1])) {
-                        $day_of_week = 1;
-                    } else {
-                        $date = date_create($tanggal_bulanan[$key]  . '-' . $bulan . '-' . $tahun);
-                        $day_of_week = date_format($date, 'w');
-                    }
-                    ?>
-                    <td <?php if ($day_of_week == 0) echo 'style="background-color: #aaa; color:white;"'; ?>>
-                        <?= $item ?>
-                    </td>
-                <?php endforeach ?>
-                <td>Total Hadir</td>
-                <td>Jumlah Terlambat</td>
-                <td>Total Telambat</td>
-                <td>tidak hadir</td>
-            </tr>
+            <thead>
+
+                <tr>
+                    <th rowspan="3" class="text-center ">Nama dan Kode Karyawan</th>
+                    <th rowspan="3" style="vertical-align: middle;" class="text-center ">Bagian & Jabatan</th>
+                </tr>
+                <tr>
+                    <th class="text-center" colspan="<?= count($tanggal_bulanan) + 4  ?>">
+                        <h3>
+                            Rekapan Absensi Bulan <?= $tanggal->getBulan($bulan) . ' Tahun ' . $tahun ?>
+                        </h3>
+                    </th>
+                </tr>
+                <tr class="text-center" style="vertical-align: middle;">
+                    <?php foreach ($tanggal_bulanan as $key => $item) : ?>
+                        <?php
+                        if (!isset($tanggal_bulanan[$key - 1])) {
+                            $day_of_week = 1;
+                        } else {
+                            $date = date_create($tanggal_bulanan[$key]  . '-' . $bulan . '-' . $tahun);
+                            $day_of_week = date_format($date, 'w');
+                        }
+                        ?>
+                        <td <?php if ($day_of_week == 0) echo 'style="background-color: #aaa; color:white;"'; ?>>
+                            <?= $item ?>
+                        </td>
+                    <?php endforeach ?>
+                    <td>Total Hadir</td>
+                    <td>Jumlah Terlambat</td>
+                    <td>Total Telambat</td>
+                    <td>Tidak Tadir</td>
+                </tr>
+            </thead>
 
             <tbody>
                 <?php foreach ($hasil as $karyawan) : ?>
@@ -219,17 +222,14 @@ $tanggal = new Tanggal;
                     <?php else : ?>
                         <?php
                         // Tentukan warna background
-                        $bgColor = ($key === $lastKey) ? 'lightblue' : '#facc15'; // Ubah menjadi lightblue jika ini adalah elemen terakhir
+                        $bgColor = ($key === $lastKey) ? 'fff' : '#facc15'; // Ubah menjadi lightblue jika ini adalah elemen terakhir
                         ?>
                         <td style="font-weight:600; text-align:center; background-color: <?= $bgColor ?>; color:#000"><?= $rekapan ? ($rekapan > 0 ? $rekapan : '') : '' ?></td>
                     <?php endif; ?>
                 <?php endforeach ?>
-                <td style="font-weight:600; text-align:center; background-color: lightblue; color:#000"></td>
-                <td style="font-weight:600; text-align:center; background-color: lightblue; color:#000"></td>
+                <td style="font-weight:600; text-align:center; background-color: #fff; color:#000"></td>
+                <td style="font-weight:600; text-align:center; background-color: #fff; color:#000"></td>
             </tr>
-
-
-
 
             <!--  2 -->
             <tr>
@@ -261,9 +261,6 @@ $tanggal = new Tanggal;
                 <td style="font-weight:600; text-align:center; background-color: #fff; color:#000"></td>
                 <td style="font-weight:600; text-align:center; background-color: #fff; color:#000"></td>
             </tr>
-
-
-
 
             <!-- 3 -->
             <tr>
