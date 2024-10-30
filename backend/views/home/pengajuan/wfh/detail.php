@@ -37,7 +37,7 @@ $tglMulai = end($assrray);;
             <hr class="w-64 h-px my-1 bg-gray-200 border-0 dark:bg-gray-700">
         </div>
         <div class="bg-white text-black  w-full  rounded-md p-2 mt-2">
-            <p class="capitalize  text-gray-500 text-sm">Disetujui Oleh : </p>
+            <p class="capitalize  text-gray-500 text-sm">Ditanggapi Oleh : </p>
             <p class="text-black">
                 <?php
                 $nama = User::find()->where(['id' => $model['disetujui_oleh']])->one(); ?>

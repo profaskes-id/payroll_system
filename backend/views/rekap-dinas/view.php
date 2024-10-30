@@ -68,13 +68,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'text-align: left;'], // Align text ke kanan
                 ],
                 [
-                    'label' => 'Disetujui Oleh',
+                    'label' => 'Ditanggapi Oleh',
                     'value' => function ($model) {
                         return $model->user->username ?? '';
                     }
                 ],
                 [
-                    'label' => 'Disetujui Pada',
+                    'label' => 'Ditanggapi Pada',
                     'value' => function ($model) {
                         $tanggalFormat = new Tanggal();
                         if ($model->disetujui_pada == null) {

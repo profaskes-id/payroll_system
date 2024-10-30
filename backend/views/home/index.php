@@ -17,6 +17,9 @@ $this->title = 'Absensis';
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
+
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
 <?php
 // Fungsi untuk memotong deskripsi dan menambahkan link
 function getShortDescription($description, $wordLimit = 5)
@@ -64,7 +67,7 @@ function getShortDescription($description, $wordLimit = 5)
 ?>
 
 
-<section class="overflow-x-hidden min-h-[80dvh]">
+<section class="overflow-x-hidden min-h-[80dvh] ">
     <div class=" ">
         <div class="h-[400px] lg:h-[350px]">
             <div class="bg-[#faf9f9] lg:bg-white h-[200px] lg:px-5">
@@ -86,8 +89,8 @@ function getShortDescription($description, $wordLimit = 5)
                             </div>
                             <div class="mt-3">
 
-                                <p class="uppercase text-xl lg:text-3xl font-bold "><?= $karyawan->nama ?></p>
-                                <p class="text-gray-500 text-sm  uppercase"><?= $karyawan->kode_karyawan ?></p>
+                                <p class="uppercase text-xl lg:text-3xl font-bold " data-aos="fade-down" data-aos-duration="1000"><?= $karyawan->nama ?></p>
+                                <p class="text-gray-500 text-sm  uppercase" data-aos="fade-down" data-aos-duration="1000"><?= $karyawan->kode_karyawan ?></p>
                             </div>
                             <div class="flex gap-3 items-center">
                                 <?= Html::a('
@@ -104,7 +107,7 @@ function getShortDescription($description, $wordLimit = 5)
                     </section>
 
 
-                    <section class="col-span-12 lg:col-span-6">
+                    <section class="col-span-12 lg:col-span-6" data-aos="fade-down" data-aos-duration="1000">
                         <div class="  relative  justify-center gap-5 content-start p-5 lg:p-0">
                             <div class="swiper mySwiper border rounded-xl overflow-hidden">
                                 <div class="swiper-wrapper">
@@ -141,38 +144,21 @@ function getShortDescription($description, $wordLimit = 5)
     </div>
 
 
-    <div class="w-[70px] h-[5px] bg-gray-300 rounded-full -mt-20 lg:-mt-20 mx-auto"></div>
+
+    <div data-aos="fade-up" data-aos-duration="800" class="w-[70px] h-[5px] bg-[#ede8fe] rounded-full -mt-20 lg:-mt-20 mx-auto"></div>
 
 
     <div class="grid grid-cols-12  mb-20  gap-2 w-full mt-5 min-w-screen   px-5 relative">
 
-        <div class="w-[120px]  aspect-square bg-[#fff] rounded-full absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border-[10px] border-white overflow-hidden    ">
-            <?php if ($absensi) : ?>
-                <?php if ($absensi->jam_pulang != null): ?>
-                    <a href="/panel/home/view?id_user=<?= Yii::$app->user->identity->id ?>" class="  col-span-6   ">
-                        <div class=" flex justify-center items-center flex-col bg-gray-800  w-full h-full rounded-[50px] ">
-                            <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/touch.png" alt="touch" width="80px" height="80px">
-                        </div>
-                    </a>
-                <?php else : ?>
-                    <a href="/panel/home/absen-masuk" class="  col-span-6   ">
-                        <div class=" flex justify-center items-center flex-col bg-[#ff7c7c] w-full h-full rounded-[50px] ">
-                            <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/touch.png" alt="touch" width="80px" height="80px">
-                        </div>
-                    </a>
-                <?php endif; ?>
-            <?php else : ?>
-                <a href="/panel/home/absen-masuk" class="  col-span-6   ">
-                    <div class=" flex justify-center text-white items-center  bg-[#fc6a03]  w-full h-full rounded-[50px] ">
-                        <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/touch.png" alt="touch" width="80px" height="80px">
+        <div class="w-[120px]  aspect-square bg-[#fff] rounded-full absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2  overflow-hidden     ">
 
-                    </div>
-                </a>
-            <?php endif; ?>
+            <div class=" flex justify-center items-center flex-col bg-[#ffc27c] w-full h-full rounded-[50px] rotate-180" data-aos="zoom-in" data-aos-delay="1000" style="z-index: 99999; position: relative;" data-aos-duration="500">
+            </div>
+
         </div>
 
 
-        <a href="/panel/pengajuan/wfh" class="  col-span-6   ">
+        <a href="/panel/pengajuan/wfh" class="  col-span-6   " data-aos-duration="1000" data-aos="fade-down-right">
             <div class=" flex justify-center items-center flex-col bg-[#ede8fe] py-5 max-h-[200px] rounded-[50px] ">
                 <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                     <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/wfh.svg" alt="calendar" width="40px" height="40px">
@@ -180,7 +166,7 @@ function getShortDescription($description, $wordLimit = 5)
                 <p class=" font-semibold text-black/80 mt-5 mb-1 flex flex-col justify-center items-center"><span>Pengajuan</span> <span>WFH</span></p>
             </div>
         </a>
-        <a href="/panel/pengajuan/cuti" class="  col-span-6   ">
+        <a href="/panel/pengajuan/cuti" class="  col-span-6   " data-aos-duration="1000" data-aos="fade-down-left">
             <div class=" flex justify-center items-center flex-col bg-[#f2fee8] py-5 max-h-[200px] rounded-[50px] ">
                 <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                     <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/calendar.png" alt="calendar" width="40px" height="40px">
@@ -188,7 +174,7 @@ function getShortDescription($description, $wordLimit = 5)
                 <p class=" font-semibold text-black/80 mt-5 mb-1 flex flex-col justify-center items-center"><span>Pengajuan</span> <span>Cuti</span></p>
             </div>
         </a>
-        <a href="/panel/pengajuan/lembur" class="  col-span-6  ">
+        <a href="/panel/pengajuan/lembur" class="  col-span-6  " data-aos-duration="1000" data-aos="fade-up-right">
             <div class=" flex-col col-span-6 bg-[#ffe3e3] py-5 max-h-[200px] rounded-[50px] flex justify-center items-center">
                 <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                     <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/alarm.png" alt="calendar" width="30px" height="30px">
@@ -196,7 +182,7 @@ function getShortDescription($description, $wordLimit = 5)
                 <p class="font-semibold text-black/80  mt-5 mb-1 flex flex-col justify-center items-center"><span>Pengajuan</span> <span>Lembur</span></p>
             </div>
         </a>
-        <a href="/panel/pengajuan/dinas" class="  col-span-6  ">
+        <a href="/panel/pengajuan/dinas" class="  col-span-6  " data-aos-duration="1000" data-aos="fade-up-left">
             <div class=" flex-col col-span-6 bg-[#ebeefd] py-5 max-h-[200px] rounded-[50px] flex justify-center items-center">
                 <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                     <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/building.png" alt="building" width="30px" height="30px">
@@ -211,6 +197,11 @@ function getShortDescription($description, $wordLimit = 5)
 
 
 
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init();
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 

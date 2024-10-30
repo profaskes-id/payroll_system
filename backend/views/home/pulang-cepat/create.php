@@ -42,10 +42,6 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
 
 
-            <div class="">
-                <?= $this->render('@backend/views/components/element/_submit-button', ['text' => 'Submit']); ?>
-            </div>
-
 
 
             <?php ActiveForm::end(); ?>

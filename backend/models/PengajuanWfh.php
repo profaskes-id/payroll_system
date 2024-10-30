@@ -64,8 +64,8 @@ class PengajuanWfh extends \yii\db\ActiveRecord
             'status' => 'Status',
             'tanggal_mulai' => 'Mulai',
             'tanggal_selesai' => 'Selesai',
-            'disetujui_oleh' => 'Disetujui Oleh',
-            'disetujui_pada' => 'Disetujui Pada',
+            'disetujui_oleh' => 'Ditanggapi Oleh',
+            'disetujui_pada' => 'Ditanggapi Pada',
             'catatan_admin' => 'Catatan Admin',
         ];
     }

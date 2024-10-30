@@ -17,7 +17,7 @@ if (Yii::$app->request->getPathInfo() ==  "user/account"): ?>
 
 
 
-<div style="z-index: 999 !important; " class="relative w-full h-16 max-w-lg -translate-x-1/2 bg-white border  bottom-0 left-1/2 dark:bg-gray-700 dark:border-gray-600">
+<div style="z-index: 999 !important; background: #fff;" class=" relative rounded-full -translate-y-4 h-16 w-[90%] -translate-x-1/2 bg-white border  bottom-0 left-1/2 dark:bg-gray-700 dark:border-gray-600">
     <div class="grid h-full max-w-lg grid-cols-5 mx-auto">
         <a href="/panel/home" data-tooltip-target="tooltip-home" class="inline-flex flex-col items-center justify-center px-5 rounded-s-full hover:bg-gray-50 dark:hover:bg-gray-800 group">
             <svg class="w-5 h-5 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -41,7 +41,7 @@ if (Yii::$app->request->getPathInfo() ==  "user/account"): ?>
             <div class="tooltip-arrow" data-popper-arrow></div>
         </div>
         <div class="flex items-center justify-center">
-            <a href="/panel/home/absen-masuk" data-tooltip-target="tooltip-new" class="-translate-y-5 inline-flex relative items-center justify-center w-12 h-12 font-medium bg-orange-400 rounded-full hover:bg-orange-500 group focus:ring-4 focus:ring-orange-300 focus:outline-none ">
+            <a href="/panel/home/absen-masuk" data-tooltip-target="tooltip-new" class=" -translate-y-5 inline-flex relative items-center justify-center w-12 h-12 font-medium bg-orange-400 rounded-full hover:bg-orange-500 group focus:ring-4 focus:ring-orange-300 focus:outline-none ">
                 <?php echo Html::img('@root/images/icons/click.svg', ['class' => 'w-6 h-6 object-cover']) ?>
                 <span class="sr-only">Absen Hari Ini</span>
             </a>

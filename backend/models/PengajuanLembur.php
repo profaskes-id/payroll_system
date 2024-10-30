@@ -56,7 +56,7 @@ class PengajuanLembur extends \yii\db\ActiveRecord
             'jam_mulai' => 'Jam Mulai',
             'jam_selesai' => 'Jam Selesai',
             'tanggal' => 'Tanggal',
-            'disetujui_oleh' => 'Disetujui Oleh',
+            'disetujui_oleh' => 'Ditanggapi Oleh',
             'catatan_admin' => 'Catatan Admin',
         ];
     }

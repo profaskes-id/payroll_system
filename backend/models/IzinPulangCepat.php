@@ -54,8 +54,8 @@ class IzinPulangCepat extends \yii\db\ActiveRecord
             'alasan' => 'Alasan',
             'tanggal' => 'Tanggal',
             'status' => 'Status',
-            'disetujui_pada' => 'Disetujui Pada',
-            'disetujui_oleh' => 'Disetujui Oleh',
+            'disetujui_pada' => 'Ditanggapi Pada',
+            'disetujui_oleh' => 'Ditanggapi Oleh',
             'catatan_admin' => 'Catatan Admin',
         ];
     }

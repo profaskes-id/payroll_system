@@ -96,7 +96,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
-                    'label' => 'Disetujui Oleh',
+                    'label' => 'Ditanggapi Oleh',
                     'value' => function ($model) {
                         return $model->disetujuiOleh->username ?? 'Admin';
                     }
