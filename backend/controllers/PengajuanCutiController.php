@@ -52,11 +52,28 @@ class PengajuanCutiController extends Controller
      */
     public function actionIndex()
     {
+        $bulan = date('m');
+        $tahun = date('Y');
+        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, 1, $tahun));
+        $lastDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, date('t', mktime(0, 0, 0, $bulan, 1, $tahun)), $tahun));
+
+        $tgl_mulai = $firstDayOfMonth;
+        $tgl_selesai = date('Y-m-d');
         $searchModel = new PengajuanCutiSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $dataProvider = $searchModel->search($this->request->queryParams, $tgl_mulai, $tgl_selesai);
+
+        if ($this->request->isPost) {
+            // dd($this->request->post());
+            $tgl_mulai = $this->request->post('PengajuanCutiSearch')['tanggal_mulai'];
+            $tgl_selesai = $this->request->post('PengajuanCutiSearch')['tanggal_selesai'];
+            $dataProvider = $searchModel->search($searchModel, $tgl_mulai, $tgl_selesai);
+        }
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'tgl_mulai' => $tgl_mulai,
+            'tgl_selesai' => $tgl_selesai
         ]);
     }
 

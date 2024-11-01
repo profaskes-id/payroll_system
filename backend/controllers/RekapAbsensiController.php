@@ -329,6 +329,9 @@ class RekapAbsensiController extends Controller
                         }
                         $totalHadir++;
                     }
+                    if ($statusHadir == 'DL') {
+                        $totalHadir++;
+                    }
                 }
 
                 $karyawanData[] = [

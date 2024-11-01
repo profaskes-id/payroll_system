@@ -41,6 +41,9 @@ use yii\widgets\ActiveForm;
         <div class="col-12">
             <?= $form->field($model, 'lokasi')->textInput(['maxlength' => true, 'placeholder' => 'Tentukan Lokasi', 'autocomplete' => 'off', 'value' => 'Rumah']) ?>
         </div>
+        <div class="col-12">
+            <?= $form->field($model, 'alamat')->textarea(['rows' => 3]) ?>
+        </div>
 
 
 
@@ -114,13 +117,17 @@ use yii\widgets\ActiveForm;
 </div>
 
 
+<?php if ($model->isNewRecord) : ?>
 
-<div class="table-container table-responsive">
-    <p class="text-danger fw-bold">Pilih Lokasi WFH untuk mendapatkan koordinat</p>
-    <?php
-    echo '<div id="map" style="height: 400px;"></div>';
-    ?>
-</div>
+
+    <div class="table-container table-responsive">
+        <p class="text-danger fw-bold">Pilih Lokasi WFH untuk mendapatkan koordinat</p>
+        <?php
+        echo '<div id="map" style="height: 400px;"></div>';
+        ?>
+    </div>
+
+<?php endif ?>
 
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>

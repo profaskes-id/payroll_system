@@ -182,6 +182,13 @@ class PengajuanController extends \yii\web\Controller
                 $model->pekerjaan = json_encode(Yii::$app->request->post('pekerjaan'));
                 $model->tanggal = date('Y-m-d H:i:s');
                 $model->status = 0;
+                $jamMulai = strtotime($model->jam_mulai);
+                $jamSelesai = strtotime($model->jam_selesai);
+
+                $selisihDetik = $jamSelesai - $jamMulai;
+                $durasi = gmdate('H:i', $selisihDetik);
+
+                $model->durasi = $durasi;
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
                     return $this->redirect(['/pengajuan/lembur']);
@@ -202,6 +209,11 @@ class PengajuanController extends \yii\web\Controller
         if ($this->request->isPost) {
             if ($pengajuanLembur->load($this->request->post())) {
                 $pengajuanLembur->pekerjaan = json_encode(Yii::$app->request->post('pekerjaan'));
+                $jamMulai = strtotime($pengajuanLembur->jam_mulai);
+                $jamSelesai = strtotime($pengajuanLembur->jam_selesai);
+                $selisihDetik = $jamSelesai - $jamMulai;
+                $durasi = gmdate('H:i', $selisihDetik);
+                $pengajuanLembur->durasi = $durasi;
                 if ($pengajuanLembur->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Mengubah Pengajuan');
                     return $this->redirect(['/pengajuan/lembur']);

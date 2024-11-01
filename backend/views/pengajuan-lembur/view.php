@@ -63,18 +63,23 @@ $this->params['breadcrumbs'][] = $this->title;
                     'jam_mulai',
                     'jam_selesai',
                     [
+                        'label' => 'Durasi Lembur',
+                        'value' => function ($model) {
+                            return date('H:i:s', strtotime($model->durasi ?? '00:00'));
+                        },
+
+                    ],
+                    [
 
                         'label' => 'Tanggal',
                         'value' => function ($model) {
                             $tanggalFormat = new Tanggal();
-                            if ($model->tanggal == null) {
+                            if ($model->tanggal != null) {
                                 return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal);
                             } else {
                                 return '-';
                             }
-                            // return date('d-m-Y', strtotime($model->tanggal));
                         }
-
                     ],
                     [
                         'attribute' => 'Ditanggapi Oleh',

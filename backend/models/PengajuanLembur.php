@@ -38,7 +38,7 @@ class PengajuanLembur extends \yii\db\ActiveRecord
             [['id_karyawan', 'pekerjaan', 'status', 'jam_mulai', 'jam_selesai', 'tanggal'], 'required'],
             [['id_karyawan', 'status', 'disetujui_oleh'], 'integer'],
             [['pekerjaan', 'catatan_admin'], 'string'],
-            [['jam_mulai', 'jam_selesai', 'tanggal', 'disetujui_pada'], 'safe'],
+            [['jam_mulai', 'jam_selesai', 'durasi', 'tanggal', 'disetujui_pada'], 'safe'],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
         ];
     }
@@ -55,6 +55,7 @@ class PengajuanLembur extends \yii\db\ActiveRecord
             'status' => 'Status',
             'jam_mulai' => 'Jam Mulai',
             'jam_selesai' => 'Jam Selesai',
+            'durasi' => 'Durasi',
             'tanggal' => 'Tanggal',
             'disetujui_oleh' => 'Ditanggapi Oleh',
             'catatan_admin' => 'Catatan Admin',

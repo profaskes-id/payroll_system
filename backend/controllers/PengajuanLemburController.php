@@ -48,12 +48,28 @@ class PengajuanLemburController extends Controller
      */
     public function actionIndex()
     {
+        $bulan = date('m');
+        $tahun = date('Y');
+        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, 1, $tahun));
+        $lastDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, date('t', mktime(0, 0, 0, $bulan, 1, $tahun)), $tahun));
+
+        $tgl_mulai = $firstDayOfMonth;
+        $tgl_selesai = date('Y-m-d');
         $searchModel = new PengajuanLemburSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $dataProvider = $searchModel->search($this->request->queryParams, $tgl_mulai, $tgl_selesai);
+
+        if ($this->request->isPost) {
+            // dd($this->request->post());
+            $tgl_mulai = $this->request->post('PengajuanLemburSearch')['tanggal_mulai'];
+            $tgl_selesai = $this->request->post('PengajuanLemburSearch')['tanggal_selesai'];
+            $dataProvider = $searchModel->search($searchModel, $tgl_mulai, $tgl_selesai);
+        }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'tgl_mulai' => $tgl_mulai,
+            'tgl_selesai' => $tgl_selesai
         ]);
     }
 
@@ -90,6 +106,18 @@ class PengajuanLemburController extends Controller
                     $model->disetujui_pada = date('Y-m-d H:i:s');
                 }
 
+                $jamMulai = strtotime($model->jam_mulai);
+                $jamSelesai = strtotime($model->jam_selesai);
+
+                // Menghitung selisih waktu dalam detik
+                $selisihDetik = $jamSelesai - $jamMulai;
+
+                // Mengkonversi selisih waktu ke dalam format jam:menit
+                $durasi = gmdate('H:i', $selisihDetik);
+
+                // Menyimpan durasi ke dalam model
+                $model->durasi = $durasi;
+
 
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Pengajuan Lembur Berhasil Ditambahkan');
@@ -124,6 +152,13 @@ class PengajuanLemburController extends Controller
             $model->pekerjaan = json_encode(Yii::$app->request->post('pekerjaan'));
             $model->disetujui_oleh = Yii::$app->user->identity->id;
             $model->disetujui_pada = date('Y-m-d H:i:s');
+
+            $jamMulai = strtotime($model->jam_mulai);
+            $jamSelesai = strtotime($model->jam_selesai);
+            $selisihDetik = $jamSelesai - $jamMulai;
+            $durasi = gmdate('H:i', $selisihDetik);
+            $model->durasi = $durasi;
+
             if ($model->save()) {
                 return $this->redirect(['view', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur]);
             }

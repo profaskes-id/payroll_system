@@ -34,7 +34,11 @@ $this->params['breadcrumbs'][] = $this->title;
 <div style="margin-top: 10px;">
     <div class="collapse width" id="collapseWidthExample">
         <div class="" style="width: 100%;">
-            <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+            <?php echo $this->render('_search', [
+                'model' => $searchModel,
+                'tgl_mulai' => $tgl_mulai,
+                'tgl_selesai' => $tgl_selesai
+            ]); ?>
         </div>
     </div>
 </div>
