@@ -6,12 +6,16 @@ use yii\helpers\Html;
 /** @var backend\models\Potongan $model */
 
 $this->title = Yii::t('app', 'Create Potongan');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Potongans'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Potongan'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="potongan-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="costume-container">
+        <p class="">
+            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+        </p>
+    </div>
 
     <?= $this->render('_form', [
         'model' => $model,

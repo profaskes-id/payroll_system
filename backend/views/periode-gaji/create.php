@@ -6,13 +6,17 @@ use yii\helpers\Html;
 /** @var backend\models\PeriodeGaji $model */
 
 $this->title = Yii::t('app', 'Create Periode Gaji');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Periode Gajis'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Periode Gaji'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="periode-gaji-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
+    <div class="costume-container">
+        <p class="">
+            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+        </p>
+    </div>
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>

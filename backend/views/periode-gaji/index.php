@@ -10,38 +10,59 @@ use yii\grid\GridView;
 /** @var backend\models\PeriodeGajiSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Periode Gajis');
+$this->title = Yii::t('app', 'Periode Gaji');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="periode-gaji-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="costume-container">
+        <p class="">
+            <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) ?>
+        </p>
+    </div>
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Periode Gaji'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+    <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+        <i class="fas fa-search"></i>
+        <span>
+            Search
+        </span>
+    </button>
+    <div style="margin-top: 10px;">
+        <div class="collapse width" id="collapseWidthExample">
+            <div class="" style="width: 100%;">
+                <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+            </div>
+        </div>
+    </div>
+    <div class="table-container table-responsive">
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'columns' => [
+                [
+                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'class' => 'yii\grid\SerialColumn'
+                ],
 
-            'bulan',
-            'tahun',
-            'tanggal_awal',
-            'tanggal_akhir',
-            'terima',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, PeriodeGaji $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'bulan' => $model->bulan, 'tahun' => $model->tahun]);
-                 }
+                [
+                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'class' => ActionColumn::className(),
+                    'urlCreator' => function ($action, PeriodeGaji $model, $key, $index, $column) {
+                        return Url::toRoute([$action, 'bulan' => $model->bulan, 'tahun' => $model->tahun]);
+                    }
+                ],
+
+                'bulan',
+                'tahun',
+                'tanggal_awal',
+                'tanggal_akhir',
+                'terima',
             ],
-        ],
-    ]); ?>
+        ]); ?>
 
 
+    </div>
 </div>

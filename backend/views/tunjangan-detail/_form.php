@@ -18,9 +18,15 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'jumlah')->textInput(['maxlength' => true]) ?>
 
+
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+        <button class="add-button" type="submit">
+            <span>
+                Save
+            </span>
+        </button>
     </div>
+
 
     <?php ActiveForm::end(); ?>
 

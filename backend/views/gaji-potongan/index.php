@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var backend\models\GajiPotonganSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Gaji Potongans');
+$this->title = Yii::t('app', 'Gaji Potongan');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="gaji-potongan-index">
@@ -21,7 +21,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a(Yii::t('app', 'Create Gaji Potongan'), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); 
+    ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -37,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, GajiPotongan $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id_gaji_potongan' => $model->id_gaji_potongan]);
-                 }
+                }
             ],
         ],
     ]); ?>

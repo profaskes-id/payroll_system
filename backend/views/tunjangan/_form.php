@@ -8,15 +8,21 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="tunjangan-form">
+<div class="tunjangan-form table-container">
 
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'nama_tunjangan')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+        <button class="add-button" type="submit">
+            <span>
+                Save
+            </span>
+        </button>
     </div>
+
+
 
     <?php ActiveForm::end(); ?>
 

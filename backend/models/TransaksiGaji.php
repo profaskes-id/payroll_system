@@ -2,7 +2,9 @@
 
 namespace backend\models;
 
+use DateTime;
 use Yii;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "transaksi_gaji".
@@ -35,6 +37,10 @@ use Yii;
  */
 class TransaksiGaji extends \yii\db\ActiveRecord
 {
+
+    const STATUS_HADIR = 'H';
+    const STATUS_SAKIT = 'S';
+    const STATUS_WFH = 1;
     /**
      * {@inheritdoc}
      */
@@ -98,5 +104,138 @@ class TransaksiGaji extends \yii\db\ActiveRecord
     public function getPeriodeGajiBulan()
     {
         return $this->hasOne(PeriodeGaji::class, ['bulan' => 'periode_gaji_bulan', 'tahun' => 'periode_gaji_tahun']);
+    }
+
+
+    public function getKaryawanData($id_karyawan, $bulan, $tahun)
+    {
+        return Karyawan::find()
+            ->select(['karyawan.id_karyawan', 'karyawan.nama', 'karyawan.nomer_identitas', 'karyawan.kode_jenis_kelamin', 'karyawan.jenis_identitas', 'karyawan.kode_karyawan', 'thk.total_hari AS total_hari_kerja',])
+            ->leftJoin('jam_kerja_karyawan jkk', 'karyawan.id_karyawan = jkk.id_karyawan')
+            ->leftJoin('total_hari_kerja thk', "jkk.id_jam_kerja = thk.id_jam_kerja AND thk.bulan = :bulan AND thk.tahun = :tahun")
+            ->where(['karyawan.id_karyawan' => $id_karyawan])
+            ->params([':bulan' => $bulan, ':tahun' => $tahun])
+            ->asArray()
+            ->one();
+    }
+
+    public function getDataPekerjaan($id_karyawan)
+    {
+        $dataPekerjaan = DataPekerjaan::find()
+            ->where(['id_karyawan' => $id_karyawan, 'is_aktif' => 1])
+            ->asArray()
+            ->one();
+
+        if ($dataPekerjaan) {
+            $dataPekerjaan['bagian'] = Bagian::findOne($dataPekerjaan['id_bagian']);
+            $dataPekerjaan['statusKaryawan'] = MasterKode::find()->select(['nama_group', 'kode', 'nama_kode'])->where([
+                'nama_group' => 'status-pekerjaan',
+                'kode' => $dataPekerjaan['status']
+            ])->asArray()->one();
+
+            $dataPekerjaan['jabatan'] = MasterKode::find()->select(['nama_group', 'kode', 'nama_kode'])->where([
+                'nama_group' => 'jabatan',
+                'kode' => $dataPekerjaan['jabatan']
+            ])->asArray()->one();
+        }
+
+        return $dataPekerjaan;
+    }
+
+    public function getAbsensiData($id_karyawan, $firstDayOfMonth, $lastDayOfMonth)
+    {
+        return Absensi::find()
+            ->select([
+                'total_hadir' => new Expression("SUM(CASE WHEN kode_status_hadir = :status_hadir THEN 1 ELSE 0 END)"),
+                'total_sakit' => new Expression("SUM(CASE WHEN kode_status_hadir = :status_sakit THEN 1 ELSE 0 END)"),
+                'total_wfh' => new Expression("SUM(CASE WHEN kode_status_hadir = :status_hadir AND is_wfh = :status_wfh THEN 1 ELSE 0 END)")
+            ])
+            ->where(['id_karyawan' => $id_karyawan])
+            ->andWhere(['between', 'tanggal', $firstDayOfMonth, $lastDayOfMonth])
+            ->params([
+                ':status_hadir' => self::STATUS_HADIR,
+                ':status_sakit' => self::STATUS_SAKIT,
+                ':status_wfh' => self::STATUS_WFH
+            ])
+            ->asArray()
+            ->one();
+    }
+
+    public function getTotalCutiKaryawan($id_karyawan, $firstDayOfMonth, $lastDayOfMonth)
+    {
+
+        $jam_kerja = 5;
+        return array_sum(RekapCuti::find()->where(['id_karyawan' => $id_karyawan])->all());
+        return PengajuanCuti::find()
+            ->where([
+                'id_karyawan' => $id_karyawan,
+                'status' => 1
+            ])
+            ->andWhere([
+                'or',
+                [
+                    'and',
+                    ['>=', 'tanggal_mulai', $firstDayOfMonth],
+                    ['<=', 'tanggal_mulai', $lastDayOfMonth]
+                ],
+                [
+                    'and',
+                    ['>=', 'tanggal_selesai', $firstDayOfMonth],
+                    ['<=', 'tanggal_selesai', $lastDayOfMonth]
+                ],
+                [
+                    'and',
+                    ['<', 'tanggal_mulai', $firstDayOfMonth],
+                    ['>', 'tanggal_selesai', $lastDayOfMonth]
+                ]
+            ])
+            ->asArray()
+            ->all();
+    }
+
+    public function getGajiPokok($id_karyawan)
+    {
+        return MasterGaji::find()->asArray()->where(['id_karyawan' => $id_karyawan])->one();
+    }
+
+    public function getJumlahJamLembur($id_karyawan, $firstDayOfMonth, $lastDayOfMonth)
+    {
+        $pengajuanLembur = PengajuanLembur::find()
+            ->where([
+                'id_karyawan' => $id_karyawan,
+                'status' => 1
+            ])
+            ->andWhere(['>=', 'tanggal', $firstDayOfMonth])
+            ->andWhere(['<=', 'tanggal', $lastDayOfMonth])
+            ->asArray()  // Ini akan mengembalikan hasil dalam bentuk array
+            ->all();
+
+        $totalMenit = 0;
+
+        foreach ($pengajuanLembur as &$lembur) {
+            // Konversi jam ke DateTime untuk perhitungan yang lebih akurat
+            $jamMulai = new DateTime($lembur['jam_mulai']);
+            $jamSelesai = new DateTime($lembur['jam_selesai']);
+
+            // Hitung selisih dalam menit
+            $selisih = $jamSelesai->diff($jamMulai);
+            $menitLembur = ($selisih->h * 60) + $selisih->i;
+
+            $totalMenit += $menitLembur;
+
+            // Tambahkan informasi durasi ke setiap entri lembur
+            $lembur['durasi_menit'] = $menitLembur;
+            $lembur['durasi_format'] = sprintf("%02d:%02d", floor($menitLembur / 60), $menitLembur % 60);
+        }
+
+        // Konversi total menit ke format jam:menit
+        $jam = floor($totalMenit / 60);
+        $menit = $totalMenit % 60;
+
+        return [
+            'detail_lembur' => $pengajuanLembur,
+            'total_jam_lembur' => sprintf("%02d:%02d", $jam, $menit),
+            'total_menit' => $totalMenit
+        ];
     }
 }

@@ -12,19 +12,25 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'bulan')->textInput() ?>
+    <?= $form->field($model, 'bulan')->textInput(['type' => 'number']) ?>
 
-    <?= $form->field($model, 'tahun')->textInput() ?>
+    <?= $form->field($model, 'tahun')->textInput(['type' => 'number']) ?>
 
-    <?= $form->field($model, 'tanggal_awal')->textInput() ?>
+    <?= $form->field($model, 'tanggal_awal')->textInput(['type' => 'date']) ?>
 
-    <?= $form->field($model, 'tanggal_akhir')->textInput() ?>
+    <?= $form->field($model, 'tanggal_akhir')->textInput(['type' => 'date']) ?>
 
-    <?= $form->field($model, 'terima')->textInput() ?>
+    <?= $form->field($model, 'terima')->textInput(['type' => 'date']) ?>
+
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+        <button class="add-button" type="submit">
+            <span>
+                Save
+            </span>
+        </button>
     </div>
+
 
     <?php ActiveForm::end(); ?>
 

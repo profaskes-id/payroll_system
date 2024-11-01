@@ -8,16 +8,22 @@ use yii\helpers\Html;
 $this->title = Yii::t('app', 'Update Transaksi Gaji: {name}', [
     'name' => $model->id_transaksi_gaji,
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Transaksi Gajis'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Transaksi Gaji'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id_transaksi_gaji, 'url' => ['view', 'id_transaksi_gaji' => $model->id_transaksi_gaji]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 <div class="transaksi-gaji-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="costume-container">
+        <p class="">
+            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+        </p>
+    </div>
 
     <?= $this->render('_form', [
         'model' => $model,
+        'rekapandata' => $rekapandata,
+
     ]) ?>
 
 </div>

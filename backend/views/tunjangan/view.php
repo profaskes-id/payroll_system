@@ -6,32 +6,37 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var backend\models\Tunjangan $model */
 
-$this->title = $model->id_tunjangan;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tunjangans'), 'url' => ['index']];
+$this->title = $model->nama_tunjangan;
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Tunjangan'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="tunjangan-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="costume-container">
+        <p class="">
+            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+        </p>
+    </div>
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id_tunjangan' => $model->id_tunjangan], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id_tunjangan' => $model->id_tunjangan], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
-                'method' => 'post',
+    <div class="table-container table-responsive">
+        <p class="d-flex justify-content-start " style="gap: 10px;">
+            <?= Html::a('update', ['update', 'id_tunjangan' => $model->id_tunjangan], ['class' => 'add-button']) ?>
+            <?= Html::a('Delete', ['delete', 'id_tunjangan' => $model->id_tunjangan], [
+                'class' => 'reset-button',
+                'data' => [
+                    'confirm' => 'Are you sure you want to delete this item?',
+                    'method' => 'post',
+                ],
+            ]) ?>
+        </p>
+
+        <?= DetailView::widget([
+            'model' => $model,
+            'attributes' => [
+                'nama_tunjangan',
             ],
         ]) ?>
-    </p>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id_tunjangan',
-            'nama_tunjangan',
-        ],
-    ]) ?>
-
+    </div>
 </div>

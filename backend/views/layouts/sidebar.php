@@ -68,6 +68,19 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                 ],
                             ],
                             [
+                                'label' => 'Transaksi',
+                                'icon' => 'th',
+                                'items' => [
+                                    ['label' => 'Tunjangan',  'icon' => 'file-code', 'url' => ['/tunjangan/index'],],
+                                    ['label' => 'Tunjangan Detail',  'icon' => 'fa  fa-calendar-alt', 'url' => ['/tunjangan-detail/index'],],
+                                    ['label' => 'Potongan',  'icon' => 'fa fa-calendar-day', 'url' => ['/potongan/index'],],
+                                    ['label' => 'Potongan Detail',  'icon' => 'fa fa-map-marker', 'url' => ['/potongan-detail/index'],],
+                                    ['label' => 'Gaji Potongan',  'icon' => 'fa fa-money-bill-alt', 'url' => ['/gaji-potongan/index'],],
+                                    ['label' => 'Gaji Tunjangan',  'icon' => 'fas fa-briefcase', 'url' => ['/gaji-tunjangan/index'],],
+                                    ['label' => 'transaksi',  'icon' => 'fas fa-briefcase', 'url' => ['/transaksi-gaji/index'],],
+                                ],
+                            ],
+                            [
                                 'label' => 'Pengaturan Data',
                                 'icon' => 'th',
                                 'items' => [

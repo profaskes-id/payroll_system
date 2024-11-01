@@ -8,13 +8,17 @@ use yii\helpers\Html;
 $this->title = Yii::t('app', 'Update Potongan Detail: {name}', [
     'name' => $model->id_potongan_detail,
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Potongan Details'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Potongan Detail'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id_potongan_detail, 'url' => ['view', 'id_potongan_detail' => $model->id_potongan_detail]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 <div class="potongan-detail-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="costume-container">
+        <p class="">
+            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+        </p>
+    </div>
 
     <?= $this->render('_form', [
         'model' => $model,

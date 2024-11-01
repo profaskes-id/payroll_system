@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /** @var backend\models\GajiPotongan $model */
 
 $this->title = Yii::t('app', 'Create Gaji Potongan');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Gaji Potongans'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Gaji Potongan'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="gaji-potongan-create">
