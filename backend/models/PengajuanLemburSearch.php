@@ -38,9 +38,9 @@ class PengajuanLemburSearch extends PengajuanLembur
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $tgl_mulai, $tgl_selesai)
     {
-        $query = PengajuanLembur::find();
+        $query = PengajuanLembur::find()->where(['>=', 'tanggal', $tgl_mulai])->andWhere(['<=', 'tanggal', $tgl_selesai]);
 
         // add conditions that should always apply here
 

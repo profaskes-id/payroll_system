@@ -58,7 +58,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
-                    'attribute' => 'estimasi_biaya',
+                    'label' => 'Biaya Diajukan',
+                    'value' => function ($model) {
+                        return $model->estimasi_biaya;
+                    },
                     'format' => 'currency', // Format currency untuk otomatis
                     'contentOptions' => ['style' => 'text-align: left;'], // Align text ke kanan
                 ],
@@ -110,6 +113,27 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => 'Catatan Admin',
                     'value' => function ($model) {
                         return $model->catatan_admin ?? '-';
+                    }
+                ],
+                [
+                    'label' => 'Dokumentasi',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        if ($model->status != 0) {
+                            if ($model->files != null) {
+                                $files = json_decode($model->files, true);
+                                if ($files) {
+                                    $output = '<ul>';
+                                    foreach ($files as $key => $file) {
+                                        $key++;
+                                        $output .= '<li>' . Html::a("Dokumentasi {$key}",  '/panel/' . $file, ['target' => '_blank']) . '</li>';
+                                    }
+                                    $output .= '</ul>';
+                                    return $output; // Kembalikan output yang sudah diformat
+                                }
+                            }
+                        }
+                        return ''; // Kembalikan string kosong jika tidak ada file
                     }
                 ]
             ],

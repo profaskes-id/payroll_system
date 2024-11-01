@@ -37,7 +37,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <div style="margin-top: 10px;">
         <div class="collapse width" id="collapseWidthExample">
             <div class="" style="width: 100%;">
-                <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+                <?php echo $this->render('_search', [
+                    'model' => $searchModel,
+                    'tgl_mulai' => $tgl_mulai,
+                    'tgl_selesai' => $tgl_selesai
+                ]); ?>
             </div>
         </div>
     </div>
@@ -75,6 +79,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Jam Selesai',
                 'value' => function ($model) {
                     return date('H:i', strtotime($model->jam_selesai));
+                },
+                'headerOptions' => ['style' => 'text-align: center;'],
+                'contentOptions' => ['style' => 'text-align: center;'],
+            ],
+            [
+                'label' => 'Durasi Lembur',
+                'value' => function ($model) {
+                    return date('H:i', strtotime($model->durasi ?? '00:00'));
                 },
                 'headerOptions' => ['style' => 'text-align: center;'],
                 'contentOptions' => ['style' => 'text-align: center;'],

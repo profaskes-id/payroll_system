@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\PengajuanDinas;
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -34,7 +35,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <div style="margin-top: 10px;">
         <div class="collapse width" id="collapseWidthExample">
             <div class="" style="width: 100%;">
-                <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+                <?php echo $this->render('_search', [
+                    'model' => $searchModel,
+                    'tgl_mulai' => $tgl_mulai,
+                    'tgl_selesai' => $tgl_selesai
+                ]); ?>
             </div>
         </div>
     </div>
@@ -65,13 +70,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'label' => 'Keterangan Perjalanan',
                     'value' => function ($model) {
-                        $text = $model->keterangan_perjalanan;
-                        $words = explode(' ', $text);
-                        if (count($words) > 8) {
-                            $text = implode(' ', array_slice($words, 0, 8)) . '...';
-                        }
-
-                        return $text;
+                        return $model->keterangan_perjalanan;;
                     }
                 ],
 
@@ -80,14 +79,27 @@ $this->params['breadcrumbs'][] = $this->title;
                     'headerOptions' => ['style' => 'text-align: center;'],
                     'contentOptions' => ['style' => 'text-align: center;'],
                     'label' => 'Tanggal Mulai',
-                    'format' => 'date',
+                    // 'format' => 'date',
                     'value' => function ($model) {
-                        return $model->tanggal_mulai;
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_mulai);
+                        // return $model->tanggal_mulai;
                     }
                 ],
                 [
 
-                    'attribute' => 'estimasi_biaya',
+                    'label' => 'Biaya Diajukan',
+                    'value' => function ($model) {
+                        return $model->estimasi_biaya;
+                    },
+                    'format' => 'currency', // Format currency untuk otomatis
+                    'contentOptions' => ['style' => 'text-align: left;'], // Align text ke kanan
+                ],
+                [
+                    'label' => 'Biaya Disetujui',
+                    'value' => function ($model) {
+                        return $model->biaya_yang_disetujui;
+                    },
                     'format' => 'currency', // Format currency untuk otomatis
                     'contentOptions' => ['style' => 'text-align: left;'], // Align text ke kanan
                 ],

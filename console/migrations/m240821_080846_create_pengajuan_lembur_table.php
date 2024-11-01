@@ -19,6 +19,7 @@ class m240821_080846_create_pengajuan_lembur_table extends Migration
             'status' => $this->integer()->notNull(),
             'jam_mulai' => $this->time()->notNull(),
             'jam_selesai' => $this->time()->notNull(),
+            'durasi' => $this->time()->null(),
             'tanggal' => $this->date()->notNull(),
             'disetujui_pada' => $this->dateTime()->null(),
             'disetujui_oleh' => $this->integer()->null(),

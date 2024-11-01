@@ -38,9 +38,9 @@ class PengajuanCutiSearch extends PengajuanCuti
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $tgl_mulai, $tgl_selesai)
     {
-        $query = PengajuanCuti::find();
+        $query = PengajuanCuti::find()->where(['>=', 'tanggal_mulai', $tgl_mulai])->andWhere(['<=', 'tanggal_selesai', $tgl_selesai]);
 
         // add conditions that should always apply here
 

@@ -84,40 +84,36 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
 
     </div>
+    <div class=" w-full" id="map" style=" height: 400px; z-index: 2 !important "></div>
 </div>
 
 
 
-<div class=" w-full" id="map" style=" height: 80dvh !important; z-index: 2 !important "></div>
 
 
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-    // console.info()
-    window.addEventListener('load', function() {
-
-        navigator.geolocation.watchPosition(function(position) {
+    navigator.geolocation.watchPosition(function(position) {
 
 
 
-                let map = L.map('map').setView([(<?= $model->latitude ?>).toFixed(10), <?= $model->longitude ?>.toFixed(10)], 15); // set initial view to the specified location
+            let map = L.map('map').setView([(<?= $model->latitude ?>).toFixed(10), <?= $model->longitude ?>.toFixed(10)], 15); // set initial view to the specified location
 
-                // Add a tile layer (e.g. OpenStreetMap)
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
-                    subdomains: ['a', 'b', 'c']
-                }).addTo(map);
+            // Add a tile layer (e.g. OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
+                subdomains: ['a', 'b', 'c']
+            }).addTo(map);
 
-                // Add a marker at the specified location
-                let marker = L.marker([<?= $model->latitude ?>.toFixed(10), <?= $model->longitude ?>.toFixed(10)]).addTo(map);
-            },
-            function(error) {
-                console.log("Error: " + error.message);
-            }, {
-                enableHighAccuracy: true,
-                timeout: 5000,
-                maximumAge: 0
-            });
-    });
+            // Add a marker at the specified location
+            let marker = L.marker([<?= $model->latitude ?>.toFixed(10), <?= $model->longitude ?>.toFixed(10)]).addTo(map);
+        },
+        function(error) {
+            console.log("Error: " + error.message);
+        }, {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+        });
 </script>

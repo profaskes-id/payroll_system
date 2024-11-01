@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\helpers\KaryawanHelper;
 use backend\models\Karyawan;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -14,12 +15,14 @@ use yii\widgets\ActiveForm;
 
         <?php $form = ActiveForm::begin([
             'action' => ['index'],
-            'method' => 'get',
-        ]); ?>
+            'method' => 'POST',
+        ]);
+
+        ?>
 
         <div class="row">
-            <div class="col-md-9 col-12">
-                <?php $nama_group = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
+            <div class="col-md-3 col-12">
+                <?php $nama_group = \yii\helpers\ArrayHelper::map(KaryawanHelper::getKaryawanData(), 'id_karyawan', 'nama');
                 echo $form->field($model, 'id_karyawan')->widget(kartik\select2\Select2::classname(), [
                     'data' => $nama_group,
                     'language' => 'id',
@@ -28,11 +31,17 @@ use yii\widgets\ActiveForm;
                         'tags' => true,
                         'allowClear' => true
                     ],
-                ])->label(false);
+                ])->label('Cari Karyawan');
                 ?>
             </div>
+            <div class="col-12 col-md-3">
+                <?= $form->field($model, 'tanggal_mulai')->textInput(['type' => 'date', 'value' => $tgl_mulai])->label("Mulai Dari") ?>
+            </div>
+            <div class="col-12 col-md-3">
+                <?= $form->field($model, 'tanggal_selesai')->textInput(['type' => 'date', 'value' => $tgl_selesai])->label("Sampai Dengan") ?>
+            </div>
 
-            <div class="col-3">
+            <div class="col-3 mt-4">
                 <div class="form-group d-flex items-center w-100  justify-content-around">
                     <button class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
                         <i class="fas fa-search"></i>

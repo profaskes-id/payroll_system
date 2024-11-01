@@ -17,6 +17,7 @@ class m241023_185653_create_pengajuan_wfh_table extends Migration
             'id_karyawan' => $this->integer()->notNull(),
             'alasan' => $this->text()->notNull(),
             'lokasi' => $this->string()->null(),
+            'alamat' => $this->text()->null(),
             'longitude' => $this->double()->notNull(),
             'latitude' => $this->double()->notNull(),
             'tanggal_array' => $this->text()->null(),

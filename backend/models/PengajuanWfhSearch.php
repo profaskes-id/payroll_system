@@ -39,9 +39,9 @@ class PengajuanWfhSearch extends PengajuanWfh
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $tgl_mulai, $tgl_selesai)
     {
-        $query = PengajuanWfh::find();
+        $query = PengajuanWfh::find()->where(['>=', 'tanggal_array', $tgl_mulai])->andWhere(['<=', 'tanggal_array', $tgl_selesai]);
 
         // add conditions that should always apply here
 
@@ -53,8 +53,7 @@ class PengajuanWfhSearch extends PengajuanWfh
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+
             return $dataProvider;
         }
 

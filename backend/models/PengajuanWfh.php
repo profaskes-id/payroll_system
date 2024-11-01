@@ -38,7 +38,7 @@ class PengajuanWfh extends \yii\db\ActiveRecord
         return [
             [['id_karyawan', 'alasan', 'longitude', 'latitude'], 'required'],
             [['id_karyawan', 'status', 'disetujui_oleh'], 'integer'],
-            [['alasan', 'tanggal_array', 'catatan_admin'], 'string'],
+            [['alasan', 'alamat',  'tanggal_array', 'catatan_admin'], 'string'],
             [['longitude', 'latitude'], 'number'],
             [['lokasi'], 'string', 'max' => 255],
             [['tanggal_mulai', 'tanggal_selesai', 'disetujui_oleh', 'disetujui_pada'], 'safe'], // Tambahkan ini
@@ -54,10 +54,11 @@ class PengajuanWfh extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_pengajuan_wfh' => 'Id Pengajuan Wfh',
-            'id_karyawan' => 'Id Karyawan',
+            'id_pengajuan_wfh' => 'Pengajuan Wfh',
+            'id_karyawan' => 'Karyawan',
             'alasan' => 'Alasan',
             'lokasi' => 'Lokasi',
+            'alamat' => 'Alamat',
             'longitude' => 'Longitude',
             'latitude' => 'Latitude',
             'tanggal_array' => 'Tanggal Array',
