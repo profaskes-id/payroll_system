@@ -41,14 +41,48 @@ class PengajuanWfhSearch extends PengajuanWfh
      */
     public function search($params, $tgl_mulai, $tgl_selesai)
     {
-        $query = PengajuanWfh::find()->where(['>=', 'tanggal_array', $tgl_mulai])->andWhere(['<=', 'tanggal_array', $tgl_selesai]);
+        $query = PengajuanWfh::find();
+        $result = $query->asArray()->all();
 
-        // add conditions that should always apply here
+        $filtered_result = array_filter(
+            $result,
+            function ($data) use ($tgl_mulai, $tgl_selesai) {
+                $tanggal = json_decode($data['tanggal_array'], true);
 
+                // Pastikan tanggal_array tidak kosong
+                if (!empty($tanggal)) {
+                    // Ambil tanggal pertama (indeks 0)
+                    $firstDate = reset($tanggal);
+
+                    // Ambil tanggal terakhir
+                    $lastDate = end($tanggal);
+
+                    // Bandingkan dengan $tgl_mulai dan $tgl_selesai
+                    return strtotime($firstDate) >= strtotime($tgl_mulai) &&
+                        strtotime($lastDate) <= strtotime($tgl_selesai);
+                }
+
+                return false; // Jika tanggal_array kosong, kembalikan false
+            }
+        );
+
+
+
+
+        $filteredIds = array_map(function ($item) {
+            return $item['id_pengajuan_wfh'];
+        }, array_values($filtered_result));
+
+        // Buat query baru dengan ID yang telah difilter
+        $query = PengajuanWfh::find()->where(['in', 'id_pengajuan_wfh', $filteredIds]);
+
+        // Buat DataProvider
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => ['defaultOrder' => ['status' => SORT_DESC]]
         ]);
+
+
 
         $this->load($params);
 
