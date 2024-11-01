@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\PengajuanWfh;
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -66,7 +67,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 'lokasi',
                 // 'longitude',
                 //'latitude',
-                //'tanggal_array:ntext',
+                [
+                    'format' => 'raw',
+                    'attribute' => 'tanggal',
+                    'value' => function ($model) {
+                        $tanggalFormat = new Tanggal();
+                        $day_wfh =  json_decode($model->tanggal_array);
+                        if ($day_wfh) {
+                            $finalValue = [];
+                            foreach ($day_wfh as $item) {
+                                $finalValue[] = "<li style='margin-left: 20px'>" . $tanggalFormat->getIndonesiaFormatTanggal($item) . "</li>";
+                            }
+                            return implode('', $finalValue);
+                        } else {
+                            return 'belum di set';
+                        }
+                    },
+                ],
                 [
                     'headerOptions' => ['style' => 'text-align: center;'],
                     'contentOptions' => ['style' => 'text-align: center;'],
