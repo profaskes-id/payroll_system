@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\Absensi;
 use backend\models\Bagian;
 use backend\models\DataPekerjaan;
+use backend\models\GajiTunjangan;
 use backend\models\Karyawan;
 use backend\models\MasterKode;
 use backend\models\PeriodeGaji;
@@ -104,6 +105,9 @@ class TransaksiGajiController extends Controller
         $totalCuti = $model->getTotalCutiKaryawan($id_karyawan, $firstDayOfMonth, $lastDayOfMonth);
         $gajiPokok = $model->getGajiPokok($id_karyawan,);
         $jumlahJamLembur = $model->getJumlahJamLembur($id_karyawan, $firstDayOfMonth, $lastDayOfMonth);
+        $periodeGaji = $model->getPeriodeGajiBulanFind($bulan, $tahun);
+        $getTunjangan = $model->getTunjangan($id_karyawan);
+        $getPotongan = $model->getPotongan($id_karyawan);
 
         $rekapandata = [
 
@@ -113,13 +117,28 @@ class TransaksiGajiController extends Controller
             'totalCuti' => $totalCuti,  //total cuti
             'gajiPokok' => $gajiPokok,  //gaji pokok
             'jumlahJamLembur' => $jumlahJamLembur,
+            'periodeGaji' => $periodeGaji,
+            'getTunjangan' => $getTunjangan,
+            'getPotongan' => $getPotongan
         ];
 
 
 
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            if ($model->load($this->request->post())) {
+
+                if ($model->save()) {
+
+                    // //query get all tunjuangan by id
+                    // $all();
+
+                    // foreach
+
+                    $gaji_tunjangan = new GajiTunjangan();
+                    $gaji_tunjangan->id_transaksi_gaji = $model->id_transaksi_gaji;
+                }
+
                 return $this->redirect(['view', 'id_transaksi_gaji' => $model->id_transaksi_gaji]);
             }
         } else {

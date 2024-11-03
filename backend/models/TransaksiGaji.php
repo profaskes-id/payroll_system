@@ -238,4 +238,18 @@ class TransaksiGaji extends \yii\db\ActiveRecord
             'total_menit' => $totalMenit
         ];
     }
+
+    public function getPeriodeGajiBulanFind($bulan, $tahun)
+    {
+        return PeriodeGaji::find()->asArray()->where(['bulan' => $bulan, 'tahun' => $tahun])->one();
+    }
+
+    public function getTunjangan($id_karyawan)
+    {
+        return TunjanganDetail::find()->where(['id_karyawan' => $id_karyawan])->asArray()->all();
+    }
+    public function getPotongan($id_karyawan)
+    {
+        return PotonganDetail::find()->where(['id_karyawan' => $id_karyawan])->asArray()->all();
+    }
 }

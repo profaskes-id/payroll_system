@@ -48,46 +48,46 @@ use yii\widgets\ActiveForm;
         <div class="col-8">
             <?php $form = ActiveForm::begin(); ?>
 
-            <?php echo  $form->field($model, 'nomer_identitas')->textInput(['maxlength' => true, 'value' => $rekapandata['karyawan']['kode_karyawan']])
+            <?php echo  $form->field($model, 'nomer_identitas')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['karyawan']['kode_karyawan']])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'nama')->textInput(['maxlength' => true, 'value' => $rekapandata['karyawan']['nama']])
+            <?php echo  $form->field($model, 'nama')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['karyawan']['nama']])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'bagian')->textInput(['maxlength' => true, 'value' => $rekapandata['dataPekerjaan']['bagian']['nama_bagian']])
+            <?php echo  $form->field($model, 'bagian')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['dataPekerjaan']['bagian']['nama_bagian']])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'jabatan')->textInput(['maxlength' => true, 'value' => $rekapandata['dataPekerjaan']['jabatan']['nama_kode']])
+            <?php echo  $form->field($model, 'jabatan')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['dataPekerjaan']['jabatan']['nama_kode']])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'jam_kerja')->textInput(['value' => $rekapandata['karyawan']['total_hari_kerja']])
+            <?php echo  $form->field($model, 'jam_kerja')->hiddenInput(['value' => $rekapandata['karyawan']['total_hari_kerja']])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'status_karyawan')->textInput(['maxlength' => true, 'value' => $rekapandata['dataPekerjaan']['statusKaryawan']['nama_kode']])
+            <?php echo  $form->field($model, 'status_karyawan')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['dataPekerjaan']['statusKaryawan']['nama_kode']])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'periode_gaji_bulan')->textInput()
+            <?php echo  $form->field($model, 'periode_gaji_bulan')->hiddenInput(['value' => $rekapandata['periodeGaji']['bulan']])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'periode_gaji_tahun')->textInput()
+            <?php echo  $form->field($model, 'periode_gaji_tahun')->hiddenInput(['value' => $rekapandata['periodeGaji']['tahun']])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'jumlah_hari_kerja')->textInput(['value' => $rekapandata['karyawan']['total_hari_kerja']])
+            <?php echo  $form->field($model, 'jumlah_hari_kerja')->hiddenInput(['value' => $rekapandata['karyawan']['total_hari_kerja']])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'jumlah_hadir')->textInput(['value' => $rekapandata['absensiData']['total_hadir']])
+            <?php echo  $form->field($model, 'jumlah_hadir')->hiddenInput(['value' => $rekapandata['absensiData']['total_hadir']])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'jumlah_sakit')->textInput(['value' => $rekapandata['absensiData']['total_sakit']])
+            <?php echo  $form->field($model, 'jumlah_sakit')->hiddenInput(['value' => $rekapandata['absensiData']['total_sakit']])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'jumlah_wfh')->textInput(['value' => $rekapandata['absensiData']['total_wfh']])
+            <?php echo  $form->field($model, 'jumlah_wfh')->hiddenInput(['value' => $rekapandata['absensiData']['total_wfh']])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'jumlah_cuti')->textInput(['value' => $rekapandata['totalCuti']])
+            <?php echo  $form->field($model, 'jumlah_cuti')->hiddenInput(['value' => $rekapandata['totalCuti']])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'gaji_pokok')->textInput(['maxlength' => true, 'value' => $rekapandata['gajiPokok']['nominal_gaji']])
+            <?php echo  $form->field($model, 'gaji_pokok')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['gajiPokok']['nominal_gaji']])->label(false)
             ?>
 
             <?php echo  $form->field($model, 'jumlah_jam_lembur')->textInput(['maxlength' => true, 'value' => $rekapandata['jumlahJamLembur']['total_menit'] / 60])
@@ -99,15 +99,15 @@ use yii\widgets\ActiveForm;
             <?php echo  $form->field($model, 'total_lembur')->textInput(['maxlength' => true, 'readonly' => true, 'id' => "total_lembur"]) ?>
 
 
-            <?= $form->field($model, 'jumlah_tunjangan')->textInput(['maxlength' => true,]) ?>
+            <?= $form->field($model, 'jumlah_tunjangan')->textInput(['maxlength' => true, 'value' => 0, 'readonly' => true]) ?>
 
-            <?= $form->field($model, 'jumlah_potongan')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'jumlah_potongan')->textInput(['maxlength' => true, 'value' => 0, 'readonly' => true]) ?>
 
-            <?= $form->field($model, 'potongan_wfh_hari')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'potongan_wfh_hari')->textInput(['maxlength' => true, 'id' => "potongan_wfh"]) ?>
 
-            <?= $form->field($model, 'jumlah_potongan_wfh')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'jumlah_potongan_wfh')->textInput(['maxlength' => true, 'readonly' => true, 'id' => "jumlah_potongan_wfh"]) ?>
 
-            <?= $form->field($model, 'gaji_diterima')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'gaji_diterima')->textInput(['maxlength' => true, 'readonly' => true]) ?>
 
 
             <div class="form-group">
@@ -119,7 +119,7 @@ use yii\widgets\ActiveForm;
             </div>
 
 
-            <?php ActiveForm::end(); ?>
+            <?php ActiveForm::end(); ?>.
         </div>
     </div>
 
@@ -132,6 +132,12 @@ use yii\widgets\ActiveForm;
     ?>
     <script>
         let todayJson = <?= $rekap ?>;
+
+        // potongan wfh
+        $('#potongan_wfh').change(function(e) {
+            e.preventDefault();
+            $('#jumlah_potongan_wfh').val(Number(this.value) * Number(todayJson?.absensiData?.total_wfh))
+        })
         //memnentukan pembayaran lembur
         let totalLembur = 0;
         let lemburPerjam = todayJson.jumlahJamLembur.total_menit / 60;
@@ -142,6 +148,7 @@ use yii\widgets\ActiveForm;
             $('#total_lembur').val(Number(this.value) * lemburPerjam)
 
         });
+
         let totalPembayaranLembur = lemburPerjam * todayJson?.lembur_perjam;
     </script>
 
