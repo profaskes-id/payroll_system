@@ -105,7 +105,6 @@ class PengajuanWfhController extends Controller
 
                 if ($mulai > $selesai) {
                     Yii::$app->session->setFlash('error', 'Tanggal mulai tidak boleh lebih besar dari tanggal selesai.');
-                    return $this->redirect(['index']);
                 }
 
                 $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $model->id_karyawan])->one();

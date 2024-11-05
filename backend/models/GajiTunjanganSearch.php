@@ -17,7 +17,7 @@ class GajiTunjanganSearch extends GajiTunjangan
     public function rules()
     {
         return [
-            [['id_gaji_tunjangan', 'id_tunjangan_detail'], 'integer'],
+            [['id_gaji_tunjangan', 'id_tunjangan_detail', 'id_transaksi_gaji'], 'integer'],
             [['nama_tunjangan'], 'safe'],
             [['jumlah'], 'number'],
         ];
@@ -62,6 +62,7 @@ class GajiTunjanganSearch extends GajiTunjangan
             'id_gaji_tunjangan' => $this->id_gaji_tunjangan,
             'id_tunjangan_detail' => $this->id_tunjangan_detail,
             'jumlah' => $this->jumlah,
+            'id_transaksi_gaji' => $this->id_transaksi_gaji,
         ]);
 
         $query->andFilterWhere(['like', 'nama_tunjangan', $this->nama_tunjangan]);

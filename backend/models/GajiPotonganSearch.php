@@ -17,7 +17,7 @@ class GajiPotonganSearch extends GajiPotongan
     public function rules()
     {
         return [
-            [['id_gaji_potongan', 'id_potongan_detail'], 'integer'],
+            [['id_gaji_potongan', 'id_potongan_detail', 'id_transaksi_gaji'], 'integer'],
             [['nama_potongan'], 'safe'],
             [['jumlah'], 'number'],
         ];
@@ -62,6 +62,7 @@ class GajiPotonganSearch extends GajiPotongan
             'id_gaji_potongan' => $this->id_gaji_potongan,
             'id_potongan_detail' => $this->id_potongan_detail,
             'jumlah' => $this->jumlah,
+            'id_transaksi_gaji' => $this->id_transaksi_gaji,
         ]);
 
         $query->andFilterWhere(['like', 'nama_potongan', $this->nama_potongan]);

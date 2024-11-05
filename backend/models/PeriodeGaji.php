@@ -28,13 +28,13 @@ class PeriodeGaji extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
     public function rules()
     {
         return [
             [['bulan', 'tahun', 'tanggal_awal', 'tanggal_akhir'], 'required'],
             [['bulan', 'tahun'], 'integer'],
             [['tanggal_awal', 'tanggal_akhir', 'terima'], 'safe'],
-            [['bulan', 'tahun'], 'unique', 'targetAttribute' => ['bulan', 'tahun']],
         ];
     }
 
@@ -44,21 +44,12 @@ class PeriodeGaji extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
+            'id_periode_gaji' => 'Id Periode Gaji',
             'bulan' => 'Bulan',
             'tahun' => 'Tahun',
             'tanggal_awal' => 'Tanggal Awal',
             'tanggal_akhir' => 'Tanggal Akhir',
             'terima' => 'Terima',
         ];
-    }
-
-    /**
-     * Gets query for [[TransaksiGajis]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getTransaksiGajis()
-    {
-        return $this->hasMany(TransaksiGaji::class, ['periode_gaji_bulan' => 'bulan', 'periode_gaji_tahun' => 'tahun']);
     }
 }

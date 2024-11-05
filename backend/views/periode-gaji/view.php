@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -10,6 +11,7 @@ $this->title = $model->bulan;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Periode Gaji'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+$tanggal = new Tanggal();
 ?>
 <div class="periode-gaji-view">
 
@@ -35,11 +37,31 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= DetailView::widget([
             'model' => $model,
             'attributes' => [
-                'bulan',
+                [
+                    'label' => 'bulan',
+                    'value' => function ($model) use ($tanggal) {
+                        return $tanggal->getBulan($model->bulan);
+                    }
+                ],
                 'tahun',
-                'tanggal_awal',
-                'tanggal_akhir',
-                'terima',
+                [
+                    'label' => 'Tanggal Awal',
+                    'value' => function ($model) use ($tanggal) {
+                        return $tanggal->getIndonesiaFormatTanggal($model->tanggal_awal);
+                    }
+                ],
+                [
+                    'label' => 'Tanggal Akhir',
+                    'value' => function ($model) use ($tanggal) {
+                        return $tanggal->getIndonesiaFormatTanggal($model->tanggal_awal);
+                    }
+                ],
+                [
+                    'label' => 'Terima',
+                    'value' => function ($model) use ($tanggal) {
+                        return $tanggal->getIndonesiaFormatTanggal($model->terima);
+                    }
+                ],
             ],
         ]) ?>
 

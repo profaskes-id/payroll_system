@@ -12,7 +12,7 @@ use Yii;
  * @property int $id_karyawan
  * @property float $jumlah
  *
- * @property GajiTunjangan[] $gajiTunjangans
+ * @property GajiTunjangan[] $gajiTunjangan
  * @property Karyawan $karyawan
  * @property Tunjangan $tunjangan
  */
@@ -54,11 +54,11 @@ class TunjanganDetail extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[GajiTunjangans]].
+     * Gets query for [[GajiTunjangan]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getGajiTunjangans()
+    public function getGajiTunjangan()
     {
         return $this->hasMany(GajiTunjangan::class, ['id_tunjangan_detail' => 'id_tunjangan_detail']);
     }

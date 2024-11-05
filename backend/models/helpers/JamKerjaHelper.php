@@ -11,4 +11,10 @@ class JamKerjaHelper extends JamKerja
     {
         return JamKerja::find()->asArray()->all();
     }
+
+    public static function getJamKerja($id)
+    {
+
+        return JamKerja::find()->where(['id_jam_kerja' => $id])->asArray()->one();
+    }
 }

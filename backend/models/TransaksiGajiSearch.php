@@ -2,9 +2,11 @@
 
 namespace backend\models;
 
+use backend\models\helpers\PeriodeGajiHelper;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use backend\models\TransaksiGaji;
+use PhpParser\Node\Stmt\Expression;
 use yii\db\Query;
 
 /**
@@ -18,7 +20,7 @@ class TransaksiGajiSearch extends TransaksiGaji
     public function rules()
     {
         return [
-            [['id_transaksi_gaji', 'jam_kerja', 'periode_gaji_bulan', 'periode_gaji_tahun', 'jumlah_hari_kerja', 'jumlah_hadir', 'jumlah_sakit', 'jumlah_wfh', 'jumlah_cuti'], 'integer'],
+            [['id_transaksi_gaji', 'jam_kerja', 'periode_gaji', 'jumlah_hari_kerja', 'jumlah_hadir', 'jumlah_sakit', 'jumlah_wfh', 'jumlah_cuti'], 'integer'],
             [['nomer_identitas', 'nama', 'bagian', 'jabatan', 'status_karyawan', 'jumlah_jam_lembur'], 'safe'],
             [['gaji_pokok', 'lembur_perjam', 'total_lembur', 'jumlah_tunjangan', 'jumlah_potongan', 'potongan_wfh_hari', 'jumlah_potongan_wfh', 'gaji_diterima'], 'number'],
         ];
@@ -40,53 +42,64 @@ class TransaksiGajiSearch extends TransaksiGaji
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+
+    public function search($params, $bulan, $tahun, $id_karyawan, $periode_gaji_id)
     {
-        $query = Karyawan::find()
-            ->where(['is_aktif' => 1])
-            ->select(['id_karyawan', 'nama']);
 
-        // add conditions that should always apply here
+        // dd($bulan, $tahun, $id_karyawan, $periode_gaji_id);
 
+        if ($periode_gaji_id == null || $periode_gaji_id == '') {
+            $periode_gaji_id = PeriodeGajiHelper::getPeriodeGajiBulanIni()['id_periode_gaji'];
+        }
+        $query = (new \yii\db\Query())
+            ->select([
+                'k.id_karyawan',
+                'k.nama',
+                'k.nomer_identitas',
+                'pg.id_periode_gaji',
+                'pg.bulan',
+                'pg.tahun',
+                'pg.terima',
+                'tg.id_transaksi_gaji',
+                'tg.jumlah_tunjangan',
+                'tg.jumlah_potongan',
+                'tg.gaji_diterima',
+            ])
+            ->from('karyawan k')
+            ->where(['k.is_aktif' => 1]);
+
+        // Jika id_karyawan tidak null, tambahkan kondisi where
+        $query->andWhere(['pg.id_periode_gaji' => $periode_gaji_id]);
+
+
+        if ($id_karyawan != null) {
+            $query->andWhere(['k.id_karyawan' => $id_karyawan]);
+        }
+
+        $query->leftJoin('periode_gaji pg', [
+            'AND',
+            'pg.bulan = :bulan',
+            'pg.tahun = :tahun'
+        ])
+            ->leftJoin('transaksi_gaji tg', 'tg.periode_gaji = pg.id_periode_gaji AND tg.nomer_identitas = k.nomer_identitas')
+            ->params([
+                ':bulan' => $bulan,
+                ':tahun' => $tahun
+            ]);
+
+        // dd($query->all());
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
+
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id_transaksi_gaji' => $this->id_transaksi_gaji,
-            'jam_kerja' => $this->jam_kerja,
-            'periode_gaji_bulan' => $this->periode_gaji_bulan,
-            'periode_gaji_tahun' => $this->periode_gaji_tahun,
-            'jumlah_hari_kerja' => $this->jumlah_hari_kerja,
-            'jumlah_hadir' => $this->jumlah_hadir,
-            'jumlah_sakit' => $this->jumlah_sakit,
-            'jumlah_wfh' => $this->jumlah_wfh,
-            'jumlah_cuti' => $this->jumlah_cuti,
-            'gaji_pokok' => $this->gaji_pokok,
-            'jumlah_jam_lembur' => $this->jumlah_jam_lembur,
-            'lembur_perjam' => $this->lembur_perjam,
-            'total_lembur' => $this->total_lembur,
-            'jumlah_tunjangan' => $this->jumlah_tunjangan,
-            'jumlah_potongan' => $this->jumlah_potongan,
-            'potongan_wfh_hari' => $this->potongan_wfh_hari,
-            'jumlah_potongan_wfh' => $this->jumlah_potongan_wfh,
-            'gaji_diterima' => $this->gaji_diterima,
-        ]);
 
-        $query->andFilterWhere(['like', 'nomer_identitas', $this->nomer_identitas])
-            ->andFilterWhere(['like', 'nama', $this->nama])
-            ->andFilterWhere(['like', 'bagian', $this->bagian])
-            ->andFilterWhere(['like', 'jabatan', $this->jabatan])
-            ->andFilterWhere(['like', 'status_karyawan', $this->status_karyawan]);
 
         return $dataProvider;
     }

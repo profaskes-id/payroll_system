@@ -15,33 +15,53 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="gaji-potongan-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Gaji Potongan'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <div class="costume-container">
+        <p class="">
+            <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) ?>
+        </p>
+    </div>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); 
-    ?>
+    <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+        <i class="fas fa-search"></i>
+        <span>
+            Search
+        </span>
+    </button>
+    <div style="margin-top: 10px;">
+        <div class="collapse width" id="collapseWidthExample">
+            <div class="" style="width: 100%;">
+                <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+            </div>
+        </div>
+    </div>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+    <div class='table-container'>
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'columns' => [
 
-            'id_gaji_potongan',
-            'id_potongan_detail',
-            'nama_potongan',
-            'jumlah',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, GajiPotongan $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id_gaji_potongan' => $model->id_gaji_potongan]);
-                }
+                [
+                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'class' => 'yii\grid\SerialColumn'
+                ],
+
+                [
+                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'class' => ActionColumn::className(),
+                    'urlCreator' => function ($action, GajiPotongan $model, $key, $index, $column) {
+                        return Url::toRoute([$action, 'id_gaji_potongan' => $model->id_gaji_potongan]);
+                    }
+                ],
+                'id_transaksi_gaji',
+                'id_potongan_detail',
+                'nama_potongan',
+                'jumlah',
             ],
-        ],
-    ]); ?>
+        ]); ?>
 
 
+    </div>
 </div>

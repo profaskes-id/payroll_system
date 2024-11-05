@@ -20,8 +20,7 @@ class m241030_064925_create_transaksi_gaji_table extends Migration
             'jabatan' => $this->string()->notNull(),
             'jam_kerja' => $this->integer()->notNull(),
             'status_karyawan' => $this->string()->notNull(),
-            'periode_gaji_bulan' => $this->integer()->notNull(), // FK part
-            'periode_gaji_tahun' => $this->integer()->notNull(), // FK part
+            'periode_gaji' => $this->integer()->null(),
             'jumlah_hari_kerja' => $this->integer()->notNull(),
             'jumlah_hadir' => $this->integer()->notNull(),
             'jumlah_sakit' => $this->integer()->notNull(),
@@ -37,16 +36,6 @@ class m241030_064925_create_transaksi_gaji_table extends Migration
             'jumlah_potongan_wfh' => $this->decimal(10, 2)->notNull(),
             'gaji_diterima' => $this->decimal(10, 2)->defaultValue(0),
         ]);
-
-        $this->addForeignKey(
-            'fk-transaksi_gaji-periode_gaji',
-            'transaksi_gaji',
-            ['periode_gaji_bulan', 'periode_gaji_tahun'],
-            'periode_gaji',
-            ['bulan', 'tahun'],
-            'CASCADE',
-            'CASCADE'
-        );
     }
 
     /**

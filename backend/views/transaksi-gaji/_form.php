@@ -1,8 +1,13 @@
 <?php
 
+use backend\models\helpers\JamKerjaHelper;
+use backend\models\helpers\PeriodeGajiHelper;
+use backend\models\Tanggal;
+use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
 /** @var backend\models\TransaksiGaji $model */
@@ -12,102 +17,256 @@ use yii\widgets\ActiveForm;
 <div class="transaksi-gaji-form">
 
     <div class="row gap-2  table-container">
-        <div class="col-md-4 border border-end">
-            <h1>karyawan</h1>
-            <p>Nama : <?= $rekapandata['karyawan']['kode_karyawan'] ?></p>
-            <p>Nama : <?= $rekapandata['karyawan']['nama'] ?></p>
-            <p>Nomer Identitas : <?= $rekapandata['karyawan']['nomer_identitas'] ?></p>
-            <br>
+        <div class="col-md-4 ">
+            <div class="col-12">
+                <?= DetailView::widget(
+                    [
+                        'model' => $rekapandata,
+                        'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                        'attributes' => [
+                            [
+                                'label' => 'Nama',
+                                'value' => function ($model) {
+                                    return   $model['karyawan']['nama'];
+                                }
+                            ],
+                            [
+                                'label' => 'Kode Karyawan',
+                                'value' => function ($model) {
+                                    return   $model['karyawan']['kode_karyawan'];
+                                }
+                            ],
+                            [
+                                'label' => 'Nomor Identitas',
+                                'value' => function ($model) {
+                                    return   $model['karyawan']['nomer_identitas'];
+                                }
+                            ],
+                            [
+                                'label' => 'Bagian',
+                                'value' => function ($model) {
+                                    return   $model['dataPekerjaan']['bagian']['nama_bagian'];
+                                }
+                            ],
+                            [
+                                'label' => 'Jabatan',
+                                'value' => function ($model) {
+                                    return   $model['dataPekerjaan']['jabatan']['nama_kode'];
+                                }
+                            ],
+                            [
+                                'label' => 'Status Karyawan',
+                                'value' => function ($model) {
+                                    return   $model['dataPekerjaan']['statusKaryawan']['nama_kode'];
+                                }
+                            ],
+                            [
+                                'label' => 'Jam Kerja',
+                                'value' => function ($model) {
+                                    $data = JamKerjaHelper::getJamKerja($model['karyawan']['id_jam_kerja']);
+                                    return   $data['nama_jam_kerja'];
+                                }
+                            ],
+                            [
+                                'label' => "Periode Gaji",
+                                'value' => function ($model) {
+                                    $data =  PeriodeGajiHelper::getPeriodeGaji($model['periode_gaji']);
+                                    $tanggal = new Tanggal();
+                                    return  $tanggal->getBulan($data['bulan']) . ' '  . $data['tahun'];
+                                }
+                            ],
+                            [
+                                'label' => "Jumlah Hari kerja",
+                                'value' => function ($model) {
+                                    $data = $model['karyawan']['total_hari_kerja'];
+                                    return   $data . ' Hari';
+                                }
+                            ],
+                            [
+                                'label' => "Jumlah Hadir",
+                                'value' => function ($model) {
+                                    $data = $model['absensiData']['total_hadir'] ?? 0;
+                                    return   $data . ' Hari';
+                                }
+                            ],
+                            [
+                                'label' => "Jumlah Sakit",
+                                'value' => function ($model) {
+                                    $data =  $model['absensiData']['total_sakit'] ?? 0;
+                                    return   $data . ' Hari';
+                                }
+                            ],
+                            [
+                                'label' => "Jumlah WFH",
+                                'value' => function ($model) {
+                                    $data = $model['absensiData']['total_wfh'] ?? 0;
+                                    return   $data . ' Hari';
+                                }
+                            ],
+                            [
+                                'label' => "Jumlah Cuti",
+                                'value' => function ($model) {
+                                    $data = $model['totalCuti'] ?? 0;
+                                    return   $data . ' Hari';
+                                }
+                            ],
+                            [
+                                'label' => "Jumlah Jam Lembur",
+                                'value' => function ($model) {
+                                    $totalMenit = $model['jumlahJamLembur']['total_menit']; // 490 menit
+                                    $jam = floor($totalMenit / 60); // Jam = total menit dibagi 60
+                                    $menit = $totalMenit % 60; // Menit = sisa dari total menit setelah dibagi 60
+                                    $detik = 0; // Anda bisa menetapkan detik ke 0, karena hanya dalam menit
+                                    $formattedTime = sprintf('%02d:%02d:%02d', $jam, $menit, $detik); // Format jam:menit:detik
+                                    return $formattedTime; // Misalnya, '08:10:00' jika total menitnya 490
+                                }
+                            ],
+                            [
+                                'label' => "Gaji Pokok",
+                                'value' => function ($model) {
+                                    return  'Rp ' . number_format($model['gajiPokok']['nominal_gaji'], 0, ',', '.');
+                                }
+                            ],
+                            [
+                                'label' => "Jumlah Tunjangan",
+                                'value' => function ($model) {
+                                    return  'Rp ' . number_format($model['getTunjangan'], 0, ',', '.');
+                                }
+                            ],
+                            [
+                                'label' => "Jumlah Potongan",
+                                'value' => function ($model) {
+                                    return  'Rp ' . number_format($model['getPotongan'], 0, ',', '.');
+                                }
+                            ],
 
-            <h1>pekerjaan</h1>
-            <p>Total Hari Kerja : <?= $rekapandata['karyawan']['total_hari_kerja'] ?> Hari bulan sekarang</p>
-            <p>Jabatan : <?= $rekapandata['dataPekerjaan']['jabatan']['nama_kode'] ?></p>
-            <p>Bagian : <?= $rekapandata['dataPekerjaan']['bagian']['nama_bagian'] ?></p>
-            <p>Status Karyawan : <?= $rekapandata['dataPekerjaan']['statusKaryawan']['nama_kode'] ?></p>
 
-            <br>
-            <h1>Absensi</h1>
-            <p>Total Hadir : <?= $rekapandata['absensiData']['total_hadir'] ?> Hari </p>
-            <p>Total Sakit : <?= $rekapandata['absensiData']['total_sakit'] ?> Hari</p>
-            <p>Total WFH : <?= $rekapandata['absensiData']['total_wfh'] ?> Hari</p>
+                        ],
+                    ]
+                ) ?>
+            </div>
 
-
-            <br>
-            <h1>Gaji Pokok</h1>
-            <p>Nominal Gaji : Rp<?= $rekapandata['gajiPokok']['nominal_gaji'] ?> </p>
-
-            <br>
-            <h1>Lembur</h1>
-            <p>Telah Lembur Selama : <?= $rekapandata['jumlahJamLembur']['total_jam_lembur'] ?> </p>
-
-            <br>
-            <h1>Cuti</h1>
-            <p>Cuti Bulan Ini selama : <?= $rekapandata['totalCuti'] ?> Hari </p>
 
         </div>
         <div class="col-8">
             <?php $form = ActiveForm::begin(); ?>
 
-            <?php echo  $form->field($model, 'nomer_identitas')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['karyawan']['kode_karyawan']])->label(false)
+            <?php echo  $form->field($model, 'kode_karyawan')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['karyawan']['kode_karyawan'] ?? $model->kode_karyawan])->label(false)
+            ?>
+            <?php echo  $form->field($model, 'nomer_identitas')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['karyawan']['nomer_identitas'] ?? $model->nomer_identitas])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'nama')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['karyawan']['nama']])->label(false)
+            <?php echo  $form->field($model, 'nama')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['karyawan']['nama'] ?? $model->nama])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'bagian')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['dataPekerjaan']['bagian']['nama_bagian']])->label(false)
+            <?php echo  $form->field($model, 'bagian')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['dataPekerjaan']['bagian']['nama_bagian'] ?? $model->bagian])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'jabatan')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['dataPekerjaan']['jabatan']['nama_kode']])->label(false)
+            <?php echo  $form->field($model, 'jabatan')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['dataPekerjaan']['jabatan']['nama_kode'] ?? $model->jabatan])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'jam_kerja')->hiddenInput(['value' => $rekapandata['karyawan']['total_hari_kerja']])->label(false)
+            <?php echo  $form->field($model, 'jam_kerja')->hiddenInput(['value' => $rekapandata['karyawan']['id_jam_kerja'] ?? $model->jam_kerja])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'status_karyawan')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['dataPekerjaan']['statusKaryawan']['nama_kode']])->label(false)
+            <?php echo  $form->field($model, 'status_karyawan')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['dataPekerjaan']['statusKaryawan']['nama_kode'] ?? $model->status_karyawan])->label(false)
+            ?>
+            <?php echo  $form->field($model, 'periode_gaji')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['periode_gaji']['id_periode_gaji']])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'periode_gaji_bulan')->hiddenInput(['value' => $rekapandata['periodeGaji']['bulan']])->label(false)
+
+
+
+            <?php echo  $form->field($model, 'jumlah_hari_kerja')->hiddenInput(['value' => $rekapandata['karyawan']['total_hari_kerja'] ?? $model->jumlah_hari_kerja])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'periode_gaji_tahun')->hiddenInput(['value' => $rekapandata['periodeGaji']['tahun']])->label(false)
+            <?php echo  $form->field($model, 'jumlah_hadir')->hiddenInput(['value' => $rekapandata['absensiData']['total_hadir'] ?? $model->jumlah_hadir])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'jumlah_hari_kerja')->hiddenInput(['value' => $rekapandata['karyawan']['total_hari_kerja']])->label(false)
+            <?php echo  $form->field($model, 'jumlah_sakit')->hiddenInput(['value' => $rekapandata['absensiData']['total_sakit'] ?? $model->jumlah_sakit])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'jumlah_hadir')->hiddenInput(['value' => $rekapandata['absensiData']['total_hadir']])->label(false)
+            <?php echo  $form->field($model, 'jumlah_wfh')->hiddenInput(['value' => $rekapandata['absensiData']['total_wfh'] ?? $model->jumlah_wfh])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'jumlah_sakit')->hiddenInput(['value' => $rekapandata['absensiData']['total_sakit']])->label(false)
+            <?php echo  $form->field($model, 'jumlah_cuti')->hiddenInput(['value' => $rekapandata['totalCuti'] ?? $model->jumlah_cuti])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'jumlah_wfh')->hiddenInput(['value' => $rekapandata['absensiData']['total_wfh']])->label(false)
+            <?php echo  $form->field($model, 'gaji_pokok')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['gajiPokok']['nominal_gaji'] ?? $model->gaji_pokok])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'jumlah_cuti')->hiddenInput(['value' => $rekapandata['totalCuti']])->label(false)
+            <?php
+
+            if ($model->isNewRecord) {
+                $data = $rekapandata['jumlahJamLembur']['total_menit'] / 60;
+            } else {
+                $data = $model->jumlah_jam_lembur;
+            }
+
+            echo  $form->field($model, 'jumlah_jam_lembur')->hiddenInput(['maxlength' => true, 'value' =>  $data])->label(false)
             ?>
 
-            <?php echo  $form->field($model, 'gaji_pokok')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['gajiPokok']['nominal_gaji']])->label(false)
+            <?php
+
+            if ($model->isNewRecord) {
+                $data = 0;
+            } else {
+                $data = $model->lembur_perjam;
+            }
+
+
+            echo  $form->field($model, 'lembur_perjam')->textInput(['maxlength' => true, 'value' => $data, 'id' => "lembur_perjam", 'value' => $model->lembur_perjam ?? 0])
             ?>
 
-            <?php echo  $form->field($model, 'jumlah_jam_lembur')->textInput(['maxlength' => true, 'value' => $rekapandata['jumlahJamLembur']['total_menit'] / 60])
-            ?>
+            <?php
 
-            <?php echo  $form->field($model, 'lembur_perjam')->textInput(['maxlength' => true, 'id' => "lembur_perjam"])
-            ?>
+            if ($model->isNewRecord) {
+                $data = 0;
+            } else {
+                $data = $model->total_lembur;
+            }
+            echo  $form->field($model, 'total_lembur')->textInput(['maxlength' => true,  'value' => $data, 'readonly' => true, 'id' => "total_lembur"]) ?>
 
-            <?php echo  $form->field($model, 'total_lembur')->textInput(['maxlength' => true, 'readonly' => true, 'id' => "total_lembur"]) ?>
 
+            <?php
 
-            <?= $form->field($model, 'jumlah_tunjangan')->textInput(['maxlength' => true, 'value' => 0, 'readonly' => true]) ?>
+            if ($model->isNewRecord) {
+                $data = $rekapandata['getTunjangan'];
+            } else {
+                $data = $model->jumlah_tunjangan;
+            }
+            echo $form->field($model, 'jumlah_tunjangan')->hiddenInput(['maxlength' => true, 'value' => $data, 'readonly' => true])->label(false) ?>
 
-            <?= $form->field($model, 'jumlah_potongan')->textInput(['maxlength' => true, 'value' => 0, 'readonly' => true]) ?>
+            <?php
+            if ($model->isNewRecord) {
+                $data = $rekapandata['getPotongan'];
+            } else {
+                $data = $model->jumlah_potongan;
+            }
+            echo $form->field($model, 'jumlah_potongan')->hiddenInput(['maxlength' => true, 'value' => $data, 'readonly' => true])->label(false) ?>
 
-            <?= $form->field($model, 'potongan_wfh_hari')->textInput(['maxlength' => true, 'id' => "potongan_wfh"]) ?>
+            <?php
+            if ($model->isNewRecord) {
+                $data = 0;
+            } else {
+                $data = $model->potongan_wfh_hari;
+            }
+            echo $form->field($model, 'potongan_wfh_hari')->textInput(['maxlength' => true, 'value' => $data, 'id' => "potongan_wfh"]) ?>
 
-            <?= $form->field($model, 'jumlah_potongan_wfh')->textInput(['maxlength' => true, 'readonly' => true, 'id' => "jumlah_potongan_wfh"]) ?>
+            <?php
+            if ($model->isNewRecord) {
+                $data = 0;
+            } else {
+                $data = $model->jumlah_potongan_wfh;
+            }
+            echo $form->field($model, 'jumlah_potongan_wfh')->textInput(['maxlength' => true, 'readonly' => true, 'value' => 0, 'id' => "jumlah_potongan_wfh"]) ?>
 
-            <?= $form->field($model, 'gaji_diterima')->textInput(['maxlength' => true, 'readonly' => true]) ?>
+            <?php
+            if ($model->isNewRecord) {
+                $data = 0;
+            } else {
+                $data = $model->gaji_diterima;
+            }
+            echo $form->field($model, 'gaji_diterima')->textInput(['id' => "gaji_diterima", 'maxlength' => true, 'readonly' => true]) ?>
 
 
             <div class="form-group">
@@ -132,24 +291,41 @@ use yii\widgets\ActiveForm;
     ?>
     <script>
         let todayJson = <?= $rekap ?>;
+        let gaji_pokok = todayJson?.gajiPokok?.nominal_gaji;
+        let potonganWFH = 0;
+        let tambahanLembur = 0;
+        let jumlahTunjangan = todayJson?.getTunjangan;
+        let jumlahPotongan = todayJson?.getPotongan;
 
-        // potongan wfh
-        $('#potongan_wfh').change(function(e) {
-            e.preventDefault();
-            $('#jumlah_potongan_wfh').val(Number(this.value) * Number(todayJson?.absensiData?.total_wfh))
-        })
-        //memnentukan pembayaran lembur
+
+        function gajiDiterima() {
+            gaji_diterima = gaji_pokok + tambahanLembur + jumlahTunjangan - jumlahPotongan - potonganWFH;
+            // console.info(gaji_diterima)
+            $('#gaji_diterima').val(gaji_diterima);
+        }
+
+        gajiDiterima();
         let totalLembur = 0;
         let lemburPerjam = todayJson.jumlahJamLembur.total_menit / 60;
-        $('#lembur_perjam').change(function(e) {
+        $('#lembur_perjam').keyup(function(e) {
             e.preventDefault();
-            console.info(lemburPerjam)
-            console.info(Number(this.value) * lemburPerjam)
+            tambahanLembur = Number(this.value) * lemburPerjam;
             $('#total_lembur').val(Number(this.value) * lemburPerjam)
+            gajiDiterima();
 
         });
 
-        let totalPembayaranLembur = lemburPerjam * todayJson?.lembur_perjam;
+        // potongan wfh
+        $('#potongan_wfh').keyup(function(e) {
+            e.preventDefault();
+            potonganWFH = Number(this.value) * Number(todayJson?.absensiData?.total_wfh)
+            $('#jumlah_potongan_wfh').val(Number(this.value) * Number(todayJson?.absensiData?.total_wfh))
+            gajiDiterima();
+        })
+        //memnentukan pembayaran lembur
+
+
+        //fungsi mencari gaji diterima
     </script>
 
 </div>
