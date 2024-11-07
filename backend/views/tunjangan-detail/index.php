@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var backend\models\TunjanganDetailSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Tunjangan Details');
+$this->title = Yii::t('app', 'Tunjangan Karyawan');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="tunjangan-detail-index">
@@ -44,14 +44,33 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-
                 [
-                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                    'class' => 'yii\grid\Column',
+                    'header' => 'Aksi',
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                    'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, TunjanganDetail $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id_tunjangan_detail' => $model->id_tunjangan_detail]);
-                    }
+                    'contentOptions' => ['style' => 'text-align: center;'],
+                    'content' => function ($model, $key, $index, $column) {
+                        return "<div class='d-flex '>" .
+                            Html::a(
+                                '<i class="fas fa-edit"></i>', // Icon tong sampah (menggunakan Font Awesome)
+                                ['update', 'id_tunjangan_detail' => $model->id_tunjangan_detail,],
+                                [
+                                    'class' => 'edit-button mr-2',
+                                ]
+                            ) .
+                            Html::a(
+                                '<i class="fas fa-trash"></i>', // Icon tong sampah (menggunakan Font Awesome)
+                                ['delete', 'id_tunjangan_detail' => $model->id_tunjangan_detail,],
+                                [
+                                    'class' => 'hapus-button',
+                                    'data' => [
+                                        'confirm' => 'Are you sure you want to delete this item?',
+                                        'method' => 'post',
+                                    ],
+                                ]
+                            ) .
+                            "</div>";
+                    },
                 ],
                 [
                     'label' => "Tunjangan",
@@ -65,7 +84,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->karyawan->nama;
                     },
                 ],
-                'jumlah',
+                [
+                    'attribute' => 'jumlah',
+                    'value' => function ($model) {
+                        return 'Rp. ' . number_format($model->jumlah, 2, ',', '.');
+                    },
+                ],
             ],
         ]); ?>
 

@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\JamKerja;
+use backend\models\Tanggal;
 use backend\models\TotalHariKerja;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
@@ -26,6 +27,8 @@ $months = [
     'November',
     'Desember',
 ];
+
+$tanggal = new Tanggal();
 
 $id_jamkerja_byget = Yii::$app->request->get('id_jam_kerja');
 $jamkerja = JamKerja::find()->where(['id_jam_kerja' => $id_jamkerja_byget])->one();
@@ -73,13 +76,29 @@ $this->params['breadcrumbs'][] = $this->title;
                         'headerOptions' => ['style' => 'width: 100px; text-align: center;'],
                         'contentOptions' => ['style' => 'width: 100px; text-align: center;'],
                         'value' => function ($model) {
-                            return $model['total_hari'];
+                            return $model['total_hari'] . ' Hari';
+                        }
+                    ],
+                    [
+                        'attribute' => 'Tanggal Awal',
+                        'headerOptions' => ['style' => 'width: 100px; text-align: center;'],
+                        'contentOptions' => ['style' => 'width: 100px; text-align: center;'],
+                        'value' => function ($model) use ($tanggal) {
+                            return  $tanggal->getIndonesiaFormatTanggal($model['tanggal_awal']);
+                        }
+                    ],
+                    [
+                        'attribute' => 'Tanggal Akhir',
+                        'headerOptions' => ['style' => 'width: 100px; text-align: center;'],
+                        'contentOptions' => ['style' => 'width: 100px; text-align: center;'],
+                        'value' => function ($model) use ($tanggal) {
+                            return  $tanggal->getIndonesiaFormatTanggal($model['tanggal_akhir']);
                         }
                     ],
                     [
                         'headerOptions' => ['style' => 'width: 100px; text-align: center;'],
                         'contentOptions' => ['style' => 'width: 100px; text-align: center;'],
-                        'attribute' => 'bulan',
+                        'attribute' => 'Periode Bulan',
                         'value' => function ($model) use ($months) {
                             return $months[$model['bulan'] - 1];
                         }

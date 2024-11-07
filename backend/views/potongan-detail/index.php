@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var backend\models\PotonganDetailSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Potongan Detail');
+$this->title = Yii::t('app', 'Potongan Karyawan');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="potongan-detail-index">
@@ -48,14 +48,33 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
 
                 [
-                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                    'class' => 'yii\grid\Column',
+                    'header' => 'Aksi',
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                    'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, PotonganDetail $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id_potongan_detail' => $model->id_potongan_detail]);
-                    }
+                    'contentOptions' => ['style' => 'text-align: center;'],
+                    'content' => function ($model, $key, $index, $column) {
+                        return "<div class='d-flex '>" .
+                            Html::a(
+                                '<i class="fas fa-edit"></i>', // Icon tong sampah (menggunakan Font Awesome)
+                                ['update', 'id_potongan_detail' => $model->id_potongan_detail,],
+                                [
+                                    'class' => 'edit-button mr-2',
+                                ]
+                            ) .
+                            Html::a(
+                                '<i class="fas fa-trash"></i>', // Icon tong sampah (menggunakan Font Awesome)
+                                ['delete', 'id_potongan_detail' => $model->id_potongan_detail,],
+                                [
+                                    'class' => 'hapus-button',
+                                    'data' => [
+                                        'confirm' => 'Are you sure you want to delete this item?',
+                                        'method' => 'post',
+                                    ],
+                                ]
+                            ) .
+                            "</div>";
+                    },
                 ],
-
                 [
                     'label' => "Potongan",
                     'value' => function ($model) {
@@ -68,7 +87,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->karyawan->nama;
                     },
                 ],
-                'jumlah',
+                [
+                    'attribute' => 'jumlah',
+                    'value' => function ($model) {
+                        return 'Rp. ' . number_format($model->jumlah, 2, ',', '.');
+                    },
+                ],
             ],
         ]); ?>
 

@@ -95,8 +95,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'columns' => [
                         [
-                            'attribute' => 'jumlah_hari_kerja',
                             'label' => 'Jumlah Hari Kerja',
+                            'value' => function ($model) {
+                                return $model['jumlah_hari_kerja'] . ' Hari';
+                            }
                         ],
                         [
                             'attribute' => 'jumlah_hadir',

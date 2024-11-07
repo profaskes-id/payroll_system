@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\PeriodeGaji;
 use backend\models\PeriodeGajiSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -25,6 +26,15 @@ class PeriodeGajiController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                    ],
+                ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::className(),
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
                     ],
                 ],
             ]
@@ -71,8 +81,13 @@ class PeriodeGajiController extends Controller
         $model = new PeriodeGaji();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'bulan' => $model->bulan, 'tahun' => $model->tahun]);
+            if ($model->load($this->request->post())) {
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
+                    return $this->redirect(['view', 'bulan' => $model->bulan, 'tahun' => $model->tahun]);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Data gagal disimpan');
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -95,8 +110,13 @@ class PeriodeGajiController extends Controller
     {
         $model = $this->findModel($bulan, $tahun);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'bulan' => $model->bulan, 'tahun' => $model->tahun]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Data berhasil diperbarui');
+                return $this->redirect(['view', 'bulan' => $model->bulan, 'tahun' => $model->tahun]);
+            } else {
+                Yii::$app->session->setFlash('error', 'Data gagal diperbarui');
+            }
         }
 
         return $this->render('update', [
@@ -114,9 +134,13 @@ class PeriodeGajiController extends Controller
      */
     public function actionDelete($bulan, $tahun)
     {
-        $this->findModel($bulan, $tahun)->delete();
-
-        return $this->redirect(['index']);
+        $model =   $this->findModel($bulan, $tahun);
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Data berhasil dihapus');
+            return $this->redirect(['index']);
+        } else {
+            Yii::$app->session->setFlash('error', 'Data gagal dihapus');
+        }
     }
 
     /**

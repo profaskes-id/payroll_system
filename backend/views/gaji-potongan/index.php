@@ -10,17 +10,18 @@ use yii\grid\GridView;
 /** @var backend\models\GajiPotonganSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Gaji Potongan');
+$this->title = Yii::t('app', 'Potongan Gaji');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="gaji-potongan-index">
 
-
+    <!-- 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) ?>
+            <?php // Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) 
+            ?>
         </p>
-    </div>
+    </div> -->
 
     <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
         <i class="fas fa-search"></i>
@@ -48,17 +49,47 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
 
                 [
-                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                    'class' => 'yii\grid\Column',
+                    'header' => 'Delete',
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                    'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, GajiPotongan $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id_gaji_potongan' => $model->id_gaji_potongan]);
+                    'contentOptions' => ['style' => 'text-align: center;'],
+                    'content' => function ($model, $key, $index, $column) {
+                        return Html::a(
+                            '<i class="fas fa-trash"></i>', // Icon tong sampah (menggunakan Font Awesome)
+                            ['delete', 'id_gaji_potongan' => $model->id_gaji_potongan],
+                            [
+                                'class' => 'hapus-button',
+                                'data' => [
+                                    'confirm' => 'Are you sure you want to delete this item?',
+                                    'method' => 'post',
+                                ],
+                            ]
+                        );
+                    },
+                ],
+
+                [
+                    'label' => 'Transaksi Gaji',
+                    'value' => function ($model) {
+                        return $model->transaksiGaji->nama ?? 'Not Found';
+                        // $model->potonganDetail->potongan->nama_potongan);
                     }
                 ],
-                'id_transaksi_gaji',
-                'id_potongan_detail',
-                'nama_potongan',
-                'jumlah',
+                // 'id_potongan_detail',
+                [
+                    'label' => 'Potongan',
+                    'value' => function ($model) {
+                        // dd($model->potonganDetail );
+                        return $model->potonganDetail->potongan->nama_potongan ?? 'Not Found';
+                    }
+                ],
+                // 'nama_potongan',
+                [
+                    'attribute' => 'jumlah',
+                    'value' => function ($model) {
+                        return 'Rp. ' . number_format($model->jumlah, 2, ',', '.');
+                    },
+                ],
             ],
         ]); ?>
 

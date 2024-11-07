@@ -52,7 +52,7 @@ $tanggal = new Tanggal;
                     <th rowspan="3" style="vertical-align: middle;" class="text-center ">Bagian & Jabatan</th>
                 </tr>
                 <tr>
-                    <th class="text-center" colspan="<?= count($tanggal_bulanan) + 4  ?>">
+                    <th class="text-center" colspan="<?= count($tanggal_bulanan) + 4 - 1  ?>">
                         <h3>
                             Rekapan Absensi Bulan <?= $tanggal->getBulan($bulan) . ' Tahun ' . $tahun ?>
                         </h3>
@@ -75,7 +75,7 @@ $tanggal = new Tanggal;
                     <td>Total Hadir</td>
                     <td>Jumlah Terlambat</td>
                     <td>Total Telambat</td>
-                    <td>Tidak Tadir</td>
+                    <!-- <td>Tidak Tadir</td> -->
                 </tr>
             </thead>
 
@@ -118,10 +118,13 @@ $tanggal = new Tanggal;
                                 <td <?php if ($day_of_week == 0) echo 'style="background-color: #aaa; color:white;"'; ?>>
                                     <p style=" width: 50px; padding:0;  text-align: center; vertical-align: middle;">
 
+                                        <?php //if ($key == (count($karyawan) - 1)): 
+                                        ?>
+                                        <?php //$data['total_tidak_hadir'] 
+                                        ?>
+                                        <?php // endif; 
+                                        ?>
                                         <?php if ($key == (count($karyawan) - 1)): ?>
-                                            <?php echo $data['total_tidak_hadir'] ?>
-                                        <?php endif; ?>
-                                        <?php if ($key == (count($karyawan) - 2)): ?>
 
                                             <?php
                                             $jam = floor($data['detik_terlambat'] / 3600); // Menghitung jam
@@ -133,10 +136,10 @@ $tanggal = new Tanggal;
 
                                             <span style="font-weight:600; text-align:center; "><?= $formattedTime ?></span>
                                         <?php endif; ?>
-                                        <?php if ($key == (count($karyawan) - 3)): ?>
+                                        <?php if ($key == (count($karyawan) - 2)): ?>
                                             <?= $data['total_terlambat'] ?>
                                         <?php endif; ?>
-                                        <?php if ($key == (count($karyawan) - 4)): ?>
+                                        <?php if ($key == (count($karyawan) - 3)): ?>
                                             <?= $data['total_hadir'] ?>
                                         <?php endif; ?>
                                         <?php if ($data !== null && $data['status_hadir'] !== null && $data['jam_masuk_karyawan'] !== null): ?>
@@ -228,7 +231,7 @@ $tanggal = new Tanggal;
                     <?php endif; ?>
                 <?php endforeach ?>
                 <td style="font-weight:600; text-align:center; background-color: #fff; color:#000"></td>
-                <td style="font-weight:600; text-align:center; background-color: #fff; color:#000"></td>
+                <!-- <td style="font-weight:600; text-align:center; background-color: #fff; color:#000"></td> -->
             </tr>
 
             <!--  2 -->
@@ -259,7 +262,7 @@ $tanggal = new Tanggal;
                     <?php endif; ?>
                 <?php endforeach ?>
                 <td style="font-weight:600; text-align:center; background-color: #fff; color:#000"></td>
-                <td style="font-weight:600; text-align:center; background-color: #fff; color:#000"></td>
+                <!-- <td style="font-weight:600; text-align:center; background-color: #fff; color:#000"></td> -->
             </tr>
 
             <!-- 3 -->
@@ -287,7 +290,7 @@ $tanggal = new Tanggal;
                 <?php endforeach ?>
                 <td style="font-weight:600; text-align:center; background-color: #fff; color:#fff"></td>
                 <td style="font-weight:600; text-align:center; background-color: #fff; color:#fff"></td>
-                <td style="font-weight:600; text-align:center; background-color: #fff; color:#fff"></td>
+                <!-- <td style="font-weight:600; text-align:center; background-color: #fff; color:#fff"></td> -->
             </tr>
         </table>
     </div>

@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\Tunjangan;
 use backend\models\TunjanganSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -25,6 +26,15 @@ class TunjanganController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                    ],
+                ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::className(),
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
                     ],
                 ],
             ]
@@ -70,8 +80,13 @@ class TunjanganController extends Controller
         $model = new Tunjangan();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_tunjangan' => $model->id_tunjangan]);
+            if ($model->load($this->request->post())) {
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
+                    return $this->redirect(['index']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Data gagal disimpan');
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -93,8 +108,13 @@ class TunjanganController extends Controller
     {
         $model = $this->findModel($id_tunjangan);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_tunjangan' => $model->id_tunjangan]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Data berhasil diperbarui');
+                return $this->redirect(['index']);
+            } else {
+                Yii::$app->session->setFlash('error', 'Data gagal diperbarui');
+            }
         }
 
         return $this->render('update', [
@@ -111,9 +131,13 @@ class TunjanganController extends Controller
      */
     public function actionDelete($id_tunjangan)
     {
-        $this->findModel($id_tunjangan)->delete();
-
-        return $this->redirect(['index']);
+        $model = $this->findModel($id_tunjangan);
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Data berhasil dihapus');
+            return $this->redirect(['index']);
+        } else {
+            Yii::$app->session->setFlash('error', 'Data gagal dihapus');
+        }
     }
 
     /**

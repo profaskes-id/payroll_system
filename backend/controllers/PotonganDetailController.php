@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\PotonganDetail;
 use backend\models\PotonganDetailSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -25,6 +26,15 @@ class PotonganDetailController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                    ],
+                ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::className(),
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
                     ],
                 ],
             ]
@@ -70,8 +80,13 @@ class PotonganDetailController extends Controller
         $model = new PotonganDetail();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_potongan_detail' => $model->id_potongan_detail]);
+            if ($model->load($this->request->post())) {
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Data berhasil ditambahkan');
+                    return $this->redirect(['index']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Data gagal ditambahkan');
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -93,8 +108,13 @@ class PotonganDetailController extends Controller
     {
         $model = $this->findModel($id_potongan_detail);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_potongan_detail' => $model->id_potongan_detail]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Data berhasil diperbarui');
+                return $this->redirect(['index']);
+            } else {
+                Yii::$app->session->setFlash('error', 'Data gagal diperbarui');
+            }
         }
 
         return $this->render('update', [
@@ -111,8 +131,13 @@ class PotonganDetailController extends Controller
      */
     public function actionDelete($id_potongan_detail)
     {
-        $this->findModel($id_potongan_detail)->delete();
-
+        $model = $this->findModel($id_potongan_detail);
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Data berhasil dihapus');
+            return $this->redirect(['index']);
+        } else {
+            Yii::$app->session->setFlash('error', 'Data gagal dihapus');
+        }
         return $this->redirect(['index']);
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\helpers\JamKerjaHelper;
+use backend\models\PeriodeGaji;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -25,26 +26,20 @@ $id_jamkerja_byget = Yii::$app->request->get('id_jam_kerja') ?? $model->id_jam_k
                 <?= $form->field($model, 'total_hari')->textInput(['maxlength' => true, 'type' => 'number']) ?>
             </div>
 
+            <div class="col-12">
 
-            <div class="col-md-6">
-                <?= $form->field($model, 'bulan')->dropDownList([
-                    1 => 'Januari',
-                    2 => 'Februari',
-                    3 => 'Maret',
-                    4 => 'April',
-                    5 => 'Mei',
-                    6 => 'Juni',
-                    7 => 'Juli',
-                    8 => 'Agustus',
-                    9 => 'September',
-                    10 => 'Oktober',
-                    11 => 'November',
-                    12 => 'Desember',
-                ], ['prompt' => 'Pilih Bulan']) ?>
+                <?php $nama_kode = \yii\helpers\ArrayHelper::map(PeriodeGaji::find()->asArray()->all(), 'id_periode_gaji', 'bulan');
+                echo $form->field($model, 'id_periode_gaji')->widget(Select2::classname(), [
+                    'data' => $nama_kode,
+                    'language' => 'id',
+                    'options' => ['placeholder' => 'Cari Periode Gaji'],
+                    'pluginOptions' => [
+                        'tags' => true,
+                        'allowClear' => true
+                    ],
+                ])->label('Periode Gaji');
+                ?>
             </div>
-            <div class="col-md-6">
-                <?= $form->field($model, 'tahun')->textInput(['value' => date('Y'),  'type' => 'number']) ?> </div>
-
 
             <div class="col-12">
                 <?= $form->field($model, 'keterangan')->textarea(['rows' => 2, 'maxlength' => true]) ?>

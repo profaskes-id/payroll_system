@@ -38,6 +38,15 @@ class TransaksiGajiController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::className(),
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
             ]
         );
     }
@@ -144,10 +153,6 @@ class TransaksiGajiController extends Controller
      */
     public function actionCreate($periode_gaji, $id_karyawan, $params = null)
     {
-        // !inisiasi awaldan akhir bulan
-        // $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, 1, $tahun));
-        // $lastDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, date('t', mktime(0, 0, 0, $bulan, 1, $tahun)), $tahun));
-
         $model = new TransaksiGaji();
         $periode_gaji = $model->getPeriodeGajiOne($periode_gaji);
 
@@ -156,23 +161,19 @@ class TransaksiGajiController extends Controller
             $bulan = $params['bulan'];
             $tahun = $params['tahun'];
         } else {
-
             $bulan = $periode_gaji['bulan'];
-            // $bulan = 10;
             $tahun = $periode_gaji['tahun'];
         }
 
         $firstDayOfMonth = $periode_gaji['tanggal_awal'];
         $lastDayOfMonth = $periode_gaji['tanggal_akhir'];
-
-        $karyawan = $model->getKaryawanData($id_karyawan, $bulan, $tahun);
+        $karyawan = $model->getKaryawanData($id_karyawan, $periode_gaji['id_periode_gaji']);
         $dataPekerjaan = $model->getDataPekerjaan($id_karyawan);
-        $absensiData = $model->getAbsensiData($id_karyawan, $bulan, $tahun);
-        $totalCuti = $model->getTotalCutiKaryawan($karyawan, $bulan, $tahun);
+        $absensiData = $model->getAbsensiData($id_karyawan, $firstDayOfMonth, $lastDayOfMonth);
+        $totalCuti = $model->getTotalCutiKaryawan($karyawan, $firstDayOfMonth, $lastDayOfMonth);
         $gajiPokok = $model->getGajiPokok($id_karyawan);
         $jumlahJamLembur = $model->getJumlahJamLembur($id_karyawan, $bulan, $tahun);
         $getTunjangan = $model->getTunjangan($id_karyawan, true);
-
         $getPotongan = $model->getPotongan($id_karyawan, true);
 
 

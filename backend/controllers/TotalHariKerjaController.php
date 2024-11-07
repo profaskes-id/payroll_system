@@ -80,8 +80,9 @@ class TotalHariKerjaController extends Controller
 
         $model = TotalHariKerja::find()
             ->asArray()
-            ->select(['total_hari_kerja.*', 'jam_kerja.id_jam_kerja', 'jam_kerja.nama_jam_kerja', 'jam_kerja.jenis_shift'])
+            ->select(['total_hari_kerja.*', 'jam_kerja.id_jam_kerja', 'jam_kerja.nama_jam_kerja', 'jam_kerja.jenis_shift', 'periode_gaji.*',])
             ->join('INNER JOIN', 'jam_kerja', 'total_hari_kerja.id_jam_kerja = jam_kerja.id_jam_kerja')
+            ->leftJoin('periode_gaji', 'total_hari_kerja.id_periode_gaji = periode_gaji.id_periode_gaji')
             ->where(['total_hari_kerja.id_jam_kerja' => $id_jam_kerja, 'jam_kerja.jenis_shift' => $jenis_shift])
             ->all();
 

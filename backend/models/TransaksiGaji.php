@@ -95,17 +95,19 @@ class TransaksiGaji extends \yii\db\ActiveRecord
     }
 
 
-    public function getKaryawanData($id_karyawan, $bulan, $tahun)
+    public function getKaryawanData($id_karyawan, $id_periode_gaji)
     {
-        return Karyawan::find()
+        $data =  Karyawan::find()
             ->select(['karyawan.id_karyawan', 'karyawan.nama', 'karyawan.nomer_identitas', 'karyawan.kode_jenis_kelamin', 'karyawan.jenis_identitas', 'karyawan.kode_karyawan', 'thk.total_hari AS total_hari_kerja', 'jkk.id_jam_kerja'])
             ->leftJoin('jam_kerja_karyawan jkk', 'karyawan.id_karyawan = jkk.id_karyawan')
             ->leftJoin('jam_kerja jk', 'karyawan.id_karyawan = jkk.id_karyawan')
-            ->leftJoin('total_hari_kerja thk', "jkk.id_jam_kerja = thk.id_jam_kerja AND thk.bulan = :bulan AND thk.tahun = :tahun")
+            ->leftJoin('total_hari_kerja thk',  "  thk.id_jam_kerja = jk.id_jam_kerja AND  thk.id_periode_gaji =  :id_periode_gaji ")
             ->where(['karyawan.id_karyawan' => $id_karyawan])
-            ->params([':bulan' => $bulan, ':tahun' => $tahun])
+            ->params([':id_periode_gaji' => intval($id_periode_gaji)])
             ->asArray()
             ->one();
+
+        return $data;
     }
 
     public function getDataPekerjaan($id_karyawan)
@@ -132,11 +134,8 @@ class TransaksiGaji extends \yii\db\ActiveRecord
         return $dataPekerjaan;
     }
 
-    public function getAbsensiData($id_karyawan, $bulan, $tahun)
+    public function getAbsensiData($id_karyawan, $firstDayOfMonth, $lastDayOfMonth)
     {
-        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, 1, $tahun));
-        $lastDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, date('t', mktime(0, 0, 0, $bulan, 1, $tahun)), $tahun));
-
 
         return Absensi::find()
             ->select([
@@ -287,16 +286,13 @@ class TransaksiGaji extends \yii\db\ActiveRecord
         return $data;
     }
 
-    public function getTotalCutiKaryawan($karyawan, $bulan, $tahun)
+    public function getTotalCutiKaryawan($karyawan, $firstDayOfMonth, $lastDayOfMonth)
     {
-        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, 1, $tahun));
-        $lastDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, date('t', mktime(0, 0, 0, $bulan, 1, $tahun)), $tahun));
-
-
         $id_karyawan = $karyawan['id_karyawan'];
 
 
         $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $id_karyawan])->one();
+
         $containsNumber = strpos($jamKerjaKaryawan->jamKerja->nama_jam_kerja, preg_match('/\d+/', "5", $matches) ? $matches[0] : '') !== false;
         $data = PengajuanCuti::find()
             ->where(['id_karyawan' => $id_karyawan, 'status' => 1])

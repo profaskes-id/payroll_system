@@ -16,10 +16,9 @@ class m241023_191311_create_total_hari_kerja_table extends Migration
             'id_total_hari_kerja' => $this->primaryKey(),
             'id_jam_kerja' => $this->integer()->notNull(),
             'total_hari' => $this->integer()->notNull(),
-            'bulan' => $this->integer()->notNull(),
-            'tahun' => $this->integer()->notNull(),
             'keterangan' => $this->string()->null(),
             'is_aktif' => $this->smallInteger()->defaultValue(1),
+
         ]);
 
         // Add foreign key constraint

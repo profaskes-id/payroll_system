@@ -5,11 +5,11 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\Potongan $model */
 
-$this->title = Yii::t('app', 'Update Potongan: {name}', [
-    'name' => $model->id_potongan,
+$this->title = Yii::t('app', 'Update Potongan  {name}', [
+    'name' => $model->nama_potongan,
 ]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Potongan'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id_potongan, 'url' => ['view', 'id_potongan' => $model->id_potongan]];
+$this->params['breadcrumbs'][] = ['label' => $model->nama_potongan, 'url' => ['view', 'id_potongan' => $model->id_potongan]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 <div class="potongan-update">

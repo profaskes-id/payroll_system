@@ -112,6 +112,48 @@ if (
                 transition: all .6s ease;
             }
 
+            .hapus-button {
+                text-align: center;
+                border: none;
+                display: flex;
+                padding: 0.75rem 1rem;
+                background-color: #ec484b;
+                color: #ffffff;
+                font-size: 1rem;
+                line-height: 1rem;
+                font-weight: 700;
+                text-align: center;
+                text-transform: uppercase;
+                vertical-align: middle;
+                align-items: center;
+                border-radius: 0.5rem;
+                user-select: none;
+                gap: 0.65rem;
+                box-shadow: 0 4px 6px -1px #ec484b31, 0 2px 4px -1px #ec484b17;
+                transition: all .6s ease;
+            }
+
+            .edit-button {
+                text-align: center;
+                border: none;
+                display: flex;
+                padding: 0.75rem 1rem;
+                background-color: #ffde21;
+                color: #272727;
+                font-size: 1rem;
+                line-height: 1rem;
+                font-weight: 700;
+                text-align: center;
+                text-transform: uppercase;
+                vertical-align: middle;
+                align-items: center;
+                border-radius: 0.5rem;
+                user-select: none;
+                gap: 0.65rem;
+                box-shadow: 0 4px 6px -1px #ec484b31, 0 2px 4px -1px #fEE12b;
+                transition: all .6s ease;
+            }
+
             .cetak-button {
                 border: none;
                 display: flex;
@@ -133,7 +175,9 @@ if (
             }
 
             .reset-button:hover,
+            .hapus-button:hover,
             .tambah-button:hover,
+            .edit-button:hover,
             .add-button:hover {
                 color: white;
             }

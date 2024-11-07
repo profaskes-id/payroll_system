@@ -8,11 +8,9 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="gaji-potongan-form">
+<div class="gaji-potongan-form table-container">
 
     <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'id_potongan_detail')->textInput() ?>
 
     <?= $form->field($model, 'nama_potongan')->textInput(['maxlength' => true]) ?>
 

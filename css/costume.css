@@ -61,8 +61,28 @@
   box-shadow: 0 4px 6px -1px #ec484b31, 0 2px 4px -1px #ec484b17;
   transition: all 0.6s ease;
 }
+.hapus-button {
+  border: none;
+  display: flex;
+  padding: 0.75rem;
+  background-color: #ec484b;
+  color: #ffffff;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  vertical-align: middle;
+  align-items: center;
+  border-radius: 0.5rem;
+  user-select: none;
+  gap: 0.65rem;
+  box-shadow: 0 4px 6px -1px #ec484b31, 0 2px 4px -1px #ec484b17;
+  transition: all 0.6s ease;
+}
 
 .reset-button:hover,
+.hapus-button:hover,
 .tambah-button:hover,
 .add-button:hover {
   color: white;

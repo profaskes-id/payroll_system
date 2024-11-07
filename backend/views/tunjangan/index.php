@@ -47,12 +47,32 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
 
                 [
-                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                    'class' => 'yii\grid\Column',
+                    'header' => 'Aksi',
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                    'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, Tunjangan $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id_tunjangan' => $model->id_tunjangan]);
-                    }
+                    'contentOptions' => ['style' => 'text-align: center;'],
+                    'content' => function ($model, $key, $index, $column) {
+                        return "<div class='d-flex '>" .
+                            Html::a(
+                                '<i class="fas fa-edit"></i>', // Icon tong sampah (menggunakan Font Awesome)
+                                ['update', 'id_tunjangan' => $model->id_tunjangan,],
+                                [
+                                    'class' => 'edit-button mr-2',
+                                ]
+                            ) .
+                            Html::a(
+                                '<i class="fas fa-trash"></i>', // Icon tong sampah (menggunakan Font Awesome)
+                                ['delete', 'id_tunjangan' => $model->id_tunjangan,],
+                                [
+                                    'class' => 'hapus-button',
+                                    'data' => [
+                                        'confirm' => 'Are you sure you want to delete this item?',
+                                        'method' => 'post',
+                                    ],
+                                ]
+                            ) .
+                            "</div>";
+                    },
                 ],
                 'nama_tunjangan',
             ],

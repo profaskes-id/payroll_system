@@ -33,10 +33,10 @@ class TotalHariKerja extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_jam_kerja', 'total_hari', 'bulan', 'tahun'], 'required'],
-            [['id_jam_kerja', 'total_hari', 'bulan', 'tahun', 'is_aktif'], 'integer'],
+            [['id_jam_kerja', 'total_hari', 'id_periode_gaji'], 'required'],
+            [['id_jam_kerja', 'total_hari', 'is_aktif', 'id_periode_gaji'], 'integer'],
             [['keterangan'], 'string', 'max' => 255],
-            [['id_jam_kerja'], 'exist', 'skipOnError' => true, 'targetClass' => JamKerja::class, 'targetAttribute' => ['id_jam_kerja' => 'id_jam_kerja']],
+            [['id_periode_gaji'], 'exist', 'skipOnError' => true, 'targetClass' => PeriodeGaji::class, 'targetAttribute' => ['id_periode_gaji' => 'id_periode_gaji']],
         ];
     }
 
@@ -46,11 +46,10 @@ class TotalHariKerja extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_total_hari_kerja' => ' Total Hari Kerja',
-            'id_jam_kerja' => 'Jam Kerja',
+            'id_total_hari_kerja' => 'Id Total Hari Kerja',
+            'id_jam_kerja' => 'Id Jam Kerja',
+            'id_periode_gaji' => 'Id Periode Gaji',
             'total_hari' => 'Total Hari',
-            'bulan' => 'Bulan',
-            'tahun' => 'Tahun',
             'keterangan' => 'Keterangan',
             'is_aktif' => 'Is Aktif',
         ];
@@ -66,6 +65,12 @@ class TotalHariKerja extends \yii\db\ActiveRecord
         return $this->hasOne(JamKerja::class, ['id_jam_kerja' => 'id_jam_kerja']);
     }
 
+
+
+    public function getPeriodeGaji()
+    {
+        return $this->hasOne(PeriodeGaji::class, ['id_periode_gaji' => 'id_periode_gaji']);
+    }
 
 
     static function getHolidaysByMonth()

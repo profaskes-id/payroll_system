@@ -8,7 +8,7 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="potongan-form">
+<div class="potongan-form table-container">
 
     <?php $form = ActiveForm::begin(); ?>
 

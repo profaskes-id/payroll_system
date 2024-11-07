@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\JamKerja;
+use backend\models\Tanggal;
 use backend\models\TotalHariKerja;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
@@ -11,6 +12,8 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var backend\models\TotalHariKerja $model */
 
+
+$tanggal = new Tanggal();
 
 $months = [
     'Januari',
@@ -79,18 +82,29 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
-                    'attribute' => 'bulan',
+                    'attribute' => 'Tanggal Awal',
+                    'value' => function ($model) use ($tanggal) {
+                        return  $tanggal->getIndonesiaFormatTanggal($model->periodeGaji->tanggal_awal);
+                    }
+                ],
+                [
+                    'attribute' => 'Tanggal Akhir',
+                    'value' => function ($model) use ($tanggal) {
+                        return  $tanggal->getIndonesiaFormatTanggal($model->periodeGaji->tanggal_akhir);
+                    }
+                ],
+                [
+                    'attribute' => 'Periode Bulan',
                     'value' => function ($model) use ($months) {
-                        return $months[$model['bulan'] - 1];
+                        return $months[$model->periodeGaji->bulan - 1];
                     }
                 ],
                 [
                     'attribute' => 'tahun',
                     'value' => function ($model) {
-                        return $model['tahun'];
+                        return $model->periodeGaji->tahun;
                     }
                 ],
-
                 [
                     'attribute' => 'status',
                     'format' => 'raw',

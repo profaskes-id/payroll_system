@@ -17,7 +17,7 @@ use yii\widgets\DetailView;
 <div class="transaksi-gaji-form">
 
     <div class="row gap-2  table-container">
-        <div class="col-md-4 ">
+        <div class="col-md-5 ">
             <div class="col-12">
                 <?= DetailView::widget(
                     [
@@ -61,7 +61,7 @@ use yii\widgets\DetailView;
                                 }
                             ],
                             [
-                                'label' => 'Jam Kerja',
+                                'label' => 'Hari Kerja',
                                 'value' => function ($model) {
                                     $data = JamKerjaHelper::getJamKerja($model['karyawan']['id_jam_kerja']);
                                     return   $data['nama_jam_kerja'];
@@ -69,10 +69,16 @@ use yii\widgets\DetailView;
                             ],
                             [
                                 'label' => "Periode Gaji",
+                                'format' => 'raw',
                                 'value' => function ($model) {
                                     $data =  PeriodeGajiHelper::getPeriodeGaji($model['periode_gaji']);
                                     $tanggal = new Tanggal();
-                                    return  $tanggal->getBulan($data['bulan']) . ' '  . $data['tahun'];
+                                    $result = "<div class> 
+                                    <p class='m-0'>{$tanggal->getBulan($data['bulan'])} {$data['tahun']} </p>
+                                    <span class='text-xs'>({$tanggal->getIndonesiaFormatTanggal($data['tanggal_awal'])} - <br/> {$tanggal->getIndonesiaFormatTanggal($data['tanggal_akhir'])})    
+                                    </div>";
+
+                                    return $result;
                                 }
                             ],
                             [
@@ -82,17 +88,11 @@ use yii\widgets\DetailView;
                                     return   $data . ' Hari';
                                 }
                             ],
+
                             [
                                 'label' => "Jumlah Hadir",
                                 'value' => function ($model) {
                                     $data = $model['absensiData']['total_hadir'] ?? 0;
-                                    return   $data . ' Hari';
-                                }
-                            ],
-                            [
-                                'label' => "Jumlah Sakit",
-                                'value' => function ($model) {
-                                    $data =  $model['absensiData']['total_sakit'] ?? 0;
                                     return   $data . ' Hari';
                                 }
                             ],
@@ -104,10 +104,28 @@ use yii\widgets\DetailView;
                                 }
                             ],
                             [
+                                'label' => "Jumlah Sakit",
+                                'value' => function ($model) {
+                                    $data =  $model['absensiData']['total_sakit'] ?? 0;
+                                    return   $data . ' Hari';
+                                }
+                            ],
+
+                            [
                                 'label' => "Jumlah Cuti",
                                 'value' => function ($model) {
                                     $data = $model['totalCuti'] ?? 0;
                                     return   $data . ' Hari';
+                                }
+                            ],
+                            [
+                                'label' => "Tidak Hadir",
+                                'value' => function ($model) {
+                                    $dataTotalHariKerja = $model['karyawan']['total_hari_kerja'];
+                                    $dataTotalHadir = $model['absensiData']['total_hadir'] ?? 0;
+                                    $dataSakit =  $model['absensiData']['total_sakit'] ?? 0;
+                                    $dataCuti = $model['totalCuti'] ?? 0;
+                                    return   $dataTotalHariKerja - $dataTotalHadir - $dataSakit - $dataCuti . ' Hari';
                                 }
                             ],
                             [
@@ -121,24 +139,6 @@ use yii\widgets\DetailView;
                                     return $formattedTime; // Misalnya, '08:10:00' jika total menitnya 490
                                 }
                             ],
-                            [
-                                'label' => "Gaji Pokok",
-                                'value' => function ($model) {
-                                    return  'Rp ' . number_format($model['gajiPokok']['nominal_gaji'], 0, ',', '.');
-                                }
-                            ],
-                            [
-                                'label' => "Jumlah Tunjangan",
-                                'value' => function ($model) {
-                                    return  'Rp ' . number_format($model['getTunjangan'], 0, ',', '.');
-                                }
-                            ],
-                            [
-                                'label' => "Jumlah Potongan",
-                                'value' => function ($model) {
-                                    return  'Rp ' . number_format($model['getPotongan'], 0, ',', '.');
-                                }
-                            ],
 
 
                         ],
@@ -148,7 +148,71 @@ use yii\widgets\DetailView;
 
 
         </div>
-        <div class="col-8">
+        <div class="col-7">
+
+            <div class="row">
+                <div class="col-12">
+                    <?= DetailView::widget(
+                        [
+                            'model' => $rekapandata,
+                            'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                            'attributes' => [
+
+                                [
+                                    'label' => "Gaji Pokok",
+                                    'value' => function ($model) {
+                                        return  'Rp ' . number_format($model['gajiPokok']['nominal_gaji'], 0, ',', '.');
+                                    }
+                                ],
+
+                            ],
+                        ]
+                    ) ?>
+                </div>
+                <div class="col-6">
+                    <?= DetailView::widget(
+                        [
+                            'model' => $rekapandata,
+                            'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                            'attributes' => [
+
+
+                                [
+                                    'label' => "Jumlah Tunjangan",
+                                    'value' => function ($model) {
+                                        // dd($model);
+                                        return 'Rp ' . number_format($model['getTunjangan'], 0, ',', '.') . ' ' .
+                                            Html::a('<i class="fa fa-edit"></i>', ['tunjangan-detail/index', 'id_tunjangan_detail' => $model['karyawan']['id_karyawan']], ['class' => 'edit-button d-inline-block', 'target' => '_blank']);
+                                    },
+                                    'format' => 'raw', // Menambahkan format raw agar HTML ditampilkan
+                                ],
+
+                            ],
+                        ]
+                    ) ?>
+                </div>
+                <div class="col-6">
+                    <?= DetailView::widget(
+                        [
+                            'model' => $rekapandata,
+                            'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                            'attributes' => [
+                                [
+                                    'label' => "Jumlah Potongan",
+                                    'value' => function ($model) {
+                                        return 'Rp ' . number_format($model['getPotongan'], 0, ',', '.') . ' ' .
+                                            Html::a('<i class="fa fa-edit"></i>', ['potongan-detail/index', 'id_potongan_detail' => $model['karyawan']['id_karyawan']], ['class' => 'edit-button d-inline-block', 'target' => '_blank']);
+                                    },
+                                    'format' => 'raw', // Menambahkan format raw agar HTML ditampilkan
+                                ],
+                            ],
+                        ]
+                    ) ?>
+                </div>
+
+            </div>
+
+
             <?php $form = ActiveForm::begin(); ?>
 
             <?php echo  $form->field($model, 'kode_karyawan')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['karyawan']['kode_karyawan'] ?? $model->kode_karyawan])->label(false)
@@ -172,9 +236,6 @@ use yii\widgets\DetailView;
             ?>
             <?php echo  $form->field($model, 'periode_gaji')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['periode_gaji']['id_periode_gaji']])->label(false)
             ?>
-
-
-
 
             <?php echo  $form->field($model, 'jumlah_hari_kerja')->hiddenInput(['value' => $rekapandata['karyawan']['total_hari_kerja'] ?? $model->jumlah_hari_kerja])->label(false)
             ?>
@@ -214,7 +275,7 @@ use yii\widgets\DetailView;
             }
 
 
-            echo  $form->field($model, 'lembur_perjam')->textInput(['maxlength' => true, 'value' => $data, 'id' => "lembur_perjam", 'value' => $model->lembur_perjam ?? 0])
+            echo  $form->field($model, 'lembur_perjam')->textInput(['maxlength' => true, 'value' => $data, 'id' => "lembur_perjam", 'value' => $model->lembur_perjam ?? 0])->label("Bayaran Lembur perjam <span class='text-danger'>(Rp)</span>")
             ?>
 
             <?php
@@ -224,7 +285,7 @@ use yii\widgets\DetailView;
             } else {
                 $data = $model->total_lembur;
             }
-            echo  $form->field($model, 'total_lembur')->textInput(['maxlength' => true,  'value' => $data, 'readonly' => true, 'id' => "total_lembur"]) ?>
+            echo  $form->field($model, 'total_lembur')->textInput(['maxlength' => true,  'value' => $data, 'readonly' => true, 'id' => "total_lembur"])->label("Bayaran Lembur Diterima <span class='text-danger'>(Rp)</span>") ?>
 
 
             <?php
@@ -250,7 +311,7 @@ use yii\widgets\DetailView;
             } else {
                 $data = $model->potongan_wfh_hari;
             }
-            echo $form->field($model, 'potongan_wfh_hari')->textInput(['maxlength' => true, 'value' => $data, 'id' => "potongan_wfh"]) ?>
+            echo $form->field($model, 'potongan_wfh_hari')->textInput(['maxlength' => true, 'value' => $data, 'id' => "potongan_wfh"])->label("Potongan WFH Per Hari <span class='text-danger'>(Rp)</span>") ?>
 
             <?php
             if ($model->isNewRecord) {
@@ -258,7 +319,7 @@ use yii\widgets\DetailView;
             } else {
                 $data = $model->jumlah_potongan_wfh;
             }
-            echo $form->field($model, 'jumlah_potongan_wfh')->textInput(['maxlength' => true, 'readonly' => true, 'value' => 0, 'id' => "jumlah_potongan_wfh"]) ?>
+            echo $form->field($model, 'jumlah_potongan_wfh')->textInput(['maxlength' => true, 'readonly' => true, 'value' => 0, 'id' => "jumlah_potongan_wfh"])->label("Jumlah Potongan WFH <span class='text-danger'>(Rp)</span>") ?>
 
             <?php
             if ($model->isNewRecord) {
@@ -266,8 +327,9 @@ use yii\widgets\DetailView;
             } else {
                 $data = $model->gaji_diterima;
             }
-            echo $form->field($model, 'gaji_diterima')->textInput(['id' => "gaji_diterima", 'maxlength' => true, 'readonly' => true]) ?>
-
+            echo $form->field($model, 'gaji_diterima')->textInput(['id' => "gaji_diterima", 'maxlength' => true, 'readonly' => true])->label("Gaji Diterima Karyawan <span class='text-danger'>(Rp)</span>");
+            echo "<p class='text-muted text-xs mt-0'>Gaji Yang diterima sudah termasuk kalkulasi potongan karyawan & WFH, tunjangan dan lembur</p>"
+            ?>
 
             <div class="form-group">
                 <button class="add-button" type="submit">

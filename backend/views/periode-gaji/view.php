@@ -6,12 +6,12 @@ use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
 /** @var backend\models\PeriodeGaji $model */
+$tanggal = new Tanggal();
 
-$this->title = $model->bulan;
+$this->title = "Periode Gaji " .  $tanggal->getBulan($model->bulan) . " - " . $model->tahun;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Periode Gaji'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
-$tanggal = new Tanggal();
 ?>
 <div class="periode-gaji-view">
 

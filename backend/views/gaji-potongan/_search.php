@@ -15,13 +15,9 @@ use yii\widgets\ActiveForm;
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'id_gaji_potongan') ?>
-
     <?= $form->field($model, 'id_potongan_detail') ?>
 
     <?= $form->field($model, 'nama_potongan') ?>
-
-    <?= $form->field($model, 'jumlah') ?>
 
     <?= $form->field($model, 'id_transaksi_gaji') ?>
 

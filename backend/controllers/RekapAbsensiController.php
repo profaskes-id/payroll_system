@@ -262,13 +262,16 @@ class RekapAbsensiController extends Controller
             ->where(['karyawan.is_aktif' => 1])
             ->leftJoin('jam_kerja_karyawan jkk', 'jkk.id_karyawan = karyawan.id_karyawan')
             ->leftJoin('jadwal_kerja jdk', 'jkk.id_jam_kerja = jdk.id_jam_kerja')
-            ->leftJoin('total_hari_kerja thk', 'thk.id_jam_kerja = jkk.id_jam_kerja AND thk.bulan = MONTH(CURRENT_DATE()) AND thk.tahun = YEAR(CURRENT_DATE())')
+            // ->leftJoin('total_hari_kerja thk', 'thk.id_jam_kerja = jkk.id_jam_kerja AND thk.bulan = :bulan AND thk.tahun = :tahun', [':bulan' => $bulan, ':tahun' => $tahun])
+            ->leftJoin('total_hari_kerja thk', 'thk.id_jam_kerja = jkk.id_jam_kerja ')
             ->leftJoin('jam_kerja jk', 'jk.id_jam_kerja = thk.id_jam_kerja')
             ->leftJoin('{{%data_pekerjaan}} dp', 'karyawan.id_karyawan = dp.id_karyawan')
             ->leftJoin('{{%bagian}} bg', 'dp.id_bagian = bg.id_bagian')
             ->leftJoin('{{%master_kode}} mk', 'mk.nama_group = "jabatan" and dp.jabatan = mk.kode')
             ->orderBy(['nama' => SORT_ASC])
             ->all();
+
+        // dd($dataKaryawan);
 
         $hasil = [];
 
@@ -406,14 +409,20 @@ class RekapAbsensiController extends Controller
                 $validDates[] = $date->format('Y-m-d');
             }
 
-            $totalTidakHadir = ($totalHariKerja  - $totalHadir) - count($validDates);
 
-            $karyawanData[] = [
-                'status_hadir' => null,
-                'jam_masuk_karyawan' => null,
-                'jam_masuk_kantor' => null,
-                'total_tidak_hadir' => max($totalTidakHadir, 0),
-            ];
+            if ($bulan == date('m')) {
+                $totalTidakHadir = ($totalHariKerja  - count($validDates) - $totalHadir);
+            } else {
+                $totalTidakHadir = $totalHariKerja  - $totalHadir;
+            }
+
+
+            // $karyawanData[] = [
+            //     'status_hadir' => null,
+            //     'jam_masuk_karyawan' => null,
+            //     'jam_masuk_kantor' => null,
+            //     'total_tidak_hadir' => max($totalTidakHadir, 0),
+            // ];
 
             $hasil[] = $karyawanData;
 
@@ -463,6 +472,7 @@ class RekapAbsensiController extends Controller
 
         $keterlambatanPerTanggal[] = 0;
 
+        // dd($hasil);
 
 
 

@@ -1,6 +1,9 @@
 <?php
 
 use backend\models\GajiTunjangan;
+use backend\models\helpers\PeriodeGajiHelper;
+use backend\models\Tanggal;
+use backend\models\TransaksiGaji;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -10,15 +13,16 @@ use yii\grid\GridView;
 /** @var backend\models\GajiTunjanganSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Gaji Tunjangan');
+$this->title = Yii::t('app', 'Tunjangan Gaji');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="gaji-tunjangan-index">
-    <div class="costume-container">
+    <!-- <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) ?>
+            <?php // Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) 
+            ?>
         </p>
-    </div>
+    </div> -->
 
     <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
         <i class="fas fa-search"></i>
@@ -45,17 +49,63 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => 'yii\grid\SerialColumn'
                 ],
                 [
-                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                    'class' => 'yii\grid\Column',
+                    'header' => 'Delete',
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                    'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, GajiTunjangan $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id_gaji_tunjangan' => $model->id_gaji_tunjangan]);
+                    'contentOptions' => ['style' => 'text-align: center;'],
+                    'content' => function ($model, $key, $index, $column) {
+                        return Html::a(
+                            '<i class="fas fa-trash"></i>', // Icon tong sampah (menggunakan Font Awesome)
+                            ['delete', 'id_gaji_tunjangan' => $model->id_gaji_tunjangan],
+                            [
+                                'class' => 'hapus-button',
+                                'data' => [
+                                    'confirm' => 'Are you sure you want to delete this item?',
+                                    'method' => 'post',
+                                ],
+                            ]
+                        );
+                    },
+                ],
+                [
+                    'label' => 'Transaksi Gaji',
+                    'value' => function ($model) {
+                        return $model->transaksiGaji->nama ?? 'Not Found';
                     }
                 ],
-                'id_transaksi_gaji',
-                'id_tunjangan_detail',
-                'nama_tunjangan',
-                'jumlah',
+                [
+                    'label' => 'Tunjangan',
+                    'value' => function ($model) {
+                        return $model->tunjanganDetail->tunjangan->nama_tunjangan ?? 'Not Found';
+                    }
+                ],
+                [
+                    'label' => "Periode Gaji",
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        $id_periode_gaji = $model->transaksiGaji['periode_gaji'];
+
+                        $data =  PeriodeGajiHelper::getPeriodeGaji($id_periode_gaji);
+                        $tanggal = new Tanggal();
+
+                        $result = "<div class> 
+                        <p class='m-0'>{$tanggal->getBulan($data['bulan'])} {$data['tahun']} </p>
+                        <span class='text-xs'>({$tanggal->getIndonesiaFormatTanggal($data['tanggal_awal'])} - {$tanggal->getIndonesiaFormatTanggal($data['tanggal_akhir'])})    
+                        </div>";
+
+                        return $result;
+                    }
+                ],
+
+                // // 'id_transaksi_gaji',
+                // 'id_tunjangan_detail',
+                // 'nama_tunjangan',
+                [
+                    'attribute' => 'jumlah',
+                    'value' => function ($model) {
+                        return 'Rp. ' . number_format($model->jumlah, 2, ',', '.');
+                    },
+                ],
             ],
         ]); ?>
 

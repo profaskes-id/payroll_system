@@ -1,6 +1,8 @@
 <?php
 
 use backend\models\PeriodeGaji;
+use backend\models\Tanggal;
+use PhpParser\Node\Stmt\Return_;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -45,21 +47,70 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-
                 [
-                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                    'class' => 'yii\grid\Column',
+                    'header' => 'Aksi',
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                    'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, PeriodeGaji $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'bulan' => $model->bulan, 'tahun' => $model->tahun]);
+                    'contentOptions' => ['style' => 'text-align: center;'],
+                    'content' => function ($model, $key, $index, $column) {
+                        return "<div class='d-flex '>" .
+                            Html::a(
+                                '<i class="fas fa-edit"></i>', // Icon tong sampah (menggunakan Font Awesome)
+                                ['update', 'bulan' => $model->bulan, 'tahun' => $model->tahun],
+                                [
+                                    'class' => 'edit-button mr-2',
+                                ]
+                            ) .
+                            Html::a(
+                                '<i class="fas fa-trash"></i>', // Icon tong sampah (menggunakan Font Awesome)
+                                ['delete', 'bulan' => $model->bulan, 'tahun' => $model->tahun],
+                                [
+                                    'class' => 'hapus-button',
+                                    'data' => [
+                                        'confirm' => 'Are you sure you want to delete this item?',
+                                        'method' => 'post',
+                                    ],
+                                ]
+                            ) .
+                            "</div>";
+                    },
+                ],
+                [
+                    'label' => 'Bulan',
+                    'value' => function ($model) {
+                        $tanggal = new Tanggal();
+                        return $tanggal->getBulan($model->bulan);
                     }
                 ],
-
-                'bulan',
-                'tahun',
-                'tanggal_awal',
-                'tanggal_akhir',
-                'terima',
+                [
+                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'contentOptions' => ['style' => 'text-align: center;'],
+                    'label' => 'Tahun',
+                    'value' => function ($model) {
+                        return $model->tahun;
+                    }
+                ],
+                [
+                    'label' => 'Tanggal Awal',
+                    'value' => function ($model) {
+                        $tanggal = new Tanggal();
+                        return $tanggal->getIndonesiaFormatTanggal($model->tanggal_awal);
+                    }
+                ],
+                [
+                    'label' => 'Tanggal Akhir',
+                    'value' => function ($model) {
+                        $tanggal = new Tanggal();
+                        return $tanggal->getIndonesiaFormatTanggal($model->tanggal_akhir);
+                    }
+                ],
+                [
+                    'label' => 'Terima',
+                    'value' => function ($model) {
+                        $tanggal = new Tanggal();
+                        return $tanggal->getIndonesiaFormatTanggal($model->terima);
+                    }
+                ],
             ],
         ]); ?>
 
