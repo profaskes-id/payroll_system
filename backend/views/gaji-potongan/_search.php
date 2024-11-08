@@ -1,5 +1,9 @@
 <?php
 
+use backend\models\Potongan;
+use backend\models\PotonganDetail;
+use backend\models\TransaksiGaji;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -15,15 +19,42 @@ use yii\widgets\ActiveForm;
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'id_potongan_detail') ?>
 
-    <?= $form->field($model, 'nama_potongan') ?>
+    <div class="row">
 
-    <?= $form->field($model, 'id_transaksi_gaji') ?>
+        <div class="col-md-9 col-12">
+            <?php
 
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-outline-secondary']) ?>
+            $nama_kode = \yii\helpers\ArrayHelper::map(Potongan::find()->asArray()->all(), 'id_potongan', 'nama_potongan');
+            echo $form->field($model, 'nama_potongan')->widget(Select2::classname(), [
+                'data' => $nama_kode,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Cari nama potongan'],
+                'pluginOptions' => [
+                    'tags' => true,
+                    'allowClear' => true
+                ],
+            ])->label(false);
+            ?>
+        </div>
+
+        <div class="col-3">
+            <div class="form-group d-flex items-center w-100  justify-content-around">
+                <button class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+                    <i class="fas fa-search"></i>
+                    <span>
+                        Search
+                    </span>
+                </button>
+
+                <a class="reset-button" href="<?= \yii\helpers\Url::to(['index']) ?>">
+                    <i class="fas fa-undo"></i>
+                    <span>
+                        Reset
+                    </span>
+                </a>
+            </div>
+        </div>
     </div>
 
     <?php ActiveForm::end(); ?>

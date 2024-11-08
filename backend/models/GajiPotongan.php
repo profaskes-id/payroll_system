@@ -74,4 +74,10 @@ class GajiPotongan extends \yii\db\ActiveRecord
     {
         return $this->hasOne(TransaksiGaji::class, ['id_transaksi_gaji' => 'id_transaksi_gaji']);
     }
+
+    public function getSumPotongan($id_karyawan)
+    {
+        $gajiPotonganDetail = PotonganDetail::find()->where(['id_karyawan' => $id_karyawan])->sum('jumlah');
+        return $gajiPotonganDetail;
+    }
 }

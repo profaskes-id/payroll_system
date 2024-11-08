@@ -182,7 +182,7 @@ use yii\widgets\DetailView;
                                     'value' => function ($model) {
                                         // dd($model);
                                         return 'Rp ' . number_format($model['getTunjangan'], 0, ',', '.') . ' ' .
-                                            Html::a('<i class="fa fa-edit"></i>', ['tunjangan-detail/index', 'id_tunjangan_detail' => $model['karyawan']['id_karyawan']], ['class' => 'edit-button d-inline-block', 'target' => '_blank']);
+                                            Html::a('<i class="fa fa-edit"></i>', ['tunjangan-detail/index', 'id_karyawan' => $model['karyawan']['id_karyawan']], ['class' => 'edit-button d-inline-block', 'target' => '_blank']);
                                     },
                                     'format' => 'raw', // Menambahkan format raw agar HTML ditampilkan
                                 ],
@@ -201,7 +201,7 @@ use yii\widgets\DetailView;
                                     'label' => "Jumlah Potongan",
                                     'value' => function ($model) {
                                         return 'Rp ' . number_format($model['getPotongan'], 0, ',', '.') . ' ' .
-                                            Html::a('<i class="fa fa-edit"></i>', ['potongan-detail/index', 'id_potongan_detail' => $model['karyawan']['id_karyawan']], ['class' => 'edit-button d-inline-block', 'target' => '_blank']);
+                                            Html::a('<i class="fa fa-edit"></i>', ['potongan-detail/index', 'id_karyawan' => $model['karyawan']['id_karyawan']], ['class' => 'edit-button d-inline-block', 'target' => '_blank']);
                                     },
                                     'format' => 'raw', // Menambahkan format raw agar HTML ditampilkan
                                 ],

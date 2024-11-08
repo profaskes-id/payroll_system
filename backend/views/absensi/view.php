@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
-                    'label' => 'Keterangan Tidak Hadir',
+                    'label' => 'Keterangan',
                     'format' => 'raw',
                     'value' => function ($model) {
                         return $model->keterangan ?? '-';

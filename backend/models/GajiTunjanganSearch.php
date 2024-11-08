@@ -47,6 +47,7 @@ class GajiTunjanganSearch extends GajiTunjangan
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['id_gaji_tunjangan' => SORT_DESC]],
         ]);
 
         $this->load($params);

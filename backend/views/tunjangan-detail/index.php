@@ -1,5 +1,9 @@
 <?php
 
+use backend\models\GajiPotongan;
+use backend\models\GajiTunjangan;
+use backend\models\helpers\KaryawanHelper;
+use backend\models\Terbilang;
 use backend\models\TunjanganDetail;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -94,5 +98,17 @@ $this->params['breadcrumbs'][] = $this->title;
         ]); ?>
 
 
-    </div>
-</div>
+        <?php if ($id_karyawan): ?>
+            <?php
+            $karyawan = KaryawanHelper::getKaryawanById($id_karyawan)[0];
+            $gajiTunjangan = new GajiTunjangan();
+            $sumall = $gajiTunjangan->getSumTunjangan($karyawan['id_karyawan']);
+            $terbilang = Terbilang::toTerbilang($sumall) . ' Rupiah';
+
+            ?>
+            <table class="table">
+                <tr>
+                    <th> Total Tunjangan Yang Didapatkan : <?= $karyawan['nama'] ?> sebesar <span class="text-danger">Rp. <?= number_format($sumall, 2, ',', '.') ?> ( <?= $terbilang ?> )</span></th>
+                </tr>
+            </table>
+        <?php endif; ?>

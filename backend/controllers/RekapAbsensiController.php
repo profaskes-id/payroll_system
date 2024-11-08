@@ -95,9 +95,6 @@ class RekapAbsensiController extends Controller
     public function actionReport()
     {
 
-
-        // Data input
-
         $bulan = date('m');
         $tahun = date('Y');
         $data = $this->RekapData();
@@ -141,19 +138,6 @@ class RekapAbsensiController extends Controller
     }
 
 
-    // public function getJumlahHariKerja($param = 1, $bulan = null, $tahun = null)
-    // {
-    //     if ($bulan === null) {
-    //         $bulan = date('m');
-    //     }
-    //     if ($tahun === null) {
-    //         $tahun = date('Y');
-    //     }
-
-    //     $model = TotalHariKerja::find()->asArray()->where(['is_aktif' => 1, 'id_jam_kerja' => $param, 'bulan' => $bulan, 'tahun' => $tahun])->one();
-    //     return $model;
-    // }
-
     function getTanggalKerjaSampaiHariIni($work_days_type = 5)
     {
         // ?megambil hariyang terlewati dari sekarang
@@ -186,16 +170,8 @@ class RekapAbsensiController extends Controller
 
 
 
-
-
-
     public function RekapData($params = null)
     {
-
-
-
-
-
 
         //! mengambil parameter
         if ($params != null) {
@@ -271,7 +247,6 @@ class RekapAbsensiController extends Controller
             ->orderBy(['nama' => SORT_ASC])
             ->all();
 
-        // dd($dataKaryawan);
 
         $hasil = [];
 
@@ -347,7 +322,6 @@ class RekapAbsensiController extends Controller
                 ];
             }
 
-            // Tambahkan total ke karyawanData
             $karyawanData[] = [
                 'status_hadir' => null,
                 'jam_masuk_karyawan' => null,
@@ -417,13 +391,6 @@ class RekapAbsensiController extends Controller
             }
 
 
-            // $karyawanData[] = [
-            //     'status_hadir' => null,
-            //     'jam_masuk_karyawan' => null,
-            //     'jam_masuk_kantor' => null,
-            //     'total_tidak_hadir' => max($totalTidakHadir, 0),
-            // ];
-
             $hasil[] = $karyawanData;
 
             // Reset variabel untuk karyawan berikutnya
@@ -432,7 +399,6 @@ class RekapAbsensiController extends Controller
             $detikTerlambat = 0;
             $totalTidakHadir = 0; // Reset total tidak hadir
         }
-
 
 
         $rekapanAbsensi = [];
@@ -471,9 +437,6 @@ class RekapAbsensiController extends Controller
         ksort($rekapanAbsensi);
 
         $keterlambatanPerTanggal[] = 0;
-
-        // dd($hasil);
-
 
 
         return [

@@ -47,6 +47,8 @@ class GajiPotonganSearch extends GajiPotongan
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['id_gaji_potongan' => SORT_DESC]],
+
         ]);
 
         $this->load($params);

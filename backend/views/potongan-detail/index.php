@@ -1,6 +1,10 @@
 <?php
 
+use backend\models\GajiPotongan;
+use backend\models\GajiTunjangan;
+use backend\models\helpers\KaryawanHelper;
 use backend\models\PotonganDetail;
+use backend\models\Terbilang;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -98,3 +102,18 @@ $this->params['breadcrumbs'][] = $this->title;
 
     </div>
 </div>
+
+<?php if ($id_karyawan): ?>
+    <?php
+    $karyawan = KaryawanHelper::getKaryawanById($id_karyawan)[0];
+    $gajiTunjangan = new GajiPotongan();
+    $sumall = $gajiTunjangan->getSumPotongan($karyawan['id_karyawan']);
+    $terbilang = Terbilang::toTerbilang($sumall) . ' Rupiah';
+
+    ?>
+    <table class="table">
+        <tr>
+            <th> Total Potongan Yang Didapatkan : <?= $karyawan['nama'] ?> sebesar <span class="text-danger">Rp. <?= number_format($sumall, 2, ',', '.') ?> ( <?= $terbilang ?> )</span></th>
+        </tr>
+    </table>
+<?php endif; ?>

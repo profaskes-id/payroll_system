@@ -46,8 +46,13 @@ class TunjanganDetailSearch extends TunjanganDetail
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['id_tunjangan_detail' => SORT_DESC]],
+
         ]);
 
+        if (isset($params['id_karyawan']) && $params['id_karyawan'] != '') {
+            $query->andWhere(['id_karyawan' => $params['id_karyawan']]);
+        }
         $this->load($params);
 
         if (!$this->validate()) {

@@ -41,6 +41,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'method' => 'post',
                 ],
             ]) ?>
+            <?= Html::a('Cetak', ['cetak', 'id_transaksi_gaji' => $model->id_transaksi_gaji, 'id_karyawan' => $id_karyawan['id_karyawan']], ['class' => 'tambah-button ms-auto'], ['target' => '_blank']) ?>
+
         </p>
 
         <div class="row">

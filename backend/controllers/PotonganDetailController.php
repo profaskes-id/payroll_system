@@ -51,9 +51,19 @@ class PotonganDetailController extends Controller
         $searchModel = new PotonganDetailSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
+
+        $id_karyawan = Yii::$app->request->get('id_karyawan');
+
+        // Jika id_karyawan tidak ada di parameter GET, cek di model pencarian
+        if (!$id_karyawan && isset($searchModel->id_karyawan)) {
+            $id_karyawan = $searchModel->id_karyawan;
+        }
+
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'id_karyawan' => $id_karyawan
         ]);
     }
 

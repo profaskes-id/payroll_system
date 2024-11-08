@@ -174,7 +174,7 @@ class HomeController extends Controller
             $model->jam_masuk = date('H:i:s');
             $model->is_lembur = Yii::$app->request->post('Absensi')['is_lembur'] ?? 0;
             $model->is_wfh = Yii::$app->request->post('Absensi')['is_wfh'] ?? 0;
-            $model->keterangan = $model->is_lembur ? 'Lembur' : 'Hadir';
+            $model->keterangan = $model->is_lembur ? 'Lembur' : '-';
             $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
             $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
             if ($model->save()) {

@@ -50,21 +50,30 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'class' => 'yii\grid\Column',
-                    'header' => 'Delete',
+                    'header' => 'Aksi',
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'contentOptions' => ['style' => 'text-align: center;'],
                     'content' => function ($model, $key, $index, $column) {
-                        return Html::a(
-                            '<i class="fas fa-trash"></i>', // Icon tong sampah (menggunakan Font Awesome)
-                            ['delete', 'id_gaji_tunjangan' => $model->id_gaji_tunjangan],
-                            [
-                                'class' => 'hapus-button',
-                                'data' => [
-                                    'confirm' => 'Are you sure you want to delete this item?',
-                                    'method' => 'post',
-                                ],
-                            ]
-                        );
+                        return "<div class='d-flex '>" .
+                            Html::a(
+                                '<i class="fas fa-edit"></i>', // Icon tong sampah (menggunakan Font Awesome)
+                                ['update', 'id_gaji_tunjangan' => $model->id_gaji_tunjangan,],
+                                [
+                                    'class' => 'edit-button mr-2',
+                                ]
+                            ) .
+                            Html::a(
+                                '<i class="fas fa-trash"></i>', // Icon tong sampah (menggunakan Font Awesome)
+                                ['delete', 'id_gaji_tunjangan' => $model->id_gaji_tunjangan,],
+                                [
+                                    'class' => 'hapus-button',
+                                    'data' => [
+                                        'confirm' => 'Are you sure you want to delete this item?',
+                                        'method' => 'post',
+                                    ],
+                                ]
+                            ) .
+                            "</div>";
                     },
                 ],
                 [

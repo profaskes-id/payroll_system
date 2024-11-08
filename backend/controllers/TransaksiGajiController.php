@@ -2,13 +2,16 @@
 
 namespace backend\controllers;
 
-
+use backend\models\GajiPotongan;
+use backend\models\GajiTunjangan;
 use backend\models\helpers\KaryawanHelper;
 use backend\models\helpers\PeriodeGajiHelper;
+use backend\models\JamKerja;
 use backend\models\Karyawan;
 use backend\models\PeriodeGaji;
 use backend\models\TransaksiGaji;
 use backend\models\TransaksiGajiSearch;
+use kartik\mpdf\Pdf;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\web\Controller;
@@ -133,6 +136,43 @@ class TransaksiGajiController extends Controller
         ]);
     }
 
+    public function actionCetak($id_transaksi_gaji)
+    {
+        $model = $this->findModel($id_transaksi_gaji);
+        $jamKerja = JamKerja::find()->where(['id_jam_kerja' => $model['jam_kerja']])->one();
+        // dd($model);
+        $content = $this->renderPartial('_report', [
+            'model' => $model,
+            'jamKerja' => $jamKerja
+        ]);
+
+
+        $pdf = new Pdf([
+
+            'mode' => Pdf::MODE_CORE,
+
+            'format' => Pdf::FORMAT_A4,
+
+            'orientation' => Pdf::ORIENT_PORTRAIT,
+
+            'destination' => Pdf::DEST_BROWSER,
+
+            'content' => $content,
+
+
+            'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
+
+            'cssInline' => '.kv-heading-1{font-size:18px}',
+
+            'options' => ['title' => 'Report Rekap Absensi ' . date('F')],
+            'methods' => [
+
+                'SetFooter' => ['{PAGENO}'],
+            ]
+        ]);
+
+        return $pdf->render();
+    }
 
 
     public function actionDetail($id_transaksi_gaji)
@@ -175,8 +215,6 @@ class TransaksiGajiController extends Controller
         $jumlahJamLembur = $model->getJumlahJamLembur($id_karyawan, $bulan, $tahun);
         $getTunjangan = $model->getTunjangan($id_karyawan, true);
         $getPotongan = $model->getPotongan($id_karyawan, true);
-
-
 
         if (!$dataPekerjaan) {
             Yii::$app->session->setFlash('error', 'Data pekerjaan tidak ditemukan, lengkapi data pekerjaan terlebih dahulu');
@@ -285,34 +323,26 @@ class TransaksiGajiController extends Controller
     {
 
         $model = $this->findModel($id_transaksi_gaji);
-
         $periode_gaji = $model->getPeriodeGajiOne($model['periode_gaji']);
-
         //! mengambil parameter
         if ($params != null) {
             $bulan = $params['bulan'];
             $tahun = $params['tahun'];
         } else {
-
             $bulan = $periode_gaji['bulan'];
-            // $bulan = 10;
             $tahun = $periode_gaji['tahun'];
         }
 
         $firstDayOfMonth = $periode_gaji['tanggal_awal'];
         $lastDayOfMonth = $periode_gaji['tanggal_akhir'];
-
-        $karyawan = $model->getKaryawanData($id_karyawan, $bulan, $tahun);
+        $karyawan = $model->getKaryawanData($id_karyawan, $periode_gaji['id_periode_gaji']);
         $dataPekerjaan = $model->getDataPekerjaan($id_karyawan);
-        $absensiData = $model->getAbsensiData($id_karyawan, $bulan, $tahun);
-        $totalCuti = $model->getTotalCutiKaryawan($karyawan, $bulan, $tahun);
+        $absensiData = $model->getAbsensiData($id_karyawan, $firstDayOfMonth, $lastDayOfMonth);
+        $totalCuti = $model->getTotalCutiKaryawan($karyawan, $firstDayOfMonth, $lastDayOfMonth);
         $gajiPokok = $model->getGajiPokok($id_karyawan);
         $jumlahJamLembur = $model->getJumlahJamLembur($id_karyawan, $bulan, $tahun);
         $getTunjangan = $model->getTunjangan($id_karyawan, true);
-
         $getPotongan = $model->getPotongan($id_karyawan, true);
-
-
 
         if (!$dataPekerjaan) {
             Yii::$app->session->setFlash('error', 'Data pekerjaan tidak ditemukan, lengkapi data pekerjaan terlebih dahulu');
@@ -344,46 +374,65 @@ class TransaksiGajiController extends Controller
 
                 if ($model->save()) {
                     $getIdTransaksiGaji = TransaksiGaji::find()->asArray()->select('id_transaksi_gaji')->where(['periode_gaji' => $model->periode_gaji, 'kode_karyawan' => $model->kode_karyawan])->one();
-                    // $tunjanganDetail =  $model->getTunjangan($id_karyawan, false);
-                    // $potonganDetail =  $model->getPotongan($id_karyawan, false);
+                    $tunjanganDetail =  $model->getTunjangan($id_karyawan, false);
+                    $potonganDetail =  $model->getPotongan($id_karyawan, false);
 
-                    // $batchDataTunjangan = [];
-                    // foreach ($tunjanganDetail as  $detail) {
-                    //     $batchDataTunjangan[] = [
-                    //         'id_transaksi_gaji' => $getIdTransaksiGaji['id_transaksi_gaji'],
-                    //         'id_tunjangan_detail' => $detail['id_tunjangan_detail'],
-                    //         'nama_tunjangan' => $detail['id_tunjangan'],
-                    //         'jumlah' => $detail['jumlah'],
-                    //     ];
-                    // }
+                    // dd($getIdTransaksiGaji, $tunjanganDetail, $potonganDetail);
 
-                    // $columnsTunjangan = ['id_transaksi_gaji', 'id_tunjangan_detail', 'nama_tunjangan', 'jumlah'];
-                    // $insertedTunjangan = Yii::$app->db->createCommand()
-                    //     ->batchInsert('gaji_tunjangan', $columnsTunjangan, $batchDataTunjangan)
-                    //     ->execute();
+                    $gajiTunjangan = GajiTunjangan::find()->where(['id_transaksi_gaji' => $getIdTransaksiGaji['id_transaksi_gaji']])->all();
+                    $gajiPotongan = GajiPotongan::find()->where(['id_transaksi_gaji' => $getIdTransaksiGaji['id_transaksi_gaji']])->all();
 
-                    // $batchDataPotongan = [];
-                    // foreach ($potonganDetail as  $detail) {
-                    //     $batchDataPotongan[] = [
-                    //         'id_transaksi_gaji' => $getIdTransaksiGaji['id_transaksi_gaji'],
-                    //         'id_potongan_detail' => $detail['id_potongan_detail'],
-                    //         'nama_potongan' => $detail['id_potongan'],
-                    //         'jumlah' => $detail['jumlah'],
-                    //     ];
-                    // }
 
-                    // $columnsPotongan = ['id_transaksi_gaji', 'id_potongan_detail', 'nama_potongan', 'jumlah'];
-                    // $insertedPotongan = Yii::$app->db->createCommand()
-                    //     ->batchInsert('gaji_potongan', $columnsPotongan, $batchDataPotongan)
-                    //     ->execute();
+                    // Hapus semua data yang ditemukan
+                    foreach ($gajiTunjangan as $item) {
+                        $item->delete();
+                    }
+
+                    foreach ($gajiPotongan as $item) {
+                        $item->delete();
+                    }
+                    // die;
 
 
 
-                    // if ($insertedTunjangan && $insertedPotongan) {
-                    //     Yii::$app->session->setFlash('success', "Data tunjangan berhasil tersimpan.");
-                    // } else {
-                    //     Yii::$app->session->setFlash('error', "Data tunjangan gagal tersimpan.");
-                    // }
+                    $batchDataTunjangan = [];
+                    foreach ($tunjanganDetail as  $detail) {
+                        $batchDataTunjangan[] = [
+                            'id_transaksi_gaji' => $getIdTransaksiGaji['id_transaksi_gaji'],
+                            'id_tunjangan_detail' => $detail['id_tunjangan_detail'],
+                            'nama_tunjangan' => $detail['id_tunjangan'],
+                            'jumlah' => $detail['jumlah'],
+                        ];
+                    }
+
+
+                    $columnsTunjangan = ['id_transaksi_gaji', 'id_tunjangan_detail', 'nama_tunjangan', 'jumlah'];
+                    $insertedTunjangan = Yii::$app->db->createCommand()
+                        ->batchInsert('gaji_tunjangan', $columnsTunjangan, $batchDataTunjangan)
+                        ->execute();
+
+                    $batchDataPotongan = [];
+                    foreach ($potonganDetail as  $detail) {
+                        $batchDataPotongan[] = [
+                            'id_transaksi_gaji' => $getIdTransaksiGaji['id_transaksi_gaji'],
+                            'id_potongan_detail' => $detail['id_potongan_detail'],
+                            'nama_potongan' => $detail['id_potongan'],
+                            'jumlah' => $detail['jumlah'],
+                        ];
+                    }
+
+                    $columnsPotongan = ['id_transaksi_gaji', 'id_potongan_detail', 'nama_potongan', 'jumlah'];
+                    $insertedPotongan = Yii::$app->db->createCommand()
+                        ->batchInsert('gaji_potongan', $columnsPotongan, $batchDataPotongan)
+                        ->execute();
+
+
+
+                    if ($insertedTunjangan && $insertedPotongan) {
+                        Yii::$app->session->setFlash('success', "Data tunjangan berhasil tersimpan.");
+                    } else {
+                        Yii::$app->session->setFlash('error', "Data tunjangan gagal tersimpan.");
+                    }
 
                     return $this->redirect(['detail', 'id_transaksi_gaji' => $getIdTransaksiGaji['id_transaksi_gaji']]);
                 } else {

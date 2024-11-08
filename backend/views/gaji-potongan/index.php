@@ -1,6 +1,8 @@
 <?php
 
 use backend\models\GajiPotongan;
+use backend\models\helpers\PeriodeGajiHelper;
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -50,21 +52,30 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 [
                     'class' => 'yii\grid\Column',
-                    'header' => 'Delete',
+                    'header' => 'Aksi',
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'contentOptions' => ['style' => 'text-align: center;'],
                     'content' => function ($model, $key, $index, $column) {
-                        return Html::a(
-                            '<i class="fas fa-trash"></i>', // Icon tong sampah (menggunakan Font Awesome)
-                            ['delete', 'id_gaji_potongan' => $model->id_gaji_potongan],
-                            [
-                                'class' => 'hapus-button',
-                                'data' => [
-                                    'confirm' => 'Are you sure you want to delete this item?',
-                                    'method' => 'post',
-                                ],
-                            ]
-                        );
+                        return "<div class='d-flex '>" .
+                            Html::a(
+                                '<i class="fas fa-edit"></i>', // Icon tong sampah (menggunakan Font Awesome)
+                                ['update', 'id_gaji_potongan' => $model->id_gaji_potongan,],
+                                [
+                                    'class' => 'edit-button mr-2',
+                                ]
+                            ) .
+                            Html::a(
+                                '<i class="fas fa-trash"></i>', // Icon tong sampah (menggunakan Font Awesome)
+                                ['delete', 'id_gaji_potongan' => $model->id_gaji_potongan,],
+                                [
+                                    'class' => 'hapus-button',
+                                    'data' => [
+                                        'confirm' => 'Are you sure you want to delete this item?',
+                                        'method' => 'post',
+                                    ],
+                                ]
+                            ) .
+                            "</div>";
                     },
                 ],
 
@@ -75,15 +86,29 @@ $this->params['breadcrumbs'][] = $this->title;
                         // $model->potonganDetail->potongan->nama_potongan);
                     }
                 ],
-                // 'id_potongan_detail',
                 [
                     'label' => 'Potongan',
                     'value' => function ($model) {
-                        // dd($model->potonganDetail );
                         return $model->potonganDetail->potongan->nama_potongan ?? 'Not Found';
                     }
                 ],
-                // 'nama_potongan',
+                [
+                    'label' => "Periode Gaji",
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        $id_periode_gaji = $model->transaksiGaji['periode_gaji'];
+
+                        $data =  PeriodeGajiHelper::getPeriodeGaji($id_periode_gaji);
+                        $tanggal = new Tanggal();
+
+                        $result = "<div class> 
+                        <p class='m-0'>{$tanggal->getBulan($data['bulan'])} {$data['tahun']} </p>
+                        <span class='text-xs'>({$tanggal->getIndonesiaFormatTanggal($data['tanggal_awal'])} - {$tanggal->getIndonesiaFormatTanggal($data['tanggal_akhir'])})    
+                        </div>";
+
+                        return $result;
+                    }
+                ],
                 [
                     'attribute' => 'jumlah',
                     'value' => function ($model) {

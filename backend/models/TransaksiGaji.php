@@ -95,6 +95,13 @@ class TransaksiGaji extends \yii\db\ActiveRecord
     }
 
 
+    public function getTransaksiData()
+    {
+        $data =  TransaksiGaji::find()->asArray()->select(['id_transaksi_gaji', 'nama'])->groupBy('nama')->all();
+        dd($data);
+    }
+
+
     public function getKaryawanData($id_karyawan, $id_periode_gaji)
     {
         $data =  Karyawan::find()

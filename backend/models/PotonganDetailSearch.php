@@ -46,6 +46,8 @@ class PotonganDetailSearch extends PotonganDetail
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['id_potongan_detail' => SORT_DESC]],
+
         ]);
 
         $this->load($params);

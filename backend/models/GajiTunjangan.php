@@ -64,4 +64,11 @@ class GajiTunjangan extends \yii\db\ActiveRecord
     {
         return $this->hasOne(TransaksiGaji::class, ['id_transaksi_gaji' => 'id_transaksi_gaji']);
     }
+
+
+    public function getSumTunjangan($id_karyawan)
+    {
+        $gajiTUnjanganDetail = TunjanganDetail::find()->where(['id_karyawan' => $id_karyawan])->sum('jumlah');
+        return $gajiTUnjanganDetail;
+    }
 }
