@@ -4,10 +4,6 @@ use backend\models\Terbilang;
 ?>
 
 
-<div>
-    <img src="<?php echo Yii::getAlias('@root') ?>/images/logo.svg" alt="">
-</div>
-
 
 
 <table class="table table-striped table-bordered w-100 ">

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "tailwindcss -i ./css/tailwind.css -o ./css/tailwind_output.css --watch",
-    "dev": "php yii serve --docroot=\".\"",
+    "dev": "php yii serve --docroot=\".\" --port=8000",
     "gb": "git branch",
     "migrate-amnah": "php yii migrate --migrationPath=@vendor/amnah/yii2-user/migrations"
   },

@@ -74,7 +74,7 @@ return [
     'Reset' => 'リセット',
     'Create {modelClass}' => '{modelClass}の作成',
     'Update {modelClass}: ' => '{modelClass}の更新: ',
-    'Are you sure you want to delete this item?' => 'この項目を削除してもよろしいですか？',
+    'Apakah Anda Yakin Ingin Menghapus Item Ini ?' => 'この項目を削除してもよろしいですか？',
 
     // default views
     'Account' => 'アカウント',

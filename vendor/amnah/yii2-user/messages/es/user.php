@@ -74,7 +74,7 @@ return [
     'Reset' => 'Reiniciar',
     'Create {modelClass}' => 'Crear {modelClass}',
     'Update {modelClass}: ' => 'Actualizar {modelClass}: ',
-    'Are you sure you want to delete this item?' => '¿Está seguro de que desea eliminar este elemento?',
+    'Apakah Anda Yakin Ingin Menghapus Item Ini ?' => '¿Está seguro de que desea eliminar este elemento?',
 
     // default views
     'Account' => 'Cuenta',
@@ -98,6 +98,6 @@ return [
     'Profile' => 'Perfil',
     'Resend' => 'Reenviar',
     'Password has been reset' => 'La contraseña ha sido reiniciada',
-//    'Login link sent - Please check your email' => '',
-//    'Registration link sent - Please check your email' => '',
+    //    'Login link sent - Please check your email' => '',
+    //    'Registration link sent - Please check your email' => '',
 ];

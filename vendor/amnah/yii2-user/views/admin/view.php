@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Html::a(Yii::t('user', 'Delete'), ['delete', 'id' => $user->id], [
                 'class' => 'reset-button',
                 'data' => [
-                    'confirm' => Yii::t('user', 'Are you sure you want to delete this item?'),
+                    'confirm' => Yii::t('user', 'Apakah Anda Yakin Ingin Menghapus Item Ini ?'),
                     'method' => 'post',
                 ],
             ]) ?>

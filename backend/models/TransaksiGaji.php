@@ -343,4 +343,12 @@ class TransaksiGaji extends \yii\db\ActiveRecord
 
         return $hari_kerja;
     }
+
+    // public function getPotonganAbsen($karyawan, $absensi, $gajiPokok, $totalCuti)
+    // {
+    //     $totalAbsen = $karyawan['total_hari_kerja'] - ($absensi['total_hadir'] + $totalCuti);
+    //     $gajiPerHari = $gajiPokok['nominal_gaji']  / $karyawan['total_hari_kerja'];
+    //     dd($gajiPerHari);
+    //     $potonganAbsen = $gajiPerHari;
+    // }
 }

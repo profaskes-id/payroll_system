@@ -67,7 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 [
                                     'class' => 'hapus-button',
                                     'data' => [
-                                        'confirm' => 'Are you sure you want to delete this item?',
+                                        'confirm' => 'Apakah Anda Yakin Ingin Menghapus Item Ini ?',
                                         'method' => 'post',
                                     ],
                                 ]

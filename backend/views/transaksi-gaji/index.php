@@ -156,7 +156,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' =>  'jumlah_tunjangan',
                     'value' => function ($model) {
                         if ($model['id_transaksi_gaji']) {
-                            return number_format($model['jumlah_tunjangan'], 0, ',', '.');
+                            return  "Rp " . number_format($model['jumlah_tunjangan'], 0, ',', '.');
                         }
                         return "<span class='text-danger'>Belum Di Set</span>";
                     }
@@ -166,7 +166,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' =>  'jumlah_potongan',
                     'value' => function ($model) {
                         if ($model['id_transaksi_gaji']) {
-                            return number_format($model['jumlah_potongan'], 0, ',', '.');
+                            return "Rp " .  number_format($model['jumlah_potongan'], 0, ',', '.');
                         }
                         return "<span class='text-danger'>Belum Di Set</span>";
                     }

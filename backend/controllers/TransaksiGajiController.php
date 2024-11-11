@@ -140,38 +140,39 @@ class TransaksiGajiController extends Controller
     {
         $model = $this->findModel($id_transaksi_gaji);
         $jamKerja = JamKerja::find()->where(['id_jam_kerja' => $model['jam_kerja']])->one();
-        // dd($model);
-        $content = $this->renderPartial('_report', [
+        // dd($model, $jamKerja);
+        // $content = $this->renderPartial('_report', [
+        return $this->renderPartial('_report', [
             'model' => $model,
             'jamKerja' => $jamKerja
         ]);
 
 
-        $pdf = new Pdf([
+        // $pdf = new Pdf([
 
-            'mode' => Pdf::MODE_CORE,
+        //     'mode' => Pdf::MODE_CORE,
 
-            'format' => Pdf::FORMAT_A4,
+        //     'format' => Pdf::FORMAT_A4,
 
-            'orientation' => Pdf::ORIENT_PORTRAIT,
+        //     'orientation' => Pdf::ORIENT_PORTRAIT,
 
-            'destination' => Pdf::DEST_BROWSER,
+        //     'destination' => Pdf::DEST_BROWSER,
 
-            'content' => $content,
+        //     'content' => $content,
 
 
-            'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
+        //     'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
 
-            'cssInline' => '.kv-heading-1{font-size:18px}',
+        //     'cssInline' => '.kv-heading-1{font-size:18px}',
 
-            'options' => ['title' => 'Report Rekap Absensi ' . date('F')],
-            'methods' => [
+        //     'options' => ['title' => 'Laporan Penggajian'],
+        //     'methods' => [
 
-                'SetFooter' => ['{PAGENO}'],
-            ]
-        ]);
+        //         'SetFooter' => ['{PAGENO}'],
+        //     ]
+        // ]);
 
-        return $pdf->render();
+        // return $pdf->render();
     }
 
 
@@ -215,6 +216,7 @@ class TransaksiGajiController extends Controller
         $jumlahJamLembur = $model->getJumlahJamLembur($id_karyawan, $bulan, $tahun);
         $getTunjangan = $model->getTunjangan($id_karyawan, true);
         $getPotongan = $model->getPotongan($id_karyawan, true);
+        // $potonganAbsen = $model->getPotonganAbsen($karyawan, $absensiData, $gajiPokok, $totalCuti);
 
         if (!$dataPekerjaan) {
             Yii::$app->session->setFlash('error', 'Data pekerjaan tidak ditemukan, lengkapi data pekerjaan terlebih dahulu');
@@ -463,8 +465,21 @@ class TransaksiGajiController extends Controller
     public function actionDelete($id_transaksi_gaji)
     {
         $model = $this->findModel($id_transaksi_gaji);
-        $karyawan = Karyawan::find()->where(['kode_karyawan' => $model->kode_karyawan])->asArray()->one();
+        // $karyawan = Karyawan::find()->where(['kode_karyawan' => $model->kode_karyawan])->asArray()->one();
         if ($model->delete()) {
+            $gajiTunjangan = GajiTunjangan::find()->where(['id_transaksi_gaji' => $id_transaksi_gaji])->all();
+            $gajiPotongan = GajiPotongan::find()->where(['id_transaksi_gaji' => $id_transaksi_gaji])->all();
+
+
+            // Hapus semua data yang ditemukan
+            foreach ($gajiTunjangan as $item) {
+                $item->delete();
+            }
+
+            foreach ($gajiPotongan as $item) {
+                $item->delete();
+            }
+            // die;
             Yii::$app->session->setFlash('success', 'Data Berhasilsil Dihapus');
             return $this->redirect(['index']);
         } else {

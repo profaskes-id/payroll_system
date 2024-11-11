@@ -19,8 +19,8 @@ return [
     'New Email' => 'Új e-mail',
     'Username' => 'Felhasználónév',
     'Password' => 'Jelszó',
-//    'Auth Key' => '',
-//    'Access Token' => '',
+    //    'Auth Key' => '',
+    //    'Access Token' => '',
     'Logged In Ip' => 'Bejelentkezési Ip',
     'Logged In At' => 'Bejelentkezés ideje',
     'Created Ip' => 'Regisztrációs Ip',
@@ -36,8 +36,8 @@ return [
     'Provider Attributes' => '',
 
     'Type' => 'Típus',
-//    'Token' => '',
-//    'Expired At' => '',
+    //    'Token' => '',
+    //    'Expired At' => '',
 
     // models/forms
     'Email not found' => 'E-mail nem található',
@@ -74,7 +74,7 @@ return [
     'Reset' => 'Alaphelyzet',
     'Create {modelClass}' => '{modelClass} létrehozása',
     'Update {modelClass}: ' => '{modelClass} módosítása',
-    'Are you sure you want to delete this item?' => 'Biztosan törölni szeretné ezt a tételt?',
+    'Apakah Anda Yakin Ingin Menghapus Item Ini ?' => 'Biztosan törölni szeretné ezt a tételt?',
 
     // default views
     'Account' => 'Fiók',
@@ -87,7 +87,7 @@ return [
     'Go to my account' => 'Vissza a fiókomhoz',
     'Go home' => 'Vissza a főoldalra',
     'Log in here' => 'Bejelentkezés',
-//    'Invalid Token' => '',
+    //    'Invalid Token' => '',
     'Forgot password' => 'Elfelejtett jelszó',
     'Submit' => 'Küldés',
     'Yii 2 User' => 'Yii 2 Felhasználó',
@@ -98,6 +98,6 @@ return [
     'Profile' => 'Profil',
     'Resend' => 'Újraküldés',
     'Password has been reset' => 'A jelszó vissza lett állítva',
-//    'Login link sent - Please check your email' => '',
-//    'Registration link sent - Please check your email' => '',
+    //    'Login link sent - Please check your email' => '',
+    //    'Registration link sent - Please check your email' => '',
 ];

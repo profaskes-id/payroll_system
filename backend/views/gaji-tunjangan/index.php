@@ -68,7 +68,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 [
                                     'class' => 'hapus-button',
                                     'data' => [
-                                        'confirm' => 'Are you sure you want to delete this item?',
+                                        'confirm' => 'Apakah Anda Yakin Ingin Menghapus Item Ini ?',
                                         'method' => 'post',
                                     ],
                                 ]
@@ -92,7 +92,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => "Periode Gaji",
                     'format' => 'raw',
                     'value' => function ($model) {
-                        $id_periode_gaji = $model->transaksiGaji['periode_gaji'];
+                        $id_periode_gaji = $model->transaksiGaji['periode_gaji'] ?? 0;
+
+                        if ($id_periode_gaji == 0) {
+                            return "tidak Ditemukan";
+                        }
 
                         $data =  PeriodeGajiHelper::getPeriodeGaji($id_periode_gaji);
                         $tanggal = new Tanggal();

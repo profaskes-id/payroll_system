@@ -52,8 +52,7 @@ $pathInfo = Yii::$app->request->getPathInfo();
 
 
         <div class="col-md-6">
-            <?= $form->field($model, 'keterangan')->textarea(['rows' => 1, 'maxlength' => true, "class" => "form-control", "placeholder" => "Keterangan Berhalangan Hadir"]) ?>
-            <p style="margin-top: -15px; font-size: 14.5px;" class="text-capitalize  text-muted"> Keterangan Jika berhalangan hadir</p>
+            <?= $form->field($model, 'keterangan')->textarea(['rows' => 1, 'maxlength' => true, "class" => "form-control", "placeholder" => "Keterangan "]) ?>
         </div>
         <div class="col-md-6">
             <?= $form->field($model, 'lampiran')->textInput(["placeholder" => "Lampiran", "class" => "form-control", 'type' => 'file'])->label('Lampiran') ?>
