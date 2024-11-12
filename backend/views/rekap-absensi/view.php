@@ -51,6 +51,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'Tanggal',
                     'value' => function ($model) {
                         $tanggalFormat = new Tanggal();
+                        if ($model->tanggal == null) {
+                            return '-';
+                        }
                         return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal);
                         // return date('d-M-Y', strtotime($model->tanggal));
                     }

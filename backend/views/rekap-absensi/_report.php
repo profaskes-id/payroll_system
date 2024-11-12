@@ -47,18 +47,18 @@ $tanggal = new Tanggal();
                     ?>
 
                     <?php if ($day_of_week == 0): ?>
-                        <td style="border: 1px solid #353535; padding: 5px; background-color: #aaa; color:white;">
+                        <td style="border: 1px solid #808080; padding: 5px; background-color: #aaa; color:white;">
                             <?= $item ?>
                         </td>
                     <?php else: ?>
-                        <td style="border: 1px solid #353535; padding: 5px; background-color: #fff; color:black;">
+                        <td style="border: 1px solid #808080; padding: 5px; background-color: #fff; color:black;">
                             <?= $item ?>
                         </td>
                     <?php endif; ?>
                 <?php endforeach ?>
-                <td style="border: 1px solid #353535; padding: 5px;">Total Hadir</td>
-                <td style="border: 1px solid #353535; padding: 5px;">Jumlah Terlambat</td>
-                <td style="border: 1px solid #353535; padding: 5px;">Total Telambat</td>
+                <td style="border: 1px solid #808080; padding: 5px;">Total Hadir</td>
+                <td style="border: 1px solid #808080; padding: 5px;">Jumlah Terlambat</td>
+                <td style="border: 1px solid #808080; padding: 5px;">Total Telambat</td>
                 <!-- <td>Tidak Tadir</td> -->
             </tr>
 
@@ -67,7 +67,7 @@ $tanggal = new Tanggal();
                     <?php foreach ($karyawan as $key => $data) : ?>
 
                         <?php if ($key == 0) : ?>
-                            <td style=" border: 1px solid #353535; padding: 5px; width: 150px;">
+                            <td style=" border: 1px solid #808080; padding: 5px; width: 150px;">
                                 <?php $text  = strtolower($data['nama']); ?>
                                 <div class=" d-flex flex-column">
                                     <p style="margin: 0; padding:0;  text-transform: capitalize;  font-weight: bold"><?= $text ?></p>
@@ -75,7 +75,7 @@ $tanggal = new Tanggal();
                                     <p style="margin: 0; padding:0;  text-transform: capitalize;"><?= $data['kode_karyawan'] ?></p>
                                 </div>
                             </td>
-                            <td style=" border: 1px solid #353535; padding: 5px; width: 100px;">
+                            <td style=" border: 1px solid #808080; padding: 5px; width: 100px;">
                                 <div>
                                     <p style="margin: 0; padding:0;  text-transform: capitalize; "><?= $data['bagian'] ?></p>
                                     <p style="margin: 0; padding:0;  text-transform: capitalize;"><?= $data['jabatan'] ?></p>
@@ -93,9 +93,9 @@ $tanggal = new Tanggal();
                             ?>
 
                             <?php if ($day_of_week == 0) : ?>
-                                <td style=" border: 1px solid #353535; padding: 2px; background-color: #aaa; color:white;">
+                                <td style=" border: 1px solid #808080; padding: 2px; background-color: #aaa; color:white;">
                                 <?php else :  ?>
-                                <td style=" border: 1px solid #353535; padding: 2px; ">
+                                <td style=" border: 1px solid #808080; padding: 2px; ">
                                 <?php endif; ?>
                                 <p style="max-width: 20px; padding:0;   text-align: center:  !important;; vertical-align: middle; ">
 
@@ -156,8 +156,8 @@ $tanggal = new Tanggal();
 
             <tr style="border: 1px solid #252525;">
 
-                <th style="border: 1px solid #353535; padding: 5px; font-size:13px; background-color: #facc15; color:#000">Hadir</th>
-                <th style="border: 1px solid #353535; padding: 5px; font-size:11px; background-color: #facc15; color:#000"></th>
+                <th style="border: 1px solid #808080; padding: 5px; font-size:13px; background-color: #facc15; color:#000">Hadir</th>
+                <th style="border: 1px solid #808080; padding: 5px; font-size:11px; background-color: #facc15; color:#000"></th>
                 <?php
                 $lastKey = array_key_last($rekapanAbsensi); // Mendapatkan kunci terakhir
                 foreach ($rekapanAbsensi as $key => $rekapan) :
@@ -169,23 +169,23 @@ $tanggal = new Tanggal();
                     }
                 ?>
                     <?php if ($day_of_week == 0): ?>
-                        <td style="border: 1px solid #353535; padding: 5px; font-weight:600; text-align:center; background-color: #aaa; color:#000"><?= '' ?? '' ?></td>
+                        <td style="border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: #aaa; color:#000"><?= '' ?? '' ?></td>
                     <?php else : ?>
                         <?php
                         // Tentukan warna background
                         $bgColor = ($key === $lastKey) ? 'fff' : '#facc15'; // Ubah menjadi lightblue jika ini adalah elemen terakhir
                         ?>
-                        <td style="border: 1px solid #353535; padding: 5px; font-weight:600; text-align:center; background-color: <?= $bgColor ?>; color:#000"><?= $rekapan ? ($rekapan > 0 ? $rekapan : '') : '' ?></td>
+                        <td style="border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: <?= $bgColor ?>; color:#000"><?= $rekapan ? ($rekapan > 0 ? $rekapan : '') : '' ?></td>
                     <?php endif; ?>
                 <?php endforeach ?>
-                <td style=" border: 1px solid #353535; padding: 5px; font-weight:600; text-align:center; background-color: #fff; color:#000"></td>
+                <td style=" border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: #fff; color:#000"></td>
             </tr>
 
             <!--  2 -->
             <tr style="border: 1px solid #252525;">
 
-                <th style=" border: 1px solid #353535; padding: 5px; font-size:13px; background-color: #84cc16; color:#000">Tidak Hadir</th>
-                <th style=" border: 1px solid #353535; padding: 5px; font-size:13px; background-color: #84cc16; color:#000"></th>
+                <th style=" border: 1px solid #808080; padding: 5px; font-size:13px; background-color: #84cc16; color:#000">Tidak Hadir</th>
+                <th style=" border: 1px solid #808080; padding: 5px; font-size:13px; background-color: #84cc16; color:#000"></th>
                 <?php
                 $lastKey = array_key_last($rekapanAbsensi); // Mendapatkan kunci terakhir
                 foreach ($rekapanAbsensi as $key => $rekapan) :
@@ -197,7 +197,7 @@ $tanggal = new Tanggal();
                     }
                 ?>
                     <?php if ($day_of_week == 0): ?>
-                        <td style=" border: 1px solid #353535; padding: 5px; font-weight:600; text-align:center; background-color: #aaa; color:#000"><?= '' ?? '' ?></td>
+                        <td style=" border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: #aaa; color:#000"><?= '' ?? '' ?></td>
                     <?php else : ?>
                         <?php
                         $data = ($rekapan && $rekapan > 0) ? $karyawanTotal - $rekapan : '';
@@ -206,17 +206,17 @@ $tanggal = new Tanggal();
                         // Tentukan background color
                         $bgColor = ($key === $lastKey) ? '#fff' : '#84cc16'; // Ubah menjadi putih jika ini adalah elemen terakhir
                         ?>
-                        <td style=" border: 1px solid #353535; padding: 5px; font-weight:600; text-align:center; background-color: <?= $bgColor ?>; color:#000"><?php echo $data ?></td>
+                        <td style=" border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: <?= $bgColor ?>; color:#000"><?php echo $data ?></td>
                     <?php endif; ?>
                 <?php endforeach ?>
-                <td style=" border: 1px solid #353535; padding: 5px; font-weight:600; text-align:center; background-color: #fff; color:#000"></td>
+                <td style=" border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: #fff; color:#000"></td>
             </tr>
 
             <!-- 3 -->
             <tr style="border: 1px solid #252525;">
 
-                <th style=" border: 1px solid #353535; padding: 5px; font-size:13px; background-color: #f43f5e; color:#fff">Terlambat</th>
-                <th style=" border: 1px solid #353535; padding: 5px; font-size:13px; background-color: #f43f5e; color:#fff"></th>
+                <th style=" border: 1px solid #808080; padding: 5px; font-size:13px; background-color: #f43f5e; color:#fff">Terlambat</th>
+                <th style=" border: 1px solid #808080; padding: 5px; font-size:13px; background-color: #f43f5e; color:#fff"></th>
                 <?php foreach ($keterlambatanPerTanggal as $key => $terlambattgl) :  ?>
                     <?php
                     if (!isset($tanggal_bulanan[$key])) {
@@ -227,17 +227,17 @@ $tanggal = new Tanggal();
                     }
                     ?>
                     <?php if ($day_of_week == 0): ?>
-                        <td style="border: 1px solid #353535; padding: 5px; font-weight:600; text-align:center; background-color: #aaa; color:#fff"><?= '' ?? '' ?></td>
+                        <td style="border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: #aaa; color:#fff"><?= '' ?? '' ?></td>
                     <?php else : ?>
                         <?php
                         $dataTerlambat = ($terlambattgl && $terlambattgl > 0) ?  $terlambattgl : '';
                         $dataTerlambat = ($dataTerlambat <= 0) ? '' : $dataTerlambat;
                         ?>
-                        <td style="border: 1px solid #353535; padding: 5px; font-weight:600; text-align:center; background-color: #f43f5e; color:#fff"><?php echo $dataTerlambat ?></td>
+                        <td style="border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: #f43f5e; color:#fff"><?php echo $dataTerlambat ?></td>
                     <?php endif; ?>
                 <?php endforeach ?>
-                <td style="border: 1px solid #353535; padding: 5px; font-weight:600; text-align:center; background-color: #fff; color:#fff"></td>
-                <td style="border: 1px solid #353535; padding: 5px; font-weight:600; text-align:center; background-color: #fff; color:#fff"></td>
+                <td style="border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: #fff; color:#fff"></td>
+                <td style="border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: #fff; color:#fff"></td>
             </tr>
 
         </table>

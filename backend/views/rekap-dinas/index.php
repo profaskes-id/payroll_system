@@ -11,7 +11,7 @@ use yii\grid\GridView;
 /** @var backend\models\RekapDinasSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Pengajuan Dinas');
+$this->title = Yii::t('app', 'Rekap Dinas');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pengajuan-dinas-index">

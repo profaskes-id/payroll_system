@@ -90,7 +90,9 @@ use yii\widgets\ActiveForm;
 
             <div id="items-container">
                 <label for="">List Pekerjaan</label>
-                <?php foreach ($poinArray as $index => $pekerjaan) : ?>
+                <?php
+                $poinArray ??= [];
+                foreach ($poinArray as $index => $pekerjaan) : ?>
                     <div class="d-flex mt-2">
                         <input type="text" name="pekerjaan[]" class="form-control" placeholder="Item <?= $index + 1 ?>" value="<?= Html::encode($pekerjaan) ?>">
                         <button type="button" class="reset-button remove-item">Remove</button>

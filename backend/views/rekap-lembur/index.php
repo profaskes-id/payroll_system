@@ -11,7 +11,7 @@ use yii\grid\GridView;
 /** @var backend\models\RekapLemburSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Pengajuan Lembur');
+$this->title = Yii::t('app', 'Rekap Lembur');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pengajuan-lembur-index">
@@ -70,6 +70,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($model) {
                         return date('H:i', strtotime($model->jam_selesai));
                     }
+                ],
+                [
+                    'label' => 'Durasi Lembur',
+                    'value' => function ($model) {
+                        return date('H:i', strtotime($model->durasi ?? '00:00'));
+                    },
+                    'headerOptions' => ['style' => 'text-align: center;'],
+                    'contentOptions' => ['style' => 'text-align: center;'],
                 ],
                 [
                     'headerOptions' => ['style' => 'text-align: center;'],

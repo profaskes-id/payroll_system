@@ -78,7 +78,6 @@ class Tanggal extends \yii\db\ActiveRecord
         ];
         $tanggal = date('d F Y', strtotime($datetime));
         $tanggal = str_replace(array_keys($bulan), array_values($bulan), $tanggal);
-
         return $tanggal;
     }
 

@@ -5,6 +5,7 @@ namespace backend\models;
 use DateTime;
 use Yii;
 use yii\db\Expression;
+use yii\db\Query;
 
 /**
  * This is the model class for table "transaksi_gaji".
@@ -52,13 +53,12 @@ class TransaksiGaji extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['periode_gaji', 'kode_karyawan', 'nomer_identitas', 'nama', 'bagian', 'jabatan', 'jam_kerja', 'status_karyawan', 'jumlah_hari_kerja', 'jumlah_hadir', 'jumlah_sakit', 'jumlah_wfh', 'jumlah_cuti', 'gaji_pokok', 'jumlah_jam_lembur', 'lembur_perjam', 'total_lembur', 'jumlah_tunjangan', 'jumlah_potongan', 'potongan_wfh_hari', 'jumlah_potongan_wfh'], 'required'],
-            [['jam_kerja', 'jumlah_hari_kerja', 'jumlah_hadir', 'jumlah_sakit', 'jumlah_wfh', 'jumlah_cuti'], 'integer'],
-            [['gaji_pokok', 'lembur_perjam', 'total_lembur', 'jumlah_tunjangan', 'jumlah_potongan', 'potongan_wfh_hari', 'jumlah_potongan_wfh', 'gaji_diterima'], 'number'],
-            [['jumlah_jam_lembur'], 'safe'],
-            [['kode_karyawan'], 'string', 'max' => 10],
+            [['nomer_identitas', 'kode_karyawan',  'nama', 'bagian', 'jabatan', 'jam_kerja', 'status_karyawan', 'jumlah_hari_kerja', 'jumlah_hadir', 'jumlah_sakit', 'jumlah_wfh', 'jumlah_cuti', 'gaji_pokok', 'jumlah_jam_lembur', 'lembur_perjam', 'total_lembur', 'jumlah_tunjangan', 'jumlah_potongan', 'potongan_wfh_hari', 'jumlah_potongan_wfh', 'jumlah_terlambat', 'potongan_terlambat_permenit', 'jumlah_potongan_terlambat'], 'required'],
+            [['jam_kerja', 'periode_gaji', 'jumlah_hari_kerja', 'jumlah_hadir', 'jumlah_sakit', 'jumlah_wfh', 'jumlah_cuti', 'jumlah_tidak_hadir'], 'integer'],
+            [['gaji_pokok', 'lembur_perjam', 'total_lembur', 'jumlah_tunjangan', 'jumlah_potongan', 'potongan_wfh_hari', 'jumlah_potongan_wfh', 'potongan_tidak_hadir_hari', 'jumlah_potongan_tidak_hadir', 'potongan_terlambat_permenit', 'jumlah_potongan_terlambat', 'gaji_diterima'], 'number'],
+            [['jumlah_jam_lembur', 'jumlah_terlambat'], 'safe'],
             [['nomer_identitas', 'nama', 'bagian', 'jabatan', 'status_karyawan'], 'string', 'max' => 255],
-            [['periode_gaji', 'kode_karyawan'], 'unique', 'targetAttribute' => ['periode_gaji', 'kode_karyawan']],
+            [['kode_karyawan'], 'string', 'max' => 10],
         ];
     }
 
@@ -69,7 +69,6 @@ class TransaksiGaji extends \yii\db\ActiveRecord
     {
         return [
             'id_transaksi_gaji' => 'Id Transaksi Gaji',
-            'periode_gaji' => 'Periode Gaji',
             'kode_karyawan' => 'Kode Karyawan',
             'nomer_identitas' => 'Nomer Identitas',
             'nama' => 'Nama',
@@ -77,6 +76,7 @@ class TransaksiGaji extends \yii\db\ActiveRecord
             'jabatan' => 'Jabatan',
             'jam_kerja' => 'Jam Kerja',
             'status_karyawan' => 'Status Karyawan',
+            'periode_gaji' => 'Periode Gaji',
             'jumlah_hari_kerja' => 'Jumlah Hari Kerja',
             'jumlah_hadir' => 'Jumlah Hadir',
             'jumlah_sakit' => 'Jumlah Sakit',
@@ -90,6 +90,12 @@ class TransaksiGaji extends \yii\db\ActiveRecord
             'jumlah_potongan' => 'Jumlah Potongan',
             'potongan_wfh_hari' => 'Potongan Wfh Hari',
             'jumlah_potongan_wfh' => 'Jumlah Potongan Wfh',
+            'jumlah_tidak_hadir' => 'Jumlah Tidak Hadir',
+            'potongan_tidak_hadir_hari' => 'Potongan Tidak Hadir Hari',
+            'jumlah_potongan_tidak_hadir' => 'Jumlah Potongan Tidak Hadir',
+            'jumlah_terlambat' => 'Jumlah Terlambat',
+            'potongan_terlambat_permenit' => 'Potongan Terlambat Permenit',
+            'jumlah_potongan_terlambat' => 'Jumlah Potongan Terlambat',
             'gaji_diterima' => 'Gaji Diterima',
         ];
     }
@@ -98,22 +104,26 @@ class TransaksiGaji extends \yii\db\ActiveRecord
     public function getTransaksiData()
     {
         $data =  TransaksiGaji::find()->asArray()->select(['id_transaksi_gaji', 'nama'])->groupBy('nama')->all();
-        dd($data);
     }
 
 
     public function getKaryawanData($id_karyawan, $id_periode_gaji)
     {
+
+
         $data =  Karyawan::find()
-            ->select(['karyawan.id_karyawan', 'karyawan.nama', 'karyawan.nomer_identitas', 'karyawan.kode_jenis_kelamin', 'karyawan.jenis_identitas', 'karyawan.kode_karyawan', 'thk.total_hari AS total_hari_kerja', 'jkk.id_jam_kerja'])
+            ->select(['karyawan.id_karyawan', 'karyawan.nama', 'karyawan.nomer_identitas', 'karyawan.kode_jenis_kelamin', 'karyawan.jenis_identitas', 'karyawan.kode_karyawan',  'jkk.id_jam_kerja'])
             ->leftJoin('jam_kerja_karyawan jkk', 'karyawan.id_karyawan = jkk.id_karyawan')
             ->leftJoin('jam_kerja jk', 'karyawan.id_karyawan = jkk.id_karyawan')
-            ->leftJoin('total_hari_kerja thk',  "  thk.id_jam_kerja = jk.id_jam_kerja AND  thk.id_periode_gaji =  :id_periode_gaji ")
             ->where(['karyawan.id_karyawan' => $id_karyawan])
-            ->params([':id_periode_gaji' => intval($id_periode_gaji)])
             ->asArray()
             ->one();
 
+        $totalHariKerja = TotalHariKerja::find()
+            ->where(['id_jam_kerja' => $data['id_jam_kerja'], 'id_periode_gaji' => $id_periode_gaji])
+            ->asArray()
+            ->one();
+        $data['total_hari_kerja'] = $totalHariKerja['total_hari'];
         return $data;
     }
 
@@ -144,7 +154,7 @@ class TransaksiGaji extends \yii\db\ActiveRecord
     public function getAbsensiData($id_karyawan, $firstDayOfMonth, $lastDayOfMonth)
     {
 
-        return Absensi::find()
+        $dataAbsensi = Absensi::find()
             ->select([
                 'total_hadir' => new Expression("SUM(CASE WHEN kode_status_hadir = :status_hadir THEN 1 ELSE 0 END)"),
                 'total_sakit' => new Expression("SUM(CASE WHEN kode_status_hadir = :status_sakit THEN 1 ELSE 0 END)"),
@@ -159,21 +169,16 @@ class TransaksiGaji extends \yii\db\ActiveRecord
             ])
             ->asArray()
             ->one();
+        return $dataAbsensi;
     }
-
-
 
     public function getGajiPokok($id_karyawan)
     {
         return MasterGaji::find()->asArray()->where(['id_karyawan' => $id_karyawan])->one();
     }
 
-    public function getJumlahJamLembur($id_karyawan, $bulan, $tahun)
+    public function getJumlahJamLembur($id_karyawan, $firstDayOfMonth, $lastDayOfMonth)
     {
-
-        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, 1, $tahun));
-        $lastDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, date('t', mktime(0, 0, 0, $bulan, 1, $tahun)), $tahun));
-
         $pengajuanLembur = PengajuanLembur::find()
             ->where([
                 'id_karyawan' => $id_karyawan,
@@ -183,30 +188,20 @@ class TransaksiGaji extends \yii\db\ActiveRecord
             ->andWhere(['<=', 'tanggal', $lastDayOfMonth])
             ->asArray()  // Ini akan mengembalikan hasil dalam bentuk array
             ->all();
-
         $totalMenit = 0;
 
         foreach ($pengajuanLembur as $key => $value) {
-            // Ambil durasi
             $durasi = $value['durasi']; // Misalnya "08:00:00"
-
-            // Pecah string durasi menjadi array jam, menit, dan detik
             list($jam, $menit, $detik) = explode(':', $durasi);
-
-            // Hitung total menit
             $totalMenit += ($jam * 60) + $menit; // Menambahkan jam dalam menit dan menit
         }
+
 
         return [
             'detail_lembur' => $pengajuanLembur,
             'total_menit' => $totalMenit
         ];
     }
-
-    // public function getPeriodeGajiBulanFind($bulan, $tahun)
-    // {
-    //     return PeriodeGaji::find()->asArray()->where(['bulan' => $bulan, 'tahun' => $tahun])->one();
-    // }
 
     public function getTunjangan($id_karyawan, $is_sum = false)
     {
@@ -344,11 +339,56 @@ class TransaksiGaji extends \yii\db\ActiveRecord
         return $hari_kerja;
     }
 
-    // public function getPotonganAbsen($karyawan, $absensi, $gajiPokok, $totalCuti)
-    // {
-    //     $totalAbsen = $karyawan['total_hari_kerja'] - ($absensi['total_hadir'] + $totalCuti);
-    //     $gajiPerHari = $gajiPokok['nominal_gaji']  / $karyawan['total_hari_kerja'];
-    //     dd($gajiPerHari);
-    //     $potonganAbsen = $gajiPerHari;
-    // }
+
+    public function getTotalTerlambat($id_karyawan, $firstDayOfMonth, $lastDayOfMonth)
+    {
+
+        // Ambil data jam kerja karyawan
+        $jamKerjakaryawan = (new \yii\db\Query())
+            ->select(['jkk.*', 'jd.id_jam_kerja', 'jd.nama_hari', 'jd.jam_masuk'])
+            ->from(['jkk' => 'jam_kerja_karyawan'])
+            ->leftJoin(['jd' => 'jadwal_kerja'], 'jkk.id_jam_kerja = jd.id_jam_kerja')
+            ->where(['jkk.id_karyawan' => $id_karyawan])
+            ->all();
+
+        // Ambil data absensi
+        $data = Absensi::find()
+            ->select(['tanggal', 'jam_masuk'])
+            ->where(['id_karyawan' => $id_karyawan])
+            ->andWhere(['between', 'tanggal', $firstDayOfMonth, $lastDayOfMonth])
+            ->andWhere(['kode_status_hadir' => self::STATUS_HADIR])
+            ->andWhere(['is_lembur' => 0])
+            ->asArray()
+            ->all();
+
+
+        $totalTerlambarDetik = 0;
+        // Buat array untuk menyimpan jam masuk berdasarkan nama hari
+        $jamMasukByHari = [];
+        foreach ($jamKerjakaryawan as $jamKerja) {
+            $jamMasukByHari[$jamKerja['nama_hari']] = $jamKerja['jam_masuk'];
+        }
+
+        // Loop melalui data absensi dan tambahkan jam masuk
+        foreach ($data as $key => $value) {
+            // Dapatkan nama hari dari tanggal
+            $nama_hari = date('N', strtotime($value['tanggal']));
+            // Cek apakah nama hari ada di jamMasukByHari
+            if (isset($jamMasukByHari[$nama_hari])) {
+                $jamMasukKantor = strtotime($jamMasukByHari[$nama_hari]);
+                $jamKeryawanMasuk = strtotime($value['jam_masuk']);
+                if ($jamKeryawanMasuk > $jamMasukKantor) {
+                    $selisih = $jamKeryawanMasuk - $jamMasukKantor;
+                    $totalTerlambarDetik += $selisih;
+                }
+            }
+        }
+
+
+        $jam = floor($totalTerlambarDetik / 3600); // Menghitung jam
+        $menit = floor(($totalTerlambarDetik % 3600) / 60); // Menghitung menit
+        $detik = $totalTerlambarDetik % 60; // Menghitung detik
+        $formattedTime = sprintf('%02d:%02d:%02d', $jam, $menit, $detik);
+        return $formattedTime;
+    }
 }

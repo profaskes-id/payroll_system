@@ -3,6 +3,7 @@
 use backend\models\helpers\JamKerjaHelper;
 use backend\models\helpers\PeriodeGajiHelper;
 use backend\models\Tanggal;
+use backend\models\Terbilang;
 use backend\models\TransaksiGaji;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
@@ -41,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'method' => 'post',
                 ],
             ]) ?>
-            <?= Html::a('Cetak', ['cetak', 'id_transaksi_gaji' => $model->id_transaksi_gaji, 'id_karyawan' => $id_karyawan['id_karyawan']], ['class' => 'tambah-button ms-auto', 'target' => '_blank']) ?>
+            <?= Html::a('Cetak', ['cetak', 'id_transaksi_gaji' => $model->id_transaksi_gaji, 'id_karyawan' => $id_karyawan['id_karyawan']], ['class' => 'tambah-button', 'target' => '_blank']) ?>
 
         </p>
 
@@ -82,101 +83,198 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'label' => ucwords(str_replace('_', ' ', 'jumlah_hari_kerja')),
                                 'value' => $model->jumlah_hari_kerja . ' Hari',
                             ],
+
+                        ],
+                    ]
+                ) ?>
+                <?= DetailView::widget(
+                    [
+                        'model' => $model,
+                        'attributes' => [
                             [
+                                'contentOptions' => ['style' => 'width: 30%'],
                                 'label' => ucwords(str_replace('_', ' ', 'jumlah_hadir')),
                                 'value' => $model->jumlah_hadir . ' Hari',
                             ],
                             [
+                                'contentOptions' => ['style' => 'width: 30%'],
                                 'label' => ucwords(str_replace('_', ' ', 'jumlah_sakit')),
                                 'value' => $model->jumlah_sakit . ' Hari',
                             ],
                             [
+                                'contentOptions' => ['style' => 'width: 30%'],
                                 'label' => ucwords(str_replace('_', ' ', 'jumlah_wfh')),
                                 'value' => $model->jumlah_wfh . ' Hari',
                             ],
                             [
+                                'contentOptions' => ['style' => 'width: 30%'],
                                 'label' => ucwords(str_replace('_', ' ', 'jumlah_cuti')),
                                 'value' => $model->jumlah_cuti . ' Hari',
                             ],
-                            [
-                                'label' => "Tidak Hadir",
-                                'value' => function ($model) {
-                                    $dataTotalHariKerja = $model['jumlah_hari_kerja'];
-                                    $dataTotalHadir = $model['jumlah_hadir'] ?? 0;
-                                    $dataSakit =  $model['jumlah_sakit'] ?? 0;
-                                    $dataCuti = $model['jumlah_cuti'] ?? 0;
-                                    return   $dataTotalHariKerja - $dataTotalHadir - $dataSakit - $dataCuti . ' Hari';
-                                }
-                            ],
-                            [
-                                'attribute' => 'jumlah_jam_lembur',
-                                'label' => 'Durasi Lembur',
-                                'value' => function ($model) {
-                                    return $model->jumlah_jam_lembur . ' Jam';
-                                },
-                                'format' => 'raw',
-                            ],
+
+
+
+
                         ],
                     ]
                 ) ?>
             </div>
             <div class="col-6">
+
                 <?= DetailView::widget([
                     'model' => $model,
-                    'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
                     'attributes' => [
                         [
-                            'attribute' =>  'lembur_perjam',
+
+                            'contentOptions' => ['style' => 'width: 30%'],
+                            'label' => "Tidak Hadir",
+                            'value' => function ($model) {
+                                $dataTotalHariKerja = $model['jumlah_hari_kerja'];
+                                $dataTotalHadir = $model['jumlah_hadir'] ?? 0;
+                                $dataSakit =  $model['jumlah_sakit'] ?? 0;
+                                $dataCuti = $model['jumlah_cuti'] ?? 0;
+                                return   $dataTotalHariKerja - $dataTotalHadir - $dataSakit - $dataCuti . ' Hari';
+                            }
+                        ],
+                        [
+                            'contentOptions' => ['style' => 'width: 30%'],
+
+                            'label' => 'Potongan Perhari',
+                            'value' => function ($model) {
+                                return 'Rp ' . number_format($model->potongan_tidak_hadir_hari, 0, ',', '.');
+                            },
+                            'format' => 'raw',
+                        ],
+                        [
+                            'contentOptions' => ['style' => 'width: 30%'],
+
+                            'label' => 'Total Potonganan',
+                            'value' => function ($model) {;
+                                return 'Rp ' . number_format($model->jumlah_potongan_tidak_hadir, 0, ',', '.');
+                            },
+                            'format' => 'raw',
+                        ],
+                    ]
+                ]) ?>
+
+                <?= DetailView::widget([
+                    'model' => $model,
+                    'attributes' => [
+                        [
+                            'contentOptions' => ['style' => 'width: 30%'],
+                            'label' => 'Durasi Terlambat',
+                            'value' => function ($model) {
+                                return $model->jumlah_terlambat ?? "00:00:00";
+                            },
+                            'format' => 'raw',
+                        ],
+                        [
+
+                            'contentOptions' => ['style' => 'width: 30%'],
+                            'label' => 'Potongan Terlambat Permenit',
+                            'value' => function ($model) {
+                                return 'Rp ' . number_format($model->potongan_terlambat_permenit, 0, ',', '.');
+                            },
+                            'format' => 'raw',
+                        ],
+                        [
+                            'contentOptions' => ['style' => 'width: 30%'],
+                            'label' => 'Total Potongan Terlambat',
+                            'value' => function ($model) {
+                                return 'Rp ' . number_format($model->jumlah_potongan_terlambat, 0, ',', '.');
+                            },
+                            'format' => 'raw',
+                        ],
+                    ]
+                ]) ?>
+
+                <?= DetailView::widget([
+                    'model' => $model,
+                    'attributes' => [
+                        [
+                            'contentOptions' => ['style' => 'width: 30%'],
+
+                            'label' => 'Durasi Lembur',
+                            'value' => function ($model) {
+                                return $model->jumlah_jam_lembur;
+                            },
+                            'format' => 'raw',
+                        ],
+                        [
+                            'contentOptions' => ['style' => 'width: 30%'],
+
+                            'label' =>  'Bayawan Lembur Perjam',
                             'value' => function ($model) {
                                 return 'Rp ' . number_format($model->lembur_perjam, 0, ',', '.');
                             }
                         ],
 
                         [
-                            'attribute' =>  'total_lembur',
+                            'contentOptions' => ['style' => 'width: 30%'],
+                            'label' =>  'Total Bayaran Lembur',
                             'value' => function ($model) {
                                 return 'Rp ' .  number_format($model->total_lembur, 0, ',', '.');
                             }
                         ],
+                    ]
+                ]) ?>
+
+                <?= DetailView::widget([
+                    'model' => $model,
+                    'attributes' => [
                         [
-                            'attribute' =>  'gaji_pokok',
-                            'value' => function ($model) {
-                                return 'Rp ' . number_format($model->gaji_pokok, 0, ',', '.');
-                            }
+                            'contentOptions' => ['style' => 'width: 30%'],
+
+                            'label' => "Jumlah WFH",
+                            'value' => $model->jumlah_wfh . ' Hari',
                         ],
                         [
-                            'attribute' =>  'jumlah_tunjangan',
-                            'value' => function ($model) {
-                                return 'Rp ' . number_format($model->jumlah_tunjangan, 0, ',', '.');
-                            }
-                        ],
-                        [
-                            'attribute' =>  'jumlah_potongan',
-                            'value' => function ($model) {
-                                return 'Rp ' . number_format($model->jumlah_potongan, 0, ',', '.');
-                            }
-                        ],
-                        [
-                            'attribute' => 'potongan_wfh_hari',
+                            'contentOptions' => ['style' => 'width: 30%'],
+                            'label' => 'Potongan WFH Perhari',
                             'value' => function ($model) {
                                 return 'Rp ' . number_format($model->potongan_wfh_hari, 0, ',', '.');
                             }
                         ],
                         [
-                            'attribute' => 'jumlah_potongan_wfh',
+                            'contentOptions' => ['style' => 'width: 30%'],
+                            'label' => 'Total Potongan WFH',
                             'value' => function ($model) {
                                 return 'Rp ' . number_format($model->jumlah_potongan_wfh, 0, ',', '.');
                             }
                         ],
+                    ]
+                ]) ?>
+
+
+            </div>
+            <div class="col-12">
+
+                <hr>
+            </div>
+            <div class="col-12">
+                <?= DetailView::widget([
+                    'model' => $model,
+                    'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                    'attributes' => [
                         [
+                            'headerOptions' => ['style' => 'width: 30%'],
+
                             'attribute' => 'gaji_diterima',
                             'value' => function ($model) {
                                 return 'Rp ' . number_format($model->gaji_diterima, 0, ',', '.');
                             }
                         ],
+                        [
+                            'headerOptions' => ['style' => 'width: 30%'],
+                            'label' => 'Gaji Diterima (Terbilang)',
+                            'value' => function ($model) {
+                                $newTerbilang = new Terbilang();
+                                $terbilang = $newTerbilang->toTerbilang($model->gaji_diterima);
+                                return $terbilang . ' Rupiah';
+                            }
+                        ],
                     ],
-                ]) ?>
-            </div>
+                ]) ?></div>
 
         </div>
 

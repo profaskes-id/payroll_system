@@ -7,6 +7,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var backend\models\PengajuanLembur $model */
 
+
 $this->title = $model->karyawan->nama . " (" . date('d-M-Y', strtotime($model->tanggal)) . ")";
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Pengajuan Lembur'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
@@ -88,9 +89,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
+                    'label' => 'Durasi Lembur',
+                    'value' => function ($model) {
+                        return date('H:i:s', strtotime($model->durasi ?? '00:00'));
+                    },
+
+                ],
+                [
                     'label' => 'Tanggal',
                     'value' => function ($model) {
                         $tanggalFormat = new Tanggal();
+                        if ($model->tanggal == null) {
+                            return '-';
+                        }
                         return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal);
                         // return date('d-M-Y', strtotime($model->tanggal));
                     }
@@ -102,9 +113,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
-                    'label' => 'Tanggal',
+                    'label' => 'Disetujui Pada',
                     'value' => function ($model) {
                         $tanggalFormat = new Tanggal();
+                        if ($model->disetujui_pada == null) {
+                            return '-';
+                        }
                         return $tanggalFormat->getIndonesiaFormatTanggal($model->disetujui_pada);
                         // return date('d-M-Y', strtotime($model->disetujui_pada));
                     }

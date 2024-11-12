@@ -20,13 +20,9 @@ class PeriodeGajiHelper extends MasterKode
 
     public static function getPeriodeGajiBulanIni($bulan = null, $tahun = null)
     {
-        if ($bulan == null) {
-            $bulan = date('m');
-        }
-        if ($tahun == null) {
-            $tahun = date('Y');
-        }
-        $data =  PeriodeGaji::findOne(['bulan' => $bulan, 'tahun' => $tahun]);
-        return $data;
+        $bulan = $bulan ?? date('m');
+        $tahun = $tahun ?? date('Y');
+
+        return PeriodeGaji::findOne(['bulan' => $bulan, 'tahun' => $tahun]);
     }
 }

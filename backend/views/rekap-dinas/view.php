@@ -45,6 +45,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => 'Tanggal Mulai',
                     'value' => function ($model) {
                         $tanggalFormat = new Tanggal();
+                        if ($model->tanggal_mulai == null) {
+                            return '-';
+                        }
                         return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_mulai);
                         // return date('d-M-Y', strtotime($model->tanggal_mulai));
                     }
@@ -53,6 +56,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => 'Tanggal Mulai',
                     'value' => function ($model) {
                         $tanggalFormat = new Tanggal();
+                        if ($model->tanggal_selesai == null) {
+                            return '-';
+                        }
                         return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_selesai);
                         // return date('d-M-Y', strtotime($model->tanggal_selesai));
                     }

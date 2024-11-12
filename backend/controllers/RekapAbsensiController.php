@@ -111,22 +111,13 @@ class RekapAbsensiController extends Controller
 
 
         $pdf = new Pdf([
-
             'mode' => Pdf::MODE_CORE,
-
             'format' => Pdf::FORMAT_A4,
-
             'orientation' => Pdf::ORIENT_LANDSCAPE,
-
             'destination' => Pdf::DEST_BROWSER,
-
             'content' => $content,
-
-
             'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
-
             'cssInline' => '.kv-heading-1{font-size:18px}',
-
             'options' => ['title' => 'Report Rekap Absensi ' . date('F')],
             'methods' => [
 

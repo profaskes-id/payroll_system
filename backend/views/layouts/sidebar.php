@@ -71,6 +71,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                 'label' => 'Transaksi',
                                 'icon' => 'th',
                                 'items' => [
+                                    ['label' => 'Transaksi Gaji',  'icon' => 'fa fa-exchange-alt', 'url' => ['/transaksi-gaji/index'],],
                                     ['label' => 'Periode Gaji',  'icon' => 'fa fa-calendar-check', 'url' => ['/periode-gaji/index'],],
                                     ['label' => 'Tunjangan',  'icon' => 'fa fa-hand-holding-usd', 'url' => ['/tunjangan/index'],],
                                     ['label' => 'Tunjangan Karyawan',  'icon' => 'fa fa-user-tie', 'url' => ['/tunjangan-detail/index'],],
@@ -78,7 +79,6 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                     ['label' => 'Potongan Karyawan',  'icon' => 'fa fa-user-slash', 'url' => ['/potongan-detail/index'],],
                                     ['label' => 'Potongan Gaji',  'icon' => 'fa fa-dollar-sign', 'url' => ['/gaji-potongan/index'],],
                                     ['label' => 'Tunjangan Gaji',  'icon' => 'fa fa-money-bill-wave', 'url' => ['/gaji-tunjangan/index'],],
-                                    ['label' => 'Transaksi',  'icon' => 'fa fa-exchange-alt', 'url' => ['/transaksi-gaji/index'],],
                                 ],
                             ],
                             [
