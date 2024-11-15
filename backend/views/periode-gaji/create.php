@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\PeriodeGaji $model */
 
-$this->title = Yii::t('app', 'Create Periode Gaji');
+$this->title = Yii::t('app', 'Tambah Periode Gaji');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Periode Gaji'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

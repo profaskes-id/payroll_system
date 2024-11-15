@@ -57,13 +57,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'text-align: center;'],
                     'content' => function ($model, $key, $index, $column) {
                         return "<div class='d-flex '>" .
-                            Html::a(
-                                '<i class="fas fa-edit"></i>', // Icon tong sampah (menggunakan Font Awesome)
-                                ['update', 'id_gaji_potongan' => $model->id_gaji_potongan,],
-                                [
-                                    'class' => 'edit-button mr-2',
-                                ]
-                            ) .
+                            // Html::a(
+                            //     '<i class="fas fa-edit"></i>', // Icon tong sampah (menggunakan Font Awesome)
+                            //     ['update', 'id_gaji_potongan' => $model->id_gaji_potongan,],
+                            //     [
+                            //         'class' => 'edit-button mr-2',
+                            //     ]
+                            // ) .
                             Html::a(
                                 '<i class="fas fa-trash"></i>', // Icon tong sampah (menggunakan Font Awesome)
                                 ['delete', 'id_gaji_potongan' => $model->id_gaji_potongan,],

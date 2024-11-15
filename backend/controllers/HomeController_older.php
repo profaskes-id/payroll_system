@@ -162,13 +162,12 @@ class HomeController extends Controller
     }
     public function actionAbsenMasuk()
     {
-        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
-        $isAda = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
         $this->layout = 'mobile-main';
         $model = new Absensi();
         $isTerlambatActive = false;
         if ($this->request->isPost) {
 
+            $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
             $model->id_karyawan = $karyawan->id_karyawan;
             $model->tanggal = date('Y-m-d');
             $model->kode_status_hadir = "H";
@@ -178,14 +177,9 @@ class HomeController extends Controller
             $model->keterangan = $model->is_lembur ? 'Lembur' : '-';
             $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
             $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
-
-            if (!$isAda) {
-                if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil');
-                    $isTerlambatActive = true;
-                }
-            } else {
-                Yii::$app->session->setFlash('error', 'Anda Sudah Absen Masuk Hari Ini');
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil');
+                $isTerlambatActive = true;
             }
         }
         $dataProvider = new ActiveDataProvider([
@@ -335,12 +329,9 @@ class HomeController extends Controller
     }
     public function actionAbsenTerlambat()
     {
-
-        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
-        $isAda = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
-
         $model = new Absensi();
         if ($this->request->isPost) {
+            $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
             $model->id_karyawan = $karyawan->id_karyawan;
             $model->tanggal = date('Y-m-d');
             $model->kode_status_hadir = "H";
@@ -348,12 +339,8 @@ class HomeController extends Controller
             $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
             $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
             $model->alasan_terlambat = Yii::$app->request->post('Absensi')['alasan_terlambat'];
-            if (!$isAda) {
-                if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil, Anda Terlambat');
-                }
-            } else {
-                Yii::$app->session->setFlash('success', 'Absen Masuk Anda Sudah Ada');
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil, Anda Terlambat');
             }
         }
 
@@ -361,11 +348,9 @@ class HomeController extends Controller
     }
     public function actionAbsenTerlalujauh()
     {
-        $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
-        $isAda = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
-
         $model = new Absensi();
         if ($this->request->isPost) {
+            $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
             $model->id_karyawan = $karyawan->id_karyawan;
             $model->tanggal = date('Y-m-d');
             $model->kode_status_hadir = "H";
@@ -373,12 +358,8 @@ class HomeController extends Controller
             $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
             $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
             $model->alasan_terlambat = Yii::$app->request->post('Absensi')['alasan_terlalu_jauh'];
-            if (!$isAda) {
-                if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil, Anda Terlalu Jauh');
-                }
-            } else {
-                Yii::$app->session->setFlash('success', 'Absen Masuk Anda Sudah Ada');
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil, Anda Terlambat');
             }
         }
 

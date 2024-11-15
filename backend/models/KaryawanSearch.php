@@ -50,6 +50,13 @@ class KaryawanSearch extends Karyawan
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            //order sesuai anama asc
+            'sort' => [
+                'defaultOrder' => [
+                    'is_aktif' => SORT_DESC,
+                    'nama' => SORT_ASC,
+                ]
+            ]
         ]);
 
         $this->load($params);
@@ -280,6 +287,7 @@ class KaryawanSearch extends Karyawan
             ->leftJoin('{{%atasan_karyawan}} atsk', 'k.id_karyawan = atsk.id_karyawan')
             ->leftJoin('{{%master_lokasi}} msl', 'atsk.id_master_lokasi = msl.id_master_lokasi')
             ->groupBy('k.id_karyawan')
+            ->orderBy(['k.nama' => SORT_ASC])
             ->addParams([':tanggal' => $tanggalSet]); // Menambahkan parameter tanggal
 
         $results = $query->all();
