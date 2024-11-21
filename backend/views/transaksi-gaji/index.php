@@ -77,7 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
 
 
-            <div class="col-2 col-md-1">
+            <div class="col-2 col-md-1 mr-2 mr-md-0">
                 <button class="add-button" type="submit">
                     <i class="fas fa-search"></i>
                 </button>

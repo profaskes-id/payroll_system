@@ -1188,10 +1188,6 @@ input:checked + .toggle-bg {
   z-index: 999;
 }
 
-.z-\[10\] {
-  z-index: 10;
-}
-
 .col-span-1 {
   grid-column: span 1 / span 1;
 }
@@ -1781,12 +1777,6 @@ input:checked + .toggle-bg {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
-.scale-150 {
-  --tw-scale-x: 1.5;
-  --tw-scale-y: 1.5;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
 .transform {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
@@ -2067,10 +2057,6 @@ input:checked + .toggle-bg {
   border-radius: 0.75rem;
 }
 
-.rounded-\[0px\] {
-  border-radius: 0px;
-}
-
 .rounded-e-full {
   border-start-end-radius: 9999px;
   border-end-end-radius: 9999px;
@@ -2112,10 +2098,6 @@ input:checked + .toggle-bg {
 
 .border-0 {
   border-width: 0px;
-}
-
-.border-\[10px\] {
-  border-width: 10px;
 }
 
 .border-b {
@@ -2179,11 +2161,6 @@ input:checked + .toggle-bg {
 
 .border-transparent {
   border-color: transparent;
-}
-
-.border-white {
-  --tw-border-opacity: 1;
-  border-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
 .\!bg-gray-50 {
@@ -2469,21 +2446,6 @@ input:checked + .toggle-bg {
   background-color: rgb(253 253 234 / var(--tw-bg-opacity));
 }
 
-.bg-\[\#ff7c7c\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 124 124 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#fc6a03\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(252 106 3 / var(--tw-bg-opacity));
-}
-
-.bg-\[\#ff0000\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 0 0 / var(--tw-bg-opacity));
-}
-
 .bg-gradient-to-r {
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
 }
@@ -2645,12 +2607,20 @@ input:checked + .toggle-bg {
   padding-bottom: 1.25rem;
 }
 
+.pe-2 {
+  padding-inline-end: 0.5rem;
+}
+
 .ps-1\.5 {
   padding-inline-start: 0.375rem;
 }
 
 .ps-10 {
   padding-inline-start: 2.5rem;
+}
+
+.ps-2 {
+  padding-inline-start: 0.5rem;
 }
 
 .ps-3\.5 {
@@ -2691,6 +2661,10 @@ input:checked + .toggle-bg {
 
 .text-justify {
   text-align: justify;
+}
+
+.text-start {
+  text-align: start;
 }
 
 .text-end {

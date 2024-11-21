@@ -287,7 +287,6 @@ class KaryawanSearch extends Karyawan
             ->leftJoin('{{%atasan_karyawan}} atsk', 'k.id_karyawan = atsk.id_karyawan')
             ->leftJoin('{{%master_lokasi}} msl', 'atsk.id_master_lokasi = msl.id_master_lokasi')
             ->groupBy('k.id_karyawan')
-            ->orderBy(['k.nama' => SORT_ASC])
             ->addParams([':tanggal' => $tanggalSet]); // Menambahkan parameter tanggal
 
         $results = $query->all();
@@ -389,15 +388,22 @@ class KaryawanSearch extends Karyawan
     {
 
         $query = Karyawan::find()
-            ->select(['karyawan.id_karyawan', 'karyawan.nama', 'jam_kerja.nama_jam_kerja', 'master_kode.nama_kode', 'jam_kerja_karyawan.max_terlambat'])
+            ->select(['karyawan.id_karyawan', 'karyawan.nama', 'jam_kerja.*',  'jam_kerja_karyawan.*', 'master_kode.nama_kode'])
             ->asArray()
             ->leftJoin('jam_kerja_karyawan', 'karyawan.id_karyawan = jam_kerja_karyawan.id_karyawan')
             ->leftJoin('jam_kerja', 'jam_kerja_karyawan.id_jam_kerja = jam_kerja.id_jam_kerja')
-            ->leftJoin('master_kode', 'master_kode.nama_group = "jenis-shift" ')
+            ->leftJoin('master_kode', 'master_kode.kode = jam_kerja.jenis_shift and master_kode.nama_group = "jenis-shift" ')
+
             ->orderBy(['karyawan.nama' => SORT_ASC])
             ->all();
-
         // dd($query);
+        $dataProvider = new ArrayDataProvider([
+            'models' => $query,
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
+
         $dataProvider = new ArrayDataProvider([
             'models' => $query,
             'pagination' => [

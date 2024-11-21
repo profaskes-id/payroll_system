@@ -47,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </p>
 
         <div class="row">
-            <div class="col-6">
+            <div class="col-md-6">
                 <?= DetailView::widget(
                     [
                         'model' => $model,
@@ -119,7 +119,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ) ?>
             </div>
-            <div class="col-6">
+            <div class="col-md-6">
 
                 <?= DetailView::widget([
                     'model' => $model,
@@ -248,10 +248,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
             </div>
             <div class="col-12">
-
                 <hr>
             </div>
-            <div class="col-12">
+            <div class="col-md-6 col-12">
                 <?= DetailView::widget([
                     'model' => $model,
                     'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
@@ -259,25 +258,127 @@ $this->params['breadcrumbs'][] = $this->title;
                         [
                             'headerOptions' => ['style' => 'width: 30%'],
 
-                            'attribute' => 'gaji_diterima',
+                            'attribute' => 'Tunjangan  Gaji',
                             'value' => function ($model) {
-                                return 'Rp ' . number_format($model->gaji_diterima, 0, ',', '.');
+                                return 'Rp ' . number_format($model->jumlah_tunjangan, 0, ',', '.');
                             }
                         ],
                         [
                             'headerOptions' => ['style' => 'width: 30%'],
-                            'label' => 'Gaji Diterima (Terbilang)',
+                            'label' => 'Potongan Gaji',
                             'value' => function ($model) {
                                 $newTerbilang = new Terbilang();
-                                $terbilang = $newTerbilang->toTerbilang($model->gaji_diterima);
+                                $terbilang = $newTerbilang->toTerbilang($model->jumlah_tunjangan);
                                 return $terbilang . ' Rupiah';
                             }
                         ],
                     ],
-                ]) ?></div>
+                ]) ?>
+            </div>
+            <div class="col-md-6 col-12">
+                <?= DetailView::widget([
+                    'model' => $model,
+                    'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                    'attributes' => [
+                        [
+                            'headerOptions' => ['style' => 'width: 30%'],
 
+                            'attribute' => 'Tunjangan  Gaji',
+                            'value' => function ($model) {
+                                return 'Rp ' . number_format($model->jumlah_potongan, 0, ',', '.');
+                            }
+                        ],
+                        [
+                            'headerOptions' => ['style' => 'width: 30%'],
+                            'label' => 'Potongan Gaji',
+                            'value' => function ($model) {
+                                $newTerbilang = new Terbilang();
+                                $terbilang = $newTerbilang->toTerbilang($model->jumlah_potongan);
+                                return $terbilang . ' Rupiah';
+                            }
+                        ],
+                    ],
+                ]) ?>
+            </div>
+            <hr>
+            <div class="col-12">
+                <hr>
+            </div>
+            <div class="col-md-6 col-12">
+                <?= DetailView::widget([
+                    'model' => $model,
+                    'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                    'attributes' => [
+                        [
+                            'headerOptions' => ['style' => 'width: 30%'],
+
+                            'attribute' => 'Keterangan',
+                            'value' => function ($model) {
+                                return  $model->keterangan_tunjangan_lainnya ?? '-';
+                            }
+                        ],
+                        [
+                            'headerOptions' => ['style' => 'width: 30%'],
+                            'attribute' => 'Total Tunjangan  ',
+                            'value' => function ($model) {
+                                return 'Rp ' . number_format($model->tunjangan_lainnya, 0, ',', '.');
+                            }
+                        ],
+                    ],
+                ]) ?>
+            </div>
+            <div class="col-md-6 col-12">
+                <?= DetailView::widget([
+                    'model' => $model,
+                    'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                    'attributes' => [
+                        [
+                            'headerOptions' => ['style' => 'width: 30%'],
+
+                            'attribute' => 'Keterangan',
+                            'value' => function ($model) {
+                                return  $model->keterangan_potongan_lainnya ?? '-';
+                            }
+                        ],
+                        [
+                            'headerOptions' => ['style' => 'width: 30%'],
+                            'attribute' => 'Total Potongan  ',
+                            'value' => function ($model) {
+                                return 'Rp ' . number_format($model->potongan_lainnya, 0, ',', '.');
+                            }
+                        ],
+                    ],
+                ]) ?>
+            </div>
+            <hr>
         </div>
+        <div class="col-12">
+            <?= DetailView::widget([
+                'model' => $model,
+                'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                'attributes' => [
+                    [
+                        'headerOptions' => ['style' => 'width: 30%'],
 
+                        'attribute' => 'gaji_diterima',
+                        'value' => function ($model) {
+                            return 'Rp ' . number_format($model->gaji_diterima, 0, ',', '.');
+                        }
+                    ],
+                    [
+                        'headerOptions' => ['style' => 'width: 30%'],
+                        'label' => 'Gaji Diterima (Terbilang)',
+                        'value' => function ($model) {
+                            $newTerbilang = new Terbilang();
+                            $terbilang = $newTerbilang->toTerbilang($model->gaji_diterima);
+                            return $terbilang . ' Rupiah';
+                        }
+                    ],
+                ],
+            ]) ?></div>
 
     </div>
+
+
+</div>
 </div>

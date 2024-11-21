@@ -53,7 +53,7 @@ class JamKerjaKaryawanController extends Controller
     {
         $searchModel = new KaryawanSearch();
         $dataProvider = $searchModel->searchJadwalKerja($this->request->queryParams);
-
+        
 
         if (\Yii::$app->request->isPost) {
             $id_karyawan = Yii::$app->request->post('KaryawanSearch')['id_karyawan'];
@@ -92,6 +92,7 @@ class JamKerjaKaryawanController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
+
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Jam kerja karyawan ditambahkan');
                     return $this->redirect(['view', 'id_karyawan' => $model->id_karyawan]);
@@ -118,7 +119,10 @@ class JamKerjaKaryawanController extends Controller
     {
         $model = $this->findModel($id_jam_kerja_karyawan);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post()) ) {
+   
+            
+             $model->save();
             return $this->redirect(['view', 'id_karyawan' => $model->id_karyawan]);
         }
 

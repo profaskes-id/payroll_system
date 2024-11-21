@@ -39,6 +39,17 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
     </div>
+
+    <br>
+
+    <div class="table-container table-responsive">
+        <!-- // ['label' => 'Tunjangan', 'icon' => 'fa fa-hand-holding-usd', 'url' => ['/tunjangan/index'],], -->
+        <div class="d-flex justify-content-start">
+            <a href="/panel/tunjangan/create" target="_blank" class="tambah-button"><i class="fa fa-plus"> Tunjangan Baru</i></a>
+            <a href="/panel/tunjangan/index" target="_blank" class="reset-button"><i class="fa fa-list"> list Tunjangan </i></a>
+        </div>
+    </div>
+
     <div class="table-container table-responsive">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,

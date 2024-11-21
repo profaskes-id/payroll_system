@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-view">
 
-    <div class="table-container table-responsive">
+    <div class='table-container'>
 
         <div class="costume-container">
             <p class="">
@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Html::a(Yii::t('user', 'Delete'), ['delete', 'id' => $user->id], [
                 'class' => 'reset-button',
                 'data' => [
-                    'confirm' => Yii::t('user', 'Apakah Anda Yakin Ingin Menghapus Item Ini ?'),
+                    'confirm' => Yii::t('user', 'Are you sure you want to delete this item?'),
                     'method' => 'post',
                 ],
             ]) ?>

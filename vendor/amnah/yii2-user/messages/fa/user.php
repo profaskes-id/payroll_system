@@ -74,7 +74,7 @@ return [
     'Reset' => 'بازنشانی',
     'Create {modelClass}' => 'ساخت {modelClass}',
     'Update {modelClass}: ' => 'بروزرسانی {modelClass}',
-    'Apakah Anda Yakin Ingin Menghapus Item Ini ?' => 'آیا از حذف این مورد مطمئنید؟',
+    'Are you sure you want to delete this item?' => 'آیا از حذف این مورد مطمئنید؟',
 
     // default views
     'Account' => 'حساب',

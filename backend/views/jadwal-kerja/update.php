@@ -7,11 +7,10 @@ use yii\helpers\Html;
 
 $this->title = 'Update Jadwal Kerja ';
 $this->params['breadcrumbs'][] = ['label' => 'Jadwal kerja', 'url' => ['jam-kerja/view', 'id_jam_kerja' => $model->id_jam_kerja]];
-$this->params['breadcrumbs'][] = ['label' => $model->id_jadwal_kerja, 'url' => ['view', 'id_jadwal_kerja' => $model->id_jadwal_kerja]];
+$this->params['breadcrumbs'][] = ['label' => $model->jamKerja->nama_jam_kerja, 'url' => ['view', 'id_jadwal_kerja' => $model->id_jadwal_kerja]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="jadwal-kerja-update">
-
 
     <div class="costume-container">
         <p class="">

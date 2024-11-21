@@ -52,14 +52,13 @@ class TransaksiGaji extends \yii\db\ActiveRecord
 
     public function rules()
     {
-        return [
-            [['nomer_identitas', 'kode_karyawan',  'nama', 'bagian', 'jabatan', 'jam_kerja', 'status_karyawan', 'jumlah_hari_kerja', 'jumlah_hadir', 'jumlah_sakit', 'jumlah_wfh', 'jumlah_cuti', 'gaji_pokok', 'jumlah_jam_lembur', 'lembur_perjam', 'total_lembur', 'jumlah_tunjangan', 'jumlah_potongan', 'potongan_wfh_hari', 'jumlah_potongan_wfh', 'jumlah_terlambat', 'potongan_terlambat_permenit', 'jumlah_potongan_terlambat'], 'required'],
-            [['jam_kerja', 'periode_gaji', 'jumlah_hari_kerja', 'jumlah_hadir', 'jumlah_sakit', 'jumlah_wfh', 'jumlah_cuti', 'jumlah_tidak_hadir'], 'integer'],
-            [['gaji_pokok', 'lembur_perjam', 'total_lembur', 'jumlah_tunjangan', 'jumlah_potongan', 'potongan_wfh_hari', 'jumlah_potongan_wfh', 'potongan_tidak_hadir_hari', 'jumlah_potongan_tidak_hadir', 'potongan_terlambat_permenit', 'jumlah_potongan_terlambat', 'gaji_diterima'], 'number'],
-            [['jumlah_jam_lembur', 'jumlah_terlambat'], 'safe'],
-            [['nomer_identitas', 'nama', 'bagian', 'jabatan', 'status_karyawan'], 'string', 'max' => 255],
-            [['kode_karyawan'], 'string', 'max' => 10],
-        ];
+            return [
+                [['kode_karyawan', 'nomer_identitas', 'nama', 'bagian', 'jabatan', 'jam_kerja', 'status_karyawan', 'jumlah_hari_kerja', 'jumlah_hadir', 'jumlah_sakit', 'jumlah_wfh', 'jumlah_cuti', 'gaji_pokok', 'jumlah_jam_lembur', 'lembur_perjam', 'total_lembur', 'jumlah_tunjangan', 'jumlah_potongan', 'potongan_wfh_hari', 'jumlah_potongan_wfh', 'jumlah_terlambat', 'potongan_terlambat_permenit', 'jumlah_potongan_terlambat'], 'required'],
+                [['jam_kerja', 'periode_gaji', 'jumlah_hari_kerja', 'jumlah_hadir', 'jumlah_sakit', 'jumlah_wfh', 'jumlah_cuti', 'jumlah_tidak_hadir'], 'integer'],
+                [['gaji_pokok', 'lembur_perjam', 'total_lembur', 'jumlah_tunjangan', 'jumlah_potongan', 'potongan_wfh_hari', 'jumlah_potongan_wfh', 'potongan_tidak_hadir_hari', 'jumlah_potongan_tidak_hadir', 'potongan_terlambat_permenit', 'jumlah_potongan_terlambat', 'gaji_diterima', 'tunjangan_lainnya', 'potongan_lainnya'], 'number'],
+                [['jumlah_jam_lembur', 'jumlah_terlambat'], 'safe'],
+                [['kode_karyawan', 'nomer_identitas', 'nama', 'bagian', 'jabatan', 'status_karyawan', 'keterangan_tunjangan_lainnya', 'keterangan_potongan_lainnya'], 'string', 'max' => 255],
+            ];
     }
 
     /**
@@ -97,6 +96,10 @@ class TransaksiGaji extends \yii\db\ActiveRecord
             'potongan_terlambat_permenit' => 'Potongan Terlambat Permenit',
             'jumlah_potongan_terlambat' => 'Jumlah Potongan Terlambat',
             'gaji_diterima' => 'Gaji Diterima',
+            'keterangan_tunjangan_lainnya' => 'Keterangan Tunjangan Lainnya',
+            'keterangan_potongan_lainnya' => 'Keterangan Potongan Lainnya',
+            'tunjangan_lainnya' => 'Tunjangan Lainnya',
+            'potongan_lainnya' => 'Potongan Lainnya',
         ];
     }
 

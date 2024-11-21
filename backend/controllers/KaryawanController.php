@@ -13,6 +13,7 @@ use backend\models\KaryawanSearch;
 use backend\models\MasterKab;
 use backend\models\MasterKec;
 use backend\models\PengalamanKerjaSearch;
+use backend\models\Resign;
 use backend\models\RiwayatKesehatanSearch;
 use backend\models\RiwayatPelatihan;
 use backend\models\RiwayatPelatihanSearch;
@@ -228,6 +229,7 @@ class KaryawanController extends Controller
     {
         $model = new Karyawan();
 
+
         if ($this->request->isPost) {
             $lampiranFileKtp = UploadedFile::getInstance($model, 'ktp');
             $lampiranFileCv = UploadedFile::getInstance($model, 'cv');
@@ -241,6 +243,18 @@ class KaryawanController extends Controller
                 $model->kode_negara = 'indonesia';
                 $model->kode_karyawan = Yii::$app->request->post('Karyawan')['kode_karyawan'] ?? $model->generateAutoCode();
                 $model->nama = strtoupper($model->nama);
+                if ($model->is_aktif == 0) {
+                    $suratPengunduranDiri = UploadedFile::getInstance($model, 'surat_pengunduran_diri') ?? null;
+                    $data = [
+                        'surat_pengunduran_diri' => $suratPengunduranDiri
+                    ];
+
+                    foreach ($data as $key => $value) {
+                        if ($value != null) {
+                            $this->saveImage($model, $value, $key);
+                        }
+                    }
+                }
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Menamabahkan  Data');
                     return $this->redirect(['index']);
@@ -274,29 +288,49 @@ class KaryawanController extends Controller
 
         if ($this->request->isPost && $model->load($this->request->post())) {
 
+            $suratPengunduranDiri = null;
+
+
+            if ($model->is_aktif == 1) {
+                $oldPost['tanggal_resign'] = null;
+                // $this->deleteImage($model->surat_pengunduran_diri);
+                if (isset($oldPost['surat_pengunduran_diri'])) {
+
+                    $this->deleteImage($oldPost['surat_pengunduran_diri']);
+                }
+                $oldPost['surat_pengunduran_diri'] = null;
+            } else {
+                $suratPengunduranDiri = UploadedFile::getInstance($model, 'surat_pengunduran_diri');
+            }
+
             $lampiranFileKtp = UploadedFile::getInstance($model, 'ktp');
             $lampiranFileCv = UploadedFile::getInstance($model, 'cv');
             $foto = UploadedFile::getInstance($model, 'foto');
             $lampiranFileIjazah = UploadedFile::getInstance($model, 'ijazah_terakhir');
 
+
             $data = [
                 'ktp' => $lampiranFileKtp,
                 'cv' => $lampiranFileCv,
                 'foto' => $foto,
-                'ijazah_terakhir' => $lampiranFileIjazah
+                'ijazah_terakhir' => $lampiranFileIjazah,
+                'surat_pengunduran_diri' => $suratPengunduranDiri
             ];
 
             foreach ($data as $key => $value) {
                 if ($value != null) {
                     $this->saveImage($model, $value, $key);
                     // Hapus gambar lama jika ada
-                    if ($oldPost[$key]) {
+                    if (isset($oldPost[$key])) {
                         $this->deleteImage($oldPost[$key]);
                     }
                 } else {
                     $model->$key = $oldPost[$key];
                 }
             }
+
+
+
 
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'Berhasil Melakukan Upadte Data Karyawan');
@@ -308,6 +342,7 @@ class KaryawanController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+
         ]);
     }
 
@@ -326,6 +361,7 @@ class KaryawanController extends Controller
         $oldThumbnailCv = $oldPost['cv'];
         $foto = $oldPost['foto'];
         $oldThumbnailIjazahTerakhir = $oldPost['ijazah_terakhir'];
+        $oldSuratPengunduranDiri =   $oldPost['surat_pengunduran_diri'];
 
         if ($oldThumbnailKtp) {
             $this->deleteImage($oldThumbnailKtp);
@@ -342,8 +378,9 @@ class KaryawanController extends Controller
         if ($oldThumbnailIjazahTerakhir) {
             $this->deleteImage($oldThumbnailIjazahTerakhir);
         }
-
-
+        if ($oldSuratPengunduranDiri) {
+            $this->deleteImage($oldSuratPengunduranDiri);
+        }
 
         $model->delete();
 
@@ -379,11 +416,15 @@ class KaryawanController extends Controller
             $uploadsDir =  Yii::getAlias('@webroot/uploads/foto/');
         } elseif ($type == 'ijazah_terakhir' || $type == 3) {
             $uploadsDir =  Yii::getAlias('@webroot/uploads/ijazah_terakhir/');
+        } elseif ($type == 'surat_pengunduran_diri' || $type == 4) {
+            $uploadsDir =  Yii::getAlias('@webroot/uploads/surat_pengunduran_diri/');
         } else {
             return false;
         }
 
         if ($uploadedFile) {
+
+
 
             if (!is_dir($uploadsDir)) {
                 mkdir($uploadsDir, 0777, true);

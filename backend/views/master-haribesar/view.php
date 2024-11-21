@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -38,9 +39,18 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= DetailView::widget([
             'model' => $model,
             'attributes' => [
-                'tanggal',
+                [
+                    'label' => "tanggal",
+                    'value' => function ($model) {
+                        $tanggal = new Tanggal();
+                        return $tanggal->getIndonesiaFormatTanggal($model->tanggal);
+                    }
+                ],
                 'nama_hari:ntext',
-                'libur_nasional',
+                [
+                    'label' => 'libur nasional',
+                    'value' => $model->libur_nasional == 1 ? 'Ya' : 'Tidak ',
+                ],
                 'pesan_default:ntext',
                 'lampiran:ntext',
             ],

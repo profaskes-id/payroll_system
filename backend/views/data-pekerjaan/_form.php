@@ -65,7 +65,7 @@ use yii\widgets\ActiveForm;
         </div>
 
         <div class="col-12 col-md-4">
-            <?= $form->field($model, 'dari')->textInput(['type' => 'date', 'id' => 'dari',  'max' => '2100-12-31']) ?>
+            <?= $form->field($model, 'dari')->textInput(['type' => 'date', 'id' => 'dari',  'max' => '2100-12-31'])->label("Dari <span class='text-danger'>(Bulan Hari Tahun)</span>") ?>
         </div>
 
         <div class="col-12 col-md-4">
@@ -76,13 +76,13 @@ use yii\widgets\ActiveForm;
                     3 => '1 Tahun',
                 ], // Daftar opsi
                 ['class' => 'selama', 'itemOptions' => ['labelOptions' => ['style' => 'margin-right: 20px;', 'max' => '2100-12-31']]] // Opsi tambahan, misalnya style
-            )->label('Selama ') ?>
+            )->label("Selama")?>
         </div>
 
 
         <div class="col-12 col-md-4 row align-items-center">
             <div class="p-1 col-12">
-                <?= $form->field($model, 'is_aktif')->textInput(['id' => 'kode_sampai', 'type' => 'date',])->label('is_aktif') ?>
+                <?= $form->field($model, 'sampai')->textInput(['id' => 'kode_sampai', 'type' => 'date',])->label("Sampai <span class='text-danger'>(Bulan Hari Tahun)</span>") ?>
             </div>
             <div class="col-5 mt-3">
                 <!-- <label for="manual_kode">
@@ -105,7 +105,7 @@ use yii\widgets\ActiveForm;
                     1 => 'Aktif',
                 ],
                 ['class' => 'selama', 'itemOptions' => ['labelOptions' => ['style' => 'margin-right: 20px;',]]] // Opsi tambahan, misalnya style
-            )->label('Selama ') ?>
+            )->label('Apakah Aktif ') ?>
         </div>
     </div>
 
@@ -130,8 +130,9 @@ use yii\widgets\ActiveForm;
     const sampai = document.querySelector('.selama');
 
     sampai.addEventListener('change', (e) => {
-        console.info(e.target.value)
-        const startDate = new Date(dari.value);
+         const startDate = new Date(dari.value);
+     
+       
         let endDate;
         if (e.target.value == 1) { // Tambah 3 bulan
             endDate = addMonths(startDate, 3);
@@ -150,7 +151,8 @@ use yii\widgets\ActiveForm;
             const lastDateOfMonth = new Date(year, month, 0).getDate();
 
             // Mengatur kode_sampai sesuai dengan jumlah hari di bulan
-            kode_sampai.value = `${year}-${(month ).toString().padStart(2, '0')}-${lastDateOfMonth}`;
+          //  console.info(`${year}-${(month).toString().padStart(2, '0')}-${lastDateOfMonth}`);
+            kode_sampai.value =`${year}-${(month).toString().padStart(2, '0')}-${lastDateOfMonth}`;
         }
     });
 

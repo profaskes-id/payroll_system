@@ -5,9 +5,9 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\JamKerjaKaryawan $model */
 
-$this->title = 'Update Jam Kerja Karyawan' ;
+$this->title = 'Update Jam Kerja Karyawan';
 $this->params['breadcrumbs'][] = ['label' => 'Jam Kerja Karyawan', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id_jam_kerja_karyawan, 'url' => ['view', 'id_jam_kerja_karyawan' => $model->id_jam_kerja_karyawan]];
+$this->params['breadcrumbs'][] = ['label' => $model->karyawan->nama, 'url' => ['view', 'id_jam_kerja_karyawan' => $model->karyawan->nama]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="jam-kerja-karyawan-update">

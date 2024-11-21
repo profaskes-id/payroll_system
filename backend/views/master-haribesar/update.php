@@ -5,11 +5,9 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\MasterHaribesar $model */
 
-$this->title = Yii::t('app', 'Update Master Haribesar: {name}', [
-    'name' => $model->kode,
-]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Master Haribesars'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->kode, 'url' => ['view', 'kode' => $model->kode]];
+$this->title = Yii::t('app', 'Update Master Hari besar',);
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Master Hari Besar'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => $model->nama_hari, 'url' => ['view', 'kode' => $model->kode]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 <div class="master-haribesar-update">

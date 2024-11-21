@@ -149,8 +149,15 @@ class CetakController extends Controller
             // format content from your own css file if needed or use the
             // enhanced bootstrap css built by Krajee for mPDF formatting 
             'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
-            'cssInline' => '.kv-heading-1{font-size:15px}',
-            'options' => ['title' => 'Report Rekap Absensi ' . date('F')],
+            // 'cssInline' => '.kv-heading-1{font-size:15px}',
+            'options' => [
+                'title' => 'Report Rekap Absensi ' . date('F'),
+                // Set the margins (in millimeters)
+                'margin_left' => 10,    // 10mm left margin
+                'margin_right' => 10,   // 10mm right margin
+                'margin_top' => 15,     // 15mm top margin
+                'margin_bottom' => 15,  // 15mm bottom margin
+            ],
             'filename' => "SURAT-PERJANJIAN-KONTRAK-KERJA-" . strtoupper($karyawan->nama) . ".pdf",
             'methods' => [
                 // 'SetHeader' => ['Data Rekap Absensi ' . date('F')],

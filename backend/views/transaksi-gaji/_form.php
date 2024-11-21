@@ -16,8 +16,8 @@ use yii\widgets\DetailView;
 
 <div class="transaksi-gaji-form">
 
-    <div class="row gap-2  table-container">
-        <div class="col-md-5 ">
+    <div class="row gap-2  table-container ">
+        <div class="col-md-5 col-12">
             <div class="col-12">
                 <?= DetailView::widget(
                     [
@@ -115,13 +115,7 @@ use yii\widgets\DetailView;
                         ],
                     ]
                 ) ?>
-            </div>
-
-
-        </div>
-        <div class="col-12 col-md-7">
-
-            <div class="row">
+                 <div class="row">
                 <div class="col-12">
                     <?= DetailView::widget(
                         [
@@ -140,7 +134,7 @@ use yii\widgets\DetailView;
                         ]
                     ) ?>
                 </div>
-                <div class="col-6">
+                <div class="col-12">
                     <?= DetailView::widget(
                         [
                             'model' => $rekapandata,
@@ -162,7 +156,7 @@ use yii\widgets\DetailView;
                         ]
                     ) ?>
                 </div>
-                <div class="col-6">
+                <div class="col-12">
                     <?= DetailView::widget(
                         [
                             'model' => $rekapandata,
@@ -183,6 +177,11 @@ use yii\widgets\DetailView;
 
             </div>
 
+            </div>
+        </div>
+        <div class="col-12 col-md-7">
+
+           
 
             <?php $form = ActiveForm::begin(); ?>
 
@@ -213,7 +212,39 @@ use yii\widgets\DetailView;
             echo $form->field($model, 'jumlah_jam_lembur')->hiddenInput(['maxlength' => true, 'value' => $dataJamLembur])->label(false);
             ?>
 
-            <div class="row">
+
+
+<div class="row">
+            <div class="col-12 col-md-6">
+                <?php
+                $keteranganTunjanganLainnya = $model->isNewRecord ? '' :  $model->keterangan_tunjangan_lainnya;
+                echo $form->field($model, 'keterangan_tunjangan_lainnya')->textInput(['maxlength' => true,  'type' => 'text', 'value' => $keteranganTunjanganLainnya, ])->label("Keterangan Tunjangan Lainnya ");
+                ?>
+            </div>
+            <div class="col-12 col-md-6">
+                <?php
+                $tunjanganLainnya = $model->isNewRecord ? 0 : (int) $model->tunjangan_lainnya;
+                echo $form->field($model, 'tunjangan_lainnya')->textInput(['maxlength' => true, 'type' => 'number', 'value' => $tunjanganLainnya, 'id' => "tunjangan_lainnya"])->label("Jumlah Tunjangan Lainnya <span class='text-danger'>(Rp)</span>");
+                ?>
+            </div>
+
+
+
+            <div class="col-12 col-md-6">
+                <?php
+                $keteranganPotonganLainnya = $model->isNewRecord ? '' : $model->keterangan_potongan_lainnya;
+                echo $form->field($model, 'keterangan_potongan_lainnya')->textInput(['maxlength' => true,  'type' => 'text', 'value' => $keteranganPotonganLainnya, ])->label("Keterangan Potongan Lainnya ");
+                ?>
+            </div>
+            <div class="col-12 col-md-6">
+                <?php
+                $potongan_lainnya = $model->isNewRecord ? 0 : (int) $model->potongan_lainnya;
+                echo $form->field($model, 'potongan_lainnya')->textInput(['maxlength' => true, 'type' => 'number', 'value' => $potongan_lainnya, 'id' => "potongan_lainnya"])->label("Jumlah Potongan Lainnya <span class='text-danger'>(Rp)</span>");
+                ?>
+            </div>
+
+
+
                 <div class="col-12 col-md-4">
                     <?php
                     $dataJamLembur;
@@ -324,7 +355,8 @@ use yii\widgets\DetailView;
 
                 ->textInput(['id' => "gaji_diterima", 'maxlength' => true, 'readonly' => true, 'value' => $data])
                 ->label("Gaji Diterima Karyawan <span class='text-danger'>(Rp)</span>");
-            echo "<p class='text-muted text-xs mt-0'>Gaji Yang diterima sudah termasuk kalkulasi potongan karyawan & WFH, tunjangan dan lembur</p>";
+            echo "<p class='text-muted text-xs mt-0 text-capitalize'>Gaji Yang diterima sudah termasuk kalkulasi tunjangan,  potongan karyawan, WFH, lembur,  serta potongan terlambat dan tidak hadir</p>";
+
             ?>
 
 
@@ -359,7 +391,7 @@ use yii\widgets\DetailView;
         let todayJson = <?= $rekap ?>;
         let isnewrecord = <?= $isNewRecord  ?> ? true : false;
 
-        let gaji_pokok, potonganWFH, tambahanLembur, jumlahTunjangan, jumlahPotongan, jumlahTidakHadir, jumlahAlfa, jumlahPotonganTerlambat, waktuTerlambat;
+        let gaji_pokok, potonganWFH, tambahanLembur, jumlahTunjangan, jumlahPotongan, jumlahTidakHadir, jumlahAlfa, jumlahPotonganTerlambat, waktuTerlambat , tunjangan_lainnya , potongan_lainnya;
 
 
         function convertToMinutes(timeString) {
@@ -371,7 +403,7 @@ use yii\widgets\DetailView;
 
         function gajiDiterima() {
             console.info(Number(gaji_pokok), Number(tambahanLembur), Number(jumlahTunjangan), Number(jumlahPotongan), Number(potonganWFH), Number(jumlahAlfa), Number(jumlahPotonganTerlambat));
-            gaji_diterima = Number(gaji_pokok) + Number(tambahanLembur) + Number(jumlahTunjangan) - Number(jumlahPotongan) - Number(potonganWFH) - Number(jumlahAlfa) - Number(jumlahPotonganTerlambat);
+            gaji_diterima = Number(gaji_pokok) + Number(tambahanLembur) + Number(jumlahTunjangan) - Number(jumlahPotongan) - Number(potonganWFH) - Number(jumlahAlfa) - Number(jumlahPotonganTerlambat) - Number(potongan_lainnya) + Number(tunjangan_lainnya);
             $('#gaji_diterima').val(Math.floor(gaji_diterima));
         }
 
@@ -389,6 +421,8 @@ use yii\widgets\DetailView;
             jumlahPotonganTerlambat = 0;
             jumlahWFH = Number(todayJson?.absensiData?.total_wfh);
             waktuTerlambat = convertToMinutes(todayJson?.getTerlambat);
+            tunjangan_lainnya = 0;
+            potongan_lainnya = 0
         } else {
             // Jika isnewrecord salah
             console.info(todayJson);
@@ -402,14 +436,27 @@ use yii\widgets\DetailView;
             jumlahPotonganTerlambat = $("#jumlah_potongan_terlambat").val();
             jumlahWFH = todayJson.jumlah_wfh;
             waktuTerlambat = convertToMinutes($('#jumlah_terlambat').val());
+            tunjangan_lainnya = $("#tunjangan_lainnya").val(); 
+            potongan_lainnya = $("#potongan_lainnya").val();
         }
 
 
+        $('#potongan_lainnya').keyup(function(e) {
+            e.preventDefault();
+            potongan_lainnya = Number(this.value); 
+            gajiDiterima();
+
+        });
+        $('#tunjangan_lainnya').keyup(function(e) {
+            e.preventDefault();
+            tunjangan_lainnya = Number(this.value); 
+            gajiDiterima();
+
+        });
 
 
 
         let totalLembur = 0;
-
         let lemburPerjam = isnewrecord ? todayJson?.jumlahJamLembur.total_menit / 60 : convertToMinutes(todayJson?.jumlah_terlambat);
 
         $('#lembur_perjam').keyup(function(e) {
@@ -449,6 +496,7 @@ use yii\widgets\DetailView;
 
             gajiDiterima();
         });
+        gajiDiterima();
     </script>
 
 </div>

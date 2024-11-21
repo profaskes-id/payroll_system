@@ -28,7 +28,7 @@ return [
     'Banned Reason' => 'Motivo de Suspensão',
     'Current Password' => 'Senha Atual',
     'New Password' => 'Nova Senha',
-    //    'New Password Confirm' => '',
+//    'New Password Confirm' => '',
     'Email Confirmation' => 'E-mail de Confirmação',
 
     'Provider' => 'Provedor',
@@ -48,8 +48,8 @@ return [
     'Incorrect password' => 'Senha Incorreta',
     'Remember Me' => 'Lembrar-me',
     'Email is already active' => 'E-mail já está ativo',
-    //    'Passwords do not match' => '',
-    //    '{attribute} can contain only letters, numbers, and "_"' => '',
+//    'Passwords do not match' => '',
+//    '{attribute} can contain only letters, numbers, and "_"' => '',
 
     // controllers
     'Successfully registered [ {displayName} ]' => 'Registrado com sucesso [ {displayName} ]',
@@ -74,7 +74,7 @@ return [
     'Reset' => 'Reiniciar',
     'Create {modelClass}' => 'Criar {modelClass}',
     'Update {modelClass}: ' => 'Atualizar {modelClass}: ',
-    'Apakah Anda Yakin Ingin Menghapus Item Ini ?' => 'Tem a certeza que deseja excluir?',
+    'Are you sure you want to delete this item?' => 'Tem a certeza que deseja excluir?',
 
     // default views
     'Account' => 'Conta',
@@ -98,6 +98,6 @@ return [
     'Profile' => 'Perfil',
     'Resend' => 'Re-enviar',
     'Password has been reset' => 'A senha foi reiniciada',
-    //    'Login link sent - Please check your email' => '',
-    //    'Registration link sent - Please check your email' => '',
+//    'Login link sent - Please check your email' => '',
+//    'Registration link sent - Please check your email' => '',
 ];

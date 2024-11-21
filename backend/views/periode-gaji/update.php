@@ -1,15 +1,18 @@
 <?php
 
+use backend\models\Tanggal;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var backend\models\PeriodeGaji $model */
 
-$this->title = Yii::t('app', 'Update Periode Gaji: {name}', [
-    'name' => $model->bulan,
+
+$tanggal = new Tanggal();
+$this->title = Yii::t('app', 'Update Periode Gaji  {name}', [
+    'name' => $tanggal->getBulan($model->bulan),
 ]);
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Periode Gaji'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->bulan, 'url' => ['view', 'bulan' => $model->bulan, 'tahun' => $model->tahun]];
+$this->params['breadcrumbs'][] = ['label' => $tanggal->getBulan($model->bulan), 'url' => ['view', 'bulan' => $model->bulan, 'tahun' => $model->tahun]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 <div class="periode-gaji-update">

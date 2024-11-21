@@ -4,7 +4,6 @@ namespace backend\controllers;
 
 use backend\models\GajiTunjangan;
 use backend\models\GajiTunjanganSearch;
-use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;

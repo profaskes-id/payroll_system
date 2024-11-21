@@ -224,25 +224,26 @@
                                                     }
                                                 ],
                                                 [
+                                                    'attribute' => 'Kode Pos',
+                                                    'value' => function ($model) {
+                                                        if (!$model->is_current_domisili) {
+                                                            return $model->kode_post_identitas;
+                                                        }
+                                                        return $model->kode_post_domisili;
+                                                    }
+                                                ],
+                                                [
                                                     'attribute' => 'Informasi Lain',
                                                     'value' => function ($model) {
                                                         return $model->informasi_lain;
                                                     }
                                                 ],
-                                                [
-                                                    'format' => 'raw',
-                                                    'attribute' => 'Apakah Aktif',
-                                                    'value' => function ($model) {
-                                                        return $model->is_aktif == 1 ? '<span class="text-success">Aktif</span>' : '<span class="text-danger">Resign</span>';
-                                                    }
-                                                ],
-
-
-
                                             ],
                                         ]) ?>
                                     </div>
-                                    <div class="col-md-12">
+
+
+                                    <div class="col-12">
                                         <div class="row">
                                             <div class="col-6 col-md-3">
                                                 <?= DetailView::widget([
@@ -322,6 +323,71 @@
                                                     ],
                                                 ]) ?>
                                             </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-12 row">
+                                        <div class="col-4">
+
+                                            <?= DetailView::widget([
+                                                'model' => $model,
+                                                'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                                                'attributes' => [
+                                                    [
+                                                        'format' => 'raw',
+                                                        'attribute' => 'Status',
+                                                        'value' => function ($model) {
+                                                            return $model->is_aktif == 1 ? '<p class="text-success">Aktif</p>' : '<p class="text-danger">Resign</p>';
+                                                        }
+                                                    ],
+
+                                                ],
+                                            ]) ?>
+
+                                        </div>
+                                        <div class="col-4">
+
+                                            <?= DetailView::widget([
+                                                'model' => $model,
+                                                'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                                                'attributes' => [
+                                                    [
+                                                        'format' => 'raw',
+                                                        'attribute' => 'Tanggal Resign',
+                                                        'value' => function ($model) {
+                                                            $tanggal =  new Tanggal();
+                                                            if ($model->tanggal_resign != null) {
+                                                                return '<p>' .  $tanggal->getIndonesiaFormatTanggal($model->tanggal_resign) . '<p>';
+                                                            }
+                                                            return '<p>Belum Di Set<p>';
+                                                        }
+                                                    ],
+
+                                                ],
+                                            ]) ?>
+
+                                        </div>
+                                        <div class="col-4">
+
+                                            <?= DetailView::widget([
+                                                'model' => $model,
+                                                'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                                                'attributes' => [
+                                                    [
+                                                        'label' => 'Durat Pengunduran Diri',
+                                                        'value' => function ($model) {
+                                                            if ($model->surat_pengunduran_diri != null) {
+                                                                return  '<p>' . Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->surat_pengunduran_diri, ['target' => '_blank']) . '</p>';
+                                                            }
+                                                            return '<p>Belum Di Set<p>';
+                                                        },
+                                                        'format' => 'raw',
+                                                    ],
+
+                                                ],
+                                            ]) ?>
+
                                         </div>
 
                                     </div>
@@ -435,7 +501,7 @@
                                                     if ($model['is_aktif'] == 1) {
                                                         if ($model['id_cetak']) {
                                                             if ($model['surat_upload']) {
-                                                                return Html::a('<button class="btn btn-warning"><i class="fas fa-edit"></i></button></button>', ['/cetak/upload', 'id_cetak' => $model['id_cetak']]);
+                                                                return Html::a('<button class="btn btn-success"><i class="fas fa-eye"></i></button></button>', ['/cetak/upload', 'id_cetak' => $model['id_cetak']]);
                                                             }
                                                             return Html::a('<button class="btn btn-success"><i class="fas fa-upload"></i></button></button>', ['/cetak/upload', 'id_cetak' => $model['id_cetak']]);
                                                         }

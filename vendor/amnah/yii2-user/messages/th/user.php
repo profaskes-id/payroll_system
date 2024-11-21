@@ -20,7 +20,7 @@ return [
     'Username' => 'ชื่อผู้ใช้',
     'Password' => 'รหัสผ่าน',
     'Auth Key' => 'รหัส Auth',
-    //    'Access Token' => '',
+//    'Access Token' => '',
     'Logged In Ip' => 'IP เข้าระบบ',
     'Logged In At' => 'เวลาเข้าระบบ',
     'Created Ip' => 'IP ที่สร้าง',
@@ -36,7 +36,7 @@ return [
     'Provider Attributes' => 'รายการผู้ให้บริการ',
 
     'Type' => 'ประเภท',
-    //    'Token' => '',
+//    'Token' => '',
     'Expired At' => 'เวลาหมดอายุ',
 
     // models/forms
@@ -74,7 +74,7 @@ return [
     'Reset' => 'เริ่มใหม่',
     'Create {modelClass}' => 'สร้าง {modelClass}',
     'Update {modelClass}: ' => 'ปรับปรุง {modelClass}: ',
-    'Apakah Anda Yakin Ingin Menghapus Item Ini ?' => 'คุณแน่ใจนะว่าต้องการลบสิ่งนี้?',
+    'Are you sure you want to delete this item?' => 'คุณแน่ใจนะว่าต้องการลบสิ่งนี้?',
 
     // default views
     'Account' => 'บัญชี',
@@ -87,7 +87,7 @@ return [
     'Go to my account' => 'ไปที่บัญชีของฉัน',
     'Go home' => 'ไปหน้าหลัก',
     'Log in here' => 'เข้าสู่ระบบที่นี่',
-    //    'Invalid Token' => '',
+//    'Invalid Token' => '',
     'Forgot password' => 'ลืมรหัสผ่าน',
     'Submit' => 'ส่งข้อมูล',
     'Yii 2 User' => 'Yii 2 User',
@@ -98,6 +98,6 @@ return [
     'Profile' => 'ข้อมูลผู้ใช้',
     'Resend' => 'ส่งอีกครั้ง',
     'Password has been reset' => 'รหัสผ่านถูกรีเซ็ต',
-    //    'Login link sent - Please check your email' => '',
-    //    'Registration link sent - Please check your email' => '',
+//    'Login link sent - Please check your email' => '',
+//    'Registration link sent - Please check your email' => '',
 ];

@@ -260,16 +260,31 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
         </div>
 
 
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-12">
             <?= $form->field($model, 'is_aktif')->radioList(
                 [
                     0 => 'Resign',
                     1 => 'Aktif',
-                ], // Daftar opsi
-                ['class' => 'selama', 'itemOptions' => ['labelOptions' => ['style' => 'margin-right: 20px;',]]] // Opsi tambahan, misalnya style
-            )->label('Apakah Aktif ') ?>
+                ],
+                [
+                    'class' => 'selama',
+                    'itemOptions' => ['labelOptions' => ['style' => 'margin-right: 20px;']]
+                ]
+            )->label('Apakah Aktif') ?>
         </div>
 
+
+
+        <div id="resign-form" style="display: none;" class="col-12">
+            <div class="row">
+                <div class="col-6">
+                    <?= $form->field($model, 'tanggal_resign')->textInput(['type' => 'date']) ?>
+                </div>
+                <div class="col-6 ">
+                    <?= $form->field($model, 'surat_pengunduran_diri')->fileInput(['class' => 'form-control']) ?>
+                </div>
+            </div> <!-- Tambahkan div untuk form resign yang bisa ditampilkan/disembunyikan -->
+        </div>
 
     </div>
     <div class="form-group">
@@ -322,6 +337,35 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+<?php
+$script = <<<JS
+$(document).ready(function() {
+    // Fungsi untuk menampilkan/menyembunyikan form resign
+    function toggleResignForm() {
+        var isAktif = $('input[name="Karyawan[is_aktif]"]:checked').val();
+        
+        if (isAktif == 0) {
+            $('#resign-form').show();
+        } else {
+            $('#resign-form').hide();
+            // Opsional: Bersihkan input jika disembunyikan
+            $('#karyawan-tanggal_resign').val('');
+            $('#karyawan-surat_pengunduran_diri').val('');
+        }
+    }
+
+    // Panggil fungsi saat halaman dimuat
+    toggleResignForm();
+
+    // Tambahkan event listener untuk perubahan radio button
+    $('input[name="Karyawan[is_aktif]"]').change(function() {
+        toggleResignForm();
+    });
+});
+JS;
+
+$this->registerJs($script);
+?>
 <script>
     $(document).ready(function() {
 

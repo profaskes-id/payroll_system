@@ -46,7 +46,8 @@ class RekapLemburSearch extends PengajuanLembur
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => ['defaultOrder' => ['status' => SORT_ASC]],
+                        'sort' => ['defaultOrder' => ['status' => SORT_ASC]],
+
         ]);
 
         $this->load($params);

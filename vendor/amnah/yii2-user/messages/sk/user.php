@@ -19,8 +19,8 @@ return [
     'New Email' => 'Nový e-mail',
     'Username' => 'Používateľské meno',
     'Password' => 'Heslo',
-    //    'Auth Key' => '',
-    //    'Access Token' => '',
+//    'Auth Key' => '',
+//    'Access Token' => '',
     'Logged In Ip' => 'Ip prihlásenia',
     'Logged In At' => 'Čas prihlásenia',
     'Created Ip' => 'Ip registacie',
@@ -36,8 +36,8 @@ return [
     'Provider Attributes' => 'Atribúty poskytovateľa',
 
     'Type' => 'Typ',
-    //    'Token' => '',
-    //    'Expired At' => '',
+//    'Token' => '',
+//    'Expired At' => '',
 
     // models/forms
     'Email not found' => 'E-mail nenájdené',
@@ -62,7 +62,7 @@ return [
 
     // mail
     'Please confirm your email address by clicking the link below:' => 'Prosím potvrďte vašu e-mailovú adresu s kliknutím na odkaz nižšie:',
-    'Please use this link to reset your password:' => 'Na obnovu hesla navštívte nasledujúcu adresu',
+        'Please use this link to reset your password:' => 'Na obnovu hesla navštívte nasledujúcu adresu',
 
     // admin views
     'Users' => 'Používatelia',
@@ -74,7 +74,7 @@ return [
     'Reset' => 'Resetovať',
     'Create {modelClass}' => 'Vytvorenie {modelClass}',
     'Update {modelClass}: ' => 'Úprava {modelClass}',
-    'Apakah Anda Yakin Ingin Menghapus Item Ini ?' => 'Skutočne to chcete zmazať?',
+    'Are you sure you want to delete this item?' => 'Skutočne to chcete zmazať?',
 
     // default views
     'Account' => 'Účet',
@@ -87,7 +87,7 @@ return [
     'Go to my account' => 'Na môj účet',
     'Go home' => 'Domov',
     'Log in here' => 'Prihlásenie',
-    //    'Invalid Token' => '',
+//    'Invalid Token' => '',
     'Forgot password' => 'Zabudnuté heslo',
     'Submit' => 'Zaslať',
     'Yii 2 User' => 'Yii 2 Používateľ',
@@ -98,6 +98,6 @@ return [
     'Profile' => 'Profil',
     'Resend' => 'Znovu odoslať',
     'Password has been reset' => 'Vaše heslo bolo obnovené',
-    //    'Login link sent - Please check your email' => '',
-    //    'Registration link sent - Please check your email' => '',
+//    'Login link sent - Please check your email' => '',
+//    'Registration link sent - Please check your email' => '',
 ];

@@ -19,8 +19,8 @@ return [
     'New Email' => '新邮箱',
     'Username' => '用户名',
     'Password' => '密码',
-    //    'Auth Key' => '',
-    //    'Access Token' => '',
+//    'Auth Key' => '',
+//    'Access Token' => '',
     'Logged In Ip' => '登陆 IP',
     'Logged In At' => '登陆时间',
     'Created Ip' => '创建 IP',
@@ -31,12 +31,12 @@ return [
     'New Password Confirm' => '确认新密码',
     'Email Confirmation' => '验证邮件',
 
-    //    'Provider' => '',
-    //    'Provider ID' => '',
-    //    'Provider Attributes' => '',
+//    'Provider' => '',
+//    'Provider ID' => '',
+//    'Provider Attributes' => '',
 
     'Type' => '类型',
-    //    'Token' => '',
+//    'Token' => '',
     'Expired At' => '超时时间',
 
     // models/forms
@@ -74,7 +74,7 @@ return [
     'Reset' => '重置',
     'Create {modelClass}' => '创建 {modelClass}',
     'Update {modelClass}: ' => '更新 {modelClass}: ',
-    'Apakah Anda Yakin Ingin Menghapus Item Ini ?' => '确定要删除该项目吗？',
+    'Are you sure you want to delete this item?' => '确定要删除该项目吗？',
 
     // default views
     'Account' => '账号',
@@ -87,7 +87,7 @@ return [
     'Go to my account' => '点击进入我的账户',
     'Go home' => '点击进入首页',
     'Log in here' => '点击此处登陆',
-    //    'Invalid Token' => '',
+//    'Invalid Token' => '',
     'Forgot password' => '忘记密码',
     'Submit' => '提交',
     'Yii 2 User' => 'Yii 2 用户',
@@ -98,6 +98,6 @@ return [
     'Profile' => '个人资料',
     'Resend' => '重新发送验证邮件',
     'Password has been reset' => '已重置密码',
-    //    'Login link sent - Please check your email' => '',
-    //    'Registration link sent - Please check your email' => '',
+//    'Login link sent - Please check your email' => '',
+//    'Registration link sent - Please check your email' => '',
 ];

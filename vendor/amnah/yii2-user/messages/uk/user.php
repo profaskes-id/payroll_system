@@ -20,7 +20,7 @@ return [
     'Username' => 'Логін користувача',
     'Password' => 'Пароль',
     'Auth Key' => 'Ключ авторизації',
-    //    'Access Token' => '',
+//    'Access Token' => '',
     'Logged In Ip' => 'IP адреса авторизації',
     'Logged In At' => 'Дата авторизації',
     'Created Ip' => 'IP адреса створення',
@@ -28,7 +28,7 @@ return [
     'Banned Reason' => 'Причина блокування',
     'Current Password' => 'Поточний пароль',
     'New Password' => 'Новий пароль',
-    //    'New Password Confirm' => '',
+//    'New Password Confirm' => '',
     'Email Confirmation' => 'E-mail підтвердження',
 
     'Provider' => 'Запрошення',
@@ -36,7 +36,7 @@ return [
     'Provider Attributes' => 'Атрибути запрошення',
 
     'Type' => 'Тип',
-    //    'Token' => '',
+//    'Token' => '',
     'Expired At' => 'Термін дії',
 
     // models/forms
@@ -48,8 +48,8 @@ return [
     'Incorrect password' => 'Невірний пароль',
     'Remember Me' => 'Запам\'ятати мене',
     'Email is already active' => 'E-mail вже активний',
-    //    'Passwords do not match' => '',
-    //    '{attribute} can contain only letters, numbers, and "_"' => '',
+//    'Passwords do not match' => '',
+//    '{attribute} can contain only letters, numbers, and "_"' => '',
 
     // controllers
     'Successfully registered [ {displayName} ]' => 'Успішно зареєстрований [ {displayName} ]',
@@ -74,7 +74,7 @@ return [
     'Reset' => 'Скинути',
     'Create {modelClass}' => 'Створити {modelClass}',
     'Update {modelClass}: ' => 'Змінити {modelClass}: ',
-    'Apakah Anda Yakin Ingin Menghapus Item Ini ?' => 'Ви впевнені, що хочете видалити ваш аккаунт?',
+    'Are you sure you want to delete this item?' => 'Ви впевнені, що хочете видалити ваш аккаунт?',
 
     // default views
     'Account' => 'Аккаунт',
@@ -87,7 +87,7 @@ return [
     'Go to my account' => 'До мого аккаунту',
     'Go home' => 'До головної',
     'Log in here' => 'Увійти зараз',
-    //    'Invalid Token' => '',
+//    'Invalid Token' => '',
     'Forgot password' => 'Забули пароль',
     'Submit' => 'Відправити',
     'Yii 2 User' => 'Yii 2 користувач',
@@ -98,6 +98,6 @@ return [
     'Profile' => 'Профіль',
     'Resend' => 'Повторити',
     'Password has been reset' => 'Пароль відновлено',
-    //    'Login link sent - Please check your email' => '',
-    //    'Registration link sent - Please check your email' => '',
+//    'Login link sent - Please check your email' => '',
+//    'Registration link sent - Please check your email' => '',
 ];

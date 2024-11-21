@@ -333,7 +333,13 @@ class RekapAbsensiController extends Controller
             ];
 
             //ambil data bulan ini yang sudah terlewati
-            $string = $nama_jam_kerja;
+            if($nama_jam_kerja == null) {
+                                                            Yii::$app->session->setFlash('error', 'Tolong isi data jam kerja dari ' . strtoupper($karyawanData[0]['nama']) . ' terlebih dahulu , untuk saat ini data jam kerja adalah ' . "5 hari kerja yang diisi secara default");
+
+                                                }
+            $string = $nama_jam_kerja ??  "5 Hari Kerja";
+            
+
             $work_days_type = match (true) {
                 str_contains($string, "4") => 4,
                 str_contains($string, "5") => 5,
@@ -352,7 +358,7 @@ class RekapAbsensiController extends Controller
 
             for ($day = $tomorrowDay; $day <= $daysInMonth; $day++) {
                 $date = new DateTime("$currentYear-$currentMonth-$day");
-                $string = $nama_jam_kerja;
+                $string = $nama_jam_kerja ??  "5 Hari Kerja";
                 $work_days_type = match (true) {
                     str_contains($string, "4") => 4,
                     str_contains($string, "5") => 5,
