@@ -46,7 +46,7 @@ class PeriodeGajiSearch extends PeriodeGaji
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => ['defaultOrder' => ['bulan' => SORT_DESC, 'tahun' => SORT_DESC]],
+            'sort' => ['defaultOrder' => ['bulan' => SORT_ASC, 'tahun' => SORT_DESC]],
 
         ]);
 

@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\Tunjangan;
 use backend\models\TunjanganDetail;
 use backend\models\TunjanganDetailSearch;
 use Yii;
@@ -50,6 +51,7 @@ class TunjanganDetailController extends Controller
     {
         $searchModel = new TunjanganDetailSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+        $tunjangan = new Tunjangan();
 
         $id_karyawan = Yii::$app->request->get('id_karyawan');
 
@@ -63,6 +65,7 @@ class TunjanganDetailController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'id_karyawan' => $id_karyawan,
+            'tunjangan' => $tunjangan
         ]);
     }
 

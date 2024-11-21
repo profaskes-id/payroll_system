@@ -50,10 +50,12 @@ class PeriodeGajiController extends Controller
     {
         $searchModel = new PeriodeGajiSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+        $periodeGaji = new PeriodeGaji();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'periodeGaji' => $periodeGaji
         ]);
     }
 
@@ -82,9 +84,36 @@ class PeriodeGajiController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                if ($model->save()) {
+                // Contoh penggunaan
+                $tahun = $model->tahun;
+                $tanggal_set = $model->tanggal_set;
+
+
+                $dateRanges = $model->generateDateRanges($tahun, $tanggal_set);
+                // Batch Insert
+                $rows = [];
+                foreach ($dateRanges as $range) {
+                    $rows[] = [
+                        'tahun' => $tahun,
+                        'bulan' => $range['bulan'],
+                        'tanggal_awal' => $range['tanggal_awal'],
+                        'tanggal_akhir' => $range['tanggal_akhir'],
+                        'terima' => $range['tanggal_terima'],
+                        // Tambahkan field lain yang diperlukan
+                    ];
+                }
+                // Gunakan batch insert
+                $result = Yii::$app->db->createCommand()
+                    ->batchInsert(
+                        'periode_gaji',
+                        ['tahun', 'bulan', 'tanggal_awal', 'tanggal_akhir', 'terima'],
+                        $rows
+                    )
+                    ->execute();
+
+                if ($result) {
                     Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
-                    return $this->redirect(['view', 'bulan' => $model->bulan, 'tahun' => $model->tahun]);
+                    return $this->redirect(['index']);
                 } else {
                     Yii::$app->session->setFlash('error', 'Data gagal disimpan');
                 }
@@ -97,6 +126,8 @@ class PeriodeGajiController extends Controller
             'model' => $model,
         ]);
     }
+
+
 
     /**
      * Updates an existing PeriodeGaji model.

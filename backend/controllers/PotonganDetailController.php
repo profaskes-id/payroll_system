@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\Potongan;
 use backend\models\PotonganDetail;
 use backend\models\PotonganDetailSearch;
 use Yii;
@@ -50,6 +51,8 @@ class PotonganDetailController extends Controller
     {
         $searchModel = new PotonganDetailSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+        $potongan  = new Potongan();
+
 
 
         $id_karyawan = Yii::$app->request->get('id_karyawan');
@@ -63,7 +66,9 @@ class PotonganDetailController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'id_karyawan' => $id_karyawan
+            'id_karyawan' => $id_karyawan,
+            'potongan' => $potongan
+
         ]);
     }
 
@@ -104,6 +109,7 @@ class PotonganDetailController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+
         ]);
     }
 

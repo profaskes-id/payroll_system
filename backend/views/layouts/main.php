@@ -178,6 +178,7 @@ if (
             .hapus-button:hover,
             .tambah-button:hover,
             .edit-button:hover,
+            .cetak-button:hover,
             .add-button:hover {
                 color: white;
             }

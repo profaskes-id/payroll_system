@@ -9,7 +9,7 @@ class KaryawanHelper extends Karyawan
 {
     public static function getKaryawanData()
     {
-        return Karyawan::find()->select(['id_karyawan', 'nama'])->where(['is_aktif' => 1])->asArray()->all();
+        return Karyawan::find()->select(['id_karyawan', 'nama'])->orderBy(['nama' => SORT_ASC])->where(['is_aktif' => 1])->asArray()->all();
     }
 
     public static function getIdKaryawan($kode_karyawan)

@@ -83,7 +83,7 @@ class PotonganController extends Controller
             if ($model->load($this->request->post())) {
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
-                    return $this->redirect(['index']);
+                    return $this->redirect(['potongan-detail/index']);
                 } else {
                     Yii::$app->session->setFlash('error', 'Data gagal disimpan');
                 }

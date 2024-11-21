@@ -64,6 +64,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                     ['label' => 'Master Hari Besar',  'icon' => 'fa fa-calendar-day', 'url' => ['/master-haribesar/index'],],
                                     ['label' => 'Master Lokasi',  'icon' => 'fa fa-map-marker', 'url' => ['/master-lokasi/index'],],
                                     ['label' => 'Master Gaji',  'icon' => 'fa fa-money-bill-alt', 'url' => ['/master-gaji/index'],],
+                                    ['label' => 'Periode Gaji',  'icon' => 'fa fa-calendar-check', 'url' => ['/periode-gaji/index'],],
                                     ['label' => 'Total Hari Kerja',  'icon' => 'fas fa-briefcase', 'url' => ['/total-hari-kerja/index'],],
                                 ],
                             ],
@@ -72,7 +73,6 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                 'icon' => 'th',
                                 'items' => [
                                     ['label' => 'Transaksi Gaji',  'icon' => 'fa fa-exchange-alt', 'url' => ['/transaksi-gaji/index'],],
-                                    ['label' => 'Periode Gaji',  'icon' => 'fa fa-calendar-check', 'url' => ['/periode-gaji/index'],],
                                     // ['label' => 'Tunjangan',  'icon' => 'fa fa-hand-holding-usd', 'url' => ['/tunjangan/index'],],
                                     ['label' => 'Tunjangan Karyawan',  'icon' => 'fa fa-user-tie', 'url' => ['/tunjangan-detail/index'],],
                                     // ['label' => 'Potongan',  'icon' => 'fa fa-minus-circle', 'url' => ['/potongan/index'],],

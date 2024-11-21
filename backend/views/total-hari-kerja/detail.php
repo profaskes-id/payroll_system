@@ -84,24 +84,36 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'Tanggal Awal',
                     'value' => function ($model) use ($tanggal) {
+                        if ($model->periodeGaji == null) {
+                            return "-";
+                        }
                         return  $tanggal->getIndonesiaFormatTanggal($model->periodeGaji->tanggal_awal);
                     }
                 ],
                 [
                     'attribute' => 'Tanggal Akhir',
                     'value' => function ($model) use ($tanggal) {
+                        if ($model->periodeGaji == null) {
+                            return "-";
+                        }
                         return  $tanggal->getIndonesiaFormatTanggal($model->periodeGaji->tanggal_akhir);
                     }
                 ],
                 [
                     'attribute' => 'Periode Bulan',
                     'value' => function ($model) use ($months) {
+                        if ($model->periodeGaji == null) {
+                            return "-";
+                        }
                         return $months[$model->periodeGaji->bulan - 1];
                     }
                 ],
                 [
                     'attribute' => 'tahun',
                     'value' => function ($model) {
+                        if ($model->periodeGaji == null) {
+                            return "-";
+                        }
                         return $model->periodeGaji->tahun;
                     }
                 ],

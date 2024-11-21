@@ -29,12 +29,13 @@ class PeriodeGaji extends \yii\db\ActiveRecord
      * {@inheritdoc}
      */
 
+    public $tanggal_set;
     public function rules()
     {
         return [
             [['bulan', 'tahun', 'tanggal_awal', 'tanggal_akhir'], 'required'],
-            [['bulan', 'tahun'], 'integer'],
-            [['tanggal_awal', 'tanggal_akhir', 'terima'], 'safe'],
+            [['bulan', 'tahun', 'tanggal_set'], 'integer'],
+            [['tanggal_awal', 'tanggal_akhir', 'terima', 'tanggal_set'], 'safe'],
         ];
     }
 
@@ -51,5 +52,34 @@ class PeriodeGaji extends \yii\db\ActiveRecord
             'tanggal_akhir' => 'Tanggal Akhir',
             'terima' => 'Terima',
         ];
+    }
+
+    function generateDateRanges($tahun, $tanggal_set)
+    {
+        $result = [];
+
+        for ($i = 1; $i <= 12; $i++) {
+            $bulan = $i;
+            $tanggal_awal = sprintf('%04d-%02d-%02d', $tahun, $i, $tanggal_set);
+
+            // Menghitung tanggal akhir
+            if ($i == 12) { // Jika bulan Desember
+                $tanggal_akhir = sprintf('%04d-%02d-%02d', $tahun + 1, 1, $tanggal_set - 1);
+            } else {
+                $tanggal_akhir = sprintf('%04d-%02d-%02d', $tahun, $i + 1, $tanggal_set - 1);
+            }
+
+            // Menghitung tanggal terima (tanggal akhir + 1 hari)
+            $tanggal_terima = date('Y-m-d', strtotime($tanggal_akhir . ' +1 day'));
+
+            $result[] = [
+                'bulan' => $bulan,
+                'tanggal_awal' => $tanggal_awal,
+                'tanggal_akhir' => $tanggal_akhir,
+                'tanggal_terima' => $tanggal_terima,
+            ];
+        }
+
+        return $result;
     }
 }

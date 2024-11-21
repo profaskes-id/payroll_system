@@ -8,6 +8,7 @@ use backend\models\MasterKode;
 use backend\models\PengajuanCuti;
 use backend\models\PengajuanDinas;
 use backend\models\PengajuanLembur;
+use backend\models\PengajuanWfh;
 use backend\models\Pengumuman;
 use common\models\LoginForm;
 use common\models\User;
@@ -88,7 +89,7 @@ class SiteController extends Controller
             $pengajuanCuti = PengajuanCuti::find()->where(['status' => '0'])->count();
             $pengajuanDinas = PengajuanDinas::find()->where(['status' => '0'])->count();
             $pengajuanPulangCepat = IzinPulangCepat::find()->where(['status' => '0'])->count();
-
+            $pengajuanWFH = PengajuanWfh::find()->where(['status' => '0'])->count();
 
 
             $dates = [];
@@ -124,7 +125,7 @@ class SiteController extends Controller
 
 
 
-            return $this->render('index', compact('datesAsJson', 'TotalKaryawan', 'TotalData', 'TotalDataBelum', 'TotalIzin', 'totalPengumuman', 'pengajuanLembur', 'pengajuanCuti', 'pengajuanDinas', 'pengajuanPulangCepat'));
+            return $this->render('index', compact('datesAsJson', 'TotalKaryawan', 'TotalData', 'TotalDataBelum', 'TotalIzin', 'totalPengumuman', 'pengajuanLembur', 'pengajuanCuti', 'pengajuanDinas', 'pengajuanPulangCepat', 'pengajuanWFH'));
         } elseif (!Yii::$app->user->can('admin')) {
 
             return $this->redirect(['home/index']);

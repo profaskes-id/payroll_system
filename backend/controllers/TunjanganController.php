@@ -79,11 +79,12 @@ class TunjanganController extends Controller
     {
         $model = new Tunjangan();
 
+
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
-                    return $this->redirect(['index']);
+                    Yii::$app->session->setFlash('success', 'Data berhasil disimpan dengan nama ' . $model->nama_tunjangan);
+                    return $this->redirect(['tunjangan-detail/index']);
                 } else {
                     Yii::$app->session->setFlash('error', 'Data gagal disimpan');
                 }

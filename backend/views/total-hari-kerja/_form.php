@@ -2,6 +2,7 @@
 
 use backend\models\helpers\JamKerjaHelper;
 use backend\models\PeriodeGaji;
+use backend\models\Tanggal;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -27,10 +28,25 @@ $id_jamkerja_byget = Yii::$app->request->get('id_jam_kerja') ?? $model->id_jam_k
             </div>
 
             <div class="col-12">
+                <?php
 
-                <?php $nama_kode = \yii\helpers\ArrayHelper::map(PeriodeGaji::find()->asArray()->all(), 'id_periode_gaji', 'bulan');
+                // Ambil data periode gaji
+                $periode_gajian = PeriodeGaji::find()->where(['tahun' => date('Y')])->asArray()->all();
+
+                // Format data untuk Select2
+                $selectData = [];
+                $tanggal = new Tanggal(); // Pastikan Anda memiliki kelas ini
+
+                foreach ($periode_gajian as $periode) {
+                    $bulanNama = $tanggal->getBulan($periode['bulan']); // Mengambil nama bulan dalam bahasa Indonesia
+                    $selectData[$periode['id_periode_gaji']] = $bulanNama . ' - ' . $periode['tahun'];
+                }
+
+                ?>
+
+                <?php
                 echo $form->field($model, 'id_periode_gaji')->widget(Select2::classname(), [
-                    'data' => $nama_kode,
+                    'data' => $selectData,
                     'language' => 'id',
                     'options' => ['placeholder' => 'Cari Periode Gaji'],
                     'pluginOptions' => [

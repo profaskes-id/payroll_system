@@ -5,6 +5,7 @@ use backend\models\GajiTunjangan;
 use backend\models\helpers\KaryawanHelper;
 use backend\models\Terbilang;
 use backend\models\TunjanganDetail;
+use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -42,15 +43,55 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <br>
 
+
+
     <div class="table-container table-responsive">
-        <!-- // ['label' => 'Tunjangan', 'icon' => 'fa fa-hand-holding-usd', 'url' => ['/tunjangan/index'],], -->
         <div class="d-flex justify-content-start">
-            <a href="/panel/tunjangan/create" target="_blank" class="tambah-button"><i class="fa fa-plus"> Tunjangan Baru</i></a>
-            <a href="/panel/tunjangan/index" target="_blank" class="reset-button"><i class="fa fa-list"> list Tunjangan </i></a>
+            <!-- Button trigger modal -->
+            <button type="button" class="tambah-button" data-toggle="modal" data-target="#exampleModal">
+                <i class="fa fa-plus"></i> Tunjangan Baru
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+                <?php $form = ActiveForm::begin([
+                    'id' => 'tunjangan-form',
+                    'action' => Url::to(['/tunjangan/create']), // Arahkan action ke tunjangan/create
+                    'method' => 'post',
+                ]); ?>
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Tambah Tunjangan Baru</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+
+
+                            <?= $form->field($tunjangan, 'nama_tunjangan')->textInput(['maxlength' => true, 'class' => 'form-control', 'autofocus' => true, 'placeholder' => 'Nama Tunjangan Baru']) ?>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="reset-button" data-dismiss="modal">Close</button>
+                            <button type="submit" class="add-button">Save New Tunjangan</button>
+                        </div>
+                    </div>
+                    <?php ActiveForm::end(); ?>
+                </div>
+            </div>
+
+
+
+            &nbsp;
+            &nbsp;
+            <a href="/panel/tunjangan/index" target="_blank" class="cetak-button"><i class="fa fa-list"></i>list Tunjangan </a>
         </div>
     </div>
 
-    <div class="table-container table-responsive">
+    <div class="table-container     table-responsive">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'columns' => [

@@ -115,73 +115,73 @@ use yii\widgets\DetailView;
                         ],
                     ]
                 ) ?>
-                 <div class="row">
-                <div class="col-12">
-                    <?= DetailView::widget(
-                        [
-                            'model' => $rekapandata,
-                            'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
-                            'attributes' => [
+                <div class="row">
+                    <div class="col-12">
+                        <?= DetailView::widget(
+                            [
+                                'model' => $rekapandata,
+                                'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                                'attributes' => [
 
-                                [
-                                    'label' => "Gaji Pokok",
-                                    'value' => function ($model) {
-                                        return  'Rp ' . number_format($model['gajiPokok']['nominal_gaji'], 0, ',', '.');
-                                    }
+                                    [
+                                        'label' => "Gaji Pokok",
+                                        'value' => function ($model) {
+                                            return  'Rp ' . number_format($model['gajiPokok']['nominal_gaji'], 0, ',', '.');
+                                        }
+                                    ],
+
                                 ],
-
-                            ],
-                        ]
-                    ) ?>
-                </div>
-                <div class="col-12">
-                    <?= DetailView::widget(
-                        [
-                            'model' => $rekapandata,
-                            'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
-                            'attributes' => [
+                            ]
+                        ) ?>
+                    </div>
+                    <div class="col-12">
+                        <?= DetailView::widget(
+                            [
+                                'model' => $rekapandata,
+                                'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                                'attributes' => [
 
 
-                                [
-                                    'label' => "Jumlah Tunjangan",
-                                    'value' => function ($model) {
-                                        // dd($model);
-                                        return 'Rp ' . number_format($model['getTunjangan'], 0, ',', '.') . ' ' .
-                                            Html::a('<i class="fa fa-edit"></i>', ['tunjangan-detail/index', 'id_karyawan' => $model['karyawan']['id_karyawan']], ['class' => 'edit-button d-inline-block', 'target' => '_blank']);
-                                    },
-                                    'format' => 'raw', // Menambahkan format raw agar HTML ditampilkan
+                                    [
+                                        'label' => "Jumlah Tunjangan",
+                                        'value' => function ($model) {
+                                            // dd($model);
+                                            return 'Rp ' . number_format($model['getTunjangan'], 0, ',', '.') . ' ' .
+                                                Html::a('<i class="fa fa-edit"></i>', ['tunjangan-detail/index', 'id_karyawan' => $model['karyawan']['id_karyawan']], ['class' => 'edit-button d-inline-block', 'target' => '_blank']);
+                                        },
+                                        'format' => 'raw', // Menambahkan format raw agar HTML ditampilkan
+                                    ],
+
                                 ],
-
-                            ],
-                        ]
-                    ) ?>
-                </div>
-                <div class="col-12">
-                    <?= DetailView::widget(
-                        [
-                            'model' => $rekapandata,
-                            'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
-                            'attributes' => [
-                                [
-                                    'label' => "Jumlah Potongan",
-                                    'value' => function ($model) {
-                                        return 'Rp ' . number_format($model['getPotongan'], 0, ',', '.') . ' ' .
-                                            Html::a('<i class="fa fa-edit"></i>', ['potongan-detail/index', 'id_karyawan' => $model['karyawan']['id_karyawan']], ['class' => 'edit-button d-inline-block', 'target' => '_blank']);
-                                    },
-                                    'format' => 'raw',
+                            ]
+                        ) ?>
+                    </div>
+                    <div class="col-12">
+                        <?= DetailView::widget(
+                            [
+                                'model' => $rekapandata,
+                                'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                                'attributes' => [
+                                    [
+                                        'label' => "Jumlah Potongan",
+                                        'value' => function ($model) {
+                                            return 'Rp ' . number_format($model['getPotongan'], 0, ',', '.') . ' ' .
+                                                Html::a('<i class="fa fa-edit"></i>', ['potongan-detail/index', 'id_karyawan' => $model['karyawan']['id_karyawan']], ['class' => 'edit-button d-inline-block', 'target' => '_blank']);
+                                        },
+                                        'format' => 'raw',
+                                    ],
                                 ],
-                            ],
-                        ]
-                    ) ?>
-                </div>
+                            ]
+                        ) ?>
+                    </div>
 
-            </div>
+                </div>
 
             </div>
         </div>
         <div class="col-12 col-md-7">
 
-           
+
 
             <?php $form = ActiveForm::begin(); ?>
 
@@ -214,34 +214,34 @@ use yii\widgets\DetailView;
 
 
 
-<div class="row">
-            <div class="col-12 col-md-6">
-                <?php
-                $keteranganTunjanganLainnya = $model->isNewRecord ? '' :  $model->keterangan_tunjangan_lainnya;
-                echo $form->field($model, 'keterangan_tunjangan_lainnya')->textInput(['maxlength' => true,  'type' => 'text', 'value' => $keteranganTunjanganLainnya, ])->label("Keterangan Tunjangan Lainnya ");
-                ?>
-            </div>
-            <div class="col-12 col-md-6">
-                <?php
-                $tunjanganLainnya = $model->isNewRecord ? 0 : (int) $model->tunjangan_lainnya;
-                echo $form->field($model, 'tunjangan_lainnya')->textInput(['maxlength' => true, 'type' => 'number', 'value' => $tunjanganLainnya, 'id' => "tunjangan_lainnya"])->label("Jumlah Tunjangan Lainnya <span class='text-danger'>(Rp)</span>");
-                ?>
-            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <?php
+                    $keteranganTunjanganLainnya = $model->isNewRecord ? '' :  $model->keterangan_tunjangan_lainnya;
+                    echo $form->field($model, 'keterangan_tunjangan_lainnya')->textInput(['maxlength' => true,  'type' => 'text', 'value' => $keteranganTunjanganLainnya,])->label("Keterangan Tunjangan Lainnya ");
+                    ?>
+                </div>
+                <div class="col-12 col-md-6">
+                    <?php
+                    $tunjanganLainnya = $model->isNewRecord ? 0 : (int) $model->tunjangan_lainnya;
+                    echo $form->field($model, 'tunjangan_lainnya')->textInput(['maxlength' => true, 'type' => 'number', 'value' => $tunjanganLainnya, 'id' => "tunjangan_lainnya"])->label("Jumlah Tunjangan Lainnya <span class='text-danger'>(Rp)</span>");
+                    ?>
+                </div>
 
 
 
-            <div class="col-12 col-md-6">
-                <?php
-                $keteranganPotonganLainnya = $model->isNewRecord ? '' : $model->keterangan_potongan_lainnya;
-                echo $form->field($model, 'keterangan_potongan_lainnya')->textInput(['maxlength' => true,  'type' => 'text', 'value' => $keteranganPotonganLainnya, ])->label("Keterangan Potongan Lainnya ");
-                ?>
-            </div>
-            <div class="col-12 col-md-6">
-                <?php
-                $potongan_lainnya = $model->isNewRecord ? 0 : (int) $model->potongan_lainnya;
-                echo $form->field($model, 'potongan_lainnya')->textInput(['maxlength' => true, 'type' => 'number', 'value' => $potongan_lainnya, 'id' => "potongan_lainnya"])->label("Jumlah Potongan Lainnya <span class='text-danger'>(Rp)</span>");
-                ?>
-            </div>
+                <div class="col-12 col-md-6">
+                    <?php
+                    $keteranganPotonganLainnya = $model->isNewRecord ? '' : $model->keterangan_potongan_lainnya;
+                    echo $form->field($model, 'keterangan_potongan_lainnya')->textInput(['maxlength' => true,  'type' => 'text', 'value' => $keteranganPotonganLainnya,])->label("Keterangan Potongan Lainnya ");
+                    ?>
+                </div>
+                <div class="col-12 col-md-6">
+                    <?php
+                    $potongan_lainnya = $model->isNewRecord ? 0 : (int) $model->potongan_lainnya;
+                    echo $form->field($model, 'potongan_lainnya')->textInput(['maxlength' => true, 'type' => 'number', 'value' => $potongan_lainnya, 'id' => "potongan_lainnya"])->label("Jumlah Potongan Lainnya <span class='text-danger'>(Rp)</span>");
+                    ?>
+                </div>
 
 
 
@@ -391,7 +391,7 @@ use yii\widgets\DetailView;
         let todayJson = <?= $rekap ?>;
         let isnewrecord = <?= $isNewRecord  ?> ? true : false;
 
-        let gaji_pokok, potonganWFH, tambahanLembur, jumlahTunjangan, jumlahPotongan, jumlahTidakHadir, jumlahAlfa, jumlahPotonganTerlambat, waktuTerlambat , tunjangan_lainnya , potongan_lainnya;
+        let gaji_pokok, potonganWFH, tambahanLembur, jumlahTunjangan, jumlahPotongan, jumlahTidakHadir, jumlahAlfa, jumlahPotonganTerlambat, waktuTerlambat, tunjangan_lainnya, potongan_lainnya;
 
 
         function convertToMinutes(timeString) {
@@ -436,20 +436,20 @@ use yii\widgets\DetailView;
             jumlahPotonganTerlambat = $("#jumlah_potongan_terlambat").val();
             jumlahWFH = todayJson.jumlah_wfh;
             waktuTerlambat = convertToMinutes($('#jumlah_terlambat').val());
-            tunjangan_lainnya = $("#tunjangan_lainnya").val(); 
+            tunjangan_lainnya = $("#tunjangan_lainnya").val();
             potongan_lainnya = $("#potongan_lainnya").val();
         }
 
 
         $('#potongan_lainnya').keyup(function(e) {
             e.preventDefault();
-            potongan_lainnya = Number(this.value); 
+            potongan_lainnya = Number(this.value);
             gajiDiterima();
 
         });
         $('#tunjangan_lainnya').keyup(function(e) {
             e.preventDefault();
-            tunjangan_lainnya = Number(this.value); 
+            tunjangan_lainnya = Number(this.value);
             gajiDiterima();
 
         });

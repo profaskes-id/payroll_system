@@ -80,10 +80,24 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     ],
                     [
+                        'headerOptions' => ['style' => 'width: 100px; text-align: center;'],
+                        'contentOptions' => ['style' => 'width: 100px; text-align: center;'],
+                        'attribute' => 'Periode Bulan',
+                        'value' => function ($model) use ($months) {
+                            if ($model['bulan'] == null) {
+                                return '-';
+                            }
+                            return $months[$model['bulan'] - 1];
+                        }
+                    ],
+                    [
                         'attribute' => 'Tanggal Awal',
                         'headerOptions' => ['style' => 'width: 100px; text-align: center;'],
                         'contentOptions' => ['style' => 'width: 100px; text-align: center;'],
                         'value' => function ($model) use ($tanggal) {
+                            if ($model['tanggal_awal'] == null) {
+                                return '-';
+                            }
                             return  $tanggal->getIndonesiaFormatTanggal($model['tanggal_awal']);
                         }
                     ],
@@ -92,22 +106,21 @@ $this->params['breadcrumbs'][] = $this->title;
                         'headerOptions' => ['style' => 'width: 100px; text-align: center;'],
                         'contentOptions' => ['style' => 'width: 100px; text-align: center;'],
                         'value' => function ($model) use ($tanggal) {
+                            if ($model['tanggal_awal'] == null) {
+                                return '-';
+                            }
                             return  $tanggal->getIndonesiaFormatTanggal($model['tanggal_akhir']);
                         }
                     ],
-                    [
-                        'headerOptions' => ['style' => 'width: 100px; text-align: center;'],
-                        'contentOptions' => ['style' => 'width: 100px; text-align: center;'],
-                        'attribute' => 'Periode Bulan',
-                        'value' => function ($model) use ($months) {
-                            return $months[$model['bulan'] - 1];
-                        }
-                    ],
+
                     [
                         'attribute' => 'tahun',
                         'headerOptions' => ['style' => 'width: 100px; text-align: center;'],
                         'contentOptions' => ['style' => 'width: 100px; text-align: center;'],
                         'value' => function ($model) {
+                            if ($model['tahun'] == null) {
+                                return '-';
+                            }
                             return $model['tahun'];
                         }
                     ],

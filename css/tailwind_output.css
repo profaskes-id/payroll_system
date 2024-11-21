@@ -2376,6 +2376,10 @@ input:checked + .toggle-bg {
   background-color: rgb(254 205 211 / var(--tw-bg-opacity));
 }
 
+.bg-rose-400\/70 {
+  background-color: rgb(251 113 133 / 0.7);
+}
+
 .bg-rose-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(255 241 242 / var(--tw-bg-opacity));
@@ -2444,6 +2448,14 @@ input:checked + .toggle-bg {
 .bg-yellow-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(253 253 234 / var(--tw-bg-opacity));
+}
+
+.bg-orange-400\/70 {
+  background-color: rgb(255 138 76 / 0.7);
+}
+
+.bg-emerald-400\/70 {
+  background-color: rgb(52 211 153 / 0.7);
 }
 
 .bg-gradient-to-r {

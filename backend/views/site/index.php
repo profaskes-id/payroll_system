@@ -120,20 +120,22 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
             </div>
         </div>
     </div>
-    <div class="col-span-4 py-5">
+
+
+    <div class="col-span-4 ">
         <div class="grid grid-col-1 gap-y-3 table-container">
             <h1 class="text-bold mt-0" style="font-size:22px;">Pengajuan Karyawan</h1>
             <p class="-mt-2 text-gray-500 mb-3">Menunggu Ditanggapi</p>
             <div class="grid grid-cols-6 gap-10">
                 <div class="col-span-6">
-                    <div class="w-full h-[80px] rounded-md p-2 text-white bg-teal-400/70">
+                    <div class="w-full h-[80px] rounded-md p-2 text-white bg-emerald-400/70">
                         <div class="flex  items-start justify-start space-x-5">
                             <svg xmlns="http://www.w3.org/2000/svg" width="50px" height="50px" viewBox="0 0 24 24">
-                                <path fill="white" d="M9.052 4.5C9 5.078 9 5.804 9 6.722v10.556c0 .918 0 1.644.052 2.222H8c-2.357 0-3.536 0-4.268-.732C3 18.035 3 16.857 3 14.5v-5c0-2.357 0-3.536.732-4.268S5.643 4.5 8 4.5z" opacity="0.5" />
-                                <path fill="white" fill-rule="evenodd" d="M9.707 2.409C9 3.036 9 4.183 9 6.476v11.048c0 2.293 0 3.44.707 4.067s1.788.439 3.95.062l2.33-.406c2.394-.418 3.591-.627 4.302-1.505c.711-.879.711-2.149.711-4.69V8.948c0-2.54 0-3.81-.71-4.689c-.712-.878-1.91-1.087-4.304-1.504l-2.328-.407c-2.162-.377-3.243-.565-3.95.062m3.043 8.545c0-.434-.336-.785-.75-.785s-.75.351-.75.784v2.094c0 .433.336.784.75.784s.75-.351.75-.784z" clip-rule="evenodd" />
+                                <path fill="currentColor" d="m14.16 10.4l-5-3.57c-.7-.5-1.63-.5-2.32 0l-5 3.57c-.53.38-.84.98-.84 1.63V20c0 .55.45 1 1 1h4v-6h4v6h4c.55 0 1-.45 1-1v-7.97c0-.65-.31-1.25-.84-1.63" />
+                                <path fill="currentColor" d="M21.03 3h-9.06C10.88 3 10 3.88 10 4.97l.09.09c.08.05.16.09.24.14l5 3.57c.76.54 1.3 1.34 1.54 2.23H19v2h-2v2h2v2h-2v4h4.03c1.09 0 1.97-.88 1.97-1.97V4.97C23 3.88 22.12 3 21.03 3M19 9h-2V7h2z" />
                             </svg>
                             <div>
-                                <p class="font-bold text-3xl"><?= $pengajuanPulangCepat ?> <span class="font-normal text-whitetext-base">Orang</span></p>
+                                <p class="font-bold text-3xl"><?= $pengajuanWFH ?> <span class="font-normal text-whitetext-base">Orang</span></p>
                                 <p class="text-base text-white">Pengajuan WFH</p>
                             </div>
                         </div>
