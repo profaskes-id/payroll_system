@@ -33,7 +33,7 @@ $tanggal = new Tanggal;
         </div>
         <div class="col-2">
             <p class="d-block">
-                <?= Html::a('Export to exel <i class="fa fa-table"></i>', ['report'], ['target' => '_blank', 'class' => 'tambah-button']) ?>
+                <?= Html::a('Export to exel <i class="fa fa-table"></i>', ['exel'], ['target' => '_blank', 'class' => 'tambah-button']) ?>
             </p>
         </div>
     </div>
