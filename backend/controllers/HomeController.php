@@ -850,12 +850,20 @@ class HomeController extends Controller
     }
 
     // ?========pengumuman
-    public function actionPengumuman($id_pengumuman)
+    public function actionPengumuman()
     {
-        $pengumuman = Pengumuman::findOne($id_pengumuman);
+        $pengumuman = Pengumuman::find()->orderBy(['dibuat_pada' => SORT_DESC])->limit(5)->all();
         $this->layout = 'mobile-main';
         return $this->render('pengumuman/index', compact('pengumuman'));
     }
+    public function actionPengumumanView($id_pengumuman)
+    {
+        $pengumuman = Pengumuman::findOne($id_pengumuman);
+        $this->layout = 'mobile-main';
+        return $this->render('pengumuman/view', compact('pengumuman'));
+    }
+
+
 
 
 

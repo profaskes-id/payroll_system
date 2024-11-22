@@ -109,27 +109,24 @@ function getShortDescription($description, $wordLimit = 5)
 
                     <section class="col-span-12 lg:col-span-6" data-aos="fade-down" data-aos-duration="1000">
                         <div class="  relative  justify-center gap-5 content-start p-5 lg:p-0">
-                            <div class="swiper mySwiper border rounded-xl overflow-hidden">
-                                <div class="swiper-wrapper">
-                                    <?php foreach ($pengumuman as $key => $value) : ?>
-                                        <div class="swiper-slide ">
-                                            <a href="/panel/home/pengumuman?id_pengumuman=<?= $value['id_pengumuman'] ?>">
-                                                <div class="grid grid-cols-12  w-full h-full">
-                                                    <div class="col-span-4 h-full ">
-                                                        <img src="<?= Yii::getAlias('@root') . "/images/icons/toa.jpg" ?>" class="object-cover xl:object-left-bottom scale-100 xl:scale-75 xl:max-h-[400px] xl:-translate-y-10" alt="toa">
+                            <div class="w-full h-full bg-white  overflow-hidden rounded-[50px]">
+                                <div>
+                                    <div class="">
+                                        <a href="/panel/home/pengumuman">
+                                            <div class="grid grid-cols-12  w-full h-full">
+                                                <div class="col-span-4 h-full ">
+                                                    <img src="<?= Yii::getAlias('@root') . "/images/icons/toa.jpg" ?>" class="object-cover xl:object-left-bottom scale-100 xl:scale-75 xl:max-h-[400px] xl:-translate-y-10" alt="toa">
 
-                                                    </div>
-                                                    <div class="col-span-8 relative   w-full flex flex-col justify-start items-start h-full p-3">
-                                                        <h1 class="text-lg font-semibold text-black"><?= getShortDescription($value['judul']); ?></h1>
-                                                        <div class="w-full mt-4">
-                                                            <p class="pb-2 text-sm text-gray-500"><?= getShortDescription($value['deskripsi']); ?></p>
-                                                            <p class=" text-gray-500 text-sm text-end absolute right-2 bottom-2.5 lg:top-40 lg:left-6"><?= date('d-M-Y', strtotime($value['dibuat_pada'])) ?></p>
-                                                        </div>
+                                                </div>
+                                                <div class="col-span-8 relative   w-full flex flex-col justify-start items-start h-full p-3">
+                                                    <h1 class="text-xl font-bold text-black"> Informasi Pengumuman</h1>
+                                                    <div class="w-full mt-4">
+                                                        <p class="pb-2 text-sm text-gray-500">Lihat informasi pengumuman terbaru dari admin</p>
                                                     </div>
                                                 </div>
-                                            </a>
-                                        </div>
-                                    <?php endforeach; ?>
+                                            </div>
+                                        </a>
+                                    </div>
                                 </div>
                                 <div class="swiper-pagination"></div>
                             </div>
@@ -145,7 +142,7 @@ function getShortDescription($description, $wordLimit = 5)
 
 
 
-    <div data-aos="fade-up" data-aos-duration="800" class="w-[70px] h-[5px] bg-[#ede8fe] rounded-full -mt-20 lg:-mt-20 mx-auto"></div>
+    <div data-aos="fade-up" data-aos-duration="800" class="w-[70px] h-[5px] bg-[#ede8fe] rounded-full -mt-24 lg:-mt-20 mx-auto"></div>
 
 
     <div class="grid grid-cols-12  mb-20  gap-2 w-full mt-5 min-w-screen   px-5 relative">
