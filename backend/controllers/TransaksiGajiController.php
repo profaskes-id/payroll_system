@@ -42,11 +42,17 @@ class TransaksiGajiController extends Controller
                     ],
                 ],
                 'access' => [
-                    'class' => \yii\filters\AccessControl::className(),
+                    'class' => \yii\filters\AccessControl::class,
                     'rules' => [
+
                         [
                             'allow' => true,
-                            'roles' => ['@'],
+                            'roles' => ['@'], // Allow authenticated users
+                            'matchCallback' => function ($rule, $action) {
+                                $user = Yii::$app->user;
+                                // Check if the user does  have the 'admin' or 'super admin' role
+                                return $user->can('admin') && $user->can('super_admin');
+                            },
                         ],
                     ],
                 ],
@@ -93,6 +99,43 @@ class TransaksiGajiController extends Controller
         }
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'karyawan' => $karyawan,
+            'periode_gaji' => $periode_gaji,
+            'bulan' => $bulan,
+            'tahun' => $tahun,
+            'model' => $model,
+            'karyawanID' => $karyawanID,
+            'periode_gajiID' => $periode_gajiID
+        ]);
+    }
+
+
+    public function actionReport()
+    {
+        $model = new TransaksiGaji();
+        $bulan = date('m');
+        $tahun = date('Y');
+        $searchModel = new TransaksiGajiSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams, $bulan, $tahun, null, null);
+        $karyawan = new Karyawan();
+        $periode_gaji = new PeriodeGaji();
+
+        $karyawanID = null;
+        $periode_gajiID = PeriodeGajiHelper::getPeriodeGajiBulanIni();
+        if ($this->request->isPost) {
+            $karyawanID = Yii::$app->request->post('Karyawan')['id_karyawan'];
+            $periode_gajiID = intval(Yii::$app->request->post('PeriodeGaji')['id_periode_gaji']);
+
+            if (!$karyawanID) $karyawanID = null;
+            if (!$periode_gajiID) $periode_gajiID = null;
+
+            $periode_gaji = PeriodeGaji::findOne($periode_gajiID);
+            $dataProvider = $searchModel->search($this->request->queryParams, $periode_gaji['bulan'], $periode_gaji['tahun'], $karyawanID, $periode_gajiID);
+        }
+
+        return $this->renderPartial('report', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'karyawan' => $karyawan,

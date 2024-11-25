@@ -248,6 +248,6 @@ $tanggal = new Tanggal;
 
 <?php
 header("Content-Type: application/vnd.ms-excel");
-header("Content-Disposition: attachment; Filename = Data.xls");
-// die;
+header("Content-Disposition: attachment; Filename = Rekapan-absensi.xls");
+die;
 ?>

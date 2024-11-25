@@ -22,22 +22,25 @@ class MasterCutiController extends Controller
         return array_merge(
             parent::behaviors(),
             [
-                'access' => [
-                    'class' => \yii\filters\AccessControl::className(),
-                    'rules' => [
-                        [
-                            'allow' => true,
-                            'roles' => ['super_admin'], // Pastikan peran ini ada dalam RBAC Anda
-                            'matchCallback' => function ($rule, $action) {
-                                return Yii::$app->user->can('super_admin'); // Pastikan Anda sudah mengonfigurasi permission ini di RBAC
-                            },
-                        ]
-                    ]
-                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                    ],
+                ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'rules' => [
+
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Allow authenticated users
+                            'matchCallback' => function ($rule, $action) {
+                                $user = Yii::$app->user;
+                                // Check if the user does  have the 'admin' or 'super admin' role
+                                return $user->can('admin') && $user->can('super_admin');
+                            },
+                        ],
                     ],
                 ],
             ]

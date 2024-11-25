@@ -6,6 +6,7 @@ use backend\models\HariLiburSearch;
 use backend\models\JadwalKerjaSearch;
 use backend\models\JamKerja;
 use backend\models\JamKerjaSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -30,11 +31,16 @@ class JamKerjaController extends Controller
                     ],
                 ],
                 'access' => [
-                    'class' => \yii\filters\AccessControl::className(),
+                    'class' => \yii\filters\AccessControl::class,
                     'rules' => [
+
                         [
                             'allow' => true,
-                            'roles' => ['@'],
+                            'roles' => ['@'], // Allow authenticated users
+                            'matchCallback' => function ($rule, $action) {
+                                $user = Yii::$app->user;
+                                return $user->can('admin') && $user->can('super_admin');
+                            },
                         ],
                     ],
                 ],

@@ -60,10 +60,7 @@ class TransaksiGajiSearch extends TransaksiGaji
                 'pg.bulan',
                 'pg.tahun',
                 'pg.terima',
-                'tg.id_transaksi_gaji',
-                'tg.jumlah_tunjangan',
-                'tg.jumlah_potongan',
-                'tg.gaji_diterima',
+                'tg.*',
             ])
             ->from('karyawan k')
             ->where(['k.is_aktif' => 1]);

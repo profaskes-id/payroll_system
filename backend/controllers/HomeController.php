@@ -52,7 +52,7 @@ class HomeController extends Controller
                             'roles' => ['@'], // Allow authenticated users
                             'matchCallback' => function ($rule, $action) {
                                 $user = Yii::$app->user;
-                                // Check if the user does not have the 'admin' or 'super admin' role
+                                // Check if the user does  have the 'admin' or 'super admin' role
                                 return !$user->can('admin') && !$user->can('super_admin');
                             },
                         ],
@@ -852,7 +852,7 @@ class HomeController extends Controller
     // ?========pengumuman
     public function actionPengumuman()
     {
-        $pengumuman = Pengumuman::find()->orderBy(['dibuat_pada' => SORT_DESC])->limit(5)->all();
+        $pengumuman = Pengumuman::find()->orderBy(['dibuat_pada' => SORT_DESC])->all();
         $this->layout = 'mobile-main';
         return $this->render('pengumuman/index', compact('pengumuman'));
     }

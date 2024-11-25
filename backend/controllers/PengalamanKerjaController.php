@@ -29,11 +29,16 @@ class PengalamanKerjaController extends Controller
                     ],
                 ],
                 'access' => [
-                    'class' => \yii\filters\AccessControl::className(),
+                    'class' => \yii\filters\AccessControl::class,
                     'rules' => [
+
                         [
                             'allow' => true,
-                            'roles' => ['@'],
+                            'roles' => ['@'], // Allow authenticated users
+                            'matchCallback' => function ($rule, $action) {
+                                $user = Yii::$app->user;
+                                return $user->can('admin') && $user->can('super_admin');
+                            },
                         ],
                     ],
                 ],

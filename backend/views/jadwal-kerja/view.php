@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
-                    'label' => 'nama_hari',
+                    'label' => 'nama hari',
                     'value' => function ($model) {
                         return $model->getNamaHari($model->nama_hari);
                     },
@@ -52,7 +52,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'jam_masuk',
                 'jam_keluar',
 
-                'jumlah_jam',
+                [
+                    'label' => 'Jumlah Jam Kerja',
+                    'value' => function ($model) {
+                        return $model['jumlah_jam'] . " Jam";
+                    }
+                ],
             ],
         ]) ?>
     </div>

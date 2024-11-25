@@ -32,11 +32,16 @@ class JamKerjaKaryawanController extends Controller
                     ],
                 ],
                 'access' => [
-                    'class' => \yii\filters\AccessControl::className(),
+                    'class' => \yii\filters\AccessControl::class,
                     'rules' => [
+
                         [
                             'allow' => true,
-                            'roles' => ['@'],
+                            'roles' => ['@'], // Allow authenticated users
+                            'matchCallback' => function ($rule, $action) {
+                                $user = Yii::$app->user;
+                                return $user->can('admin') && $user->can('super_admin');
+                            },
                         ],
                     ],
                 ],
@@ -53,7 +58,7 @@ class JamKerjaKaryawanController extends Controller
     {
         $searchModel = new KaryawanSearch();
         $dataProvider = $searchModel->searchJadwalKerja($this->request->queryParams);
-        
+
 
         if (\Yii::$app->request->isPost) {
             $id_karyawan = Yii::$app->request->post('KaryawanSearch')['id_karyawan'];
@@ -119,10 +124,10 @@ class JamKerjaKaryawanController extends Controller
     {
         $model = $this->findModel($id_jam_kerja_karyawan);
 
-        if ($this->request->isPost && $model->load($this->request->post()) ) {
-   
-            
-             $model->save();
+        if ($this->request->isPost && $model->load($this->request->post())) {
+
+
+            $model->save();
             return $this->redirect(['view', 'id_karyawan' => $model->id_karyawan]);
         }
 

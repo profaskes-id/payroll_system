@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\MasterKode;
 use backend\models\MasterKodeSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -25,6 +26,21 @@ class JabatanController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                    ],
+                ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'rules' => [
+
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Allow authenticated users
+                            'matchCallback' => function ($rule, $action) {
+                                $user = Yii::$app->user;
+                                // Check if the user does  have the 'admin' or 'super admin' role
+                                return $user->can('admin') && $user->can('super_admin');
+                            },
+                        ],
                     ],
                 ],
             ]

@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="table-container table-responsive">
         <div class="row mb-2">
 
-            <div class="col-md-5 col-12">
+            <div class="col-md-6 col-12">
                 <?php
                 // Memastikan data yang digunakan untuk Select2 sesuai dengan kondisi $karyawanID
                 if ($karyawanID != null) {
@@ -52,7 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ?>
 
             </div>
-            <div class="col-md-5 col-12">
+            <div class="col-md-6 col-12">
                 <?php
 
                 $nama_group = \yii\helpers\ArrayHelper::map($model->getPeriodeGajidpw(), 'id_periode_gaji', 'tampilan');
@@ -77,17 +77,26 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
 
 
-            <div class="col-2 col-md-1 mr-2 mr-md-0">
-                <button class="add-button" type="submit">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-            <div class="col-2 col-md-1">
-                <a href="/panel/transaksi-gaji">
-                    <button class="reset-button" type="button">
-                        <i class="fas fa-undo"></i>
+            <div class="col-12 d-flex justify-content-start  " style="gap: 10px;">
+                <div class=" ">
+                    <button class="add-button" type="submit">
+                        <i class="fas fa-search"></i>Search
                     </button>
-                </a>
+                </div>
+                <div class="">
+                    <a href="/panel/transaksi-gaji">
+                        <button class="reset-button" type="button">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </a>
+                </div>
+                <div class=" ">
+                    <a href="/panel/transaksi-gaji/report">
+                        <button class="tambah-button" type="button">
+                            <i class="fas fa-print"></i> Cetak Transaksi
+                        </button>
+                    </a>
+                </div>
             </div>
         </div>
     </div>

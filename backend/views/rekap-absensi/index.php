@@ -18,7 +18,7 @@ $tanggal = new Tanggal;
 ?>
 <div class="absensi-index position-relative">
     <div class="row">
-        <div class="col-9 col-md-8">
+        <div class="col-12 col-md-8">
             <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
                 <i class="fas fa-search"></i>
                 <span>
@@ -26,12 +26,12 @@ $tanggal = new Tanggal;
                 </span>
             </button>
         </div>
-        <div class="col-2">
+        <div class="col-3 col-md-2">
             <p class="d-block ">
                 <?= Html::a('Print to PDF <i class="fa fa-print"></i>', ['report'], ['target' => '_blank', 'class' => 'cetak-button']) ?>
             </p>
         </div>
-        <div class="col-2">
+        <div class="col-3 col-md-2">
             <p class="d-block">
                 <?= Html::a('Export to exel <i class="fa fa-table"></i>', ['exel'], ['target' => '_blank', 'class' => 'tambah-button']) ?>
             </p>

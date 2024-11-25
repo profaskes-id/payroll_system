@@ -2069,6 +2069,10 @@ input:checked + .toggle-bg {
   border-radius: 0.75rem;
 }
 
+.rounded-\[20px\] {
+  border-radius: 20px;
+}
+
 .rounded-e-full {
   border-start-end-radius: 9999px;
   border-end-end-radius: 9999px;
@@ -2635,8 +2639,8 @@ input:checked + .toggle-bg {
   padding-bottom: 1.25rem;
 }
 
-.pb-\[200px\] {
-  padding-bottom: 200px;
+.pb-\[250px\] {
+  padding-bottom: 250px;
 }
 
 .pe-2 {
@@ -2681,10 +2685,6 @@ input:checked + .toggle-bg {
 
 .pt-5 {
   padding-top: 1.25rem;
-}
-
-.pb-\[250px\] {
-  padding-bottom: 250px;
 }
 
 .text-left {
@@ -3578,8 +3578,8 @@ input:checked + .toggle-bg {
     grid-column: span 6 / span 6;
   }
 
-  .lg\:-mt-20 {
-    margin-top: -5rem;
+  .lg\:-mt-10 {
+    margin-top: -2.5rem;
   }
 
   .lg\:block {

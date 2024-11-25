@@ -20,24 +20,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-<?php
-// Fungsi untuk memotong deskripsi dan menambahkan link
-function getShortDescription($description, $wordLimit = 5)
-{
-    $words = explode(' ', $description);
-    if (count($words) > $wordLimit) {
-        $shortDescription = implode(' ', array_slice($words, 0, $wordLimit)) . '...';
-    } else {
-        $shortDescription = $description;
-    }
-
-    return $shortDescription;
-}
-
-?>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-
 <!-- Demo styles -->
 <style>
     html,
@@ -109,7 +91,7 @@ function getShortDescription($description, $wordLimit = 5)
 
                     <section class="col-span-12 lg:col-span-6" data-aos="fade-down" data-aos-duration="1000">
                         <div class="  relative  justify-center gap-5 content-start p-5 lg:p-0">
-                            <div class="w-full h-full bg-white  overflow-hidden rounded-[50px]">
+                            <div class="w-full h-full bg-white  overflow-hidden rounded-[20px]">
                                 <div>
                                     <div class="">
                                         <a href="/panel/home/pengumuman">
@@ -128,7 +110,6 @@ function getShortDescription($description, $wordLimit = 5)
                                         </a>
                                     </div>
                                 </div>
-                                <div class="swiper-pagination"></div>
                             </div>
 
 
@@ -142,21 +123,21 @@ function getShortDescription($description, $wordLimit = 5)
 
 
 
-    <div data-aos="fade-up" data-aos-duration="800" class="w-[70px] h-[5px] bg-[#ede8fe] rounded-full -mt-24 lg:-mt-20 mx-auto"></div>
+    <div data-aos="fade-up" data-aos-duration="800" class="w-[70px] h-[5px] bg-[#ede8fe]     -mt-24 lg:-mt-10 mx-auto"></div>
 
 
     <div class="grid grid-cols-12  mb-20  gap-2 w-full mt-5 min-w-screen   px-5 relative">
 
         <div class="w-[120px]  aspect-square bg-[#fff] rounded-full absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2  overflow-hidden     ">
 
-            <div class=" flex justify-center items-center flex-col bg-[#ffc27c] w-full h-full rounded-[50px] rotate-180" data-aos="zoom-in" data-aos-delay="1000" style="z-index: 99999; position: relative;" data-aos-duration="500">
+            <div class=" flex justify-center items-center flex-col bg-[#ffc27c] w-full h-full rounded-[50px] rotate-180" data-aos="zoom-in" data-aos-delay="1000" style="z-index: -99999; position: relative;" data-aos-duration="500">
             </div>
 
         </div>
 
 
         <a href="/panel/pengajuan/wfh" class="  col-span-6   " data-aos-duration="1000" data-aos="fade-down-right">
-            <div class=" flex justify-center items-center flex-col bg-[#ede8fe] py-5 max-h-[200px] rounded-[50px] ">
+            <div class=" flex justify-center items-center flex-col bg-[#ede8fe] py-5 max-h-[200px] relative z-50 rounded-[50px] ">
                 <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                     <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/wfh.svg" alt="calendar" width="40px" height="40px">
                 </div>
@@ -164,7 +145,7 @@ function getShortDescription($description, $wordLimit = 5)
             </div>
         </a>
         <a href="/panel/pengajuan/cuti" class="  col-span-6   " data-aos-duration="1000" data-aos="fade-down-left">
-            <div class=" flex justify-center items-center flex-col bg-[#f2fee8] py-5 max-h-[200px] rounded-[50px] ">
+            <div class=" flex justify-center items-center flex-col bg-[#f2fee8] py-5 max-h-[200px] relative z-50 rounded-[50px] ">
                 <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                     <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/calendar.png" alt="calendar" width="40px" height="40px">
                 </div>
@@ -172,7 +153,7 @@ function getShortDescription($description, $wordLimit = 5)
             </div>
         </a>
         <a href="/panel/pengajuan/lembur" class="  col-span-6  " data-aos-duration="1000" data-aos="fade-up-right">
-            <div class=" flex-col col-span-6 bg-[#ffe3e3] py-5 max-h-[200px] rounded-[50px] flex justify-center items-center">
+            <div class=" flex-col col-span-6 bg-[#ffe3e3] py-5 max-h-[200px] relative z-50 rounded-[50px] flex justify-center items-center">
                 <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                     <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/alarm.png" alt="calendar" width="30px" height="30px">
                 </div>
@@ -180,7 +161,7 @@ function getShortDescription($description, $wordLimit = 5)
             </div>
         </a>
         <a href="/panel/pengajuan/dinas" class="  col-span-6  " data-aos-duration="1000" data-aos="fade-up-left">
-            <div class=" flex-col col-span-6 bg-[#ebeefd] py-5 max-h-[200px] rounded-[50px] flex justify-center items-center">
+            <div class=" flex-col col-span-6 bg-[#ebeefd] py-5 max-h-[200px] relative z-50 rounded-[50px] flex justify-center items-center">
                 <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                     <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/building.png" alt="building" width="30px" height="30px">
                 </div>
@@ -199,8 +180,6 @@ function getShortDescription($description, $wordLimit = 5)
 <script>
     AOS.init();
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 <script>
     function updateClock() {
@@ -233,23 +212,3 @@ function getShortDescription($description, $wordLimit = 5)
 </script>
 
 <!-- Initialize Swiper -->
-<script>
-    var swiper = new Swiper(".mySwiper", {
-        spaceBetween: 30,
-        loop: true,
-        centeredSlides: true,
-        autoplay: {
-            delay: 2500,
-            disableOnInteraction: false,
-        },
-        pagination: {
-            el: ".swiper-pagination",
-            clickable: true,
-            // type: "fraction",
-        },
-        navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-        },
-    });
-</script>
