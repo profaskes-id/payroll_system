@@ -2,12 +2,14 @@
 
 namespace backend\controllers;
 
+use backend\models\AtasanKaryawan;
 use backend\models\GajiPotongan;
 use backend\models\GajiTunjangan;
 use backend\models\helpers\KaryawanHelper;
 use backend\models\helpers\PeriodeGajiHelper;
 use backend\models\JamKerja;
 use backend\models\Karyawan;
+use backend\models\MasterLokasi;
 use backend\models\PeriodeGaji;
 use backend\models\TransaksiGaji;
 use backend\models\TransaksiGajiSearch;
@@ -95,7 +97,6 @@ class TransaksiGajiController extends Controller
 
             $periode_gaji = PeriodeGaji::findOne($periode_gajiID);
             $dataProvider = $searchModel->search($this->request->queryParams, $periode_gaji['bulan'], $periode_gaji['tahun'], $karyawanID, $periode_gajiID);
-            // dd($dataProvider->models);
         }
 
         return $this->render('index', [
@@ -124,16 +125,7 @@ class TransaksiGajiController extends Controller
 
         $karyawanID = null;
         $periode_gajiID = PeriodeGajiHelper::getPeriodeGajiBulanIni();
-        if ($this->request->isPost) {
-            $karyawanID = Yii::$app->request->post('Karyawan')['id_karyawan'];
-            $periode_gajiID = intval(Yii::$app->request->post('PeriodeGaji')['id_periode_gaji']);
-
-            if (!$karyawanID) $karyawanID = null;
-            if (!$periode_gajiID) $periode_gajiID = null;
-
-            $periode_gaji = PeriodeGaji::findOne($periode_gajiID);
-            $dataProvider = $searchModel->search($this->request->queryParams, $periode_gaji['bulan'], $periode_gaji['tahun'], $karyawanID, $periode_gajiID);
-        }
+        // dd($dataProvider->models);
 
         return $this->renderPartial('report', [
             'searchModel' => $searchModel,
@@ -182,10 +174,12 @@ class TransaksiGajiController extends Controller
     public function actionCetak($id_transaksi_gaji)
     {
         $model = $this->findModel($id_transaksi_gaji);
+        // $karyawan = Karyawan::find()->select(['id_karyawan'])->where(['kode_karyawan' => $model['kode_karyawan']])->asArray()->one();
         $jamKerja = JamKerja::find()->where(['id_jam_kerja' => $model['jam_kerja']])->one();
-        // dd($model, $jamKerja);
+        // $penempatan = AtasanKaryawan::find()->where(['id_karyawan' => $karyawan['id_karyawan']])->one();
+        // $masterLokasi = MasterLokasi::find()->where(['id_master_lokasi' => $penempatan['id_master_lokasi']])->one();
+        // $perusahaan = Perusahaan::find()->where(['id_perusahaan' => $masterLokasi['id_perusahaan']])->one();
         $content = $this->renderPartial('_report', [
-            // return $this->renderPartial('_report', [
             'model' => $model,
             'jamKerja' => $jamKerja
         ]);

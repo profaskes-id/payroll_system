@@ -46,7 +46,6 @@ class TransaksiGajiSearch extends TransaksiGaji
     public function search($params, $bulan, $tahun, $id_karyawan, $periode_gaji_id)
     {
 
-        // dd($bulan, $tahun, $id_karyawan, $periode_gaji_id);
 
         if ($periode_gaji_id == null || $periode_gaji_id == '') {
             $periode_gaji_id = PeriodeGajiHelper::getPeriodeGajiBulanIni()['id_periode_gaji'];
@@ -54,7 +53,6 @@ class TransaksiGajiSearch extends TransaksiGaji
         $query = (new \yii\db\Query())
             ->select([
                 'k.id_karyawan',
-                'k.nama',
                 'k.nomer_identitas',
                 'pg.id_periode_gaji',
                 'pg.bulan',
@@ -84,7 +82,6 @@ class TransaksiGajiSearch extends TransaksiGaji
                 ':tahun' => $tahun
             ]);
 
-        // dd($query->all());
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -105,9 +102,6 @@ class TransaksiGajiSearch extends TransaksiGaji
     {
 
         $periodeGajian = PeriodeGaji::findOne(['bulan' => $bulan, 'tahun' => $tahun]);
-
-
-
 
         $query = (new Query())
             ->select([
@@ -140,7 +134,7 @@ class TransaksiGajiSearch extends TransaksiGaji
 
 
         $results = $query->all();
-        dd($results);
+        // dd($results);
         $result = [];
 
         $currentDate = $tanggalSet; // Gunakan tanggalSet

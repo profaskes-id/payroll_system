@@ -104,6 +104,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 
+    <?php
+    $karyawan = new KaryawanHelper();
+
+    ?>
 
     <div class="table-container table-responsive">
         <?= GridView::widget([
@@ -142,8 +146,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 [
                     'label' => "karyawan",
-                    'value' => function ($model) {
-                        return $model['nama'];
+                    'value' => function ($model) use ($karyawan) {
+                        return $karyawan->getKaryawanById($model['id_karyawan'])[0]['nama'] ?? "-";
                     }
                 ],
 
