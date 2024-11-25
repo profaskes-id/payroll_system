@@ -331,7 +331,6 @@ class PengajuanController extends \yii\web\Controller
                 $model->files = json_encode($filePaths); // Simpan dalam format JSON
 
 
-                // dd($model->save());
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Files Berhasil Di upload.');
                     return $this->redirect(['/pengajuan/dinas']);

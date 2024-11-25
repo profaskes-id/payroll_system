@@ -65,7 +65,6 @@ class AbsensiController extends Controller
             // echo "kode jika request adalah POST";
             $param_bagian = Yii::$app->request->post('Bagian')['id_bagian'];
             $param_tanggal = Yii::$app->request->post('Absensi')['tanggal'];
-            // dd($param_tanggal);
 
             if ($param_tanggal) {
                 $tanggalSet = $param_tanggal;

@@ -145,7 +145,6 @@ use yii\widgets\DetailView;
                                     [
                                         'label' => "Jumlah Tunjangan",
                                         'value' => function ($model) {
-                                            // dd($model);
                                             return 'Rp ' . number_format($model['getTunjangan'], 0, ',', '.') . ' ' .
                                                 Html::a('<i class="fa fa-edit"></i>', ['tunjangan-detail/index', 'id_karyawan' => $model['karyawan']['id_karyawan']], ['class' => 'edit-button d-inline-block', 'target' => '_blank']);
                                         },
@@ -200,7 +199,6 @@ use yii\widgets\DetailView;
             <?= $form->field($model, 'gaji_pokok')->hiddenInput(['maxlength' => true, 'value' => $rekapandata['gajiPokok']['nominal_gaji'] ?? $model->gaji_pokok])->label(false) ?>
 
             <?php
-            // dd($rekapandata['getTunjangan']);
             $data = strval($rekapandata['getTunjangan']);
             echo $form->field($model, 'jumlah_tunjangan')->hiddenInput(['maxlength' => true, 'id' => 'tunjangan', 'value' => $data, 'readonly' => true])->label(false);
             ?>

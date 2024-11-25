@@ -134,10 +134,10 @@ class TransaksiGajiSearch extends TransaksiGaji
 
 
         $results = $query->all();
-        // dd($results);
+
         $result = [];
 
-        $currentDate = $tanggalSet; // Gunakan tanggalSet
+        // $currentDate = $tanggalSet; // Gunakan tanggalSet
         // Mendapatkan hari saat ini (1 = Senin, 0 = Minggu, dst.)
         $currentDayOfWeek = date('w'); // 0 (Minggu) sampai 6 (Sabtu)
         $currentDayOfWeek = $currentDayOfWeek == 0 ? 7 : $currentDayOfWeek; // Mengubah Minggu (0) menjadi 7

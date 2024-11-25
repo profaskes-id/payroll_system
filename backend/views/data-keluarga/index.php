@@ -54,8 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'label' => 'hubungan',
                     'value' => function ($model) {
-                        dd($model->masterHubungan);
-                        return $model->masterHubungan->nama_kode;
+                        return $model->masterHubungan->nama_kode ?? "";
                     }
                 ],
                 'pekerjaan',

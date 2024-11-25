@@ -67,7 +67,6 @@ class DataPekerjaanSearch extends DataPekerjaan
             ->leftJoin('{{%master_kode}} mk', 'mk.nama_group = "status-pekerjaan" and data_pekerjaan.status = mk.kode');
 
 
-        // dd($query->all());
 
         // add conditions that should always apply here
 

@@ -184,7 +184,6 @@ class CetakController extends Controller
     public function actionUpload($id_cetak)
     {
         $model = $this->findModel($id_cetak);
-        // dd($model);
         $oldPost = $model->oldAttributes;
 
         if ($this->request->isPost && $model->load($this->request->post())) {

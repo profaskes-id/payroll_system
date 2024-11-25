@@ -102,7 +102,6 @@ $this->params['breadcrumbs'][] = $this->title;
         $longitude_now = $model->longitude;
         $latitude_penempatan = strval($alamat->latitude);
         $longitude_penempatan = strval($alamat->longtitude);
-        // dd($latitude_now, $longitude_now, $latitude_penempatan, $longitude_penempatan);
         // $latitude_now = "-0.350190";
         // $longitude_now = "100.372248";
 

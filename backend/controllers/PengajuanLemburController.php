@@ -65,7 +65,6 @@ class PengajuanLemburController extends Controller
         $dataProvider = $searchModel->search($this->request->queryParams, $tgl_mulai, $tgl_selesai);
 
         if ($this->request->isPost) {
-            // dd($this->request->post());
             $tgl_mulai = $this->request->post('PengajuanLemburSearch')['tanggal_mulai'];
             $tgl_selesai = $this->request->post('PengajuanLemburSearch')['tanggal_selesai'];
             $dataProvider = $searchModel->search($searchModel, $tgl_mulai, $tgl_selesai);

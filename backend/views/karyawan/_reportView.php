@@ -184,16 +184,10 @@ $this->title = 'Report Data Karyawan';
                 [
                     'label' => 'Bagian',
                     'value' => function ($model) {
-                        // dd($model);
-                        return $model['nama_bagian'];
+                        return $model['nama_bagian'] ?? '';
                     }
                 ],
-                // [
-                //     'label' => 'jabatan',
-                //     'value' => function ($model) {
-                //         return $model->jabatanPekerja->nama_kode;
-                //     }
-                // ],
+
 
                 [
                     'headerOptions' => ['style' => 'text-align: center;'],

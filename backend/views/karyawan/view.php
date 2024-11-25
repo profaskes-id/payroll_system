@@ -446,7 +446,6 @@
                                                 'contentOptions' => ['style' => 'text-align: center;'],
                                                 'label' => 'Sampai',
                                                 'value' => function ($model) {
-                                                    // dd($model);
                                                     $tanggalFormat = new Tanggal();
                                                     if ($model['sampai']) {
                                                         return $tanggalFormat->getIndonesiaFormatTanggal($model['sampai']);

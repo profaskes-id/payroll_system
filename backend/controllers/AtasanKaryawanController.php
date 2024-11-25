@@ -64,7 +64,6 @@ class AtasanKaryawanController extends Controller
             $dataProvider = $searchModel->searchAtasanKaryawanID($id_karyawan);
         }
 
-        // dd($dataProvider->models);
 
 
         return $this->render('index', [

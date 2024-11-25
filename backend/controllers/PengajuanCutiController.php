@@ -68,7 +68,6 @@ class PengajuanCutiController extends Controller
         $dataProvider = $searchModel->search($this->request->queryParams, $tgl_mulai, $tgl_selesai);
 
         if ($this->request->isPost) {
-            // dd($this->request->post());
             $tgl_mulai = $this->request->post('PengajuanCutiSearch')['tanggal_mulai'];
             $tgl_selesai = $this->request->post('PengajuanCutiSearch')['tanggal_selesai'];
             $dataProvider = $searchModel->search($searchModel, $tgl_mulai, $tgl_selesai);
@@ -155,7 +154,6 @@ class PengajuanCutiController extends Controller
                 $containsNumber = strpos($jamKerjaKaryawan->jamKerja->nama_jam_kerja, preg_match('/\d+/', "5", $matches) ? $matches[0] : '') !== false;
 
                 $hari_kerja = $this->hitungHariKerja($model->tanggal_mulai, $model->tanggal_selesai, $containsNumber);
-                // dd($hari_kerja);
                 // Menghitung selisih hari
                 // $selisih_detik = $timestamp_selesai - $timestamp_mulai;
                 // $selisih_hari = $selisih_detik / (60 * 60 * 24);

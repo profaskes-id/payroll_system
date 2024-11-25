@@ -125,7 +125,6 @@ class TransaksiGajiController extends Controller
 
         $karyawanID = null;
         $periode_gajiID = PeriodeGajiHelper::getPeriodeGajiBulanIni();
-        // dd($dataProvider->models);
 
         return $this->renderPartial('report', [
             'searchModel' => $searchModel,
@@ -414,7 +413,6 @@ class TransaksiGajiController extends Controller
                     $tunjanganDetail =  $model->getTunjangan($id_karyawan, false);
                     $potonganDetail =  $model->getPotongan($id_karyawan, false);
 
-                    // dd($getIdTransaksiGaji, $tunjanganDetail, $potonganDetail);
 
                     $gajiTunjangan = GajiTunjangan::find()->where(['id_transaksi_gaji' => $getIdTransaksiGaji['id_transaksi_gaji']])->all();
                     $gajiPotongan = GajiPotongan::find()->where(['id_transaksi_gaji' => $getIdTransaksiGaji['id_transaksi_gaji']])->all();

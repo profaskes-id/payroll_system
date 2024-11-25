@@ -393,10 +393,10 @@ class KaryawanSearch extends Karyawan
             ->leftJoin('jam_kerja_karyawan', 'karyawan.id_karyawan = jam_kerja_karyawan.id_karyawan')
             ->leftJoin('jam_kerja', 'jam_kerja_karyawan.id_jam_kerja = jam_kerja.id_jam_kerja')
             ->leftJoin('master_kode', 'master_kode.kode = jam_kerja.jenis_shift and master_kode.nama_group = "jenis-shift" ')
-
+            ->where(['karyawan.is_aktif' => 1])
             ->orderBy(['karyawan.nama' => SORT_ASC])
             ->all();
-        // dd($query);
+
         $dataProvider = new ArrayDataProvider([
             'models' => $query,
             'pagination' => [
@@ -451,11 +451,10 @@ class KaryawanSearch extends Karyawan
             ])
             ->from('karyawan k')
             ->leftJoin('atasan_karyawan a', 'k.id_karyawan = a.id_karyawan')
-            // ->where(['karyawan.id_karyawan' => $params])
+            ->where(['k.is_aktif' => 1])
             ->all();
 
 
-        // dd($query);
         $dataProvider = new ArrayDataProvider([
             'models' => $query,
             'pagination' => [
@@ -478,7 +477,7 @@ class KaryawanSearch extends Karyawan
             ])
             ->from('karyawan k')
             ->leftJoin('atasan_karyawan a', 'k.id_karyawan = a.id_karyawan')
-            ->where(['k.id_karyawan' => $params])
+            ->where(['k.id_karyawan' => $params, 'k.is_aktif' => 1])
             ->all();
 
 

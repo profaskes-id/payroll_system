@@ -106,9 +106,7 @@ class SiteController extends Controller
                 ->orderBy('tanggal ASC')
                 ->all();
 
-            // dd($absensi);
             foreach ($absensi as $absen) {
-                // dd($absen);
                 $tanggal_var = date('d-m-Y', strtotime($absen['tanggal']));
                 if (!isset($dates[$tanggal_var])) {
                     $dates[$tanggal_var] = [];

@@ -51,8 +51,7 @@ $this->title = 'Expirience';
                 <h2 class=" font-semibold text-gray-900 ">Data Personal </h2>
                 <div class="mt-2 grid grid-cols-1 gap-y-3">
                     <?php if (!empty($karyawan)) : ?>
-                        <?php // dd($karyawan);
-                        ?>
+
                         <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
                             <div class="grid grid-cols-12 gap-2">
                                 <div class="w-full border border-gray-300 p-2 col-span-12 lg:col-span-6">

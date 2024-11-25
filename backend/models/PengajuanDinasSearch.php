@@ -42,7 +42,6 @@ class PengajuanDinasSearch extends PengajuanDinas
 
     public function search($params, $tgl_mulai, $tgl_selesai)
     {
-        // dd($tgl_mulai);
         $query = PengajuanDinas::find()->where(['>=', 'tanggal_mulai', $tgl_mulai])->andWhere(['<=', 'tanggal_selesai', $tgl_selesai]);
 
         // add conditions that should always apply here

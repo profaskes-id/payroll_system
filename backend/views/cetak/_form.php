@@ -10,16 +10,12 @@ use yii\widgets\ActiveForm;
 ?>
 
 
-<?php //dd($karyawan)
-?>
 <style>
     tr td:first-child {
         width: 150px;
     }
 </style>
 
-<?php // dd($perusahaan) 
-?>
 <div class="row">
 
     <div class=' col-lg-6 table-container mb-3 mb-lg-0'>
@@ -49,8 +45,6 @@ use yii\widgets\ActiveForm;
                 <td>:</td>
                 <td> <?= $karyawan->kode_jenis_kelamin == 'L' || $karyawan->kode_jenis_kelamin == 1 ? 'Laki-Laki' : 'Perempuan' ?></td>
             </tr>
-            <?php // dd() 
-            ?>
             <tr>
                 <td>Alamat</td>
                 <td>:</td>
