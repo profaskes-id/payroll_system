@@ -87,8 +87,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <!-- content -->
         <div class="col-span-12 w-full  px-5 pt-5  ">
-
-
             <div class=" grid grid-cols-12 place-items-center">
                 <div class="col-span-12  w-full">
 
@@ -143,14 +141,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?php endif; ?>
                     <?php endif; ?>
 
-
-
-
-
                     <br>
                     <br>
-                    <!-- ================== -->
-
                     <?php if ($dataJam['today']) : ?>
 
                         <?php if (count($absensiToday) > 0) : ?>
@@ -204,11 +196,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php endif ?>
 
 
-
-
                 </div>
             </div>
-
             <!-- ? mobile izin -->
             <div class="flex justify-between  items-center pb-32">
                 <?php if (count($absensiToday) > 0) : ?>
@@ -228,7 +217,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php else : ?>
 
                         <?php if ($isPulangCepat): ?>
-
                             <div class="grid place-items-center mt-5">
                                 <a href="/panel/home/pulang-cepat">
                                     <div class="grid place-items-center">
@@ -319,11 +307,17 @@ $redirectUrl = Yii::getAlias('@web');
             navigator.geolocation.getCurrentPosition(
                 function(position) {},
                 function(error) {
-                    alert('Izinkan Browser Untuk Mengakses Lokasi Anda');
+                    Swal.fire({
+                        confirmButtonColor: "#3085d6",
+                        text: "Izinkan Browser Untuk Mengakses Lokasi Anda!"
+                    });
                 }
             );
         } else {
-            alert('Izinkan Browser Untuk Mengakses Lokasi Anda');
+            Swal.fire({
+                confirmButtonColor: "#3085d6",
+                text: "Izinkan Browser Untuk Mengakses Lokasi Anda!"
+            });
         }
     }
 

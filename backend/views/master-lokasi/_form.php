@@ -103,7 +103,10 @@ use yii\widgets\ActiveForm;
             })
             .then(response => response.json())
             .then(data => {
-                alert(data.message);
+                Swal.fire({
+                    confirmButtonColor: "#3085d6",
+                    text: `${data.message}`,
+                });
             })
             .catch(error => console.error('Error:', error));
     });

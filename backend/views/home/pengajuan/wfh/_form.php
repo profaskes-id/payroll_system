@@ -98,7 +98,10 @@ $form = ActiveForm::begin(); ?>
     useCurrentLocation.addEventListener('click', function() {
         document.getElementById('lat').value = "";
         document.getElementById('lng').value = "";
-        alert('Pastikan anda telah memilih lokasi secara manual');
+        Swal.fire({
+            confirmButtonColor: "#3085d6",
+            text: "Pastikan anda Telah Mengaktifkan Lokasi Anda!"
+        });
         navigator.geolocation.watchPosition(function(position) {
 
             console.info(position);
@@ -142,7 +145,10 @@ $form = ActiveForm::begin(); ?>
             })
             .then(response => response.json())
             .then(data => {
-                alert(data.message);
+                Swal.fire({
+                    confirmButtonColor: "#3085d6",
+                    text: `${data.message}`,
+                });
             })
             .catch(error => console.error('Error:', error));
     });

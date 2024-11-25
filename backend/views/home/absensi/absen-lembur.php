@@ -197,11 +197,17 @@ $redirectUrl = Yii::getAlias('@web');
             navigator.geolocation.getCurrentPosition(
                 function(position) {},
                 function(error) {
-                    alert('Izinkan Browser Untuk Mengakses Lokasi Anda');
+                    Swal.fire({
+                        confirmButtonColor: "#3085d6",
+                        text: "Izinkan Browser Untuk Mengakses Lokasi Anda!"
+                    });
                 }
             );
         } else {
-            alert('Izinkan Browser Untuk Mengakses Lokasi Anda');
+            Swal.fire({
+                confirmButtonColor: "#3085d6",
+                text: "Izinkan Browser Untuk Mengakses Lokasi Anda!"
+            });
         }
     }
 

@@ -180,5 +180,6 @@
 
 </body>
 <script src="<?= Yii::getAlias('@root') . '/node_modules/flowbite/dist/flowbite.min.js' ?>"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </html>
