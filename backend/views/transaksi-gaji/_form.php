@@ -16,7 +16,7 @@ use yii\widgets\DetailView;
 
 <div class="transaksi-gaji-form">
 
-    <div class="row gap-2  table-container ">
+    <div class="row   table-container ">
         <div class="col-md-5 col-12">
             <div class="col-12">
                 <?= DetailView::widget(
@@ -173,9 +173,7 @@ use yii\widgets\DetailView;
                             ]
                         ) ?>
                     </div>
-
                 </div>
-
             </div>
         </div>
         <div class="col-12 col-md-7">
