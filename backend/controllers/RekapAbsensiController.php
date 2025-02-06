@@ -71,10 +71,7 @@ class RekapAbsensiController extends Controller
     public function actionIndex()
     {
 
-
-
         if (Yii::$app->request->isPost) {
-
             $query =  $this->RekapData(Yii::$app->request->post());
             $bulan = Yii::$app->request->post('bulan');
             $tahun = Yii::$app->request->post('tahun');
@@ -254,7 +251,6 @@ class RekapAbsensiController extends Controller
 
         ];
     }
-
 
 
     public function actionView($id_absensi)

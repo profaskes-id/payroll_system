@@ -14,7 +14,6 @@ use yii\grid\GridView;
 $this->title = 'Rekap Absensi';
 $this->params['breadcrumbs'][] = $this->title;
 $tanggal = new Tanggal;
-
 ?>
 <div class="absensi-index position-relative">
     <div class="row">
@@ -48,7 +47,7 @@ $tanggal = new Tanggal;
 
 
     <div class="table-container table-responsive">
-
+        <p class="text-muted text-capitalize text-xs">jika data karyawan tidak ada, silahkan tambahkan data jam kerja karyawan</p>
         <table class="table table-bordered table-responsive">
             <thead>
 
@@ -80,7 +79,6 @@ $tanggal = new Tanggal;
                     <td>Total Hadir</td>
                     <td>Jumlah Terlambat</td>
                     <td>Total Telambat</td>
-                    <!-- <td>Tidak Tadir</td> -->
                 </tr>
             </thead>
 
@@ -107,8 +105,6 @@ $tanggal = new Tanggal;
                                 </td>
 
 
-
-
                             <?php else : ?>
 
                                 <?php
@@ -120,15 +116,9 @@ $tanggal = new Tanggal;
                                 }
                                 ?>
 
-                                <td <?php if ($day_of_week == 0) echo 'style="background-color: #aaa; color:white;"'; ?>>
-                                    <p style=" width: 50px; padding:0;  text-align: center; vertical-align: middle;">
+                                <td <?php if ($day_of_week == 0) echo 'style="  background-color: #aaa; color:white;"'; ?>>
+                                    <p style=" width: 50px; padding:0;   text-align: center; vertical-align: middle;">
 
-                                        <?php //if ($key == (count($karyawan) - 1)): 
-                                        ?>
-                                        <?php //$data['total_tidak_hadir'] 
-                                        ?>
-                                        <?php // endif; 
-                                        ?>
                                         <?php if ($key == (count($karyawan) - 1)): ?>
 
                                             <?php
@@ -153,10 +143,8 @@ $tanggal = new Tanggal;
                                             $jamKerjaKantor = $data['jam_masuk_kantor']; // jam kantor
                                             $karyawan_absen_pada = strtotime($jamKerjakaryawan);
 
-
                                             $jam_kantor_masuk = strtotime($jamKerjaKantor ?? "08:00:00");
                                             ?>
-
 
                                             <?php if ($data['is_lembur'] == 1) : ?>
                                                 <span style='color: black;'><?= $data['status_hadir'] ?></span><br />
@@ -166,36 +154,15 @@ $tanggal = new Tanggal;
                                                 <span style='color: blue; font-weight:700;'><?= $data['status_hadir'] ?></span><br />
                                                 <span style='color: blue; font-weight:700;'>WFH</span><br />
 
+                                            <?php elseif ($data['is_24jam'] == 1) : ?>
+                                                <span style='color: green; font-weight:700;'><?= $data['status_hadir'] ?></span><br />
+                                                <span style='color: green; font-weight:700;'>24 Jam</span><br />
 
-                                            <?php elseif ($karyawan_absen_pada > $jam_kantor_masuk) : ?>
+
+                                            <?php elseif ($data['is_terlambat'] == 1) : ?>
                                                 <span style='color: red;'><?= $data['status_hadir'] ?></span><br />
-                                                <?php
-                                                $selisih_detik = $karyawan_absen_pada - $jam_kantor_masuk;
-                                                $menit = floor($selisih_detik / 60);
-                                                $detik = $selisih_detik % 60;
-                                                $jam = floor($menit / 60);
-                                                // Hitung menit yang tersisa
-                                                $menit = $menit % 60;
+                                                <span style='color: red;'><?= $data['lama_terlambat'] ?></span><br />
 
-                                                // Jika menit atau jam negatif, set menjadi 0
-                                                if ($menit < 0) {
-                                                    $menit = 0;
-                                                }
-                                                if ($jam < 0) {
-                                                    $jam = 0;
-                                                }
-
-                                                // Tambahkan nol di depan jika kurang dari 10
-                                                $menit = str_pad($menit, 2, '0', STR_PAD_LEFT);
-                                                $detik = str_pad($detik, 2, '0', STR_PAD_LEFT);
-                                                $jam = str_pad($jam, 2, '0', STR_PAD_LEFT);
-
-                                                if ($jam > 0) {
-                                                    echo "<span style='color: red; font-size: 12px; justify-content:center; align-items:center; display: flex;'>+{$jam}:{$menit}:{$detik}</span>";
-                                                } else {
-                                                    echo "<span style='color: red; font-size: 12px; justify-content:center; align-items:center; display: flex;'>+{$jam}:{$menit}:{$detik}</span>";
-                                                }
-                                                ?>
                                             <?php else : ?>
                                                 <span style='color: black;'><?= $data['status_hadir'] ?></span>
                                             <?php endif; ?>

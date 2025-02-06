@@ -2,8 +2,12 @@
 
 namespace backend\controllers;
 
+use amnah\yii2\user\models\User;
+use backend\models\helpers\EmailHelper;
 use backend\models\helpers\KaryawanHelper;
+use backend\models\helpers\NotificationHelper;
 use backend\models\JamKerjaKaryawan;
+use backend\models\MasterKode;
 use backend\models\PengajuanWfh;
 use backend\models\PengajuanWfhSearch;
 use DateTime;
@@ -56,13 +60,13 @@ class PengajuanWfhController extends Controller
      */
     public function actionIndex()
     {
+        $tanggalAwal = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one();
         $bulan = date('m');
         $tahun = date('Y');
-        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, 1, $tahun));
-        $lastDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, date('t', mktime(0, 0, 0, $bulan, 1, $tahun)), $tahun));
-
+        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, intval($tanggalAwal->nama_kode) + 1, $tahun));
+        $lastdate = date('Y-m-d', mktime(0, 0, 0, $bulan + 1, intval($tanggalAwal->nama_kode), $tahun));
         $tgl_mulai = $firstDayOfMonth;
-        $tgl_selesai = date('Y-m-d');
+        $tgl_selesai = $lastdate;
         $searchModel = new PengajuanWfhSearch();
         $dataProvider = $searchModel->search($this->request->queryParams, $tgl_mulai, $tgl_selesai);
 
@@ -107,46 +111,26 @@ class PengajuanWfhController extends Controller
                 $mulai = strtotime($model->tanggal_mulai);
                 $selesai = strtotime($model->tanggal_selesai);
 
-
+                // Validasi tanggal
                 if ($mulai > $selesai) {
                     Yii::$app->session->setFlash('error', 'Tanggal mulai tidak boleh lebih besar dari tanggal selesai.');
+                    return $this->redirect(['create']); // Menghentikan eksekusi dan kembali ke form
                 }
 
-                $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $model->id_karyawan])->one();
-                $namaJamKerja = strtolower($jamKerjaKaryawan->jamKerja['nama_jam_kerja']);
-                // Inisialisasi jumlahHari berdasarkan nama jam kerja
-                if (strpos($namaJamKerja, '6 hari kerja') !== false) {
-                    $jumlahHari = 6;
-                } elseif (strpos($namaJamKerja, '5 hari kerja') !== false) {
-                    $jumlahHari = 5;
-                } elseif (strpos($namaJamKerja, '4 hari kerja') !== false) {
-                    $jumlahHari = 4;
-                } else {
-                    $jumlahHari = 0; // Default jika tidak ada yang cocok
-                }
-
+                // Inisialisasi array untuk menyimpan tanggal
                 $tanggalArray = [];
                 $startDate = new DateTime($model->tanggal_mulai);
                 $endDate = new DateTime($model->tanggal_selesai);
 
-                while ($startDate <= $endDate && count($tanggalArray) < $jumlahHari) {
-                    // Cek apakah hari ini adalah Sabtu (6) atau Minggu (0)
-                    if ($jumlahHari === 5) {
-                        // Untuk 5 hari, simpan hanya Senin hingga Jumat
-                        if ($startDate->format('N') < 6) { // 1 (Senin) sampai 5 (Jumat)
-                            $tanggalArray[] = $startDate->format('Y-m-d');
-                        }
-                    } else {
-                        // Untuk 6 hari, simpan Senin hingga Sabtu
-                        if ($startDate->format('N') < 7) { // 1 (Senin) sampai 6 (Sabtu)
-                            $tanggalArray[] = $startDate->format('Y-m-d');
-                        }
-                    }
+                // Loop untuk menambahkan tanggal ke dalam array
+                while ($startDate <= $endDate) {
+                    // Tambahkan tanggal ke dalam array
+                    $tanggalArray[] = $startDate->format('d-m-Y'); // Format sesuai yang diinginkan
                     // Tambah satu hari
                     $startDate->modify('+1 day');
                 }
 
-                // Encode tanggal_array menjadi JSON
+                // Menyimpan tanggal_array dalam format JSON
                 $model->tanggal_array = json_encode($tanggalArray);
 
                 // Menyimpan tanggal_mulai dan tanggal_selesai dalam format yang diinginkan
@@ -157,7 +141,7 @@ class PengajuanWfhController extends Controller
                     Yii::$app->session->setFlash('success', 'Berhasil menyimpan data pengajuan WFH.');
                     return $this->redirect(['index']);
                 } else {
-                    Yii::$app->session->setFlash('error', 'Gagal menyimpan data pengajuan WFH ,  pastikan data yang anda masukkan benar.');
+                    Yii::$app->session->setFlash('error', 'Gagal menyimpan data pengajuan WFH, pastikan data yang anda masukkan benar.');
                 }
             }
         } else {
@@ -168,7 +152,6 @@ class PengajuanWfhController extends Controller
             'model' => $model,
         ]);
     }
-
     /**
      * Updates an existing PengajuanWfh model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -181,8 +164,10 @@ class PengajuanWfhController extends Controller
         $model = $this->findModel($id_pengajuan_wfh);
 
         $tgl = json_decode($model['tanggal_array']);
-        $tglmulai = $tgl[0] ?? "2024-01-01";
+        $tglmulai = $tgl[0] ?? date('Y') . "-01-01";
         $tanggalSelesai = end($tgl);
+        $model->disetujui_oleh = Yii::$app->user->identity->id;
+
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             $mulai = strtotime($model->tanggal_mulai);
@@ -237,6 +222,20 @@ class PengajuanWfhController extends Controller
             $model->tanggal_selesai = date('Y-m-d', $selesai);
 
             if ($model->save()) {
+
+                $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+                $sender = Yii::$app->user->identity->id;
+
+                $params = [
+                    'judul' => 'Pengajuan wfh',
+                    'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan wfh .',
+                    'nama_transaksi' => "wfh",
+                    'id_transaksi' => $model['id_pengajuan_wfh'],
+                ];
+                $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan wfh Baru Dari " . $model->karyawan->nama);
+
+
+
                 Yii::$app->session->setFlash('success', 'Berhasil menyimpan data pengajuan WFH.');
                 return $this->redirect(['index']);
             } else {
@@ -279,5 +278,35 @@ class PengajuanWfhController extends Controller
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+
+
+    // send notif
+    public function sendNotif($params, $sender, $model, $adminUsers, $subject = "Pengajuan Di Tanggapi")
+    {
+        try {
+            NotificationHelper::sendNotification($params, $adminUsers, $sender);
+        } catch (\InvalidArgumentException $e) {
+            // Handle invalid argument exception
+            Yii::error("Invalid argument: " . $e->getMessage());
+        } catch (\RuntimeException $e) {
+            // Handle runtime exception
+            Yii::error("Runtime error: " . $e->getMessage());
+        }
+
+        // return $this->renderPartial('@backend/views/home/pengajuan/email', compact('model', 'adminUsers', 'subject'));
+        $msgToCheck = $this->renderPartial('@backend/views/home/pengajuan/email', compact('model', 'params'));
+
+        // $msgToCheck = $this->renderPartial('@backend/views/home/pengajuan/email');
+        // Mengirim email ke setiap pengguna
+        foreach ($adminUsers as $user) {
+            $to = $user->email;
+            if (EmailHelper::sendEmail($to, $subject, $msgToCheck)) {
+                Yii::$app->session->setFlash('success', 'Email berhasil dikirim ke ' . $to);
+            } else {
+                Yii::$app->session->setFlash('error', 'Email gagal dikirim ke ' . $to);
+            }
+        }
     }
 }

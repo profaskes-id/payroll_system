@@ -47,32 +47,30 @@ class AutoLoginController extends Controller
             $kode_karyawan = Yii::$app->request->post('kode_karyawan');
             $password = Yii::$app->request->post('password');
 
-            $model = Karyawan::find()->select(['email', 'nama', 'nomer_identitas'])->where(['kode_karyawan' => $kode_karyawan])->one();
-
+            $model = Karyawan::find()->select(['id_karyawan', 'email', 'nama', 'nomer_identitas'])->where(['kode_karyawan' => $kode_karyawan])->one();
+            $users->id_karyawan = $model->id_karyawan;
             $users->email =  $model->email;
             $users->newPassword = $password;
             $users->setRegisterAttributes(2, 1);
-
-
             if ($passwordHasher->verify($params['token'], $kode_karyawan)) {
 
-            if ($users->save(false)) {
-                $profil = new Profile();
-                $profil->user_id = $users->id;
-                $profil->full_name = $model->nama;
-                if ($profil->save()) {
-                    return $this->redirect(['/home']);
+                if ($users->save(false)) {
+                    $profil = new Profile();
+                    $profil->user_id = $users->id;
+                    $profil->full_name = $model->nama;
+                    if ($profil->save()) {
+                        return $this->redirect(['/home']);
+                    } else {
+                        Yii::$app->session->setFlash(
+                            'error',
+                            "gagal save profile"
+                        );
+                        return $this->redirect(['/']);
+                    }
                 } else {
-                    Yii::$app->session->setFlash(
-                    'error',
-                    "gagal save profile"
-                );
-                    return $this->redirect(['/']);
+                    // tampilkan error
+                    return  Yii::error("Error saving user: " . json_encode($users->errors), __METHOD__);
                 }
-            } else {
-                // tampilkan error
-                return  Yii::error("Error saving user: " . json_encode($users->errors), __METHOD__);
-            }
             } else {
                 return 'gagal kode karyawan beda';
             }

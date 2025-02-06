@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\JamKerja;
+use backend\models\MasterKode;
 use backend\models\Tanggal;
 use backend\models\TotalHariKerja;
 use yii\grid\ActionColumn;
@@ -32,7 +33,8 @@ $tanggal = new Tanggal();
 
 $id_jamkerja_byget = Yii::$app->request->get('id_jam_kerja');
 $jamkerja = JamKerja::find()->where(['id_jam_kerja' => $id_jamkerja_byget])->one();
-$this->title = "Total Hari Kerja - " . $jamkerja['nama_jam_kerja'];
+$jenisShift = MasterKode::find()->asArray()->where(['nama_group' => 'jenis-shift', 'kode' => $jamkerja['jenis_shift']])->one()['nama_kode'] ?? "-";
+$this->title = "Total Hari Kerja - " . $jamkerja['nama_jam_kerja'] . " - " . $jenisShift;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Total Hari Kerja'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);

@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="table-container table-responsive">
         <div class="row mb-2">
 
-            <div class="col-md-6 col-12">
+            <div class="col-lg-3 col-12">
                 <?php
                 // Memastikan data yang digunakan untuk Select2 sesuai dengan kondisi $karyawanID
                 if ($karyawanID != null) {
@@ -52,7 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ?>
 
             </div>
-            <div class="col-md-6 col-12">
+            <div class="col-lg-4 col-12">
                 <?php
 
                 $nama_group = \yii\helpers\ArrayHelper::map($model->getPeriodeGajidpw(), 'id_periode_gaji', 'tampilan');
@@ -77,7 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
 
 
-            <div class="col-12 d-flex justify-content-start  " style="gap: 10px;">
+            <div class="col-5 d-flex justify-content-start  " style="gap: 10px;">
                 <div class=" ">
                     <button class="add-button" type="submit">
                         <i class="fas fa-search"></i>Search

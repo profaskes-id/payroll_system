@@ -4,6 +4,8 @@ namespace backend\controllers;
 
 use backend\models\JadwalKerja;
 use backend\models\JadwalKerjaSearch;
+use Mpdf\Http\Exception\NetworkException;
+use PHPUnit\Framework\Error\Error;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -97,6 +99,54 @@ class JadwalKerjaController extends Controller
             'id_jam_kerja' => $id_jam_kerja,
             'model' => $model,
         ]);
+    }
+
+
+    public function actionShift($id_jam_kerja = null)
+    {
+        $model = new JadwalKerja();
+        if ($id_jam_kerja == null) {
+            throw new \yii\web\NotFoundHttpException('membutuhkan data jam kerja yang valid');
+        }
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                // Hapus data shift lama untuk jam kerja ini (opsional)
+                JadwalKerja::deleteAll(['nama_hari' => $model->nama_hari, 'id_jam_kerja' => $id_jam_kerja]);
+                // Siapkan data untuk batch insert
+                $data = [];
+                if (is_array($model->shift_sehari)) {
+                    foreach ($model->shift_sehari as $shift) {
+                        $data[] = [
+                            'id_jam_kerja' => $id_jam_kerja,
+                            'id_shift_kerja' => $shift,
+                            'nama_hari' => $model->nama_hari
+                        ];
+                    }
+                }
+
+                // Lakukan batch insert
+                if (!empty($data)) {
+                    $result = Yii::$app->db->createCommand()
+                        ->batchInsert(JadwalKerja::tableName(), [
+                            'id_jam_kerja',
+                            'id_shift_kerja',
+                            'nama_hari'
+                        ], $data)
+                        ->execute();
+
+                    if ($result) {
+                        Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
+                    } else {
+                        Yii::$app->session->setFlash('error', 'Gagal menyimpan data');
+                    }
+                }
+
+                return $this->redirect(['/jam-kerja/view', 'id_jam_kerja' => $id_jam_kerja]);
+            }
+        } else {
+            $model->loadDefaultValues();
+        }
     }
 
     /**

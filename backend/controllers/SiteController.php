@@ -4,7 +4,9 @@ namespace backend\controllers;
 
 use backend\models\Absensi;
 use backend\models\IzinPulangCepat;
+use backend\models\Karyawan;
 use backend\models\MasterKode;
+use backend\models\MessageReceiver;
 use backend\models\PengajuanCuti;
 use backend\models\PengajuanDinas;
 use backend\models\PengajuanLembur;
@@ -77,7 +79,7 @@ class SiteController extends Controller
             return $this->redirect(['user/login']);
         } elseif (Yii::$app->user->can('admin')) {
 
-            $TotalKaryawan = User::find()->where(['role_id' => '2'])->count();
+            $TotalKaryawan = Karyawan::find()->where(['is_aktif' => 1])->count();
             $TotalData = Absensi::find()->where(['tanggal' => date('Y-m-d'), 'kode_status_hadir' => 'H'])->count();
             $TotalDataBelum = $TotalKaryawan - $TotalData;
             $izin = MasterKode::find()->where(['nama_group' => 'status-hadir', 'nama_kode' => 'Izin'])->one();
@@ -123,7 +125,12 @@ class SiteController extends Controller
 
 
 
-            return $this->render('index', compact('datesAsJson', 'TotalKaryawan', 'TotalData', 'TotalDataBelum', 'TotalIzin', 'totalPengumuman', 'pengajuanLembur', 'pengajuanCuti', 'pengajuanDinas', 'pengajuanPulangCepat', 'pengajuanWFH'));
+            $is_ada_notif =  MessageReceiver::find()
+                ->where(['receiver_id' => $this->user->id, 'is_open' => 0])
+                ->count();
+
+
+            return $this->render('index', compact('is_ada_notif', 'datesAsJson', 'TotalKaryawan', 'TotalData', 'TotalDataBelum', 'TotalIzin', 'totalPengumuman', 'pengajuanLembur', 'pengajuanCuti', 'pengajuanDinas', 'pengajuanPulangCepat', 'pengajuanWFH'));
         } elseif (!Yii::$app->user->can('admin')) {
 
             return $this->redirect(['home/index']);

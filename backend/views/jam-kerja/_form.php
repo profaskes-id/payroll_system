@@ -38,7 +38,7 @@ use yii\widgets\ActiveForm;
                     'tags' => true,
                     'allowClear' => true
                 ],
-            ]);
+            ])->label('Pilih Jam Kerja / Buat Jam Kerja Baru');
             ?>
         </div>
 
@@ -48,7 +48,7 @@ use yii\widgets\ActiveForm;
             echo $form->field($model, 'jenis_shift')->widget(Select2::classname(), [
                 'data' => $data,
                 'language' => 'id',
-                'options' => ['placeholder' => 'Pilih Status Kehadiran ...'],
+                'options' => ['placeholder' => 'Pilih Jenis Shift ...'],
                 'pluginOptions' => [
                     'allowClear' => true
                 ],

@@ -2,6 +2,9 @@
 
 namespace backend\controllers;
 
+use amnah\yii2\user\models\User;
+use backend\models\helpers\EmailHelper;
+use backend\models\helpers\NotificationHelper;
 use backend\models\JamKerjaKaryawan;
 use backend\models\MasterCuti;
 use backend\models\MasterKode;
@@ -57,13 +60,13 @@ class PengajuanCutiController extends Controller
      */
     public function actionIndex()
     {
+        $tanggalAwal = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one();
         $bulan = date('m');
         $tahun = date('Y');
-        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, 1, $tahun));
-        $lastDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, date('t', mktime(0, 0, 0, $bulan, 1, $tahun)), $tahun));
-
+        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, intval($tanggalAwal->nama_kode) + 1, $tahun));
+        $lastdate = date('Y-m-d', mktime(0, 0, 0, $bulan + 1, intval($tanggalAwal->nama_kode), $tahun));
         $tgl_mulai = $firstDayOfMonth;
-        $tgl_selesai = date('Y-m-d');
+        $tgl_selesai = $lastdate;
         $searchModel = new PengajuanCutiSearch();
         $dataProvider = $searchModel->search($this->request->queryParams, $tgl_mulai, $tgl_selesai);
 
@@ -162,15 +165,13 @@ class PengajuanCutiController extends Controller
 
                 if ($model->status == Yii::$app->params['disetujui']) {
                     $rekapan = RekapCuti::find()->where(['id_karyawan' => $model->id_karyawan, 'id_master_cuti' => $model->jenis_cuti, 'tahun' => date('Y', strtotime($model->tanggal_mulai))])->one();
-
                     if ($rekapan) {
                         $rekapan->total_hari_terpakai += $hari_kerja;
                         $rekapan->save();
                     } else {
                         $timestamp_mulai = strtotime($model->tanggal_mulai);
                         $timestamp_selesai = strtotime($model->tanggal_selesai);
-
-                        $selisih_detik = $timestamp_selesai - $timestamp_mulai;
+                        $selisih_detik = $timestamp_selesai - $timestamp_mulai == 0 ? (1 * 60 * 60 * 24) : $timestamp_selesai - $timestamp_mulai;
                         $selisih_hari = $selisih_detik / (60 * 60 * 24);
                         $NewrekapAsensi = new RekapCuti();
                         $NewrekapAsensi->id_karyawan = $model->id_karyawan;
@@ -180,6 +181,20 @@ class PengajuanCutiController extends Controller
                         $NewrekapAsensi->save();
                     }
                 }
+
+
+                $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+                $sender = Yii::$app->user->identity->id;
+
+                $params = [
+                    'judul' => 'Pengajuan cuti',
+                    'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan cuti .',
+                    'nama_transaksi' => "cuti",
+                    'id_transaksi' => $model['id_pengajuan_cuti'],
+                ];
+                $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan cuti Baru Dari " . $model->karyawan->nama);
+
+
 
 
 
@@ -258,6 +273,30 @@ class PengajuanCutiController extends Controller
         return $hari_kerja;
     }
 
-    // Contoh penggunaan fungsi
+    // send notif
+    public function sendNotif($params, $sender, $model, $adminUsers, $subject = "Pengajuan Di Tanggapi")
+    {
+        try {
+            NotificationHelper::sendNotification($params, $adminUsers, $sender);
+        } catch (\InvalidArgumentException $e) {
+            // Handle invalid argument exception
+            Yii::error("Invalid argument: " . $e->getMessage());
+        } catch (\RuntimeException $e) {
+            // Handle runtime exception
+            Yii::error("Runtime error: " . $e->getMessage());
+        }
 
+        $msgToCheck = $this->renderPartial('@backend/views/home/pengajuan/email', compact('model', 'params'));
+
+        // $msgToCheck = $this->renderPartial('@backend/views/home/pengajuan/email');
+        // Mengirim email ke setiap pengguna
+        foreach ($adminUsers as $user) {
+            $to = $user->email;
+            if (EmailHelper::sendEmail($to, $subject, $msgToCheck)) {
+                Yii::$app->session->setFlash('success', 'Email berhasil dikirim ke ' . $to);
+            } else {
+                Yii::$app->session->setFlash('error', 'Email gagal dikirim ke ' . $to);
+            }
+        }
+    }
 }

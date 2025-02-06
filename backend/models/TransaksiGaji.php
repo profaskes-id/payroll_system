@@ -127,9 +127,10 @@ class TransaksiGaji extends \yii\db\ActiveRecord
             ->asArray()
             ->one();
 
+
         //jika total hari kerja == null kembalikan dengan set session error
         if ($totalHariKerja == null) {
-            Yii::$app->session->setFlash('error', 'Silahkan Cek Data Total Hari Kerja Dan Data Periode Gaji Terlebih Dahulu');
+            Yii::$app->session->setFlash('error', 'Silahkan Cek Data <a href="/panel/total-hari-kerja" style="text-decoration: underline; color: blue" target="_blank" >Total Hari Kerja</a> Total Hari Kerja Dan Data Periode Gaji Terlebih Dahulu');
             $data['total_hari_kerja'] = 0;
             return $data;
         }

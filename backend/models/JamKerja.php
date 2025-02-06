@@ -83,4 +83,20 @@ class JamKerja extends \yii\db\ActiveRecord
     {
         return $this->hasOne(MasterKode::class, ['kode' => 'jenis_shift'])->onCondition(['nama_group' => 'jenis-shift']);
     }
+
+    public function getTampilanJamKerja()
+    {
+        $data = JamKerja::find()->all();
+
+        $dataResult = [];
+
+        foreach ($data as $key => $value) {
+            $jenisShift = isset($value['jenisShift']) ? $value['jenisShift']['nama_kode'] : null;
+            $dataResult[] = [
+                'id' => $value['id_jam_kerja'],
+                'text' => $value['nama_jam_kerja']  . ' - ' . $jenisShift,
+            ];
+        }
+        return $dataResult;
+    }
 }

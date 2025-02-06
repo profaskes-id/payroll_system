@@ -253,11 +253,11 @@ class TransaksiGajiController extends Controller
         $getTerlambat = $model->getTotalTerlambat($id_karyawan, $firstDayOfMonth, $lastDayOfMonth);
 
         if (!$dataPekerjaan) {
-            Yii::$app->session->setFlash('error', 'Data pekerjaan tidak ditemukan, lengkapi data pekerjaan terlebih dahulu');
+            Yii::$app->session->setFlash('error', '<a href="/panel/karyawan" style="text-decoration: underline; color: blue" target="_blank" > Data pekerjaan </a>tidak ditemukan, lengkapi data pekerjaan terlebih dahulu');
             return $this->redirect(['transaksi-gaji/index']);
         }
         if (!$gajiPokok) {
-            Yii::$app->session->setFlash('error', 'Data gaji pokok tidak ditemukan, lengkapi data gaji pokok terlebih dahulu');
+            Yii::$app->session->setFlash('error', '<a href="/panel/master-gaji" style="text-decoration: underline; color: blue" target="_blank"> Data gaji </a> pokok tidak ditemukan, lengkapi data gaji pokok terlebih dahulu');
             return $this->redirect(['transaksi-gaji/index']);
         }
 
@@ -426,7 +426,6 @@ class TransaksiGajiController extends Controller
                     foreach ($gajiPotongan as $item) {
                         $item->delete();
                     }
-                    // die;
 
 
 

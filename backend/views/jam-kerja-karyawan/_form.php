@@ -1,8 +1,10 @@
 <?php
 
 use backend\models\JamKerja;
+use backend\models\JamKerjaKaryawan;
 use backend\models\Karyawan;
 use backend\models\MasterKode;
+use backend\models\ShiftKerja;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -23,7 +25,9 @@ use yii\widgets\ActiveForm;
     <div class="row">
         <div class="col-md-6">
             <?php
-            $data = \yii\helpers\ArrayHelper::map(JamKerja::find()->all(), 'id_jam_kerja', 'nama_jam_kerja');
+            $jkk = new JamKerja();
+            $dataJkk = $jkk->getTampilanJamKerja();
+            $data = \yii\helpers\ArrayHelper::map($dataJkk, 'id', 'text');
             echo $form->field($model, 'id_jam_kerja')->widget(Select2::classname(), [
                 'data' => $data,
                 'language' => 'id',
@@ -38,6 +42,27 @@ use yii\widgets\ActiveForm;
 
         <div class="col-md-6">
             <?= $form->field($model, 'max_terlambat')->textInput(['type' => 'time'])->label('Maximal Terlambat');
+            ?>
+        </div>
+
+        <div class="col-12">
+            <?php
+            $shiftKerja = new ShiftKerja();
+            $data = $shiftKerja->getShiftKerjaAll();
+            $nama_kode = \yii\helpers\ArrayHelper::map($data, 'id_shift_kerja', 'tampilan');
+            echo $form->field($model, 'id_shift_kerja')->radioList($nama_kode, [
+                'item' => function ($index, $label, $name, $checked, $value) {
+                    return Html::radio($name, $checked, [
+                        'class' => 'radio',
+                        'value' => $value,
+                        'label' => $label,
+                        'labelOptions' => [
+                            'class' => 'radio-inline',
+                            'style' => 'display: block; margin-bottom: 10px; cursor: pointer'
+                        ],
+                    ]);
+                }
+            ])->label('Pilih Shift <span class="text-danger">*</span>');
             ?>
         </div>
     </div>

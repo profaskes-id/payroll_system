@@ -2,9 +2,11 @@
 
 namespace backend\controllers;
 
+use amnah\yii2\user\models\User;
+use backend\models\helpers\EmailHelper;
+use backend\models\helpers\NotificationHelper;
 use backend\models\Karyawan;
 use backend\models\MasterCuti;
-use backend\models\MasterKode;
 use backend\models\PengajuanCuti;
 use backend\models\PengajuanDinas;
 use backend\models\PengajuanLembur;
@@ -15,10 +17,9 @@ use Yii;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 
+
 class PengajuanController extends \yii\web\Controller
 {
-
-
 
     public function beforeAction($action)
     {
@@ -117,6 +118,18 @@ class PengajuanController extends \yii\web\Controller
                 $model->jenis_cuti = Yii::$app->request->post('jenis_cuti');
                 $model->sisa_hari = 90;
                 if ($model->save()) {
+
+                    // ? KIRIM NOTIFIKASI
+                    $adminUsers = User::find()->where(['role_id' => [1, 3]])->all();
+                    $params = [
+                        'judul' => 'Pengajuan cuti',
+                        'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan cuti.',
+                        'nama_transaksi' => "/panel/pengajuan-cuti/view?id_pengajuan_cuti=",
+                        'id_transaksi' => $model['id_pengajuan_cuti'],
+                    ];
+                    $this->sendNotif($params, $model, $adminUsers, "Pengajuan cuti Baru Dari " . $model->karyawan->nama);
+
+
                     Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
                     return $this->redirect(['/pengajuan/cuti']);
                 } else {
@@ -190,6 +203,18 @@ class PengajuanController extends \yii\web\Controller
 
                 $model->durasi = $durasi;
                 if ($model->save()) {
+
+                    // ? KIRIM NOTIFIKASI
+                    $adminUsers = User::find()->where(['role_id' => [1, 3]])->all();
+                    $params = [
+                        'judul' => 'Pengajuan lembur',
+                        'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan lembur.',
+                        'nama_transaksi' => "/panel/pengajuan-lembur/view?id_pengajuan_lembur=",
+                        'id_transaksi' => $model['id_pengajuan_lembur'],
+                    ];
+                    $this->sendNotif($params, $model, $adminUsers, "Pengajuan lembur Baru Dari " . $model->karyawan->nama);
+
+
                     Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
                     return $this->redirect(['/pengajuan/lembur']);
                 } else {
@@ -278,6 +303,16 @@ class PengajuanController extends \yii\web\Controller
                 $model->status = 0;
 
                 if ($model->save()) {
+                    // ? KIRIM NOTIFIKASI
+                    $adminUsers = User::find()->where(['role_id' => [1, 3]])->all();
+                    $params = [
+                        'judul' => 'Pengajuan Dinas',
+                        'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan dinas luar.',
+                        'nama_transaksi' => "/panel/pengajuan-dinas/view?id_pengajuan_dinas=",
+                        'id_transaksi' => $model['id_pengajuan_dinas'],
+                    ];
+                    $this->sendNotif($params, $model, $adminUsers, "Pengajuan Dinas Baru Dari " . $model->karyawan->nama);
+
                     Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
                     return $this->redirect(['/pengajuan/dinas']);
                 } else {
@@ -382,6 +417,8 @@ class PengajuanController extends \yii\web\Controller
 
         $poinArray = [];
         if ($this->request->isPost) {
+            // Simpan pesan ke tabel message
+
             if ($model->load($this->request->post())) {
                 $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
                 $model->id_karyawan = $karyawan->id_karyawan;
@@ -394,13 +431,22 @@ class PengajuanController extends \yii\web\Controller
                     $tanggalArray[] = $startDate->format('Y-m-d');
                     $startDate->modify('+1 day');
                 }
-
-
                 $model->tanggal_array = json_encode($tanggalArray);
-
-
                 if ($model->save()) {
+
+                    // ? KIRIM NOTIFIKASI
+                    $adminUsers = User::find()->where(['role_id' => [1, 3]])->all();
+                    $params = [
+                        'judul' => 'Pengajuan WFH',
+                        'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan WFH.',
+                        'nama_transaksi' => "/panel/pengajuan-wfh/view?id_pengajuan_wfh=",
+                        'id_transaksi' => $model['id_pengajuan_wfh'],
+                    ];
+
+                    $this->sendNotif($params, $model, $adminUsers, "Pengajuan WFH Baru Dari " . $model->karyawan->nama);
+
                     Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
+
                     return $this->redirect(['/pengajuan/wfh']);
                 } else {
                     Yii::$app->session->setFlash('error', 'Gagal Membuat Pengajuan');
@@ -454,5 +500,32 @@ class PengajuanController extends \yii\web\Controller
 
         Yii::$app->session->setFlash('error', 'Gagal Menghapus Pengajuan');
         return $this->redirect(['/pengajuan/wfh']);
+    }
+
+    public function sendNotif($params, $model, $adminUsers, $subject = "Pengajuan Karyawan")
+    {
+        try {
+            NotificationHelper::sendNotification($params, $adminUsers);
+        } catch (\InvalidArgumentException $e) {
+            // Handle invalid argument exception
+            Yii::error("Invalid argument: " . $e->getMessage());
+        } catch (\RuntimeException $e) {
+            // Handle runtime exception
+            Yii::error("Runtime error: " . $e->getMessage());
+        }
+
+        // return $this->renderPartial('@backend/views/home/pengajuan/email', compact('model', 'adminUsers', 'subject'));
+        $msgToCheck = $this->renderPartial('@backend/views/home/pengajuan/email_user', compact('model', 'params'));
+
+        // $msgToCheck = $this->renderPartial('@backend/views/home/pengajuan/email');
+        // Mengirim email ke setiap pengguna
+        foreach ($adminUsers as $user) {
+            $to = $user->email;
+            if (EmailHelper::sendEmail($to, $subject, $msgToCheck)) {
+                Yii::$app->session->setFlash('success', 'Email berhasil dikirim ke ' . $to);
+            } else {
+                Yii::$app->session->setFlash('error', 'Email gagal dikirim ke ' . $to);
+            }
+        }
     }
 }

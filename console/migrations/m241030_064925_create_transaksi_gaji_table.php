@@ -42,10 +42,6 @@ class m241030_064925_create_transaksi_gaji_table extends Migration
             'potongan_terlambat_permenit' => $this->decimal(10, 2)->notNull(),
             'jumlah_potongan_terlambat' => $this->decimal(10, 2)->notNull(),
             'gaji_diterima' => $this->decimal(10, 2)->defaultValue(0),
-            'tunjangan_lainnya' => $this->decimal(10, 2)->defaultValue(0),
-            'potongan_lainnya' => $this->decimal(10, 2)->defaultValue(0),
-            'keterangan_tunjangan_lainnya' => $this->text()->defaultValue(0),
-            'keterangan_potongan_lainnya' => $this->text()->defaultValue(0),
         ]);
     }
 

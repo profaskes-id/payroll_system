@@ -375,7 +375,7 @@
                                                 'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
                                                 'attributes' => [
                                                     [
-                                                        'label' => 'Durat Pengunduran Diri',
+                                                        'label' => 'Surat Pengunduran Diri',
                                                         'value' => function ($model) {
                                                             if ($model->surat_pengunduran_diri != null) {
                                                                 return  '<p>' . Html::a('preview', Yii::getAlias('@root') . '/panel/' . $model->surat_pengunduran_diri, ['target' => '_blank']) . '</p>';

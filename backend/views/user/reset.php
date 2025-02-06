@@ -16,7 +16,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-default-reset">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?php if (!empty($success)): ?>
 
@@ -34,22 +33,22 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
     <?php else: ?>
+        <div style="position: absolute ; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <div class="card text-center" style="width: 300px;">
+                <div class="card-header h5 text-white bg-primary">Password Baru</div>
+                <div class="card-body px-5">
+                    <p class="card-text py-2">
+                        Email : <?= $user->email ?>
+                    </p>
+                    <?php $form = ActiveForm::begin(['id' => 'reset-form']); ?>
 
-        <div class="row">
-            <div class="col-lg-5">
-
-                <div class="alert alert-warning">
-                    <p><?= Yii::t("user", "Email") ?> [ <?= $user->email ?> ]</p>
-                </div>
-
-                <?php $form = ActiveForm::begin(['id' => 'reset-form']); ?>
-
-                    <?= $form->field($user, 'newPassword')->passwordInput() ?>
-                    <?= $form->field($user, 'newPasswordConfirm')->passwordInput() ?>
+                    <?= $form->field($user, 'newPassword')->passwordInput()->label('Password Baru') ?>
+                    <?= $form->field($user, 'newPasswordConfirm')->passwordInput()->label('Konfirmasi Password Baru') ?>
                     <div class="form-group">
-                        <?= Html::submitButton(Yii::t("user", "Reset"), ['class' => 'btn btn-primary']) ?>
+                        <?= Html::submitButton(Yii::t("user", "Update Password"), ['class' => 'btn btn-primary w-100']) ?>
                     </div>
-                <?php ActiveForm::end(); ?>
+                    <?php ActiveForm::end(); ?>
+                </div>
             </div>
         </div>
 

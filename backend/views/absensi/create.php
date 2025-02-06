@@ -7,7 +7,7 @@ use yii\helpers\Html;
 
 $this->title = 'Absensi Masuk';
 $this->params['breadcrumbs'][] = ['label' => 'Absensi', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => 'Absensis Masuk',];
+$this->params['breadcrumbs'][] = ['label' => 'Absensi Masuk',];
 
 ?>
 <div class="absensi-create">

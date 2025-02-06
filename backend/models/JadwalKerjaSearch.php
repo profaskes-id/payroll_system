@@ -47,6 +47,7 @@ class JadwalKerjaSearch extends JadwalKerja
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['nama_hari' => SORT_ASC]]
         ]);
 
         $this->load($params);

@@ -55,9 +55,7 @@
                 </div>
             </div>
             <div>
-                <h1 class="text-lg font-bold">Lokasi Anda Saat Ini</h1>
-                <p class="text-sm">longitude : <span id="longitude"></span></p>
-                <p class="text-sm">latitude : <span id="latitude"></span></p>
+                <p class="text-muted" id="alamat"></p>
             </div>
         </div>
     </div>
@@ -80,9 +78,11 @@
         showLoading(); // Tampilkan loading saat mulai
 
         navigator.geolocation.watchPosition(function(position) {
-                console.info(position);
-                document.getElementById('latitude').textContent = position.coords.latitude.toFixed(10);
-                document.getElementById('longitude').textContent = position.coords.longitude.toFixed(10);
+                // console.info(position);
+                // document.getElementById('latitude').textContent = position.coords.latitude.toFixed(10);
+                // document.getElementById('longitude').textContent = position.coords.longitude.toFixed(10);
+                dapatkanAlamat(position.coords.latitude.toFixed(10), position.coords.longitude.toFixed(10));
+
 
                 let map = L.map('map').setView([position.coords.latitude.toFixed(10), position.coords.longitude.toFixed(10)], 15);
 
@@ -106,5 +106,19 @@
                 timeout: 5000,
                 maximumAge: 0
             });
+
+
+        function dapatkanAlamat(lat, lon) {
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                .then(response => response.json())
+                .then(data => {
+                    var alamatLengkap = data.display_name;
+
+                    document.getElementById('alamat').textContent = alamatLengkap;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
     });
 </script>

@@ -109,13 +109,13 @@ $tanggalFormat = new Tanggal();
                             <span>
                                 Mendapat tunjangan hari raya keagamaan sebesar 1 (satu) bulan gaji.
                             </span>
-                            <p>&nbsp; &nbsp; Apabila pihak kedua masa kerjanya belum mencapai 1 (satu) tahun pada saat
+                            <p>&nbsp; &nbsp; Apabila pihak kedua masa kerjanya belum mencapai 1 (satu) tahun pada
                             </p>
                             <p>
-                                &nbsp; &nbsp; hari raya keagamaan dibayarkan, berhak mendapatkan 1/12 (seperduabelas)
+                                &nbsp; &nbsp; saat hari raya keagamaan dibayarkan, berhak mendapatkan 1/12
                             </p>
                             <p>
-                                &nbsp; &nbsp; dari tunjangan hari raya untuk setiap bulan masa kerja.
+                                &nbsp; &nbsp; (seperduabelas) dari tunjangan hari raya untuk setiap bulan masa kerja.
                             </p>
                         </li>
                         <li style="text-align: justify;">Bekerja WFH mendapatkan potongan sesuai ketentuan perusahaan.</li>
@@ -135,17 +135,25 @@ $tanggalFormat = new Tanggal();
                 <td>
                     <ol style="font-size: 12px; text-align: justify;">
                         <li style="font-size: 12px; text-align: justify;">Hadir di kantor sesuai waktu & jam kerja yang berlaku di perusahaan.</li>
-                        <li style="font-size: 12px; text-align: justify;">Menjalankan pekerjaan sesuai uraian tugas, tanggungjawab dan wewenang yang diberikan.</li>
+                        <li style="font-size: 12px; text-align: justify;">
+                            <span>Menjalankan pekerjaan sesuai uraian tugas, tanggungjawab </span>
+                            <p>
+                                &nbsp; &nbsp; dan wewenang yang diberikan.
+                            </p>
+
+                        </li>
                         <li style="font-size: 12px; text-align: justify;">Menjaga nama baik dan rahasia perusahaan.</li>
                         <li style="font-size: 12px; text-align: justify;">Mematuhi kode etik yang berlaku di perusahaan.</li>
-                        <li style="font-size: 12px; text-align: justify;">Menjaga kerahasiaan data publik sesuai UU nomor 27 Tahun 2022 tentang Perlindungan data
+                        <li style="font-size: 12px; text-align: justify;">Menjaga kerahasiaan data publik sesuai UU nomor 27 Tahun 2022 tentang
                         </li>
-                        <p style="font-size: 12px;">&nbsp; &nbsp;pribadi.</p>
-                        <li style="font-size: 12px; text-align: justify;">Menjaga kerahasiaan data medis berdasarkan Peraturan Menteri Kesehatan Nomor 24 tahun </li>
+                        <p style="font-size: 12px;">&nbsp; &nbsp; Perlindungan data pribadi.</p>
+                        <li style="font-size: 12px; text-align: justify;">Menjaga kerahasiaan data medis berdasarkan Peraturan Menteri </li>
 
-                        <p style="font-size: 12px;">&nbsp; &nbsp;2022 tentang Rekam Medis.</p>
+                        <p style="font-size: 12px;">&nbsp; &nbsp; Kesehatan Nomor 24 tahun 2022 tentang Rekam Medis.</p>
                         <li style="font-size: 12px; text-align: justify;">Dilarang mengikat hubungan kerja dengan perusahaan lain.</li>
-                        <li style="font-size: 12px; text-align: justify;">Dilarang menerima komisi dari pembelian atau jasa untuk kepentingan pribadi.</li>
+                        <li style="font-size: 12px; text-align: justify;">Dilarang menerima komisi dari pembelian atau jasa untuk kepentingan
+                            <p style="font-size: 12px;">&nbsp; &nbsp; pribadi.</p>
+                        </li>
                     </ol>
                 </td>
             </tr>
@@ -158,12 +166,15 @@ $tanggalFormat = new Tanggal();
                 <td class="w-25" style="font-size: 12px; vertical-align: top; width:30px; text-align:center;"><strong>:</strong></td>
                 <td style="font-size: 12px;">
                     <ol style="font-size: 12px;">
-                        <li style="font-size: 12px;">Pihak pertama maupun pihak kedua dapat melakukan pemutusan hubungan kerja sewaktu-waktu </li>
+                        <li style="font-size: 12px;">Pihak pertama maupun pihak kedua dapat melakukan </li>
                         <p style="font-size: 12px;">&nbsp; &nbsp;
-                            dengan pemberitahuan 30 (tiga puluh) hari sebelumnya.
+                            pemutusan hubungan kerja sewaktu-waktu dengan pemberitahuan
                         </p>
-                        <li style="font-size: 12px;">Pemutusan hubungan kerja yang tidak sesuai prosedur maka akan membatalkan hak-hak para</li>
-                        <p style="font-size: 12px;">&nbsp; &nbsp;&nbsp;pihak.</p>
+                        <p style="font-size: 12px;">&nbsp; &nbsp;
+                            (tiga puluh) hari sebelumnya.
+                        </p>
+                        <li style="font-size: 12px;">Pemutusan hubungan kerja yang tidak sesuai prosedur maka akan </li>
+                        <p style="font-size: 12px;">&nbsp; &nbsp;&nbsp;membatalkan hak-hak para pihak.</p>
                     </ol>
                 </td>
             </tr>
@@ -173,20 +184,27 @@ $tanggalFormat = new Tanggal();
                 <td class="w-25" style="font-size: 12px; vertical-align: top; width:30px; text-align:center;"><strong>:</strong></td>
                 <td style="font-size: 12px;">
                     <ol style="font-size: 12px;">
-                        <li style="font-size: 12px;">Pihak kedua boleh meninggalkan kerja tanpa pemotongan gaji untuk keperluan:</li>
+                        <li style="font-size: 12px;">Pihak kedua boleh meninggalkan kerja tanpa pemotongan gaji untuk </li>
+                        <p style="font-size: 12px;">&nbsp; &nbsp;
+                            keperluan :
+                        </p>
                         <ul style="font-size: 12px;">
                             <li style="font-size: 12px;">Sakit yang dibuktikan dengan surat dokter.</li>
                             <li style="font-size: 12px;">Menikah: 3 (tiga) hari kerja.</li>
-                            <li style="font-size: 12px;">Menikahkan anaknya/mengkhitankan anaknya/membaptiskan anaknya: 2 (dua) hari kerja.</li>
+                            <li style="font-size: 12px;">Menikahkan anaknya/mengkhitankan anaknya/membaptiskan anaknya </li>
+                            <p style="font-size: 12px;">&nbsp; &nbsp; &nbsp; 2 (dua) hari kerja. </p>
                             <li style="font-size: 12px;">Isteri melahirkan atau keguguran kandungan: 2 (dua) hari kerja.</li>
                             <li style="font-size: 12px;">Orang tua/Mertua/Anak/Suami/Istri meninggal dunia: 2 (dua) hari kerja.</li>
                             <li style="font-size: 12px;">Anggota keluarga dalam satu rumah meninggal dunia: 1 (satu) hari kerja.</li>
                         </ul>
 
-                        <li style="font-size: 12px;">Meninggalkan kerja di luar kepentingan di atas dapat diperoleh jika ada kepentingan yang sangat
+                        <li style="font-size: 12px;">Meninggalkan kerja di luar kepentingan di atas dapat diperoleh
                         </li>
                         <p style="font-size: 12px;">&nbsp; &nbsp;
-                            mendesak dengan dilakukan pemotongan gaji sesuai jumlah hari ketidakhadiran.
+                            jika ada kepentingan yang sangat mendesak dengan dilakukan
+                        </p>
+                        <p style="font-size: 12px;">&nbsp; &nbsp;
+                            pemotongan gaji sesuai jumlah hari ketidakhadiran.
                         </p>
                     </ol>
                 </td>

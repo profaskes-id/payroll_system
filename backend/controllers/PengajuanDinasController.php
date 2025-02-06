@@ -2,6 +2,10 @@
 
 namespace backend\controllers;
 
+use amnah\yii2\user\models\User;
+use backend\models\helpers\EmailHelper;
+use backend\models\helpers\NotificationHelper;
+use backend\models\MasterKode;
 use backend\models\PengajuanDinas;
 use backend\models\PengajuanDinasSearch;
 use Yii;
@@ -54,13 +58,13 @@ class PengajuanDinasController extends Controller
      */
     public function actionIndex()
     {
+        $tanggalAwal = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one();
         $bulan = date('m');
         $tahun = date('Y');
-        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, 1, $tahun));
-        $lastDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, date('t', mktime(0, 0, 0, $bulan, 1, $tahun)), $tahun));
-
+        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, intval($tanggalAwal->nama_kode) + 1, $tahun));
+        $lastdate = date('Y-m-d', mktime(0, 0, 0, $bulan + 1, intval($tanggalAwal->nama_kode), $tahun));
         $tgl_mulai = $firstDayOfMonth;
-        $tgl_selesai = date('Y-m-d');
+        $tgl_selesai = $lastdate;
         $searchModel = new PengajuanDinasSearch();
         $dataProvider = $searchModel->search($this->request->queryParams, $tgl_mulai, $tgl_selesai);
 
@@ -139,6 +143,18 @@ class PengajuanDinasController extends Controller
             $model->disetujui_oleh = Yii::$app->user->identity->id;
             $model->disetujui_pada = date('Y-m-d H:i:s');
             $model->save();
+            $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+            $sender = Yii::$app->user->identity->id;
+
+            $params = [
+                'judul' => 'Pengajuan dinas',
+                'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan dinas luar.',
+                'nama_transaksi' => "dinas",
+                'id_transaksi' => $model['id_pengajuan_dinas'],
+            ];
+            $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan dinas Baru Dari " . $model->karyawan->nama);
+
+
             return $this->redirect(['view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]);
         }
         return $this->render('update', [
@@ -186,5 +202,34 @@ class PengajuanDinasController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+    // send notif
+    public function sendNotif($params, $sender, $model, $adminUsers, $subject = "Pengajuan Di Tanggapi")
+    {
+        try {
+            NotificationHelper::sendNotification($params, $adminUsers, $sender);
+        } catch (\InvalidArgumentException $e) {
+            // Handle invalid argument exception
+            Yii::error("Invalid argument: " . $e->getMessage());
+        } catch (\RuntimeException $e) {
+            // Handle runtime exception
+            Yii::error("Runtime error: " . $e->getMessage());
+        }
+
+        // return $this->renderPartial('@backend/views/home/pengajuan/email', compact('model', 'adminUsers', 'subject'));
+        $msgToCheck = $this->renderPartial('@backend/views/home/pengajuan/email', compact('model', 'params'));
+
+        // $msgToCheck = $this->renderPartial('@backend/views/home/pengajuan/email');
+        // Mengirim email ke setiap pengguna
+        foreach ($adminUsers as $user) {
+            $to = $user->email;
+            if (EmailHelper::sendEmail($to, $subject, $msgToCheck)) {
+                Yii::$app->session->setFlash('success', 'Email berhasil dikirim ke ' . $to);
+            } else {
+                Yii::$app->session->setFlash('error', 'Email gagal dikirim ke ' . $to);
+            }
+        }
     }
 }

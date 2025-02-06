@@ -13,6 +13,19 @@ $model = $dataProvider->models;
 
 <table border="1">
     <tr>
+        <th colspan="31" style="text-align: center;">REKAP TRANSAKSI GAJI</th>
+    </tr>
+    <tr>
+        <th colspan="6">Karyawan</th>
+        <th colspan="5">Absensi</th>
+        <th colspan="3">Lembur</th>
+        <th colspan="3">WFH</th>
+        <th colspan="3">Tidak Hadir</th>
+        <th colspan="2">Terlambat</th>
+        <th colspan="4">Tunjangan & Potongan lain</th>
+        <th colspan="5">Gaji Diterima </th>
+    </tr>
+    <tr>
         <!-- =========== -->
         <th>Karyawan</th>
         <th>Kode Karyawan</th>

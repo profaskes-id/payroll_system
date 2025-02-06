@@ -84,7 +84,7 @@ use yii\widgets\ActiveForm;
             <div class="p-1 col-12">
                 <?= $form->field($model, 'sampai')->textInput(['id' => 'kode_sampai', 'type' => 'date',])->label("Sampai Dengan ") ?>
             </div>
-            <div class="col-5 mt-3">
+            <div class="mt-3 col-5">
                 <!-- <label for="manual_kode">
                     <input type="checkbox" id="manual_kode" checked>
                     <span style="font-size: 12px">Sampai Sekarang</span>
@@ -144,20 +144,17 @@ use yii\widgets\ActiveForm;
 
         // Menghitung akhir bulan dari endDate
         if (endDate) {
-            const month = endDate.getMonth();
-            const year = endDate.getFullYear();
-
-            // Menghitung tanggal terakhir di bulan itu
+            const month = endDate.getMonth() <= 0 ? 12 : endDate.getMonth();
+            console.log("🚀 ~ sampai.addEventListener ~ month:", month)
+            const year = month == 12 ? endDate.getFullYear() - 1 : endDate.getFullYear();
             const lastDateOfMonth = new Date(year, month, 0).getDate();
-
-            // Mengatur kode_sampai sesuai dengan jumlah hari di bulan
-            //  console.info(`${year}-${(month).toString().padStart(2, '0')}-${lastDateOfMonth}`);
             kode_sampai.value = `${year}-${(month).toString().padStart(2, '0')}-${lastDateOfMonth}`;
         }
     });
 
     // Fungsi untuk menambah bulan
     function addMonths(date, months) {
+
         const newDate = new Date(date);
         // Menyimpan tanggal asli
         const originalDate = newDate.getDate();

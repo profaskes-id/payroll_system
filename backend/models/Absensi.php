@@ -5,6 +5,7 @@ namespace backend\models;
 use DateTime;
 use Exception;
 use PhpParser\Node\Expr\Cast\Array_;
+use Symfony\Component\VarDumper\VarDumper;
 use Yii;
 
 /**
@@ -41,8 +42,8 @@ class Absensi extends \yii\db\ActiveRecord
     {
         return [
             [['id_karyawan', 'tanggal', 'kode_status_hadir'], 'required'],
-            [['id_karyawan', 'is_lembur', 'is_wfh'], 'integer'],
-            [['tanggal', 'jam_masuk', 'jam_pulang'], 'safe'],
+            [['id_karyawan', 'is_lembur', 'is_wfh', 'is_terlambat', 'is_24jam'], 'integer'],
+            [['tanggal', 'jam_masuk', 'jam_pulang', 'lama_terlambat', 'tanggal_pulang'], 'safe'],
             [['keterangan', 'alasan_terlambat', 'alasan_terlalu_jauh'], 'string'],
             [['latitude', 'longitude'], 'number'],
             [['lampiran'], 'string', 'max' => 255],
@@ -69,8 +70,13 @@ class Absensi extends \yii\db\ActiveRecord
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
             'alasan_terlambat' => 'Alasan Terlambat',
+            'alasan_terlalu_jauh' => 'alasan terlalu jauh',
             'is_lembur' => 'Apakah Lembur',
             'is_wfh' => 'Apakah WFH',
+            'is_terlambat' => 'Apakah Terlambat',
+            'lama_terlambat' => 'Lama Terlambat',
+            'is_24jam' => 'Is 24jam',
+            'tanggal_pulang' => 'Tanggal Pulang',
         ];
     }
 
@@ -91,17 +97,20 @@ class Absensi extends \yii\db\ActiveRecord
 
     static function getAllAbsensiFromFirstAndLastMonth($absensi, $firstDayOfMonth, $lastDayOfMonth)
     {
+
         $absensi = $absensi::find()
             ->select([
                 'absensi.id_karyawan',
-                'absensi.jam_masuk',
+                'MIN(absensi.jam_masuk) AS jam_masuk', // Ambil jam masuk paling awal
                 'absensi.tanggal',
                 'absensi.is_lembur',
                 'absensi.is_wfh',
+                'absensi.is_24jam',
                 'absensi.kode_status_hadir',
+                'absensi.is_terlambat',
+                'absensi.lama_terlambat',
                 'jkk.id_jam_kerja',
-                'jdk.id_jam_kerja',
-                'jdk.jam_masuk as jam_masuk_kerja',
+                'MIN(jdk.jam_masuk) AS jam_masuk_kerja', // Ambil jam masuk kerja paling awal
                 'jdk.nama_hari'
             ])
             ->asArray()
@@ -109,7 +118,9 @@ class Absensi extends \yii\db\ActiveRecord
             ->leftJoin('jadwal_kerja jdk', 'jkk.id_jam_kerja = jdk.id_jam_kerja AND jdk.nama_hari = DAYOFWEEK(absensi.tanggal) - 1')
             ->andWhere(['>=', 'absensi.tanggal', $firstDayOfMonth])
             ->andWhere(['<=', 'absensi.tanggal', $lastDayOfMonth])
+            ->groupBy('absensi.id_karyawan, absensi.tanggal, absensi.is_lembur, absensi.is_24jam, absensi.is_wfh, absensi.kode_status_hadir, absensi.is_terlambat,absensi.lama_terlambat,  jkk.id_jam_kerja, jdk.nama_hari')
             ->all();
+
         return $absensi;
     }
 
@@ -137,19 +148,18 @@ class Absensi extends \yii\db\ActiveRecord
                 'mk.nama_kode as jabatan',
                 'thk.total_hari',
                 'jk.nama_jam_kerja',
+                'jkk.id_shift_kerja',
             ])
             ->asArray()
             ->where(['karyawan.is_aktif' => 1])
             ->leftJoin('jam_kerja_karyawan jkk', 'jkk.id_karyawan = karyawan.id_karyawan')
-            ->leftJoin('jadwal_kerja jdk', 'jkk.id_jam_kerja = jdk.id_jam_kerja')
             ->leftJoin('total_hari_kerja thk', 'thk.id_jam_kerja = jkk.id_jam_kerja ')
-            ->leftJoin('jam_kerja jk', 'jk.id_jam_kerja = thk.id_jam_kerja')
+            ->leftJoin('jam_kerja jk', 'jk.id_jam_kerja = jkk.id_jam_kerja')
             ->leftJoin('{{%data_pekerjaan}} dp', 'karyawan.id_karyawan = dp.id_karyawan')
             ->leftJoin('{{%bagian}} bg', 'dp.id_bagian = bg.id_bagian')
             ->leftJoin('{{%master_kode}} mk', 'mk.nama_group = "jabatan" and dp.jabatan = mk.kode')
             ->orderBy(['nama' => SORT_ASC])
             ->all();
-
         return $data;
     }
 
@@ -163,101 +173,140 @@ class Absensi extends \yii\db\ActiveRecord
         $totalTerlambat = 0;
         $totalHadir = 0;
         $detikTerlambat = 0;
-        // $totalTidakHadir = 0; // Variabel untuk menyimpan total tidak hadir
+        $dataJamMasukKantor = "00:00:00";
+
+
+
 
         $keterlambatanPerTanggal = array_fill(1, $totalHari, 0);
 
         foreach ($dataKaryawan as $karyawan) {
-            // $totalHariKerja = $karyawan["total_hari"];
+
+
             $nama_jam_kerja = $karyawan["nama_jam_kerja"];
-            $karyawanData = [
-                [
-                    "id_karyawan" => $karyawan["id_karyawan"],
-                    "nama" => $karyawan["nama"],
-                    "kode_karyawan" => $karyawan["kode_karyawan"],
-                    "id_bagian" => $karyawan["id_bagian"],
-                    "bagian" => $karyawan["nama_bagian"],
-                    "jabatan" => $karyawan["jabatan"],
-                ],
-            ];
+            if ($nama_jam_kerja == null) {
+                continue;
+            } else {
 
-            for ($i = 1; $i <= $totalHari; $i++) {
-                $tanggal = date('Y-m-d', mktime(0, 0, 0, $bulan, $i, $tahun));
-                $absensiRecord = array_filter($absensi, function ($record) use ($karyawan, $tanggal) {
-                    return $record['id_karyawan'] == $karyawan['id_karyawan'] && $record['tanggal'] == $tanggal;
-                });
+                $karyawanData = [
+                    [
+                        "id_karyawan" => $karyawan["id_karyawan"],
+                        "nama" => $karyawan["nama"],
+                        "kode_karyawan" => $karyawan["kode_karyawan"],
+                        "id_bagian" => $karyawan["id_bagian"],
+                        "bagian" => $karyawan["nama_bagian"],
+                        "jabatan" => $karyawan["jabatan"],
+                    ],
+                ];
 
-                $statusHadir = null;
-                $is_lembur = 0;
-                $is_wfh = 0;
-                $jamMasukKaryawan = null;
-                $jamMasukKantor = null;
 
-                if (!empty($absensiRecord)) {
-                    $record = array_values($absensiRecord)[0];
-                    $statusHadir = $record['kode_status_hadir'];
-                    $is_lembur = $record['is_lembur'];
-                    $is_wfh = $record['is_wfh'];
-                    $jamMasukKaryawan = $record['jam_masuk'];
-                    $jamMasukKantor = $record['jam_masuk_kerja'];
+                for ($i = 1; $i <= $totalHari; $i++) {
+                    $tanggal = date('Y-m-d', mktime(0, 0, 0, $bulan, $i, $tahun));
+                    $absensiRecord = array_filter($absensi, function ($record) use ($karyawan, $tanggal) {
+                        return $record['id_karyawan'] == $karyawan['id_karyawan'] && $record['tanggal'] == $tanggal;
+                    });
 
-                    if ($statusHadir == 'H') {
-                        $jamMasuk = strtotime($record['jam_masuk']);
-                        $jamMasukKerja = strtotime($record['jam_masuk_kerja'] ?? "08:00:00");
+                    $statusHadir = null;
+                    $is_lembur = 0;
+                    $is_wfh = 0;
+                    $is_24jam = 0;
+                    $is_terlambat = 0;
+                    $lama_terlambat = 0;
+                    $jamMasukKaryawan = null;
+                    $jamMasukKantor = null;
 
-                        if ($jamMasuk > $jamMasukKerja && $record['is_lembur'] == 0 && $record['is_wfh'] == 0) {
-                            $totalTerlambat++;
-                            $selisihDetik = $jamMasuk - $jamMasukKerja;
-                            $detikTerlambat += $selisihDetik;
-                            $keterlambatanPerTanggal[$i] = ($keterlambatanPerTanggal[$i] ?? 0) + 1;
+                    if (!empty($absensiRecord)) {
+                        // dd($absensiRecord);
+                        $record = array_values($absensiRecord)[0];
+                        $statusHadir = $record['kode_status_hadir'];
+                        $is_24jam = $record['is_24jam'];
+                        $is_lembur = $record['is_lembur'];
+                        $is_wfh = $record['is_wfh'];
+                        $jamMasukKaryawan = $record['jam_masuk'];
+                        $jamMasukKantor = $record['jam_masuk_kerja'];
+
+
+                        if ($statusHadir == 'H') {
+                            $jamMasuk = strtotime($record['jam_masuk']);
+
+                            if ($record['jam_masuk_kerja'] == null) {
+                                if ($karyawan['id_shift_kerja'] == null) {
+                                    $jamMasukKerja = strtotime($record['jam_masuk_kerja'] ?? "08:00:00");
+                                } else {
+
+                                    $sk = ShiftKerja::findOne(['id_shift_kerja' => $karyawan['id_shift_kerja']]);
+                                    $jamMasukKerja = strtotime($sk->jam_mulai ?? "08:00:00");
+                                }
+                            } else {
+                                $jamMasukKerja = strtotime($record['jam_masuk_kerja'] ?? "08:00:00");
+                            }
+
+                            if ($record['is_terlambat'] == 1 && $record['is_lembur'] == 0 && $record['is_wfh'] == 0) {
+                                $is_terlambat = 1;
+                                $lama_terlambat = $record['lama_terlambat'];
+                                $jamMenitDetik = explode(':', $record['lama_terlambat']);
+                                $detikTerlambat += ($jamMenitDetik[0] * 3600) + ($jamMenitDetik[1] * 60) + $jamMenitDetik[2];
+                                $totalTerlambat++;
+                                // $selisihDetik = $jamMasuk - $jamMasukKerja;
+                                $keterlambatanPerTanggal[$i] = ($keterlambatanPerTanggal[$i] ?? 0) + 1;
+                            }
+                            $totalHadir++;
                         }
-                        $totalHadir++;
+                        if ($statusHadir == 'DL') {
+                            $totalHadir++;
+                        }
                     }
-                    if ($statusHadir == 'DL') {
-                        $totalHadir++;
-                    }
+
+                    $karyawanData[] = [
+                        'status_hadir' => $statusHadir,
+                        'is_lembur' => $is_lembur,
+                        'is_wfh' => $is_wfh,
+                        'is_24jam' => $is_24jam,
+                        'is_terlambat' => $is_terlambat,
+                        'lama_terlambat' => $lama_terlambat,
+                        'jam_masuk_karyawan' => $jamMasukKaryawan,
+                        'jam_masuk_kantor' => $jamMasukKantor,
+
+                        'total_terlambat_hari_ini' => $keterlambatanPerTanggal[$i] ?? 0, // Tambahkan info keterlambatan per tanggal
+                    ];
                 }
 
                 $karyawanData[] = [
-                    'status_hadir' => $statusHadir,
-                    'is_lembur' => $is_lembur,
-                    'is_wfh' => $is_wfh,
-                    'jam_masuk_karyawan' => $jamMasukKaryawan,
-                    'jam_masuk_kantor' => $jamMasukKantor,
-                    'total_terlambat_hari_ini' => $keterlambatanPerTanggal[$i] ?? 0, // Tambahkan info keterlambatan per tanggal
+                    'status_hadir' => null,
+                    'jam_masuk_karyawan' => null,
+                    'jam_masuk_kantor' => null,
+                    'total_hadir' => $totalHadir,
+                ];
+                $karyawanData[] = [
+                    'status_hadir' => null,
+                    'jam_masuk_karyawan' => null,
+                    'jam_masuk_kantor' => null,
+                    'total_terlambat' => $totalTerlambat,
+                ];
+                $karyawanData[] = [
+                    'status_hadir' => null,
+                    'jam_masuk_karyawan' => null,
+                    'jam_masuk_kantor' => null,
+                    'detik_terlambat' => $detikTerlambat,
                 ];
             }
 
-            $karyawanData[] = [
-                'status_hadir' => null,
-                'jam_masuk_karyawan' => null,
-                'jam_masuk_kantor' => null,
-                'total_hadir' => $totalHadir,
-            ];
-            $karyawanData[] = [
-                'status_hadir' => null,
-                'jam_masuk_karyawan' => null,
-                'jam_masuk_kantor' => null,
-                'total_terlambat' => $totalTerlambat,
-            ];
-            $karyawanData[] = [
-                'status_hadir' => null,
-                'jam_masuk_karyawan' => null,
-                'jam_masuk_kantor' => null,
-                'detik_terlambat' => $detikTerlambat,
-            ];
-            // $karyawanData
 
-            if ($nama_jam_kerja == null) {
+
+            if (empty($nama_jam_kerja)) {
                 Yii::$app->session->setFlash('error', 'Tolong isi data jam kerja dari ' . strtoupper($karyawanData[0]['nama']) . ' terlebih dahulu , untuk saat ini data jam kerja adalah ' . "5 hari kerja yang diisi secara default");
             }
             $string = $nama_jam_kerja ??  "5 Hari Kerja";
 
 
+
             $work_days_type = match (true) {
+                str_contains($string, "2") => 2,
+                str_contains($string, "3") => 3,
                 str_contains($string, "4") => 4,
                 str_contains($string, "5") => 5,
                 str_contains($string, "6") => 6,
+                str_contains($string, "7") => 7,
                 default => throw new Exception("Invalid work days type")
             };
 
@@ -274,9 +323,12 @@ class Absensi extends \yii\db\ActiveRecord
                 $date = new DateTime("$currentYear-$currentMonth-$day");
                 $string = $nama_jam_kerja ??  "5 Hari Kerja";
                 $work_days_type = match (true) {
+                    str_contains($string, "2") => 2,
+                    str_contains($string, "3") => 3,
                     str_contains($string, "4") => 4,
                     str_contains($string, "5") => 5,
                     str_contains($string, "6") => 6,
+                    str_contains($string, "7") => 7,
                     default => throw new Exception("Invalid work days type")
                 };
                 $dayOfWeek = $date->format('N');
@@ -295,19 +347,11 @@ class Absensi extends \yii\db\ActiveRecord
             }
 
 
-            // if ($bulan == date('m')) {
-            //     $totalTidakHadir = ($totalHariKerja  - count($validDates) - $totalHadir);
-            // } else {
-            //     $totalTidakHadir = $totalHariKerja  - $totalHadir;
-            // }
-
 
             $hasil[] = $karyawanData;
-
             $totalTerlambat = 0;
             $totalHadir = 0;
             $detikTerlambat = 0;
-            // $totalTidakHadir = 0; // Reset total tidak hadir
         }
 
         return [

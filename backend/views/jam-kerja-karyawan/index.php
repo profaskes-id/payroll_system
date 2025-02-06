@@ -17,11 +17,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="jam-kerja-karyawan-index">
 
-    <div class="costume-container">
-        <p class="">
-            <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) ?>
-        </p>
-    </div>
 
     <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
         <i class="fas fa-search"></i>
@@ -67,9 +62,24 @@ $this->params['breadcrumbs'][] = $this->title;
                             return '<p class="text-danger">(Belum Diset)</p>';
                         }
                         return "{$model['nama_jam_kerja']} ({$model['nama_kode']})" ?? '<p class="text-danger">(Belum Diset)</p>';
-                        // return "{$model['nama_jam_kerja']}" ?? '<p class="text-danger">(Belum Diset)</p>';
                     },
                     'format' => 'raw'
+                ],
+                [
+                    'format' => 'raw',
+                    'attribute' => 'Jenis Shift',
+                    'value' => function ($model) {
+                        if ($model['id_shift_kerja'] == null) {
+                            return '<p>-</p>';
+                        } else {
+                            $jkk = new JamKerjaKaryawan();
+                            $data = $jkk->shiftKerja($model['id_shift_kerja']);
+                            if ($data == null) {
+                                return '<p>-</p>';
+                            }
+                            return $data['nama_shift'];
+                        }
+                    }
                 ],
 
                 [

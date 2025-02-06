@@ -48,12 +48,12 @@ $today = date('Y-m-d');
     <div class="table-container table-responsive">
         <div class="row mb-2">
 
-            <div class="col-5">
+            <div class="col-lg-4 col-12">
                 <?= $form->field($absensi, 'tanggal')->textInput(['type' => 'date',  'value' => $tanggalSet ?? $today])->label(false); ?>
             </div>
 
 
-            <div class="col-5">
+            <div class="col-lg-5 col-12">
                 <?php
                 $idBagian = Yii::$app->request->post('Bagian')['id_bagian'] ?? 0;
                 $data = \yii\helpers\ArrayHelper::map(Bagian::find()->all(), 'id_bagian', 'nama_bagian');
@@ -67,17 +67,21 @@ $today = date('Y-m-d');
                 ?>
 
             </div>
-            <div class="col-2 col-md-1">
-                <button class="add-button" type="submit">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-            <div class="col-2 col-md-1">
-                <a href="/panel/absensi">
-                    <button class="reset-button" type="reset">
-                        <i class="fas fa-undo"></i>
+
+            <div class="col-lg-3 d-flex justify-content-start   " style="gap: 10px;">
+
+                <div class=" ">
+                    <button class="add-button" type="submit">
+                        <i class="fas fa-search"></i>Search
                     </button>
-                </a>
+                </div>
+                <div class="">
+                    <a href="/panel/absensi/index">
+                        <button class="reset-button" type="button">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </a>
+                </div>
             </div>
         </div>
         <?php ActiveForm::end(); ?>
@@ -140,24 +144,11 @@ $today = date('Y-m-d');
                     'value' => function ($model) {
 
                         if ($model['absensi']) {
-                            $jam_masuk_kerja = $model['jadwal_kerja']['jam_masuk'];
                             $jam_karyawan_masuk = $model['absensi']['jam_masuk'];
-
-                            if ($jam_masuk_kerja && $jam_karyawan_masuk) {
-                                // Mengkonversi jam ke format waktu
-                                $jam_masuk_kerja_time = strtotime($jam_masuk_kerja);
-                                $jam_karyawan_masuk_time = strtotime($jam_karyawan_masuk);
-
-                                // Menentukan warna teks berdasarkan waktu
-                                if ($jam_karyawan_masuk_time <= $jam_masuk_kerja_time) {
-                                    // Tepat waktu atau sebelum jam masuk kerja
-                                    return "<span style='color: black;'>$jam_karyawan_masuk</span>";
-                                } else {
-                                    // Terlambat
-                                    return "<span style='color: red;'>$jam_karyawan_masuk</span>";
-                                }
+                            if ($model['absensi']['is_terlambat'] == 0) {
+                                return "<span style='color: black;'>$jam_karyawan_masuk</span>";
                             } else {
-                                return "<span style='color: red; font-size: 10px'>00:00:00</span>";
+                                return "<span style='color: red;'>$jam_karyawan_masuk</span>";
                             }
                         } else {
                             return "<span style='color: red;'>00:00:00</span>";

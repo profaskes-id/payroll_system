@@ -144,6 +144,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             <div class="moving-text capitalize flex justify-around items-center text-[12px] ">
                                                 <p>lat : <span id="latitude"></span></p>
                                                 <p>long : <span id="longitude"></span></p>
+                                                <p id="alamat"></p>
                                             </div>
                                         </div>
                                     </a>
@@ -464,6 +465,7 @@ $dataAtasanPenempatanJson = json_encode($dataAtasanPenempatan, JSON_PRETTY_PRINT
                 document.querySelector('.longi').value = position.coords.longitude.toFixed(10);
                 document.getElementById('latitude').textContent = position.coords.latitude.toFixed(10);
                 document.getElementById('longitude').textContent = position.coords.longitude.toFixed(10);
+                dapatkanAlamat(position.coords.latitude.toFixed(10), position.coords.longitude.toFixed(10));
 
                 globatLat = position.coords.latitude.toFixed(10);
                 globatLong = position.coords.longitude.toFixed(10);
@@ -608,4 +610,18 @@ $dataAtasanPenempatanJson = json_encode($dataAtasanPenempatan, JSON_PRETTY_PRINT
 
 
     setInterval(cekWaktu, 1000);
+
+
+    function dapatkanAlamat(lat, lon) {
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+            .then(response => response.json())
+            .then(data => {
+                var alamatLengkap = data.display_name;
+
+                document.getElementById('alamat').textContent = alamatLengkap;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
 </script>

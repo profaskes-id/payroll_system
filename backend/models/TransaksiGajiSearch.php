@@ -9,6 +9,7 @@ use backend\models\TransaksiGaji;
 use PhpParser\Node\Stmt\Expression;
 use Yii;
 use yii\db\Query;
+use yii\web\NotFoundHttpException;
 
 /**
  * TransaksiGajiSearch represents the model behind the search form of `backend\models\TransaksiGaji`.
@@ -51,8 +52,7 @@ class TransaksiGajiSearch extends TransaksiGaji
         if ($periode_gaji_id == null || $periode_gaji_id == '') {
             $dataPeriode = PeriodeGajiHelper::getPeriodeGajiBulanIni();
             if ($dataPeriode == null) {
-                echo 'Data Periode Gaji Tidak Di Ditemukan, silahkan Tambahkan Data Periode Gaji Di Menu Periode Gaji Terlebih Dahulu';
-                die;
+                throw new NotFoundHttpException('Data Periode Gaji Tidak Di Ditemukan, silahkan Tambahkan Data Periode Gaji Di Menu Periode Gaji Terlebih Dahulu');
             }
             $periode_gaji_id = $dataPeriode['id_periode_gaji'];
         }

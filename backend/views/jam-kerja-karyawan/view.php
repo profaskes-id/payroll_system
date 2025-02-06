@@ -52,11 +52,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
 
                 [
-                    'attribute' => 'Maximal Terlambat',
+                    'attribute' => 'Jenis Shift',
                     'value' => function ($model) {
-                        return date('H:i', strtotime($model->max_terlambat));
+                        $data = $model->shiftKerja($model->id_shift_kerja);
+                        if ($data == null) {
+                            return '-';
+                        }
+                        return $data['nama_shift'] . " ({$data['jam_masuk']} - {$data['jam_keluar']})";
                     }
                 ],
+
             ],
         ]) ?>
     </div>

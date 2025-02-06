@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\HariLiburSearch;
+use backend\models\JadwalKerja;
 use backend\models\JadwalKerjaSearch;
 use backend\models\JamKerja;
 use backend\models\JamKerjaSearch;
@@ -73,6 +74,8 @@ class JamKerjaController extends Controller
     public function actionView($id_jam_kerja)
     {
 
+        $jadwalKerja = new JadwalKerja();
+
         $jadwalKerjaSearch = new JadwalKerjaSearch();
         $jadwalKerjaSearch->id_jam_kerja = $id_jam_kerja;
         $jadwalKerjaProvider = $jadwalKerjaSearch->search($this->request->queryParams);
@@ -83,6 +86,7 @@ class JamKerjaController extends Controller
 
 
         return $this->render('view', [
+            'jadwalKerja' => $jadwalKerja,
             // 'hariLiburSearchModel' => $hariLiburSearchModel,
             // 'hariLiburdataProvider' => $hariLiburdataProvider,
             'jadwalKerjaSearch' => $jadwalKerjaSearch,
@@ -101,7 +105,12 @@ class JamKerjaController extends Controller
         $model = new JamKerja();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            if ($model->load($this->request->post())) {
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
+                } else {
+                    Yii::$app->session->setFlash('error', 'Data gagal disimpan');
+                }
                 return $this->redirect(['view', 'id_jam_kerja' => $model->id_jam_kerja]);
             }
         } else {
@@ -124,7 +133,14 @@ class JamKerjaController extends Controller
     {
         $model = $this->findModel($id_jam_kerja);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+
+
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Data berhasil diubah');
+            } else {
+                Yii::$app->session->setFlash('error', 'Data gagal diubah');
+            }
             return $this->redirect(['view', 'id_jam_kerja' => $model->id_jam_kerja]);
         }
 

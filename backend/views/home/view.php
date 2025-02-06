@@ -83,8 +83,12 @@ $masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['stat
                                                 </p>
                                                 <p class="text-sm text-gray-500 truncate dark:text-gray-400">
                                                     <?php
-                                                    $tanggalFormat = new Tanggal();
-                                                    echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                    if ($value['is_24jam'] == 1) {
+                                                        echo '24 jam';
+                                                    } else {
+                                                        $tanggalFormat = new Tanggal();
+                                                        echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                    }
                                                     ?>
                                                 </p>
                                             </div>
@@ -96,26 +100,52 @@ $masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['stat
                                                     Work From Home
                                                 </p>
                                                 <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+
+
                                                     <?php
-                                                    $tanggalFormat = new Tanggal();
-                                                    echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                    if ($value['is_24jam'] == 1) {
+                                                        echo '24 jam';
+                                                    } else {
+
+                                                        $tanggalFormat = new Tanggal();
+                                                        echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                    }
                                                     ?>
                                                 </p>
                                             </div>
                                         <?php else :  ?>
                                             <?php if (strtolower($value['kode_status_hadir']) == 'h') : ?>
-                                                <div class="flex-shrink-0 w-[15px] h-[15px] rounded-xl bg-lime-500 grid place-items-center">
-                                                </div>
+                                                <?php if ($value['is_terlambat'] == 1) : ?>
+                                                    <div class="flex-shrink-0 w-[15px] h-[15px] rounded-xl bg-blue-500 grid place-items-center">
+                                                    </div>
+                                                <?php else : ?>
+                                                    <div class="flex-shrink-0 w-[15px] h-[15px] rounded-xl bg-lime-500 grid place-items-center">
+                                                    </div>
+                                                <?php endif; ?>
+
+                                                <?php ?>
                                                 <div class="flex-1 min-w-0">
-                                                    <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                        Hadir
-                                                    </p>
+                                                    <?php if ($value['is_terlambat'] == 1) : ?>
+                                                        <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                            Hadir <sub>(Terlambat <?= $value['lama_terlambat']; ?>)</sub>
+                                                        </p>
+                                                    <?php else : ?>
+                                                        <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                            Hadir
+                                                        </p>
+                                                    <?php endif; ?>
+
                                                     <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+
                                                         <?php
-                                                        $tanggalFormat = new Tanggal();
-                                                        echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
-                                                        ?>
-                                                    </p>
+                                                        if ($value['is_24jam'] == 1) {
+                                                            echo '24 jam';
+                                                        } else {
+
+                                                            $tanggalFormat = new Tanggal();
+                                                            echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                        }
+                                                        ?> </p>
                                                 </div>
                                             <?php elseif (strtolower($value['kode_status_hadir']) == 's') : ?>
                                                 <div class="flex-shrink-0 w-[15px] h-[15px] rounded-xl bg-blue-500 grid place-items-center">
@@ -126,8 +156,12 @@ $masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['stat
                                                     </p>
                                                     <p class="text-sm text-gray-500 truncate dark:text-gray-400">
                                                         <?php
-                                                        $tanggalFormat = new Tanggal();
-                                                        echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                        if ($value['is_24jam'] == 1) {
+                                                            echo '24 jam';
+                                                        } else {
+                                                            $tanggalFormat = new Tanggal();
+                                                            echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                        }
                                                         ?>
                                                     </p>
                                                 </div>
@@ -139,10 +173,17 @@ $masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['stat
                                                         Izin
                                                     </p>
                                                     <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+
                                                         <?php
-                                                        $tanggalFormat = new Tanggal();
-                                                        echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                        if ($value['is_24jam'] == 1) {
+                                                            echo '24 jam';
+                                                        } else {
+                                                            $tanggalFormat = new Tanggal();
+                                                            echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                        }
                                                         ?>
+
+
                                                     </p>
                                                 </div>
                                             <?php elseif (strtolower($value['kode_status_hadir']) == 'dl') : ?>
@@ -153,10 +194,16 @@ $masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['stat
                                                         Dinas Luar
                                                     </p>
                                                     <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+
                                                         <?php
-                                                        $tanggalFormat = new Tanggal();
-                                                        echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                        if ($value['is_24jam'] == 1) {
+                                                            echo '24 jam';
+                                                        } else {
+                                                            $tanggalFormat = new Tanggal();
+                                                            echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                        }
                                                         ?>
+
                                                     </p>
                                                 </div>
                                             <?php elseif (strtolower($value['kode_status_hadir']) == 'c') : ?>
@@ -168,9 +215,14 @@ $masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['stat
                                                     </p>
                                                     <p class="text-sm text-gray-500 truncate dark:text-gray-400">
                                                         <?php
-                                                        $tanggalFormat = new Tanggal();
-                                                        echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                        if ($value['is_24jam'] == 1) {
+                                                            echo '24 jam';
+                                                        } else {
+                                                            $tanggalFormat = new Tanggal();
+                                                            echo $tanggalFormat->getIndonesiaFormatTanggal($value['tanggal']);
+                                                        }
                                                         ?>
+
                                                     </p>
                                                 </div>
                                             <?php endif ?>
@@ -178,21 +230,46 @@ $masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['stat
 
 
                                     </div>
-                                    <div class="inline-flex items-center text-base  text-[#373737] ">
+                                    <div class=" flex-col flex items-center text-base  text-[#373737] ">
 
-                                        <?= date('H:i', strtotime($value['jam_masuk'] ?? "00:00")) ?>
+                                        <p>
+
+                                            <?= date('H:i', strtotime($value['jam_masuk'] ?? "00:00")) ?>
+                                        </p>
+                                        <p>
+
+                                            <?php
+                                            if ($value['is_24jam'] == 1) {
+                                                echo date('d M Y', strtotime($value['tanggal_pulang']));
+                                            }
+                                            ?>
+                                        </p>
+
+
                                     </div>
                                     <div class="inline-flex items-center text-base  text-[#373737] ">
                                         -
                                     </div>
-                                    <div class="inline-flex items-center text-base  text-[#373737] ">
-                                        <?php
-                                        if (empty($value['jam_pulang'])) {
-                                            echo "Not Set";
-                                        } else {
-                                            echo date('H:i', strtotime($value['jam_pulang']));
-                                        }
-                                        ?>
+                                    <div class="flex-col flex justify-center items-center text-base  text-[#373737] ">
+
+                                        <p>
+
+                                            <?php
+                                            if (empty($value['jam_pulang'])) {
+                                                echo "Not Set";
+                                            } else {
+                                                echo date('H:i', strtotime($value['jam_pulang']));
+                                            }
+                                            ?>
+                                        </p>
+                                        <p>
+
+                                            <?php
+                                            if ($value['is_24jam'] == 1) {
+                                                echo date('d M Y', strtotime($value['tanggal_pulang']));
+                                            }
+                                            ?>
+                                        </p>
 
 
                                     </div>
@@ -221,4 +298,8 @@ $masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['stat
 
         </div>
     </section>
+    <br>
+    <br>
+    <br>
+    <br>
 </div>

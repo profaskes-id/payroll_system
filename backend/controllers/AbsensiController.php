@@ -58,6 +58,7 @@ class AbsensiController extends Controller
         $tanggalSet = date('Y-m-d');
         $searchModel = new KaryawanSearch();
         $dataProvider = $searchModel->searchAbsensi(Yii::$app->request->queryParams, $tanggalSet);
+
         $absensi = new Absensi();
         $bagian = new Bagian();
 

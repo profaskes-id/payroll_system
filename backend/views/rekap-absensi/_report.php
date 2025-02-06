@@ -97,7 +97,7 @@ $tanggal = new Tanggal();
                                 <?php else :  ?>
                                 <td style=" border: 1px solid #808080; padding: 2px; ">
                                 <?php endif; ?>
-                                <p style="max-width: 20px; padding:0;   text-align: center:  !important;; vertical-align: middle; ">
+                                <p style="max-width: 20px; padding:0;   text-align: center  !important; vertical-align: middle; ">
 
 
                                     <?php if ($key == (count($karyawan) - 1)): ?>
@@ -131,14 +131,21 @@ $tanggal = new Tanggal();
 
                                         <?php if ($data['is_lembur'] == 1) : ?>
                                             <span style='color: black;'><?= $data['status_hadir'] ?></span><br />
-                                            <span style='color: black;'>Lembur</span>
+                                            <span style='color: black; font-size:10px;'>Lembur</span><br />
+
+                                        <?php elseif ($data['is_24jam'] == 1) : ?>
+                                            <span style='color: green; font-weight:700;'><?= $data['status_hadir'] ?></span><br />
+                                            <span style='color: black; font-size:10px;'>24 jam</span><br />
+
+
 
                                         <?php elseif ($data['is_wfh'] == 1) : ?>
                                             <span style='color: blue; font-weight:700;'><?= $data['status_hadir'] ?></span><br />
-                                            <span style='color: blue; font-weight:700;'>WFH</span>
+                                            <span style='color: blue; font-size:10px;'>WFH</span>
 
 
-                                        <?php elseif ($karyawan_absen_pada > $jam_kantor_masuk) : ?>
+
+                                        <?php elseif ($data['is_terlambat'] == 1) : ?>
                                             <span style='color: red;'><?= $data['status_hadir'] ?></span>
 
                                         <?php else : ?>

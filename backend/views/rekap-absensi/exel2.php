@@ -12,8 +12,10 @@ $tanggal = new Tanggal;
     <thead>
 
         <tr>
-            <th rowspan="3">Nama dan Kode Karyawan</th>
-            <th rowspan="3">Bagian & Jabatan</th>
+            <th rowspan="3">Nama </th>
+            <th rowspan="3">Kode Karyawan</th>
+            <th rowspan="3">Bagian </th>
+            <th rowspan="3">jabatan</th>
         </tr>
         <tr>
             <th colspan="<?= count($tanggal_bulanan) + 4 - 1  ?>">
@@ -49,26 +51,18 @@ $tanggal = new Tanggal;
 
                     <?php if ($key == 0) : ?>
                         <td>
-                            <?php $text  = strtolower($data['nama']); ?>
-                            <div class=" d-flex flex-column">
-                                <p><?= $text ?></p>
-
-                                <p><?= $data['kode_karyawan'] ?></p>
-                            </div>
+                            <?php $text  = strtolower($data['nama']); ?> <p><?= $text ?></p>
                         </td>
                         <td>
-                            <div>
-                                <p><?= $data['bagian'] ?></p>
-                                <hr>
-                                <p><?= $data['jabatan'] ?></p>
-                            </div>
+                            <p><?= $data['kode_karyawan'] ?></p>
                         </td>
-
-
-
-
+                        <td>
+                            <p><?= $data['bagian'] ?></p>
+                        </td>
+                        <td>
+                            <p><?= $data['jabatan'] ?></p>
+                        </td>
                     <?php else : ?>
-
                         <?php
                         if (!isset($tanggal_bulanan[$key - 1])) {
                             $day_of_week = 1;
@@ -103,50 +97,25 @@ $tanggal = new Tanggal;
                                     $jamKerjakaryawan = $data['jam_masuk_karyawan']; //karyawan masuj
                                     $jamKerjaKantor = $data['jam_masuk_kantor']; // jam kantor
                                     $karyawan_absen_pada = strtotime($jamKerjakaryawan);
-
-
                                     $jam_kantor_masuk = strtotime($jamKerjaKantor ?? "08:00:00");
                                     ?>
-
 
                                     <?php if ($data['is_lembur'] == 1) : ?>
                                         <span><?= $data['status_hadir'] ?></span><br />
                                         <span>Lembur</span><br />
 
+                                    <?php elseif ($data['is_24jam'] == 1) : ?>
+                                        <span style='color: green; font-weight:700;'><?= $data['status_hadir'] ?></span><br />
+                                        <span>24 Jam</span><br />
+
+
+
                                     <?php elseif ($data['is_wfh'] == 1) : ?>
                                         <span><?= $data['status_hadir'] ?></span><br />
                                         <span>WFH</span><br />
 
-
-                                    <?php elseif ($karyawan_absen_pada > $jam_kantor_masuk) : ?>
-                                        <span><?= $data['status_hadir'] ?></span><br />
-                                        <?php
-                                        $selisih_detik = $karyawan_absen_pada - $jam_kantor_masuk;
-                                        $menit = floor($selisih_detik / 60);
-                                        $detik = $selisih_detik % 60;
-                                        $jam = floor($menit / 60);
-                                        // Hitung menit yang tersisa
-                                        $menit = $menit % 60;
-
-                                        // Jika menit atau jam negatif, set menjadi 0
-                                        if ($menit < 0) {
-                                            $menit = 0;
-                                        }
-                                        if ($jam < 0) {
-                                            $jam = 0;
-                                        }
-
-                                        // Tambahkan nol di depan jika kurang dari 10
-                                        $menit = str_pad($menit, 2, '0', STR_PAD_LEFT);
-                                        $detik = str_pad($detik, 2, '0', STR_PAD_LEFT);
-                                        $jam = str_pad($jam, 2, '0', STR_PAD_LEFT);
-
-                                        if ($jam > 0) {
-                                            echo "<span style='color:red;'>+{$jam}:{$menit}:{$detik}</span>";
-                                        } else {
-                                            echo "<span style='color:red;'>+{$jam}:{$menit}:{$detik}</span>";
-                                        }
-                                        ?>
+                                    <?php elseif ($data['is_terlambat'] == 1) : ?>
+                                        <span style='color:red;'><?= $data['status_hadir'] ?></span><br />
                                     <?php else : ?>
                                         <span><?= $data['status_hadir'] ?></span>
                                     <?php endif; ?>
@@ -164,8 +133,7 @@ $tanggal = new Tanggal;
 
     <!-- 1 -->
     <tr>
-        <th>Hadir</th>
-        <th></th>
+        <th colspan="4" style="text-align: left;">Hadir</th>
         <?php
         $lastKey = array_key_last($rekapanAbsensi); // Mendapatkan kunci terakhir
         foreach ($rekapanAbsensi as $key => $rekapan) :
@@ -180,8 +148,7 @@ $tanggal = new Tanggal;
                 <td style="background-color: gray;"></td>
             <?php else : ?>
                 <?php
-                // Tentukan warna background
-                $bgColor = ($key === $lastKey) ? 'fff' : '#facc15'; // Ubah menjadi lightblue jika ini adalah elemen terakhir
+                $bgColor = ($key === $lastKey) ? 'fff' : '#facc15';
                 ?>
                 <td><?= $rekapan ? ($rekapan > 0 ? $rekapan : '') : '' ?></td>
             <?php endif; ?>
@@ -192,8 +159,7 @@ $tanggal = new Tanggal;
 
     <!--  2 -->
     <tr>
-        <th>Tidak Hadir</th>
-        <th></th>
+        <th colspan="4" style="text-align: left;">Tidak Hadir</th>
         <?php
         $lastKey = array_key_last($rekapanAbsensi); // Mendapatkan kunci terakhir
         foreach ($rekapanAbsensi as $key => $rekapan) :
@@ -219,8 +185,7 @@ $tanggal = new Tanggal;
 
     <!-- 3 -->
     <tr>
-        <th>Terlambat</th>
-        <th></th>
+        <th colspan="4" style="text-align: left;">Terlambat</th>
         <?php foreach ($keterlambatanPerTanggal as $key => $terlambattgl) :  ?>
             <?php
             if (!isset($tanggal_bulanan[$key])) {

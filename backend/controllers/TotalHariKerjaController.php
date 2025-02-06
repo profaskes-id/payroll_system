@@ -118,7 +118,6 @@ class TotalHariKerjaController extends Controller
                     Yii::$app->session->setFlash('error', 'Jam Kerja Tidak Ditemukan');
                     return $this->redirect(['index']);
                 }
-
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Total Hari Kerja Berhasil');
                     return $this->redirect(['view', 'id_jam_kerja' => $jamKerja->id_jam_kerja, 'jenis_shift' => $jamKerja->jenis_shift]);

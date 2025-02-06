@@ -23,5 +23,10 @@ return [
     "jenis-identitas" => "jenis-identitas",
     "jenis-cuti" => "jenis-cuti",
     "jabatan" => "jabatan",
-   "hubungan-keluarga" => "hubungan-keluarga",
+    "hubungan-keluarga" => "hubungan-keluarga",
+    "tanggal-cut-of" => "tanggal-cut-of",
+    "wa-admin" => "wa-admin",
+    "email-admin" => "email-admin",
+    "no-telfon-admin" => "no-telfon-admin",
+
 ];

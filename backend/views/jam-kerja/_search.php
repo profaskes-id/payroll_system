@@ -18,20 +18,8 @@ use yii\widgets\ActiveForm;
         ]); ?>
 
         <div class="row">
-            <div class="col-md-5 col-6">
-                <?php $nama_group = \yii\helpers\ArrayHelper::map(JamKerja::find()->all(), 'id_jam_kerja', 'id_jam_kerja');
-                echo $form->field($model, 'id_jam_kerja')->widget(kartik\select2\Select2::classname(), [
-                    'data' => $nama_group,
-                    'language' => 'id',
-                    'options' => ['placeholder' => 'Cari id Jam kerja ...'],
-                    'pluginOptions' => [
-                        'tags' => true,
-                        'allowClear' => true
-                    ],
-                ])->label(false);
-                ?>
-            </div>
-            <div class="col-md-4 col-6">
+
+            <div class="col-md-9 col-12">
                 <?php $nama_group = \yii\helpers\ArrayHelper::map(JamKerja::find()->all(), 'nama_jam_kerja', 'nama_jam_kerja');
                 echo $form->field($model, 'nama_jam_kerja')->widget(kartik\select2\Select2::classname(), [
                     'data' => $nama_group,

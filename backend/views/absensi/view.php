@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 
@@ -71,11 +71,19 @@ $this->params['breadcrumbs'][] = $this->title;
                         return '<p>Belum Di Set<p>';
                     }
                 ],
+               
                 [
-                    'label' => 'Keterangan',
+                    'label' => 'Apakah Lembur',
                     'format' => 'raw',
                     'value' => function ($model) {
-                        return $model->keterangan ?? '-';
+                        return $model->is_lembur == 1 ? "Iya" : "Tidak";
+                    }
+                ],
+                [
+                    'label' => 'Apakah WFH',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        return $model->is_wfh = 1 ? "Iya" : "Tidak";
                     }
                 ],
                 [
@@ -84,6 +92,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($model) {
 
                         return $model->alasan_terlambat ?? '-';
+                    }
+                ],
+                [
+                    'label' => 'Keterangan',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        return $model->keterangan ?? '-';
                     }
                 ],
                 [

@@ -31,8 +31,8 @@ use yii\widgets\ActiveForm;
             <div class="py-2" style="padding:10px 4px;">
                 <?php
                 $formAbsen = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',  'action' => ['home/absen-terlalujauh']]); ?>
-                <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'lati'])->label(false) ?>
-                <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'longi'])->label(false) ?>
+                <?= $formAbsen->field($model, 'latitude')->hiddenInput(['type' => 'text', 'class' => 'lati'])->label(false) ?>
+                <?= $formAbsen->field($model, 'longitude')->hiddenInput(['type' => 'text', 'class' => 'longi'])->label(false) ?>
                 <?= $formAbsen->field($model, 'alasan_terlalu_jauh')->textarea(['class' => 'py-1 w-full border border-gray-200 rounded-md', 'required' => true, 'rows' => 7, 'placeholder' => 'Alasan Anda Terlalu Jauh Dari Lokasi Penempatan Kerja'])->label(false) ?>
 
                 <div class="flex justify-end items-center space-x-4">

@@ -125,9 +125,11 @@ class JamKerjaKaryawanController extends Controller
         $model = $this->findModel($id_jam_kerja_karyawan);
 
         if ($this->request->isPost && $model->load($this->request->post())) {
-
-
-            $model->save();
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Jam kerja karyawan diubah');
+            } else {
+                Yii::$app->session->setFlash('error', 'Jam kerja karyawan gagal diubah');
+            }
             return $this->redirect(['view', 'id_karyawan' => $model->id_karyawan]);
         }
 

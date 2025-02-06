@@ -14,17 +14,17 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
     <!-- Sidebar -->
     <div class="sidebar">
         <!-- Sidebar user panel (optional) -->
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center justify-content-center">
+        <div class="pb-3 mt-3 mb-3 user-panel d-flex align-items-center justify-content-center">
             <div class="image">
                 <img src="<?= Yii::getAlias('@root') ?>/images/logo.svg" alt="Profaskes Logo" class="brand-image img-circle " style="width: 60px; ">
             </div>
             <div class="info">
-                <a href="#" style="font-size: 17.8px;" class="d-block fw-bold  text-white">Profaskes</a>
+                <a href="#" style="font-size: 17.8px;" class="text-white d-block fw-bold">Profaskes</a>
                 <a href="#" style="font-size:14px" class="d-block">Payroll System</a>
             </div>
         </div>
 
-        <div class="d-flex justify-content-center align-items-center w-100 mx-auto px-5">
+        <div class="px-5 mx-auto d-flex justify-content-center align-items-center w-100">
             <?= Html::a('<i class="fa fa-solid fa-user"></i>', ['/user/profile'], ['class' => 'nav-link']) ?>
             <?= Html::a('<i class="fa fa-solid fa-cog"></i>', ['/user/account'], ['class' => 'nav-link']) ?>
             <?php if (Yii::$app->user->can('super_admin')) : ?>
@@ -47,7 +47,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
         </div>
 
         <!-- Sidebar Menu -->
-        <div class="mt-2 d-flex justify-center items-end flex-column ">
+        <div class="items-end justify-center mt-2 d-flex flex-column ">
             <?php if (Yii::$app->user->can('super_admin')) : ?>
                 <nav class="">
                     <?php
@@ -66,6 +66,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                     ['label' => 'Master Gaji',  'icon' => 'fa fa-money-bill-alt', 'url' => ['/master-gaji/index'],],
                                     ['label' => 'Periode Gaji',  'icon' => 'fa fa-calendar-check', 'url' => ['/periode-gaji/index'],],
                                     ['label' => 'Total Hari Kerja',  'icon' => 'fas fa-briefcase', 'url' => ['/total-hari-kerja/index'],],
+                                    ['label' => 'faq',  'icon' => 'fas fa-question-circle', 'url' => ['/faq/index'],],
                                 ],
                             ],
                             [
@@ -79,6 +80,16 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                     ['label' => 'Potongan Karyawan',  'icon' => 'fa fa-user-slash', 'url' => ['/potongan-detail/index'],],
                                     // ['label' => 'Potongan Gaji',  'icon' => 'fa fa-dollar-sign', 'url' => ['/gaji-potongan/index'],],
                                     // ['label' => 'Tunjangan Gaji',  'icon' => 'fa fa-money-bill-wave', 'url' => ['/gaji-tunjangan/index'],],
+                                    [
+                                        'label' => 'Pengeluaran',
+                                        'icon' => 'th',
+                                        'items' => [
+                                            ['label' => 'Kategori',  'icon' => 'fa fa-building', 'url' => ['/kategori-expenses/index'],],
+                                            ['label' => 'Sub Kategori',  'icon' => 'fa fa-user-tie', 'url' => ['/subkategori-expenses/index'],],
+                                            // ['label' => 'Header',  'icon' => 'fa fa-users', 'url' => ['/expenses-header/index'],],
+                                            ['label' => 'Biaya & Beban',  'icon' => 'fa fa-users', 'url' => ['/expenses-detail/index'],],
+                                        ],
+                                    ],
                                 ],
                             ],
                             [
@@ -90,6 +101,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                     ['label' => 'Karyawan',  'icon' => 'fa fa-users', 'url' => ['/karyawan/index'],],
                                     ['label' => 'Atasan dan Penempatan',  'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index'],],
                                     ['label' => 'Jam Kerja',  'icon' => 'fa fa-clock', 'url' => ['/jam-kerja/index'],],
+                                    ['label' => 'Shift Kerja',  'icon' => 'fa fa-cogs', 'url' => ['/shift-kerja/index'],],
                                     ['label' => 'Jam Kerja Karyawan',  'icon' => 'fa fa-user-clock', 'url' => ['/jam-kerja-karyawan/index'],],
 
                                 ],
@@ -111,8 +123,8 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                 'items' => [
                                     ['label' => 'Rekap Absensi',  'icon' => 'fa fa-table', 'url' => ['/rekap-absensi/index'],],
                                     ['label' => 'Rekap Cuti',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-cuti/index'],],
-                                    ['label' => 'Rekap Lembur',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-lembur/index'],],
-                                    ['label' => 'Rekap dinas',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-dinas/index'],],
+                                    // ['label' => 'Rekap Lembur',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-lembur/index'],],
+                                    // ['label' => 'Rekap dinas',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-dinas/index'],],
                                     // ['label' => 'Rekap WFH',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-wfh/index'],],
                                 ],
                             ],
@@ -123,6 +135,8 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                 'url' => ['/izin-pulang-cepat/index'],
                                 'options' => ['class' => 'nav-item'], // Opsional, untuk styling
                             ],
+                            ['label' => 'Download Mobile App',  'icon' => 'fa fa-mobile ', 'url' => ['/download/index'],],
+
                         ],
                         'encodeLabels' => false, // Pastikan ini diatur ke false agar HTML di-render
                     ]);
