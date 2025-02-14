@@ -15,6 +15,7 @@ return [
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
     'modules' => [
+        'v1' => ['class' => 'app\modules\v1\Module',],
         'user' => [
             'class' => 'amnah\yii2\user\Module',
         ],

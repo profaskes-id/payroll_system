@@ -38,7 +38,7 @@ class RiwayatPendidikanController extends Controller
                             'matchCallback' => function ($rule, $action) {
                                 $user = Yii::$app->user;
                                 // Check if the user does  have the 'admin' or 'super admin' role
-                                return $user->can('admin') && $user->can('super_admin');
+                                return $user->can('admin') || $user->can('super_admin');
                             },
                         ],
                     ],

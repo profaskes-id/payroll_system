@@ -9,6 +9,8 @@ use backend\models\JadwalKerja;
 use backend\models\JamKerjaKaryawan;
 use backend\models\Karyawan;
 use backend\models\MasterHaribesar;
+use backend\models\PengajuanCuti;
+use backend\models\PengajuanDinas;
 use backend\models\PengajuanLembur;
 use backend\models\PengajuanWfh;
 use backend\models\ShiftKerja;
@@ -192,11 +194,11 @@ class HomeController extends ActiveController
     public function actionTidakMasuk($id_karyawan)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-    
+
         // Nonaktifkan CSRF validation untuk API
         $this->enableCsrfValidation = false;
 
-    
+
         // Ambil ID karyawan dari parameter URL
         if (!$id_karyawan) {
             return [
@@ -204,7 +206,7 @@ class HomeController extends ActiveController
                 'message' => 'ID Karyawan tidak ditemukan'
             ];
         }
-    
+
         // Validasi karyawan
         $karyawan = Karyawan::findOne($id_karyawan);
         if (!$karyawan) {
@@ -213,26 +215,26 @@ class HomeController extends ActiveController
                 'message' => 'Karyawan tidak ditemukan'
             ];
         }
-    
+
         $model = new Absensi();
-    
-        
+
+
         // Ambil data dari berbagai sumber
         $keterangan = Yii::$app->request->post('keterangan');
         $statusHadir = Yii::$app->request->post('kode_status_hadir');
-    
+
         // Jika data kosong, coba ambil dari raw input
         if ($keterangan === null || $statusHadir === null) {
             $rawInput = Yii::$app->request->getRawBody();
             $inputData = json_decode($rawInput, true);
-            
+
             $keterangan = $inputData['keterangan'] ?? $keterangan;
             $statusHadir = $inputData['kode_status_hadir'] ?? $statusHadir;
         }
-    
+
         // Proses upload lampiran
         $uploadedFile = null;
-        
+
         // Coba ambil file dari beberapa sumber
         if (isset($_FILES['lampiran'])) {
             // Dari $_FILES (multipart form-data)
@@ -242,28 +244,28 @@ class HomeController extends ActiveController
             $base64File = Yii::$app->request->post('lampiran');
             $uploadedFile = $this->base64ToUploadedFile($base64File);
         }
-    
+
         // Debug informasi file
         \Yii::info([
             'FILES' => $_FILES,
             'POST' => Yii::$app->request->post(),
             'uploadedFile' => $uploadedFile ? $uploadedFile->name : 'No file'
         ], 'file_upload_debug');
-    
+
         // Proses upload file
         if ($uploadedFile) {
 
-            
+
             // Tentukan direktori upload
             $uploadPath = \Yii::getAlias('@webroot/uploads/lampiran/');
-            
+
             // Pastikan direktori ada
             FileHelper::createDirectory($uploadPath, 0775, true);
-    
+
             // Generate nama file unik
             $fileName = $this->generateUniqueFileName($uploadedFile);
             $fullPath = $uploadPath . $fileName;
-    
+
             // Simpan file
             if ($uploadedFile->saveAs($fullPath)) {
                 // Set nama file ke model
@@ -275,7 +277,7 @@ class HomeController extends ActiveController
                 ];
             }
         }
-    
+
         // Set atribut model
         $model->id_karyawan = $id_karyawan;
         $model->jam_masuk = "00:00:00";
@@ -283,7 +285,7 @@ class HomeController extends ActiveController
         $model->tanggal = date('Y-m-d');
         $model->keterangan = $keterangan;
         $model->kode_status_hadir = $statusHadir;
-    
+
         // Cek jam kerja karyawan
         $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $id_karyawan])->one();
         if ($jamKerjaKaryawan && $jamKerjaKaryawan->jamKerja) {
@@ -291,7 +293,7 @@ class HomeController extends ActiveController
             $jadwalKerja = JadwalKerja::find()->asArray()
                 ->where(['id_jam_kerja' => $jamKerjaKaryawan->id_jam_kerja, 'nama_hari' => $hariIni])
                 ->one();
-    
+
             if ($jadwalKerja) {
                 $model->jam_masuk = $jadwalKerja['jam_masuk'];
                 $model->jam_pulang = $jadwalKerja['jam_keluar'];
@@ -300,7 +302,7 @@ class HomeController extends ActiveController
                 $model->jam_pulang = "00:00:00";
             }
         }
-    
+
         // Simpan model
         if ($model->save()) {
             return [
@@ -313,7 +315,7 @@ class HomeController extends ActiveController
             if (isset($fullPath) && file_exists($fullPath)) {
                 unlink($fullPath);
             }
-    
+
             return [
                 'success' => false,
                 'message' => 'Gagal menyimpan absensi',
@@ -321,7 +323,7 @@ class HomeController extends ActiveController
             ];
         }
     }
-    
+
     /**
      * Generate nama file unik
      * 
@@ -333,7 +335,7 @@ class HomeController extends ActiveController
         // Generate nama file unik dengan timestamp dan ekstensi asli
         return uniqid() . '_' . time() . '.' . $uploadedFile->extension;
     }
-    
+
     /**
      * Konversi base64 ke UploadedFile
      * 
@@ -343,14 +345,14 @@ class HomeController extends ActiveController
     private function base64ToUploadedFile($base64String)
     {
         if (!$base64String) return null;
-    
+
         // Decode base64
         $fileData = base64_decode($base64String);
-        
+
         // Simpan sementara
         $tempFile = tempnam(sys_get_temp_dir(), 'upload_');
         file_put_contents($tempFile, $fileData);
-    
+
         // Buat UploadedFile
         return new UploadedFile([
             'name' => 'uploaded_file',
@@ -896,10 +898,10 @@ class HomeController extends ActiveController
             if ($adaHariBesar) {
                 return null;
             } else {
-               $filteredJamKerja = array_filter($jamKerjaHari, function ($item) use ($hariIni) {
-                return $item['nama_hari'] == $hariIni;
-            });
-            return $filteredJamKerja;
+                $filteredJamKerja = array_filter($jamKerjaHari, function ($item) use ($hariIni) {
+                    return $item['nama_hari'] == $hariIni;
+                });
+                return $filteredJamKerja;
             }
         }
 

@@ -3,6 +3,7 @@
 namespace app\modules\v1\controllers;
 
 use amnah\yii2\user\models\User;
+use backend\models\AtasanKaryawan;
 use Yii;
 use backend\models\helpers\EmailHelper;
 use backend\models\helpers\NotificationHelper;
@@ -69,14 +70,20 @@ class PengajuanWfhController extends ActiveController
 
     // Simpan model ke database
     if ($model->save()) {
-      $adminUsers = User::find()->where(['role_id' => [1, 3]])->all();
+      // ? KIRIM NOTIFIKASI
+      $atasan = $this->getAtasanKaryawan($model->id_karyawan);
+      if ($atasan != null) {
+        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['id' => $atasan['id_atasan']])->all();
+      } else {
+        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['role_id' => [1, 3]])->all();
+      }
       $params = [
         'judul' => 'Pengajuan WFH',
         'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan WFH.',
         'nama_transaksi' => "/panel/pengajuan-wfh/view?id_pengajuan_wfh=",
         'id_transaksi' => $model['id_pengajuan_wfh'],
       ];
-      $sender = User::find()->where(['id_karyawan' => $model->id_karyawan])->one();
+      $sender = User::find()->select(['id', 'email', 'role_id',])->where(['id_karyawan' => $model->id_karyawan])->one();
       $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan WFH Baru Dari " . $model->karyawan->nama);
 
       return [
@@ -158,5 +165,11 @@ class PengajuanWfhController extends ActiveController
         Yii::$app->session->setFlash('error', 'Email gagal dikirim ke ' . $to);
       }
     }
+  }
+
+  public function getAtasanKaryawan($id_karyawan)
+  {
+    $atasan = AtasanKaryawan::find()->where(['id_karyawan' => $id_karyawan])->asArray()->one();
+    return $atasan;
   }
 }

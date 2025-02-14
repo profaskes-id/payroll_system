@@ -44,7 +44,7 @@ class PengajuanWfhController extends Controller
                             'roles' => ['@'], // Allow authenticated users
                             'matchCallback' => function ($rule, $action) {
                                 $user = Yii::$app->user;
-                                return $user->can('admin') && $user->can('super_admin');
+                                return $user->can('admin') || $user->can('super_admin');
                             },
                         ],
                     ],
@@ -228,7 +228,7 @@ class PengajuanWfhController extends Controller
 
                 $params = [
                     'judul' => 'Pengajuan wfh',
-                    'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan wfh .',
+                    'deskripsi' => 'Pengajuan WFH anda telah ditanggapi oleh atasan .',
                     'nama_transaksi' => "wfh",
                     'id_transaksi' => $model['id_pengajuan_wfh'],
                 ];

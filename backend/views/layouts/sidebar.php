@@ -154,24 +154,23 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                 'items' => [
                                     ['label' => 'Profile Perusahaan',  'icon' => 'fa fa-building', 'url' => ['/perusahaan/index'],],
                                     ['label' => 'Jabatan',  'icon' => 'fa fa-user-tie', 'url' => ['/jabatan/index'],],
-
                                     ['label' => 'Karyawan',  'icon' => 'fa fa-users', 'url' => ['/karyawan/index'],],
                                     ['label' => 'Atasan dan Penempatan',  'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index'],],
                                     ['label' => 'Jam Kerja',  'icon' => 'fa fa-clock', 'url' => ['/jam-kerja/index'],],
+                                    ['label' => 'Shift Kerja',  'icon' => 'fa fa-cogs', 'url' => ['/shift-kerja/index'],],
                                     ['label' => 'Jam Kerja Karyawan',  'icon' => 'fa fa-user-clock', 'url' => ['/jam-kerja-karyawan/index'],],
 
                                 ],
                             ],
                             ['label' => 'Absensi',  'icon' => 'fa fa-user-check', 'url' => ['/absensi/index'],],
-
                             [
                                 'label' => 'Pengajuan',
                                 'icon' => 'th',
                                 'items' => [
+                                    ['label' => 'Pengajuan WFH',  'icon' => 'fa fa-laptop-house', 'url' => ['/pengajuan-wfh/index'],],
                                     ['label' => 'Pengajuan Cuti',  'icon' => 'fa fa-paper-plane', 'url' => ['/pengajuan-cuti/index'],],
                                     ['label' => 'Pengajuan lembur',  'icon' => 'fa fa-hourglass', 'url' => ['/pengajuan-lembur/index'],],
                                     ['label' => 'Pengajuan Dinas',  'icon' => 'fa fa-map-marker-alt', 'url' => ['/pengajuan-dinas/index'],],
-
                                 ],
                             ],
                             [
@@ -180,15 +179,22 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                 'items' => [
                                     ['label' => 'Rekap Absensi',  'icon' => 'fa fa-table', 'url' => ['/rekap-absensi/index'],],
                                     ['label' => 'Rekap Cuti',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-cuti/index'],],
-                                    ['label' => 'Rekap Lembur',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-lembur/index'],],
-                                    ['label' => 'Rekap dinas',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-dinas/index'],],
-
+                                    // ['label' => 'Rekap Lembur',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-lembur/index'],],
+                                    // ['label' => 'Rekap dinas',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-dinas/index'],],
+                                    // ['label' => 'Rekap WFH',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-wfh/index'],],
                                 ],
                             ],
                             ['label' => 'Pengumuman',  'icon' => 'fa fa-bullhorn', 'url' => ['/pengumuman/index'],],
-                            ['label' => 'Pulang Cepat',  'icon' => 'fa fa-clock ', 'url' => ['/izin-pulang-cepat/index'],],
+                            [
+                                'label' => 'Pulang Cepat <span class="right badge badge-warning">' . $jumlahPulangCepatToday . '</span>',
+                                'icon' => 'fas fa-clock',
+                                'url' => ['/izin-pulang-cepat/index'],
+                                'options' => ['class' => 'nav-item'], // Opsional, untuk styling
+                            ],
+                            ['label' => 'Download Mobile App',  'icon' => 'fa fa-mobile ', 'url' => ['/download/index'],],
 
                         ],
+                        'encodeLabels' => false, // Pastikan ini diatur ke false agar HTML di-render
                     ]);
                     ?>
                 </nav>

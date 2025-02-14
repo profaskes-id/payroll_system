@@ -9,7 +9,7 @@ $form = ActiveForm::begin(); ?>
 <div class="relative min-h-[85dvh]">
 
 
-    <div class="my-4 grid grid-cols-2 gap-5">
+    <div class="grid grid-cols-2 gap-5 my-4">
         <?php foreach ($jenisCuti as $key => $value) : ?>
             <div>
                 <label
@@ -18,7 +18,7 @@ $form = ActiveForm::begin(); ?>
                     <div>
 
                         <p class="mt-1 text-gray-900"><?= $value->jenis_cuti ?></p>
-                        <p class="mt-1 text-gray-500 text-xs">
+                        <p class="mt-1 text-xs text-gray-500">
                             <?php echo $value->deskripsi_singkat ?>
                         </p>
                     </div>
@@ -38,7 +38,7 @@ $form = ActiveForm::begin(); ?>
         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">Sisa Hari Cuti</label>
         <?= $form->field($model, 'sisa_hari')->textInput(['id' => 'sisa_hari', 'type' => 'text', 'disabled' => true, 'class' => 'disabled:bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '])->label(false) ?>
     </div>
-    <p class="text-sm text-red-500 mb-5 -mt-1 capitalize" id="error"></p>
+    <p class="mb-5 -mt-1 text-sm text-red-500 capitalize" id="error"></p>
     <div class="mb-5">
         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">tanggal mulai</label>
         <?= $form->field($model, 'tanggal_mulai')->textInput(['id' => 'tanggal_mulai', 'type' => 'date', 'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '])->label(false) ?>
@@ -47,7 +47,7 @@ $form = ActiveForm::begin(); ?>
         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">tanggal selesai</label>
         <?= $form->field($model, 'tanggal_selesai')->textInput(['readonly' => true, 'id' => 'tanggal_selesai', 'type' => 'date', 'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '])->label(false) ?>
     </div>
-    <p class="text-sm text-red-500 mb-5 -mt-1 capitalize hidden" id="error-year"></p>
+    <p class="hidden mb-5 -mt-1 text-sm text-red-500 capitalize" id="error-year"></p>
 
     <div class="mb-5">
         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">Jumlah Hari</label>
@@ -142,8 +142,7 @@ $rekapCutiJson = json_encode($rekapCutinew);
                     }
                     // Menghitung selisih hari
                     let diffInMs = new Date(endDate) - new Date(startDate);
-                    let diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-
+                    let diffInDays = diffInMs / (1000 * 60 * 60 * 24) + 1;
 
                     $('#jumlah_hari').val(diffInDays + " Hari");
                     let data = $('#sisa_hari').val();

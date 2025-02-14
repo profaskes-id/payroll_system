@@ -37,7 +37,7 @@ class MasterLokasiController extends Controller
                             'roles' => ['@'], // Allow authenticated users
                             'matchCallback' => function ($rule, $action) {
                                 $user = Yii::$app->user;
-                                return $user->can('admin') && $user->can('super_admin');
+                                return $user->can('admin') || $user->can('super_admin');
                             },
                         ],
                     ],

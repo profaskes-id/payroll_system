@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use amnah\yii2\user\models\User;
+use backend\models\AtasanKaryawan;
 use backend\models\helpers\EmailHelper;
 use backend\models\helpers\NotificationHelper;
 use backend\models\Karyawan;
@@ -120,7 +121,13 @@ class PengajuanController extends \yii\web\Controller
                 if ($model->save()) {
 
                     // ? KIRIM NOTIFIKASI
-                    $adminUsers = User::find()->where(['role_id' => [1, 3]])->all();
+                    $atasan = $this->getAtasanKaryawan($karyawan->id_karyawan);
+                    if ($atasan != null) {
+                        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['id' => $atasan['id_atasan']])->all();
+                    } else {
+                        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['role_id' => [1, 3]])->all();
+                    }
+
                     $params = [
                         'judul' => 'Pengajuan cuti',
                         'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan cuti.',
@@ -204,8 +211,15 @@ class PengajuanController extends \yii\web\Controller
                 $model->durasi = $durasi;
                 if ($model->save()) {
 
+
                     // ? KIRIM NOTIFIKASI
-                    $adminUsers = User::find()->where(['role_id' => [1, 3]])->all();
+                    $atasan = $this->getAtasanKaryawan($karyawan->id_karyawan);
+                    if ($atasan != null) {
+                        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['id' => $atasan['id_atasan']])->all();
+                    } else {
+                        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['role_id' => [1, 3]])->all();
+                    }
+
                     $params = [
                         'judul' => 'Pengajuan lembur',
                         'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan lembur.',
@@ -304,7 +318,12 @@ class PengajuanController extends \yii\web\Controller
 
                 if ($model->save()) {
                     // ? KIRIM NOTIFIKASI
-                    $adminUsers = User::find()->where(['role_id' => [1, 3]])->all();
+                    $atasan = $this->getAtasanKaryawan($karyawan->id_karyawan);
+                    if ($atasan != null) {
+                        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['id' => $atasan['id_atasan']])->all();
+                    } else {
+                        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['role_id' => [1, 3]])->all();
+                    }
                     $params = [
                         'judul' => 'Pengajuan Dinas',
                         'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan dinas luar.',
@@ -435,7 +454,12 @@ class PengajuanController extends \yii\web\Controller
                 if ($model->save()) {
 
                     // ? KIRIM NOTIFIKASI
-                    $adminUsers = User::find()->where(['role_id' => [1, 3]])->all();
+                    $atasan = $this->getAtasanKaryawan($karyawan->id_karyawan);
+                    if ($atasan != null) {
+                        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['id' => $atasan['id_atasan']])->all();
+                    } else {
+                        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['role_id' => [1, 3]])->all();
+                    }
                     $params = [
                         'judul' => 'Pengajuan WFH',
                         'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan WFH.',
@@ -519,13 +543,19 @@ class PengajuanController extends \yii\web\Controller
 
         // $msgToCheck = $this->renderPartial('@backend/views/home/pengajuan/email');
         // Mengirim email ke setiap pengguna
-        foreach ($adminUsers as $user) {
-            $to = $user->email;
+        foreach ($adminUsers as $atasan) {
+            $to = $atasan['email'];
             if (EmailHelper::sendEmail($to, $subject, $msgToCheck)) {
                 Yii::$app->session->setFlash('success', 'Email berhasil dikirim ke ' . $to);
             } else {
                 Yii::$app->session->setFlash('error', 'Email gagal dikirim ke ' . $to);
             }
         }
+    }
+
+    public function getAtasanKaryawan($id_karyawan)
+    {
+        $atasan = AtasanKaryawan::find()->where(['id_karyawan' => $id_karyawan])->asArray()->one();
+        return $atasan;
     }
 }

@@ -42,7 +42,7 @@ class PengajuanDinasController extends Controller
                             'matchCallback' => function ($rule, $action) {
                                 $user = Yii::$app->user;
                                 // Check if the user does  have the 'admin' or 'super admin' role
-                                return $user->can('admin') && $user->can('super_admin');
+                                return $user->can('admin') || $user->can('super_admin');
                             },
                         ],
                     ],
@@ -148,7 +148,7 @@ class PengajuanDinasController extends Controller
 
             $params = [
                 'judul' => 'Pengajuan dinas',
-                'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan dinas luar.',
+                'deskripsi' => 'Pengajuan Dinas luar Anda Telah Ditanggapi Oleh Atasan.',
                 'nama_transaksi' => "dinas",
                 'id_transaksi' => $model['id_pengajuan_dinas'],
             ];

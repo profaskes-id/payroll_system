@@ -44,7 +44,7 @@ class PengajuanCutiController extends Controller
                             'roles' => ['@'], // Allow authenticated users
                             'matchCallback' => function ($rule, $action) {
                                 $user = Yii::$app->user;
-                                return $user->can('admin') && $user->can('super_admin');
+                                return $user->can('admin') || $user->can('super_admin');
                             },
                         ],
                     ],
@@ -188,7 +188,7 @@ class PengajuanCutiController extends Controller
 
                 $params = [
                     'judul' => 'Pengajuan cuti',
-                    'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan cuti .',
+                    'deskripsi' => 'Pengajuan Cuti Anda Telah Ditanggapi Oleh Atasan ',
                     'nama_transaksi' => "cuti",
                     'id_transaksi' => $model['id_pengajuan_cuti'],
                 ];

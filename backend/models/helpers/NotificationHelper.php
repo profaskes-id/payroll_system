@@ -36,13 +36,13 @@ class NotificationHelper
 
         // Buat pesan baru
         $message = new Message();
-        $message->sender = $sender ?? Yii::$app->user->identity->id;
+        $message->sender = $sender['id'] ?? Yii::$app->user->identity->id;
         $message->judul = $params['judul']; // Ambil judul dari parameter
         $message->deskripsi = $params['deskripsi']; // Ambil deskripsi dari parameter
         $message->create_at = date('Y-m-d H:i:s');
         $message->nama_transaksi = $params['nama_transaksi']; // Ambil nama transaksi dari parameter
         $message->id_transaksi = $params['id_transaksi']; // Ambil ID transaksi dari parameter
-        $message->create_by = $sender ?? Yii::$app->user->identity->id;
+        $message->create_by = $sender['id'] ?? Yii::$app->user->identity->id;
 
         // Simpan pesan
         if (!$message->save()) {
@@ -68,7 +68,7 @@ class NotificationHelper
 
 Jika penerima (receiver) bisa banyak (misalnya, semua admin dengan role 1 dan 3), maka struktur tabel yang Anda usulkan (dengan `receiver` sebagai array dan `is_open` sebagai array) **tidak ideal** dari sudut pandang normalisasi database. Database relasional dirancang untuk menghindari penyimpanan data dalam bentuk array atau JSON karena akan menyulitkan query dan manipulasi data.
 
-Berikut adalah solusi yang lebih baik dan sesuai dengan prinsip normalisasi database:
+Berikut adalah solusi yang lebih baik dan sesuai dengan prin    sip normalisasi database:
 
 ---
 

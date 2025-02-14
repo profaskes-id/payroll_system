@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 
@@ -43,14 +43,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'label' => 'Atasan',
-                    'attribute' => 'atasan.nama',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        // Jika model tidak ada, kembalikan pesan "Belum Di Set"
+                        if (empty($model) || empty($model['id_atasan'])) {
+                            return '<p class="text-danger">(Belum Di Set)</p>';
+                        }
+
+                        $user = User::findOne($model->id_atasan);
+                        return $user->profile->full_name ?? $user->email;
+                    }
                 ],
 
                 [
                     'label' => 'Di Set Oleh',
                     'value' => function ($model) {
                         $user = User::findOne($model->di_setting_oleh);
-                        return $user->username ?? $user->email;
+                        return $user->profile->full_name ?? $user->email;
                     },
                 ],
                 [

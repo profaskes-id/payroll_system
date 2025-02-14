@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 
@@ -83,14 +83,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'attribute' => 'Ditanggapi Oleh',
-                        'value' => function ($model) {
-                            if ($model->status == 0) {
-                                return '<span class="text-warning">Menuggu Tanggapan</span>';
-                            }
-                            $username = User::findOne(['id' => $model->disetujui_oleh])->username;
-                            return  $username ?? '<span class="text-danger">User Tidak Terdaftar</span>';
-                        },
-                        "format" => 'raw',
+                        // 'value' => function ($model) {
+                        //     if ($model->status == 0) {
+                        //         return '<span class="text-warning">Menuggu Tanggapan</span>';
+                        //     }
+                        //     $username = User::findOne(['id' => $model->disetujui_oleh])->username;
+                        //     return  $username ?? '<span class="text-danger">User Tidak Terdaftar</span>';
+                        // },
+                        // "format" => 'raw',
                     ],
                     [
                         'attribute' => 'Ditanggapi Pada',
