@@ -48,16 +48,9 @@ class PengajuanWfhSearch extends PengajuanWfh
             $result,
             function ($data) use ($tgl_mulai, $tgl_selesai) {
                 $tanggal = json_decode($data['tanggal_array'], true);
-
-                // Pastikan tanggal_array tidak kosong
                 if (!empty($tanggal)) {
-                    // Ambil tanggal pertama (indeks 0)
                     $firstDate = reset($tanggal);
-
-                    // Ambil tanggal terakhir
                     $lastDate = end($tanggal);
-
-                    // Bandingkan dengan $tgl_mulai dan $tgl_selesai
                     return strtotime($firstDate) >= strtotime($tgl_mulai) &&
                         strtotime($lastDate) <= strtotime($tgl_selesai);
                 }
@@ -74,7 +67,7 @@ class PengajuanWfhSearch extends PengajuanWfh
         }, array_values($filtered_result));
 
         // Buat query baru dengan ID yang telah difilter
-        $query = PengajuanWfh::find()->where(['in', 'id_pengajuan_wfh', $filteredIds]);
+        $query = PengajuanWfh::find()->select(['pengajuan_wfh.*', 'karyawan.nama'])->where(['in', 'id_pengajuan_wfh', $filteredIds])->leftJoin('karyawan', 'pengajuan_wfh.id_karyawan = karyawan.id_karyawan')->asArray();
 
         // Buat DataProvider
         $dataProvider = new ActiveDataProvider([
@@ -93,11 +86,11 @@ class PengajuanWfhSearch extends PengajuanWfh
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id_pengajuan_wfh' => $this->id_pengajuan_wfh,
-            'id_karyawan' => $this->id_karyawan,
-            'longitude' => $this->longitude,
-            'latitude' => $this->latitude,
-            'status' => $this->status,
+            'pengajuan_wfh.id_pengajuan_wfh' => $this->id_pengajuan_wfh,
+            'pengajuan_wfh.id_karyawan' => $this->id_karyawan,
+            'pengajuan_wfh.longitude' => $this->longitude,
+            'pengajuan_wfh.latitude' => $this->latitude,
+            'pengajuan_wfh.status' => $this->status,
         ]);
 
         $query->andFilterWhere(['like', 'alasan', $this->alasan])

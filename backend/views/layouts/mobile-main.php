@@ -8,6 +8,42 @@
 </head>
 
 <style type="text/css">
+    .tw-add {
+        border: none;
+        display: flex;
+        padding-block: 0.75rem;
+        background-color: #488aec;
+        color: #ffffff;
+        font-size: 0.75rem;
+        line-height: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        text-align: center;
+        text-transform: uppercase;
+        vertical-align: middle;
+        align-items: center;
+        border-radius: 0.5rem;
+        user-select: none;
+        gap: 0.75rem;
+        box-shadow: 0 4px 6px -1px #488aec31, 0 2px 4px -1px #488aec17;
+        transition: all 0.6s ease;
+    }
+
+    .tw-add :hover {
+        box-shadow: 0 10px 15px -3px #488aec4f, 0 4px 6px -2px #488aec17;
+    }
+
+    .tw-add :focus,
+    .tw-add :active {
+        opacity: 0.85;
+        box-shadow: none;
+    }
+
+    .tw-add svg {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
     .add-button {
         border: none;
         display: flex;
@@ -75,6 +111,59 @@
         ;
         background-size: calc(0.866 * var(--s)) var(--s);
     }
+
+
+    .costume-btn {
+        width: 130px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #131133;
+        border: none;
+        color: white;
+        font-weight: 600;
+        gap: 8px;
+        cursor: pointer;
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.103);
+        position: relative;
+        overflow: hidden;
+        transition-duration: .3s;
+        margin-left: auto;
+    }
+
+    .svgIcon {
+        width: 16px;
+    }
+
+    .svgIcon path {
+        fill: white;
+    }
+
+    .costume-btn::before {
+        width: 130px;
+        height: 130px;
+        position: absolute;
+        content: "";
+        background-color: #ffffff;
+
+        border-radius: 50%;
+        left: -100%;
+        top: 0;
+        transition-duration: .3s;
+        mix-blend-mode: difference;
+    }
+
+    .costume-btn:hover::before {
+        transition-duration: .3s;
+        transform: translate(100%, -50%);
+        border-radius: 0;
+    }
+
+    .costume-btn:active {
+        transform: translate(5px, 5px);
+        transition-duration: .3s;
+    }
 </style>
 <link href="<?= Yii::getAlias('@root') . '/css/tailwind_output.css' ?>" rel="stylesheet">
 <link href="<?= Yii::getAlias('@root') . '/node_modules/flowbite/dist/flowbite.min.css' ?>" rel="stylesheet">
@@ -117,9 +206,9 @@
 
 
 
-<body class="w-full  mx-auto relative">
+<body class="relative w-full mx-auto ">
 
-    <section class="grid grid-cols-11">
+    <section class="grid grid-cols-11 overflow-x-auto">
         <?php if (!(
             str_contains($this->context->action->id, 'create') ||
             str_contains($this->context->action->id, 'update')
@@ -130,7 +219,7 @@
             </div>
         <?php endif ?>
         <div class="col-span-11 xl:col-span-2 ">
-            <div class="hidden xl:block fixed bottom-0 left-0 right-0 w-full">
+            <div class="fixed bottom-0 left-0 right-0 hidden w-full xl:block">
                 <?= $this->render('@backend/views/components/_sidebar-desktop'); ?>
             </div>
         </div>
@@ -143,7 +232,7 @@
                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
                     </svg>
                     <span class="sr-only">Info</span>
-                    <div class="ms-3 text-sm font-medium">
+                    <div class="text-sm font-medium ms-3">
                         <?= Yii::$app->session->getFlash('success') ?>
                     </div>
                     <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-green-50 text-green-500 rounded-lg focus:ring-2 focus:ring-green-400 p-1.5 hover:bg-green-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-3" aria-label="Close">
@@ -160,7 +249,7 @@
                         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
                     </svg>
                     <span class="sr-only">Info</span>
-                    <div class="ms-3 text-sm font-medium">
+                    <div class="text-sm font-medium ms-3">
                         <?= Yii::$app->session->getFlash('error') ?>
                     </div>
                     <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-3" aria-label="Close">

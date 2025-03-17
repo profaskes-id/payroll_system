@@ -27,14 +27,14 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
     <div class="row align-items-start ">
 
-        <div class="row align-items-start col-12 col-lg-4  p-3">
+        <div class="p-3 row align-items-start col-12 col-lg-4">
             <h6 class="text-center col-12">Data Personal</h6>
             <hr class="col-12">
-            <div class="col-12  row align-items-start align-items-center justify-items-between ">
+            <div class="col-12 row align-items-start align-items-center justify-items-between ">
                 <div class=" col-12" style="margin-bottom: -20px;">
                     <?= $form->field($model, 'kode_karyawan')->textInput(['id' => 'kode_karyawan', 'readonly' => true, 'value' => $nextKode ?? $model->kode_karyawan])->label('Kode Karyawan') ?>
                 </div>
-                <div class="col-6 mt-3">
+                <div class="mt-3 col-6">
                     <label for="manual_kode">
                         <input type="checkbox" id="manual_kode">
                         <span style="font-size: 12px">Manual Kode</span>
@@ -110,7 +110,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
         </div>
 
 
-        <div class="row align-items-start col-12 col-lg-4 p-3">
+        <div class="p-3 row align-items-start col-12 col-lg-4">
             <h6 class="text-center col-12">Alamat Sesuai Identitas</h6>
             <hr class="col-12">
             <div class="col-6 ">
@@ -168,10 +168,10 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
         </div>
 
 
-        <div class="row align-items-start col-12 col-lg-4 p-3">
+        <div class="p-3 row align-items-start col-12 col-lg-4">
             <h6 class="text-center col-12">Alamat Sesuai Domisili</h6>
             <hr class="col-12">
-            <div class="col-12 text-sm">
+            <div class="text-sm col-12">
                 <?= $form->field($model, 'is_current_domisili')->checkbox(['id' => 'is_currnetly_domisili'])->label('') ?>
             </div>
 
@@ -239,7 +239,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
 
 
 
-        <div class="row align-items-start col-12 p-3">
+        <div class="p-3 row align-items-start col-12">
 
 
             <div class="col-6 col-lg-3 ">
@@ -260,7 +260,7 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
         </div>
 
 
-        <div class="col-12 col-12">
+        <div class="col-12">
             <?= $form->field($model, 'is_aktif')->radioList(
                 [
                     0 => 'Resign',
@@ -284,6 +284,20 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
                     <?= $form->field($model, 'surat_pengunduran_diri')->fileInput(['class' => 'form-control']) ?>
                 </div>
             </div> <!-- Tambahkan div untuk form resign yang bisa ditampilkan/disembunyikan -->
+        </div>
+
+
+        <div class="col-12">
+            <?= $form->field($model, 'is_atasan')->radioList(
+                [
+                    0 => 'Tidak',
+                    1 => 'Iya',
+                ],
+                [
+                    'class' => 'selama',
+                    'itemOptions' => ['labelOptions' => ['style' => 'margin-right: 20px;']]
+                ]
+            )->label('Apakah Atasan Karyawan') ?>
         </div>
 
     </div>

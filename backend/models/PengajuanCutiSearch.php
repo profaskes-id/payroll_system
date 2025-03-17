@@ -40,7 +40,13 @@ class PengajuanCutiSearch extends PengajuanCuti
      */
     public function search($params, $tgl_mulai, $tgl_selesai)
     {
-        $query = PengajuanCuti::find()->where(['>=', 'tanggal_mulai', $tgl_mulai])->andWhere(['<=', 'tanggal_selesai', $tgl_selesai]);
+        $query = PengajuanCuti::find()
+            ->select(['pengajuan_cuti.*', 'master_cuti.jenis_cuti as jenis_cuti', 'karyawan.nama'])
+            ->where(['>=', 'tanggal_mulai', $tgl_mulai])->andWhere(['<=', 'tanggal_selesai', $tgl_selesai])
+            ->leftJoin('master_cuti', 'pengajuan_cuti.jenis_cuti = master_cuti.id_master_cuti')
+            ->leftJoin('karyawan', 'pengajuan_cuti.id_karyawan = karyawan.id_karyawan')
+            ->asArray();
+
 
         // add conditions that should always apply here
 

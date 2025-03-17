@@ -95,19 +95,17 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
-                    'label' => 'Atasan',
                     'format' => 'raw',
+                    'label' => 'Atasan',
                     'value' => function ($model) {
                         // Jika model tidak ada, kembalikan pesan "Belum Di Set"
+                        // dd($model);
                         if (empty($model) || empty($model['id_atasan'])) {
                             return '<p class="text-danger">(Belum Di Set)</p>';
                         }
-
-                        // Ambil data profile berdasarkan user_id
-                        $data = Profile::find()->select('full_name')->where(['user_id' => $model['id_atasan']])->one();
-
+                        $data = Karyawan::find()->select('nama')->where(['id_karyawan' => $model['id_atasan']])->one();
                         // Kembalikan nama lengkap atau pesan "Belum Di Set" jika tidak ada
-                        return $data->full_name ?? '<p class="text-danger">(Belum Di Set)</p>';
+                        return $data->nama ?? '<p class="text-danger">(Belum Di Set)</p>';
                     }
                 ],
 

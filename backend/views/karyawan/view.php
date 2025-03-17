@@ -26,7 +26,7 @@
 
         <div class="costume-container">
             <p class="">
-                <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+                <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
             </p>
         </div>
 
@@ -36,7 +36,7 @@
             </p>
             <div class="w-100">
                 <div class="card card-primary card-tabs">
-                    <div class="card-header p-0 pt-1">
+                    <div class="p-0 pt-1 card-header">
                         <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">Data Pribadi</a>
@@ -83,7 +83,7 @@
                                                 [
                                                     'label' => 'Nama',
                                                     'value' => function ($model) {
-                                                        return "<p class='m-0 p-0 text-capitalize'>{$model->nama}</p>";
+                                                        return "<p class='p-0 m-0 text-capitalize'>{$model->nama}</p>";
                                                     },
                                                     'format' => 'raw',
                                                 ],
@@ -155,7 +155,7 @@
                                                 [
                                                     'label' => 'Negara',
                                                     'value' => function ($model) {
-                                                        return "<p class=' py-0 my-0 text-uppercase'>{$model->kode_negara}</p>";
+                                                        return "<p class='py-0 my-0 text-uppercase'>{$model->kode_negara}</p>";
                                                     },
                                                     'format' => 'raw',
                                                 ],
@@ -238,6 +238,13 @@
                                                         return $model->informasi_lain;
                                                     }
                                                 ],
+                                                [
+                                                    'attribute' => 'Apakah Seorang Atasan',
+                                                    'value' => function ($model) {
+                                                        return $model->is_atasan == 0 ? "Tidak" : "Iya";
+                                                    }
+                                                ]
+
                                             ],
                                         ]) ?>
                                     </div>

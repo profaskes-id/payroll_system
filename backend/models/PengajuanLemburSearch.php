@@ -40,7 +40,7 @@ class PengajuanLemburSearch extends PengajuanLembur
      */
     public function search($params, $tgl_mulai, $tgl_selesai)
     {
-        $query = PengajuanLembur::find()->where(['>=', 'tanggal', $tgl_mulai])->andWhere(['<=', 'tanggal', $tgl_selesai]);
+        $query = PengajuanLembur::find()->select(['pengajuan_lembur.*', 'karyawan.nama'])->where(['>=', 'tanggal', $tgl_mulai])->andWhere(['<=', 'tanggal', $tgl_selesai])->leftJoin('karyawan', 'pengajuan_lembur.id_karyawan = karyawan.id_karyawan ')->asArray();
 
         // add conditions that should always apply here
 

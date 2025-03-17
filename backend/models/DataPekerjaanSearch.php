@@ -60,7 +60,7 @@ class DataPekerjaanSearch extends DataPekerjaan
 
             ])
             ->asArray()
-            ->where(['data_pekerjaan.id_karyawan' => $this->id_karyawan, 'data_pekerjaan.is_aktif' => 1])
+            ->where(['data_pekerjaan.id_karyawan' => $this->id_karyawan,])
             ->leftJoin('{{%cetak}} cetak', 'data_pekerjaan.id_data_pekerjaan = cetak.id_data_pekerjaan and data_pekerjaan.id_karyawan = cetak.id_karyawan')
             ->leftJoin('{{%karyawan}} karyawan', 'data_pekerjaan.id_karyawan = karyawan.id_karyawan')
             ->leftJoin('{{%bagian}} bagian', 'data_pekerjaan.id_bagian = bagian.id_bagian')
@@ -72,7 +72,7 @@ class DataPekerjaanSearch extends DataPekerjaan
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => ['defaultOrder' => ['is_aktif' => SORT_DESC]],
+            'sort' => ['defaultOrder' => ['dari' => SORT_DESC]],
         ]);
 
         $this->load($params);

@@ -27,8 +27,8 @@ class m240912_043924_create_atasan_karyawan_table extends Migration
             'fk-atasan-karyawan-id-atasan',
             '{{%atasan_karyawan}}',
             'id_atasan',
-            '{{%user}}',
-            'id',
+            '{{%karyawan}}',
+            'id_karyawan',
             'CASCADE',
             'CASCADE'
         );

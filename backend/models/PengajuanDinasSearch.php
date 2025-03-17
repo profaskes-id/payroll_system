@@ -42,7 +42,7 @@ class PengajuanDinasSearch extends PengajuanDinas
 
     public function search($params, $tgl_mulai, $tgl_selesai)
     {
-        $query = PengajuanDinas::find()->where(['>=', 'tanggal_mulai', $tgl_mulai])->andWhere(['<=', 'tanggal_selesai', $tgl_selesai]);
+        $query = PengajuanDinas::find()->select(['pengajuan_dinas.*', 'karyawan.nama'])->where(['>=', 'tanggal_mulai', $tgl_mulai])->andWhere(['<=', 'tanggal_selesai', $tgl_selesai])->leftJoin('karyawan', 'pengajuan_dinas.id_karyawan = karyawan.id_karyawan ')->asArray();
 
         // add conditions that should always apply here
 

@@ -4,7 +4,6 @@ use backend\models\Karyawan;
 use backend\models\MasterLokasi;
 use kartik\select2\Select2;
 use yii\helpers\Html;
-use amnah\yii2\user\models\User;
 
 use yii\widgets\ActiveForm;
 
@@ -15,10 +14,8 @@ use yii\widgets\ActiveForm;
 
 <?php
 
-$dataUser = User::find()->select(['user.id', 'profile.full_name'])
-    ->leftJoin('profile', 'profile.user_id = user.id')
-    ->where(['!=', 'role_id', 2])->asArray()->all();
-
+$dataKaryawan = Karyawan::find()->select(['id_karyawan', 'nama', 'is_atasan'])->where(['is_atasan' => 1])->asArray()->all();
+// dd($dataKaryawan);
 
 ?>
 
@@ -37,9 +34,9 @@ $dataUser = User::find()->select(['user.id', 'profile.full_name'])
         <div class="col-12">
             <?php
             $data = \yii\helpers\ArrayHelper::map(
-                $dataUser,
-                'id',
-                'full_name'
+                $dataKaryawan,
+                'id_karyawan',
+                'nama'
             );
 
             echo $form->field($model, 'id_atasan')->widget(Select2::classname(), [

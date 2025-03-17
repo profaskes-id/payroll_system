@@ -70,7 +70,9 @@ class AuthController extends Controller
                                 'email' => $user['email'],
                                 'id_karyawan' => $karyawan->id_karyawan,
                                 'nama' => $karyawan->nama,
-                                'kode_karyawan' => $karyawan->kode_karyawan
+                                'kode_karyawan' => $karyawan->kode_karyawan,
+                        'is_atasan' => $karyawan->is_atasan,
+
                             ],
                         ];
                     }

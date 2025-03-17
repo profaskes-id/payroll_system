@@ -12,6 +12,7 @@ use backend\models\Karyawan;
 use backend\models\KaryawanSearch;
 use backend\models\MasterKab;
 use backend\models\MasterKec;
+use backend\models\MasterKode;
 use backend\models\PengalamanKerjaSearch;
 use backend\models\Resign;
 use backend\models\RiwayatKesehatanSearch;
@@ -71,12 +72,21 @@ class KaryawanController extends Controller
      */
     public function actionIndex()
     {
+
+        $statusKontrak  = MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pekerjaan']])->where(['nama_kode' => 'Kontrak',])->one();
+        if ($statusKontrak == null) {
+            $statusKontrak = "2";
+        } else {
+            $statusKontrak = $statusKontrak->kode;
+        }
+
+
         $searchModel = new KaryawanSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'statusKontrak' => $statusKontrak
         ]);
     }
 

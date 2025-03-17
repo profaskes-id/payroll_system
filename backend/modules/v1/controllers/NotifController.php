@@ -35,6 +35,13 @@ class NotifController extends ActiveController
         Yii::$app->response->format = Response::FORMAT_JSON;
         $user = User::find()->where(['id_karyawan' => $id_karyawan])->asArray()->one();
 
+        if ($user === null) {
+            return [
+                'success' => false,
+                'message' => 'User  not found, tambahkan user terlebih dahulu dengan invite di menu karyawan',
+            ];
+        }
+
         $messages = MessageModel::find()
             ->select(['message.*', 'message_receiver.is_open'])
             ->innerJoin('message_receiver', 'message.id_message = message_receiver.message_id')

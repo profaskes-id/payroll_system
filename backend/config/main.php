@@ -14,7 +14,7 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
-    'modules' => [
+        'modules' => [
         'v1' => ['class' => 'app\modules\v1\Module',],
         'user' => [
             'class' => 'amnah\yii2\user\Module',
@@ -66,8 +66,8 @@ return [
         ],
         'urlManagerFrontEnd' => [
             'class' => 'yii\web\urlManager',
-            // 'baseUrl' => 'https://payroll.profaskes.id',
-            'baseUrl' => 'https://localhost:8000',
+            'baseUrl' => 'https://payroll.profaskes.id',
+            // 'baseUrl' => 'https://localhost:8000',
             'enablePrettyUrl' => true,
             'showScriptName' => false,
         ],

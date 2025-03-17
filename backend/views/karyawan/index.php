@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\Karyawan;
+use backend\models\Tanggal;
 use common\models\User;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -13,6 +14,7 @@ use yii\grid\GridView;
 
 $this->title = 'Karyawan';
 $this->params['breadcrumbs'][] = $this->title;
+$tanggalFormater = new Tanggal();
 ?>
 <div class="karyawan-index">
 
@@ -38,9 +40,10 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
 
-    <div class="table-container table-responsive ">
+    <div class="table-container table-responsive">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
+            'options' => ['class' => 'table table-striped table-responsive table-hover'],
             'columns' => [
                 [
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
@@ -48,11 +51,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => 'yii\grid\SerialColumn'
                 ],
                 [
+                    'class' => ActionColumn::className(),
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                    'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, Karyawan $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id_karyawan' => $model->id_karyawan]);
+                    'urlCreator' => function ($action, $model, $key, $index, $column) {
+
+
+                        return Url::toRoute([$action, 'id_karyawan' => $model['id_karyawan']]);
                     }
                 ],
                 'nama',
@@ -65,30 +70,112 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'label' => 'Jenis Kelamin',
                     'value' => function ($model) {
-                        return $model->kode_jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan';
+
+                        return $model['kode_jenis_kelamin'] == 'L' ? 'Laki-laki' : 'Perempuan';
                     }
                 ],
                 [
                     'label' => 'Bagian',
                     'value' => function ($model) {
                         $divisiAktif = [];
-                        // return $model->data->nama_kode;
+
                         $filteredData = array_filter($model->dataPekerjaans, function ($item) {
                             return $item->is_aktif == 1;
                         });
                         foreach ($filteredData as $key => $value) {
                             $divisiAktif[] = $value->bagian->nama_bagian;
                         }
-                        // return implode(', ', $divisiAktif);
+
                         return implode(', ', $divisiAktif);
                     }
                 ],
+                [
+                    'label' => 'Tanggal Masuk',
+                    'format' => 'raw',
+                    'value' => function ($model) use ($tanggalFormater, $statusKontrak) {
+                        if (!$model->is_aktif == 1) {
+                            return '<span class=""></span>';
+                        }
+                        if (empty($model->dataPekerjaans)) {
+                            return "";
+                        }
+                        $filteredDataPekerjaans = array_filter($model->dataPekerjaans, function ($dataPekerjaan) use ($statusKontrak) {
+                            return $dataPekerjaan->status == $statusKontrak;
+                        });
+                        $filteredDataPekerjaans = array_values($filteredDataPekerjaans);
+                        if (empty($filteredDataPekerjaans)) {
+                            return "";
+                        }
+                        $dates = array_map(function ($dataPekerjaan) {
+                            return $dataPekerjaan->dari;  // 'dari' is the field with the date
+                        }, $filteredDataPekerjaans);
+
+                        $earliestDate = min($dates);
+                        return $tanggalFormater->getIndonesiaFormatTanggal(Yii::$app->formatter->asDate($earliestDate, 'php:Y-m-d'));
+                    },
+
+                ],
+                [
+                    'label' => 'Masa Kerja',
+                    'format' => 'raw',
+                    'value' => function ($model) use ($statusKontrak) {
+                        if (!$model->is_aktif == 1) {
+                            return '<span class=""></span>';
+                        }
+                        if (empty($model->dataPekerjaans)) {
+                            return "";
+                        }
+
+                        // Ambil data pekerjaan yang relevan dengan status kontrak
+                        $filteredDataPekerjaans = array_filter($model->dataPekerjaans, function ($dataPekerjaan) use ($statusKontrak) {
+                            return $dataPekerjaan->status == $statusKontrak;  // Sesuaikan dengan status kontrak yang relevan
+                        });
+                        $filteredDataPekerjaans = array_values($filteredDataPekerjaans);
+
+                        if (empty($filteredDataPekerjaans)) {
+                            return "";
+                        }
+
+                        // Ambil tanggal 'dari' yang paling awal
+                        $dates = array_map(function ($dataPekerjaan) {
+                            return $dataPekerjaan->dari;
+                        }, $filteredDataPekerjaans);
+
+                        $earliestDate = max($dates);
+
+                        // Hitung selisih antara tanggal masuk dengan tanggal sekarang
+                        $startDate = new DateTime($earliestDate);
+                        $endDate = new DateTime(); // Tanggal hari ini
+
+                        $interval = $startDate->diff($endDate);
+
+                        $years = $interval->y;
+                        $months = $interval->m;
+                        $days = $interval->d;
+
+                        // Format durasi masa kerja
+                        $duration = '';
+                        if ($years > 0) {
+                            $duration .= $years . ' tahun ';
+                        }
+                        if ($months > 0) {
+                            $duration .= $months . ' bulan ';
+                        }
+                        if ($days > 0) {
+                            $duration .= $days . ' hari';
+                        }
+
+                        return $duration ?: 'Kurang dari 1 hari';
+                    }
+                ],
+
+
                 [
                     'header' => 'Aktif',
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'value' => function ($model) {
-                        // return $model->email;
+
                         return $model->is_aktif == 1 ? '<span class="text-success">Aktif</span>' : '<span class="text-danger">Resign</span>';
                     },
                     'format' => 'raw',

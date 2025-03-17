@@ -2,6 +2,7 @@
 
 use backend\assets\AppAsset;
 use backend\models\Absensi;
+use backend\models\Karyawan;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -190,6 +191,60 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </a>
     </div>
+
+    <?php
+    $karyawan =  Karyawan::find()->select('is_atasan')->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan])->asArray()->one();
+
+    if ($karyawan['is_atasan'] == 1) : ?>
+
+
+
+        <h1 class="font-bold ms-5">Pengajuan Karyawan</h1>
+        <div class="relative grid w-full grid-cols-12 gap-2 px-5 mt-5 mb-20 min-w-screen">
+
+            <div class="w-[120px]  aspect-square bg-[#fff] rounded-full absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2  overflow-hidden     ">
+
+                <div class=" flex justify-center items-center flex-col bg-[#ffc27c] w-full h-full rounded-[50px] rotate-180" data-aos="zoom-in" data-aos-delay="1000" style="z-index: -99999; position: relative;" data-aos-duration="500">
+                </div>
+
+            </div>
+
+
+            <a href="/panel/tanggapan/wfh" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-right">
+                <div class=" flex justify-center items-center flex-col bg-[#ede8fe] py-5 max-h-[200px] relative z-50 rounded-[50px] ">
+                    <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
+                        <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/wfh.svg" alt="calendar" width="40px" height="40px">
+                    </div>
+                    <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-black/80"><span>Tanggapan</span> <span>WFH</span></p>
+                </div>
+            </a>
+            <a href="/panel/tanggapan/cuti" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-left">
+                <div class=" flex justify-center items-center flex-col bg-[#f2fee8] py-5 max-h-[200px] relative z-50 rounded-[50px] ">
+                    <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
+                        <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/calendar.png" alt="calendar" width="40px" height="40px">
+                    </div>
+                    <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-black/80"><span>Tanggapan</span> <span>Cuti</span></p>
+                </div>
+            </a>
+            <a href="/panel/tanggapan/lembur" class="col-span-6 " data-aos-duration="1000" data-aos="fade-up-right">
+                <div class=" flex-col col-span-6 bg-[#ffe3e3] py-5 max-h-[200px] relative z-50 rounded-[50px] flex justify-center items-center">
+                    <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
+                        <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/alarm.png" alt="calendar" width="30px" height="30px">
+                    </div>
+                    <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-black/80"><span>Tanggapan</span> <span>Lembur</span></p>
+                </div>
+            </a>
+            <a href="/panel/tanggapan/dinas" class="col-span-6 " data-aos-duration="1000" data-aos="fade-up-left">
+                <div class=" flex-col col-span-6 bg-[#ebeefd] py-5 max-h-[200px] relative z-50 rounded-[50px] flex justify-center items-center">
+                    <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
+                        <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/building.png" alt="building" width="30px" height="30px">
+                    </div>
+                    <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-black/80" style="font-size: 15px !important;"><span>Tanggapan</span> <span>Dinas </span></p>
+                </div>
+            </a>
+        </div>
+    <?php endif ?>
+
 </section>
 
 

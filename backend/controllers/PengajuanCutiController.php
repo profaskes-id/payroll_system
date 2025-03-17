@@ -194,11 +194,6 @@ class PengajuanCutiController extends Controller
                 ];
                 $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan cuti Baru Dari " . $model->karyawan->nama);
 
-
-
-
-
-
                 Yii::$app->session->setFlash('success', 'Pengajuan Cuti Berhasil Ditanggapi');
 
                 return $this->redirect(['view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]);

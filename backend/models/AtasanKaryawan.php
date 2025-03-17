@@ -36,7 +36,7 @@ class AtasanKaryawan extends \yii\db\ActiveRecord
             [['id_atasan', 'id_karyawan', 'status', 'di_setting_oleh', 'id_master_lokasi'], 'integer'],
             [['id_karyawan', 'id_master_lokasi'], 'required'],
             [['di_setting_pada'], 'safe'],
-            [['id_atasan'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['id_atasan' => 'id']],
+            [['id_atasan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_atasan' => 'id_karyawan']],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
             [['id_master_lokasi'], 'exist', 'skipOnError' => true, 'targetClass' => MasterLokasi::class, 'targetAttribute' => ['id_master_lokasi' => 'id_master_lokasi']],
         ];
@@ -62,16 +62,16 @@ class AtasanKaryawan extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getAtasan()
-    {
-        return $this->hasOne(User::class, ['id' => 'id_atasan']);
-    }
 
     /**
      * Gets query for [[Karyawan]].
      *
      * @return \yii\db\ActiveQuery
      */
+    public function getAtasan()
+    {
+        return $this->hasOne(Karyawan::class, ['id_karyawan' => 'id_atasan']);
+    }
     public function getKaryawan()
     {
         return $this->hasOne(Karyawan::class, ['id_karyawan' => 'id_karyawan']);

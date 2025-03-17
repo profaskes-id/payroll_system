@@ -101,115 +101,115 @@ class PengajuanLemburController extends ActiveController
       ];
     }
   }
-
-
-  public function actionCustomUpdate($id)
-  {
+  
+  
+ public function actionCustomUpdate($id)
+{
     // Set response format to JSON
     Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
     try {
-      // Cari model berdasarkan ID
-      $model = PengajuanLemburModel::findOne($id);
-      if (!$model) {
-        Yii::$app->response->statusCode = 404; // Not Found
-        return [
-          'status' => 'error',
-          'message' => 'Data tidak ditemukan.',
-        ];
-      }
-
-      // Ambil body parameters
-      $rawBody = Yii::$app->request->getRawBody();
-      $bodyParams = json_decode($rawBody, true);
-
-      // Validasi apakah ada data yang dikirim
-      if (empty($bodyParams)) {
-        Yii::$app->response->statusCode = 400; // Bad Request
-        return [
-          'status' => 'error',
-          'message' => 'Tidak ada data untuk diupdate.',
-        ];
-      }
-
-      // Validasi field yang diperlukan
-      $requiredFields = [
-        'id_karyawan' => 'Karyawan tidak boleh kosong.',
-        'pekerjaan' => 'Pekerjaan tidak boleh kosong.',
-        'tanggal' => 'Tanggal tidak boleh kosong.',
-        'jam_mulai' => 'Jam mulai tidak boleh kosong.',
-        'jam_selesai' => 'Jam selesai tidak boleh kosong.',
-      ];
-
-      $errors = [];
-      foreach ($requiredFields as $field => $message) {
-        if (!isset($bodyParams[$field]) || $bodyParams[$field] === null) {
-          $errors[] = [
-            'field' => $field,
-            'message' => $message,
-          ];
+        // Cari model berdasarkan ID
+        $model = PengajuanLemburModel::findOne($id);
+        if (!$model) {
+            Yii::$app->response->statusCode = 404; // Not Found
+            return [
+                'status' => 'error',
+                'message' => 'Data tidak ditemukan.',
+            ];
         }
-      }
 
-      // Jika ada error, kembalikan response error
-      if (!empty($errors)) {
-        Yii::$app->response->statusCode = 400; // Bad Request
-        return [
-          'status' => 'error',
-          'errors' => $errors,
-        ];
-      }
+        // Ambil body parameters
+        $rawBody = Yii::$app->request->getRawBody();
+        $bodyParams = json_decode($rawBody, true);
 
-      // Update atribut model
-      foreach ($bodyParams as $key => $value) {
-        if ($model->hasAttribute($key)) {
-          $model->setAttribute($key, $value);
+        // Validasi apakah ada data yang dikirim
+        if (empty($bodyParams)) {
+            Yii::$app->response->statusCode = 400; // Bad Request
+            return [
+                'status' => 'error',
+                'message' => 'Tidak ada data untuk diupdate.',
+            ];
         }
-      }
 
-      // Simpan model ke database
-      if ($model->save()) {
-        // KIRIM NOTIFIKASI
-        $atasan = $this->getAtasanKaryawan($model->id_karyawan);
-        if ($atasan != null) {
-          $adminUsers = User::find()->select(['id', 'email', 'role_id'])->where(['id' => $atasan['id_atasan']])->all();
+        // Validasi field yang diperlukan
+        $requiredFields = [
+            'id_karyawan' => 'Karyawan tidak boleh kosong.',
+            'pekerjaan' => 'Pekerjaan tidak boleh kosong.',
+            'tanggal' => 'Tanggal tidak boleh kosong.',
+            'jam_mulai' => 'Jam mulai tidak boleh kosong.',
+            'jam_selesai' => 'Jam selesai tidak boleh kosong.',
+        ];
+
+        $errors = [];
+        foreach ($requiredFields as $field => $message) {
+            if (!isset($bodyParams[$field]) || $bodyParams[$field] === null) {
+                $errors[] = [
+                    'field' => $field,
+                    'message' => $message,
+                ];
+            }
+        }
+
+        // Jika ada error, kembalikan response error
+        if (!empty($errors)) {
+            Yii::$app->response->statusCode = 400; // Bad Request
+            return [
+                'status' => 'error',
+                'errors' => $errors,
+            ];
+        }
+
+        // Update atribut model
+        foreach ($bodyParams as $key => $value) {
+            if ($model->hasAttribute($key)) {
+                $model->setAttribute($key, $value);
+            }
+        }
+
+        // Simpan model ke database
+        if ($model->save()) {
+            // KIRIM NOTIFIKASI
+            $atasan = $this->getAtasanKaryawan($model->id_karyawan);
+            if ($atasan != null) {
+                $adminUsers = User::find()->select(['id', 'email', 'role_id'])->where(['id' => $atasan['id_atasan']])->all();
+            } else {
+                $adminUsers = User::find()->select(['id', 'email', 'role_id'])->where(['role_id' => [1, 3]])->all();
+            }
+            $params = [
+                'judul' => 'Edit Pengajuan lembur',
+                'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah melakukan edit pada pengajuan lembur.',
+                'nama_transaksi' => "/panel/pengajuan-lembur/view?id_pengajuan_lembur=",
+                'id_transaksi' => $model['id_pengajuan_lembur'],
+            ];
+
+            $sender = User::find()->select(['id', 'email', 'role_id'])->where(['id_karyawan' => $model->id_karyawan])->one();
+            $this->sendNotif($params, $sender, $model, $adminUsers, "Edit Pengajuan lembur " . $model->karyawan->nama);
+
+            return [
+                'status' => 'success',
+                'message' => 'Data berhasil diperbarui.',
+                'data' => $model,
+            ];
         } else {
-          $adminUsers = User::find()->select(['id', 'email', 'role_id'])->where(['role_id' => [1, 3]])->all();
+            Yii::$app->response->statusCode = 500; // Internal Server Error
+            return [
+                'status' => 'error',
+                'message' => 'Gagal memperbarui data.',
+                'errors' => $model->getErrors(),
+            ];
         }
-        $params = [
-          'judul' => 'Edit Pengajuan lembur',
-          'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah melakukan edit pada pengajuan lembur.',
-          'nama_transaksi' => "/panel/pengajuan-lembur/view?id_pengajuan_lembur=",
-          'id_transaksi' => $model['id_pengajuan_lembur'],
-        ];
-
-        $sender = User::find()->select(['id', 'email', 'role_id'])->where(['id_karyawan' => $model->id_karyawan])->one();
-        $this->sendNotif($params, $sender, $model, $adminUsers, "Edit Pengajuan lembur " . $model->karyawan->nama);
-
-        return [
-          'status' => 'success',
-          'message' => 'Data berhasil diperbarui.',
-          'data' => $model,
-        ];
-      } else {
+    } catch (\Exception $e) {
+        // Tangkap exception yang tidak terduga
+        Yii::error('Update Error: ' . $e->getMessage());
         Yii::$app->response->statusCode = 500; // Internal Server Error
         return [
-          'status' => 'error',
-          'message' => 'Gagal memperbarui data.',
-          'errors' => $model->getErrors(),
+            'status' => 'error',
+            'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
         ];
-      }
-    } catch (\Exception $e) {
-      // Tangkap exception yang tidak terduga
-      Yii::error('Update Error: ' . $e->getMessage());
-      Yii::$app->response->statusCode = 500; // Internal Server Error
-      return [
-        'status' => 'error',
-        'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
-      ];
     }
-  }
-
+}
+  
   // Metode untuk mendapatkan detail pengajuan lembur berdasarkan ID
   public function actionGetByPengajuan($id_pengajuan_lembur)
   {

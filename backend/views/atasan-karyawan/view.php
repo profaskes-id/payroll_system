@@ -1,6 +1,7 @@
 <?php
 
 use amnah\yii2\user\models\User;
+use backend\models\Karyawan;
 use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -42,16 +43,17 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'karyawan.nama',
                 ],
                 [
-                    'label' => 'Atasan',
                     'format' => 'raw',
+                    'label' => 'Atasan',
                     'value' => function ($model) {
                         // Jika model tidak ada, kembalikan pesan "Belum Di Set"
+                        // dd($model);
                         if (empty($model) || empty($model['id_atasan'])) {
                             return '<p class="text-danger">(Belum Di Set)</p>';
                         }
-
-                        $user = User::findOne($model->id_atasan);
-                        return $user->profile->full_name ?? $user->email;
+                        $data = Karyawan::find()->select('nama')->where(['id_karyawan' => $model['id_atasan']])->one();
+                        // Kembalikan nama lengkap atau pesan "Belum Di Set" jika tidak ada
+                        return $data->nama ?? '<p class="text-danger">(Belum Di Set)</p>';
                     }
                 ],
 
