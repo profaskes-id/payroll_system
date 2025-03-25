@@ -9,6 +9,13 @@ return [
     'timeZone' => 'Asia/Jakarta',
     'language' => 'id_ID',
     'components' => [
+        'session' => [
+            'class' => 'yii\web\Session',
+            'cookieParams' => [
+                'httponly' => true,
+                'secure' => YII_ENV_PROD, // Hanya gunakan secure cookies di lingkungan produksi
+            ],
+        ],
         'assetManager' => [
             'bundles' => [
                 'kartik\select2\Select2' => [

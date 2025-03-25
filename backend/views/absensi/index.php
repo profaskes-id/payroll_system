@@ -44,9 +44,9 @@ $today = date('Y-m-d');
 <?php Pjax::begin(); ?>
 <div class="absensi-index position-relative">
 
-    <?php $form = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',   'action' => ['absensi/index']]); ?>
+    <?php $form = ActiveForm::begin(['method' => 'get', 'id' => 'my-form',   'action' => ['absensi/index']]); ?>
     <div class="table-container table-responsive">
-        <div class="row mb-2">
+        <div class="mb-2 row">
 
             <div class="col-lg-4 col-12">
                 <?= $form->field($absensi, 'tanggal')->textInput(['type' => 'date',  'value' => $tanggalSet ?? $today])->label(false); ?>
@@ -68,9 +68,9 @@ $today = date('Y-m-d');
 
             </div>
 
-            <div class="col-lg-3 d-flex justify-content-start   " style="gap: 10px;">
+            <div class="col-lg-3 d-flex justify-content-start " style="gap: 10px;">
 
-                <div class=" ">
+                <div class="">
                     <button class="add-button" type="submit">
                         <i class="fas fa-search"></i>Search
                     </button>
@@ -189,7 +189,7 @@ $today = date('Y-m-d');
                                 return "<span class='text-black'>Tidak Hadir</span>";
                             }
                         } else {
-                            return "<span class=' text-black'>Tidak Hadir</span>";
+                            return "<span class='text-black '>Tidak Hadir</span>";
                         }
                     },
                     'format' => 'raw',

@@ -52,13 +52,17 @@ $this->params['breadcrumbs'][] = $this->title;
                         <input readonly value="<?= $kode_karyawan  ?>" type="text" id="kode_karyawan" name="kode_karyawan" class="form-control w-100">
                     </div>
                     <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" class="form-control w-100">
+                    </div>
+                    <div class="form-group">
                         <label for="confirm_password">Confirm Password</label>
                         <input type="password" id="confirm_password" name="confirm_password" class="form-control w-100">
                     </div>
                     <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" class="form-control w-100">
-                        <input type="checkbox" id="show-password"> Show Password
+
+                        <input type="checkbox" id="show-password">
+                        <label for="show-password"> Show Password</label>
                     </div>
 
                     <div class="form-group">

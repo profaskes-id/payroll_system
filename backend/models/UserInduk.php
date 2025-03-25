@@ -1,6 +1,6 @@
 <?php
 
-namespace amnah\yii2\user\models;
+namespace backend\models;
 
 use backend\models\Karyawan;
 use Yii;
@@ -35,8 +35,19 @@ use ReflectionClass;
  * @property UserToken[] $userTokens
  * @property UserAuth[] $userAuths
  */
-class User extends ActiveRecord implements IdentityInterface
+class UserInduk extends ActiveRecord implements IdentityInterface
 {
+
+
+    public static function getDb()
+    {
+        return Yii::$app->get('db_induk'); // Gunakan koneksi db_induk
+    }
+
+    public static function tableName()
+    {
+        return 'user'; // Sesuaikan dengan nama tabel di db_induk
+    }
     /**
      * @var int Inactive status
      */

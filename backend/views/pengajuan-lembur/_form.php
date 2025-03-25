@@ -45,6 +45,21 @@ use yii\widgets\ActiveForm;
                     <?= $form->field($model, 'jam_selesai')->textInput(['type' => 'time']) ?>
                 </div>
 
+                <?php
+                if (!$model->isNewRecord) : ?>
+
+                    <div class="col-12">
+                        <?= $form->field($model, 'durasi')->textInput(['format' => 'time']) ?>
+                    </div>
+                <?php endif; ?>
+                <?php
+                if (!$model->isNewRecord) : ?>
+
+                    <div class="col-12">
+                        <?= $form->field($model, 'hitungan_jam')->textInput(['format' => ['decimal', 2]]) ?>
+                    </div>
+                <?php endif; ?>
+
 
                 <?php
                 if (!$model->isNewRecord) : ?>
@@ -82,6 +97,7 @@ use yii\widgets\ActiveForm;
 
 
 
+
             </div>
         </div>
 
@@ -93,19 +109,19 @@ use yii\widgets\ActiveForm;
                 <?php
                 $poinArray ??= [];
                 foreach ($poinArray as $index => $pekerjaan) : ?>
-                    <div class="d-flex mt-2">
+                    <div class="mt-2 d-flex">
                         <input type="text" name="pekerjaan[]" class="form-control" placeholder="Item <?= $index + 1 ?>" value="<?= Html::encode($pekerjaan) ?>">
                         <button type="button" class="reset-button remove-item">Remove</button>
                     </div>
                 <?php endforeach; ?>
             </div>
-            <button class="tambah-button mt-2" type="button" id="add-item">Tambah Item</button>
+            <button class="mt-2 tambah-button" type="button" id="add-item">Tambah Item</button>
         </div>
 
     </div>
 
 
-    <div class="col-md-6 pt-4">
+    <div class="pt-4 col-md-6">
 
         <div class="form-group">
             <button class="add-button" type="submit">

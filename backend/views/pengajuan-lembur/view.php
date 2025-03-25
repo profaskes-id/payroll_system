@@ -70,6 +70,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     ],
                     [
+                        'label' => 'Hitungan Jam',
+                        'value' => function ($model) {
+                            return $model->hitungan_jam ?? 0;
+                        },
+
+                    ],
+                    [
 
                         'label' => 'Tanggal',
                         'value' => function ($model) {
@@ -83,14 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     [
                         'attribute' => 'Ditanggapi Oleh',
-                        // 'value' => function ($model) {
-                        //     if ($model->status == 0) {
-                        //         return '<span class="text-warning">Menuggu Tanggapan</span>';
-                        //     }
-                        //     $username = User::findOne(['id' => $model->disetujui_oleh])->username;
-                        //     return  $username ?? '<span class="text-danger">User Tidak Terdaftar</span>';
-                        // },
-                        // "format" => 'raw',
+
                     ],
                     [
                         'attribute' => 'Ditanggapi Pada',

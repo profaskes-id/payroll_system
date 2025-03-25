@@ -49,4 +49,29 @@ class DataKaryawanController extends ActiveController
 
         return $karyawan;
     }
+
+    public function actionNameAndId()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $karyawan = $this->modelClass::find()
+            ->select([
+                'id_karyawan',
+                'nama',
+            ])
+            ->asArray()
+            ->all();
+
+        return \yii\helpers\ArrayHelper::map($karyawan, 'id_karyawan', 'nama', [
+            'id_karyawan',
+            'nama',
+        ]);
+    }
+
+
+    public function actionLogin($id_karyawan)
+    {
+        $dataKaryawan = $this->modelClass::find()->select(['id_karyawan', 'nama', 'is_atasan', 'kode_karyawan'])->where(['id_karyawan' => $id_karyawan])->asArray()->one();
+        return $dataKaryawan;
+    }
 }

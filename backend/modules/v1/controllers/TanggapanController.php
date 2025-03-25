@@ -2,10 +2,14 @@
 
 namespace app\modules\v1\controllers;
 
+use amnah\yii2\user\models\User;
 use Yii;
 use yii\rest\Controller;
 use backend\models\PengajuanWfh;
 use backend\models\AtasanKaryawan;
+use backend\models\helpers\EmailHelper;
+use backend\models\helpers\MobileNotificationHelper;
+use backend\models\helpers\NotificationHelper;
 use backend\models\JamKerjaKaryawan;
 use backend\models\Karyawan;
 use backend\models\MasterKode;
@@ -77,7 +81,7 @@ class TanggapanController extends Controller
 
 
         $searchModel = new PengajuanWfhSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $tgl_mulai, $tgl_selesai,);
+        $dataProvider = $searchModel->searchApi(Yii::$app->request->queryParams, $tgl_mulai, $tgl_selesai,);
 
         $dataProvider->query->andWhere(['pengajuan_wfh.id_karyawan' => $idKaryawanList]);
 
@@ -175,6 +179,37 @@ class TanggapanController extends Controller
 
 
                 if ($model->save()) {
+                    $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+                    $sender = $id_admin;
+
+                    $params = [
+                        'judul' => 'Pengajuan wfh',
+                        'deskripsi' => 'Pengajuan WFH anda telah ditanggapi oleh atasan .',
+                        'nama_transaksi' => "wfh",
+                        'id_transaksi' => $model['id_pengajuan_wfh'],
+                    ];
+                    $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan wfh Baru Dari " . $model->karyawan->nama);
+
+
+                    if ($adminUsers != null || $adminUsers != []) {
+                        foreach ($adminUsers as $admin) {
+                            if ($admin['fcm_token']) {
+
+                                $token = $admin['fcm_token'];
+                                $title = 'Pengajuan WFH';
+                                $body = 'Atasan Telah Menanggapi Pengajuan WFH Anda';
+                                $data = ['url' => '/'];
+
+                                try {
+                                    MobileNotificationHelper::sendNotification($token, $title, $body, $data);
+                                } catch (\Exception $e) {
+                                    echo 'Error: ' . $e->getMessage();
+                                }
+                            }
+                        }
+                    };
+
+
                     return $this->asJson(['success' => 'Berhasil menyimpan data pengajuan WFH.']);
                 } else {
                     return $this->asJson(['error' => 'Gagal menyimpan data pengajuan WFH, pastikan data yang anda masukkan benar.']);
@@ -239,7 +274,7 @@ class TanggapanController extends Controller
 
         // Mencari data berdasarkan filter yang diberikan
         $searchModel = new PengajuanLemburSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $tgl_mulai, $tgl_selesai);
+        $dataProvider = $searchModel->searchApi(Yii::$app->request->queryParams, $tgl_mulai, $tgl_selesai);
 
         $dataProvider->query->andWhere(['pengajuan_lembur.id_karyawan' => $idKaryawanList]);
 
@@ -308,6 +343,36 @@ class TanggapanController extends Controller
                 $model->disetujui_pada = date('Y-m-d H:i:s');
                 $model->catatan_admin = $decodedArray['catatan_admin'] ?? null; // Atau nilai default lains
                 if ($model->save()) {
+
+                    $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+                    $sender = $id_admin;
+
+                    $params = [
+                        'judul' => 'Pengajuan lembur',
+                        'deskripsi' => 'Pengajuan Lembur anda telah ditanggapi oleh atasan .',
+                        'nama_transaksi' => "lembur",
+                        'id_transaksi' => $model['id_pengajuan_lembur'],
+                    ];
+                    $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan lembur Baru Dari " . $model->karyawan->nama);
+
+                    if ($adminUsers != null || $adminUsers != []) {
+                        foreach ($adminUsers as $admin) {
+                            if ($admin['fcm_token']) {
+
+                                $token = $admin['fcm_token'];
+                                $title = 'Pengajuan Lembur';
+                                $body = 'Atasan Telah Menanggapi Pengajuan Lembur Anda';
+                                $data = ['url' => '/'];
+
+                                try {
+                                    MobileNotificationHelper::sendNotification($token, $title, $body, $data);
+                                } catch (\Exception $e) {
+                                    echo 'Error: ' . $e->getMessage();
+                                }
+                            }
+                        }
+                    };
+
                     return $this->asJson(['success' => 'Pengajuan Lembur Berhasil Diubah']);
                 } else {
                     return $this->asJson(['error' => 'Gagal Mengubah Pengajuan Lembur']);
@@ -375,7 +440,7 @@ class TanggapanController extends Controller
 
         // Mencari data berdasarkan filter yang diberikan
         $searchModel = new PengajuanCutiSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $tgl_mulai, $tgl_selesai);
+        $dataProvider = $searchModel->searchApi(Yii::$app->request->queryParams, $tgl_mulai, $tgl_selesai);
 
         // Menambahkan filter berdasarkan ID karyawan
         $dataProvider->query->andWhere(['pengajuan_cuti.id_karyawan' => $idKaryawanList]);
@@ -498,6 +563,38 @@ class TanggapanController extends Controller
 
         // Menyimpan perubahan data
         if ($model->save()) {
+            $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+            $sender = $id_admin;
+
+            $params = [
+                'judul' => 'Pengajuan cuti',
+                'deskripsi' => 'Pengajuan cuti anda telah ditanggapi oleh atasan .',
+                'nama_transaksi' => "cuti",
+                'id_transaksi' => $model['id_pengajuan_cuti'],
+            ];
+            $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan cuti Baru Dari " . $model->karyawan->nama);
+
+
+            if ($adminUsers != null || $adminUsers != []) {
+                foreach ($adminUsers as $admin) {
+                    if ($admin['fcm_token']) {
+
+                        $token = $admin['fcm_token'];
+                        $title = 'Pengajuan Cuti';
+                        $body = 'Atasan Telah Menanggapi Pengajuan Cuti Anda';
+                        $data = ['url' => '/'];
+
+                        try {
+                            MobileNotificationHelper::sendNotification($token, $title, $body, $data);
+                        } catch (\Exception $e) {
+                            echo 'Error: ' . $e->getMessage();
+                        }
+                    }
+                }
+            };
+
+
+
             return $this->asJson(['success' => 'Pengajuan Cuti Berhasil Diubah']);
         } else {
             return $this->asJson(['error' => 'Gagal Mengubah Pengajuan Cuti']);
@@ -565,7 +662,7 @@ class TanggapanController extends Controller
 
         // Mencari data berdasarkan filter yang diberikan
         $searchModel = new PengajuanDinasSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $tgl_mulai, $tgl_selesai);
+        $dataProvider = $searchModel->searchApi(Yii::$app->request->queryParams, $tgl_mulai, $tgl_selesai);
 
         // Menambahkan filter berdasarkan ID karyawan
         $dataProvider->query->andWhere(['pengajuan_dinas.id_karyawan' => $idKaryawanList]);
@@ -645,6 +742,38 @@ class TanggapanController extends Controller
 
                 // Menyimpan perubahan data
                 if ($model->save()) {
+                    $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+                    $sender = $id_admin;
+
+                    $params = [
+                        'judul' => 'Pengajuan dinas',
+                        'deskripsi' => 'Pengajuan Dinas anda telah ditanggapi oleh atasan .',
+                        'nama_transaksi' => "dinas",
+                        'id_transaksi' => $model['id_pengajuan_dinas'],
+                    ];
+                    $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan dinas Baru Dari " . $model->karyawan->nama);
+
+                    if ($adminUsers != null || $adminUsers != []) {
+                        foreach ($adminUsers as $admin) {
+                            if ($admin['fcm_token']) {
+
+                                $token = $admin['fcm_token'];
+                                $title = 'Pengajuan Dinas';
+                                $body = 'Atasan Telah Menanggapi Pengajuan Dinas Anda';
+                                $data = ['url' => '/'];
+
+                                try {
+                                    MobileNotificationHelper::sendNotification($token, $title, $body, $data);
+                                } catch (\Exception $e) {
+                                    echo 'Error: ' . $e->getMessage();
+                                }
+                            }
+                        }
+                    };
+
+
+
+
                     return $this->asJson(['success' => 'Pengajuan Dinas Berhasil Diubah']);
                 } else {
                     return $this->asJson(['error' => 'Gagal Mengubah Pengajuan Dinas']);
@@ -704,5 +833,36 @@ class TanggapanController extends Controller
         }
 
         return $hari_kerja;
+    }
+
+
+
+
+
+    public function sendNotif($params, $sender, $model, $adminUsers, $subject = "Pengajuan Karyawan")
+    {
+        try {
+            NotificationHelper::sendNotification($params, $adminUsers, $sender);
+        } catch (\InvalidArgumentException $e) {
+            // Handle invalid argument exception
+            Yii::error("Invalid argument: " . $e->getMessage());
+        } catch (\RuntimeException $e) {
+            // Handle runtime exception
+            Yii::error("Runtime error: " . $e->getMessage());
+        }
+
+        // return $this->renderPartial('@backend/views/home/pengajuan/email', compact('model', 'adminUsers', 'subject'));
+        $msgToCheck = $this->renderPartial('@backend/views/home/pengajuan/email_user', compact('model', 'params'));
+
+        // $msgToCheck = $this->renderPartial('@backend/views/home/pengajuan/email');
+        // Mengirim email ke setiap pengguna
+        foreach ($adminUsers as $atasan) {
+            $to = $atasan['email'];
+            if (EmailHelper::sendEmail($to, $subject, $msgToCheck)) {
+                Yii::$app->session->setFlash('success', 'Email berhasil dikirim ke ' . $to);
+            } else {
+                Yii::$app->session->setFlash('error', 'Email gagal dikirim ke ' . $to);
+            }
+        }
     }
 }

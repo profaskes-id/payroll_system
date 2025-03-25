@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\AtasanKaryawan;
 use backend\models\AtasanKaryawanSearch;
+use backend\models\Karyawan;
 use backend\models\KaryawanSearch;
 use Yii;
 use yii\web\Controller;
@@ -55,16 +56,8 @@ class AtasanKaryawanController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new KaryawanSearch();
-        $dataProvider = $searchModel->searchAtasanKaryawan($this->request->queryParams);
-
-
-        if (Yii::$app->request->isPost) {
-            $id_karyawan = Yii::$app->request->post('KaryawanSearch')['id_karyawan'];
-            $dataProvider = $searchModel->searchAtasanKaryawanID($id_karyawan);
-        }
-
-
+        $searchModel = new AtasanKaryawanSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -78,9 +71,9 @@ class AtasanKaryawanController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id_karyawan)
+    public function actionView($id_atasan_karyawan)
     {
-        $model = AtasanKaryawan::find()->where(['id_karyawan' => $id_karyawan])->one();
+        $model = $this->findModel($id_atasan_karyawan);
 
         return $this->render('view', [
             'model' => $model,
@@ -95,25 +88,84 @@ class AtasanKaryawanController extends Controller
     public function actionCreate()
     {
         $model = new AtasanKaryawan();
+        $dataKaryawan = Karyawan::find()->select(['id_karyawan', 'nama', 'is_atasan'])->where(['is_aktif' => 1])->orderBy(['nama' => SORT_ASC])->asArray()->all();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-
                 $model->di_setting_oleh = Yii::$app->user->identity->id;
                 $model->di_setting_pada = date('Y-m-d H:i:s');
-                if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data ');
+                // Find the selected atasan
+
+                if (($this->request->get('id_atasan'))) {
+                    $model->id_atasan = intval($this->request->get('id_atasan'));
+                }
+
+
+
+                $atasan = Karyawan::findOne(['id_karyawan' => $model->atasan]);
+                if ($atasan === null) {
+                    Yii::$app->session->setFlash('error', 'Atasan tidak ditemukan.');
                     return $this->redirect(['index']);
                 }
-                Yii::$app->session->setFlash('error', 'Gagal Menambahkan Data ');
-                return $this->redirect(['index']);
+
+                // Mark the selected atasan as an official atasan
+                $atasan->is_atasan = 1;
+
+                // Wrap in transaction for atomic save
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    // Save both models in a transaction
+                    if ($model->save() && $atasan->save()) {
+                        // Commit the transaction if both save operations are successful
+                        $transaction->commit();
+                        Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data');
+                        // Redirect with id_atasan
+                        return $this->redirect(['create', 'id_atasan' => $model->id_atasan]);
+                    } else {
+                        // Rollback if either save operation fails
+                        $transaction->rollBack();
+                        Yii::$app->session->setFlash('error', 'Gagal Menambahkan Data');
+                        return $this->redirect(['index']);
+                    }
+                } catch (\Exception $e) {
+                    // Rollback if an exception occurs
+                    $transaction->rollBack();
+                    Yii::$app->session->setFlash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                    return $this->redirect(['index']);
+                }
             }
         } else {
             $model->loadDefaultValues();
         }
 
+
+
+        if (empty(Yii::$app->request->get()['id_atasan'])) {
+            $atasanData = [];
+        } else {
+            $atasanData = AtasanKaryawan::find()
+                ->select([
+                    'atasan_karyawan.*',
+                    'karyawan_atasan.nama AS nama_atasan', // Alias untuk nama atasan
+                    'karyawan.nama AS nama_karyawan', // Alias untuk nama karyawan
+                    'master_lokasi.label AS id_master_lokasi',
+                ])
+                ->where(['id_atasan' => Yii::$app->request->get()['id_atasan']])
+                ->leftJoin('karyawan AS karyawan_atasan', 'atasan_karyawan.id_atasan = karyawan_atasan.id_karyawan') // Join untuk atasan
+                ->leftJoin('karyawan', 'atasan_karyawan.id_karyawan = karyawan.id_karyawan') // Join untuk karyawan
+                ->leftJoin('master_lokasi', 'atasan_karyawan.id_master_lokasi = master_lokasi.id_master_lokasi')
+                ->asArray()
+                ->orderBy(['atasan_karyawan.id_karyawan' => SORT_ASC])
+                ->all();
+        }
+
+
+
+
         return $this->render('create', [
             'model' => $model,
+            'dataKaryawan' => $dataKaryawan,
+            'atasanData' => $atasanData
         ]);
     }
 
@@ -127,6 +179,7 @@ class AtasanKaryawanController extends Controller
     public function actionUpdate($id_atasan_karyawan)
     {
         $model = $this->findModel($id_atasan_karyawan);
+        $dataKaryawan = Karyawan::find()->select(['id_karyawan', 'nama', 'is_atasan'])->asArray()->all();
 
         if ($this->request->isPost && $model->load($this->request->post())) {
             if ($model->save()) {
@@ -139,6 +192,7 @@ class AtasanKaryawanController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'dataKaryawan' => $dataKaryawan
         ]);
     }
 
@@ -160,6 +214,17 @@ class AtasanKaryawanController extends Controller
 
         Yii::$app->session->setFlash('error', 'Gagal Menghapus Data ');
         return $this->redirect(['index']);
+    }
+    public function actionDeleteCustom($id_atasan_karyawan)
+    {
+        $model = $this->findModel($id_atasan_karyawan);
+
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Berhasil Menghapus Data ');
+            return $this->redirect(['create', 'id_atasan' => $model->id_atasan]);
+        }
+
+        Yii::$app->session->setFlash('error', 'Gagal Menghapus Data ');
     }
 
 

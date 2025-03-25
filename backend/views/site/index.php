@@ -42,6 +42,7 @@ $this->title = 'Hello, ' . Yii::$app->user->identity->username ?? 'admin';
 </style>
 
 <div class="flex items-center justify-between mb-5">
+
     <p class="font-medium text-gray-500 ">Lihat Rekapan Absensi Hari Ini</p>
     <div class="flex items-center space-x-2">
 

@@ -16,7 +16,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
-        'method' => 'POST',
+        'method' => 'get',
     ]); ?>
 
     <div class="row">
@@ -56,7 +56,7 @@ use yii\widgets\ActiveForm;
         </div>
 
         <div class="col-3">
-            <div class="form-group d-flex items-center w-100  justify-content-around">
+            <div class="items-center form-group d-flex w-100 justify-content-around">
                 <button class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
                     <i class="fas fa-search"></i>
                     <span>

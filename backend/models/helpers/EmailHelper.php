@@ -20,7 +20,6 @@ class EmailHelper extends Component
     public static function sendEmail($to, $subject, $body,)
     {
         $mailer = Yii::$app->mailer;
-
         $message = $mailer->compose()
             ->setTo($to)
             ->setSubject($subject)

@@ -1,6 +1,5 @@
 <?php
 
-use Codeception\Lib\Interfaces\Web;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -15,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row justify-content-center align-items-center">
         <div class="col-12">
             <div class="wrap">
-                <div class="login-wrap p-4 px-md-5 pt-md-4">
+                <div class="p-4 login-wrap px-md-5 pt-md-4">
                     <?= Html::img('@root/images/profaskes.png', ['width' => '250px', 'class' => 'mb-4 mx-auto', 'alt' => 'banner']) ?>
                     <?php $form = ActiveForm::begin([
                         'id' => 'login-form',
@@ -28,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?= $form->field($model, 'password')->passwordInput(['class' => 'form-control w-100']) ?>
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="form-control btn  rounded submit px-3" style="background-color: #1e70b8; color: white; font-weight: 800; font-size: 18px;">Masuk</button>
+                        <button type="submit" class="px-3 rounded form-control btn submit" style="background-color: #1e70b8; color: white; font-weight: 800; font-size: 18px;">Masuk</button>
                     </div>
                     <div class="form-group ">
                         <div class="text-left">
@@ -38,8 +37,24 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                         <?php ActiveForm::end(); ?>
                     </div>
+
+
+                    <!-- Div yang hanya muncul pada Android -->
+                    <div id="mobile-login-link" style="display:none;">
+                        <hr>
+                        <a href="https://app.payroll.profaskes.id">Login Menggunakan Aplikasi Mobile</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Menambahkan script untuk mendeteksi Android -->
+<script type="text/javascript">
+    // Cek apakah user menggunakan perangkat Android
+    if (navigator.userAgent.match(/Android/i)) {
+        // Jika Android, tampilkan elemen yang disembunyikan
+        document.getElementById('mobile-login-link').style.display = 'block';
+    }
+</script>

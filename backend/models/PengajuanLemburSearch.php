@@ -40,6 +40,39 @@ class PengajuanLemburSearch extends PengajuanLembur
      */
     public function search($params, $tgl_mulai, $tgl_selesai)
     {
+        $query = PengajuanLembur::find()->where(['>=', 'tanggal', $tgl_mulai])->andWhere(['<=', 'tanggal', $tgl_selesai]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'sort' => ['defaultOrder' => ['status' => SORT_ASC]],
+            // mematikan pagintaion
+            'pagination' => false
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'id_pengajuan_lembur' => $this->id_pengajuan_lembur,
+            'id_karyawan' => $this->id_karyawan,
+            'status' => $this->status,
+            'jam_mulai' => $this->jam_mulai,
+            'jam_selesai' => $this->jam_selesai,
+            'tanggal' => $this->tanggal,
+            'disetujui_oleh' => $this->disetujui_oleh,
+        ]);
+
+        $query->andFilterWhere(['like', 'pekerjaan', $this->pekerjaan]);
+
+        return $dataProvider;
+    }
+    public function searchApi($params, $tgl_mulai, $tgl_selesai)
+    {
         $query = PengajuanLembur::find()->select(['pengajuan_lembur.*', 'karyawan.nama'])->where(['>=', 'tanggal', $tgl_mulai])->andWhere(['<=', 'tanggal', $tgl_selesai])->leftJoin('karyawan', 'pengajuan_lembur.id_karyawan = karyawan.id_karyawan ')->asArray();
 
         // add conditions that should always apply here

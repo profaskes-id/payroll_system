@@ -63,16 +63,17 @@ class PengajuanDinasController extends Controller
         $tahun = date('Y');
         $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, intval($tanggalAwal->nama_kode) + 1, $tahun));
         $lastdate = date('Y-m-d', mktime(0, 0, 0, $bulan + 1, intval($tanggalAwal->nama_kode), $tahun));
-        $tgl_mulai = $firstDayOfMonth;
-        $tgl_selesai = $lastdate;
+        $tgl_mulai =  Yii::$app->request->get() == [] ? $firstDayOfMonth :  Yii::$app->request->get()['PengajuanDinasSearch']['tanggal_mulai'];
+        $tgl_selesai =  Yii::$app->request->get() == [] ? $lastdate :  Yii::$app->request->get()['PengajuanDinasSearch']['tanggal_selesai'];
+
         $searchModel = new PengajuanDinasSearch();
         $dataProvider = $searchModel->search($this->request->queryParams, $tgl_mulai, $tgl_selesai);
 
-        if ($this->request->isPost) {
-            $tgl_mulai = $this->request->post('PengajuanDinasSearch')['tanggal_mulai'];
-            $tgl_selesai = $this->request->post('PengajuanDinasSearch')['tanggal_selesai'];
-            $dataProvider = $searchModel->search($searchModel, $tgl_mulai, $tgl_selesai);
-        }
+        // if ($this->request->isPost) {
+        //     $tgl_mulai = $this->request->post('PengajuanDinasSearch')['tanggal_mulai'];
+        //     $tgl_selesai = $this->request->post('PengajuanDinasSearch')['tanggal_selesai'];
+        //     $dataProvider = $searchModel->search($searchModel, $tgl_mulai, $tgl_selesai);
+        // }
 
         return $this->render('index', [
             'searchModel' => $searchModel,

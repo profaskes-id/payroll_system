@@ -287,18 +287,8 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
         </div>
 
 
-        <div class="col-12">
-            <?= $form->field($model, 'is_atasan')->radioList(
-                [
-                    0 => 'Tidak',
-                    1 => 'Iya',
-                ],
-                [
-                    'class' => 'selama',
-                    'itemOptions' => ['labelOptions' => ['style' => 'margin-right: 20px;']]
-                ]
-            )->label('Apakah Atasan Karyawan') ?>
-        </div>
+        <?= $form->field($model, 'is_atasan')->hiddenInput(['value' => 0])->label(false) ?>
+
 
     </div>
     <div class="form-group">

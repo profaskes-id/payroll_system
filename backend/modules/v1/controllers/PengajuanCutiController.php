@@ -5,6 +5,7 @@ namespace app\modules\v1\controllers;
 use amnah\yii2\user\models\User;
 use backend\models\AtasanKaryawan;
 use backend\models\helpers\EmailHelper;
+use backend\models\helpers\MobileNotificationHelper;
 use backend\models\helpers\NotificationHelper;
 use backend\models\Karyawan;
 use backend\models\MasterCuti;
@@ -74,19 +75,40 @@ class PengajuanCutiController extends ActiveController
     if ($model->save()) {
       // ? KIRIM NOTIFIKASI
       $atasan = $this->getAtasanKaryawan($model->id_karyawan);
+      $adminUsers = null;
       if ($atasan != null) {
-        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['id' => $atasan['id_atasan']])->all();
+        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['id_karyawan' => $atasan['id_atasan']])->all();
       } else {
         $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['role_id' => [1, 3]])->all();
       }
       $params = [
         'judul' => 'Pengajuan cuti',
         'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan cuti.',
-        'nama_transaksi' => "/panel/pengajuan-cuti/view?id_pengajuan_cuti=",
+        'nama_transaksi' => "cuti",
         'id_transaksi' => $model['id_pengajuan_cuti'],
       ];
       $sender = User::find()->select(['id', 'email', 'role_id',])->where(['id_karyawan' => $model->id_karyawan])->one();
       $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan cuti Baru Dari " . $model->karyawan->nama);
+
+      foreach ($adminUsers as $admin) {
+        if ($admin['fcm_token']) {
+
+          $token = $admin['fcm_token'];
+          $title = 'Pengajuan Cuti';
+          $body = 'Pengajuan Cuti Dari ' . $model->karyawan->nama ?? 'karyawan';
+          $data = ['url' => '/profile'];
+
+          try {
+            $result = MobileNotificationHelper::sendNotification($token, $title, $body, $data);
+            echo "Status Code: " . $result['statusCode'] . "\n";
+            echo "Response: " . print_r($result['response'], true) . "\n";
+          } catch (\Exception $e) {
+            echo 'Error: ' . $e->getMessage();
+          }
+        }
+      };
+
+
 
       return [
         'status' => 'success',

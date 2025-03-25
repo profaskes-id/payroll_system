@@ -70,18 +70,12 @@ class RekapAbsensiController extends Controller
      */
     public function actionIndex()
     {
+        // Ambil bulan dan tahun dari parameter GET, jika tidak ada, gunakan nilai default
+        $bulan = Yii::$app->request->get('bulan', date('m'));  // Ambil bulan dari GET atau default ke bulan saat ini
+        $tahun = Yii::$app->request->get('tahun', date('Y'));  // Ambil tahun dari GET atau default ke tahun saat ini
 
-        if (Yii::$app->request->isPost) {
-            $query =  $this->RekapData(Yii::$app->request->post());
-            $bulan = Yii::$app->request->post('bulan');
-            $tahun = Yii::$app->request->post('tahun');
-            $data = $query;
-        } else {
-            $bulan = date('m');
-            $tahun = date('Y');
-            $data = $this->RekapData();
-        }
-
+        // Ambil data rekapan berdasarkan bulan dan tahun yang dipilih
+        $data = $this->RekapData(['bulan' => $bulan, 'tahun' => $tahun]);
 
         return $this->render('index', [
             'bulan' => $bulan,
@@ -91,9 +85,10 @@ class RekapAbsensiController extends Controller
             'tanggal_bulanan' => $data['tanggal_bulanan'],
             'karyawanTotal' => $data['karyawanTotal'],
             'keterlambatanPerTanggal' => $data['keterlambatanPerTanggal'],
-
         ]);
     }
+
+
 
 
     public function actionExel()

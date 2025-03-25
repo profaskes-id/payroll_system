@@ -57,12 +57,17 @@ class JamKerjaKaryawanController extends Controller
     public function actionIndex()
     {
         $searchModel = new KaryawanSearch();
-        $dataProvider = $searchModel->searchJadwalKerja($this->request->queryParams);
 
+        // Get the query parameters from the request
+        $queryParams = $this->request->queryParams;
 
-        if (\Yii::$app->request->isPost) {
-            $id_karyawan = Yii::$app->request->post('KaryawanSearch')['id_karyawan'];
-            $dataProvider = $searchModel->searchJadwalKerjaID($id_karyawan);
+        // Check if 'id_karyawan' is present in the query parameters
+        if (isset($queryParams['KaryawanSearch']['id_karyawan']) && !empty($queryParams['KaryawanSearch']['id_karyawan'])) {
+            // If 'id_karyawan' exists, search using the specific ID
+            $dataProvider = $searchModel->searchJadwalKerjaID($queryParams['KaryawanSearch']['id_karyawan']);
+        } else {
+            // If 'id_karyawan' does not exist or is null/empty, fall back to the default search
+            $dataProvider = $searchModel->searchJadwalKerja($queryParams);
         }
 
         return $this->render('index', [

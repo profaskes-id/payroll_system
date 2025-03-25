@@ -549,10 +549,10 @@ if (
 
     </head>
 
-    <body class="hold-transition sidebar-mini relative " style="overflow-x: auto;">
+    <body class="relative hold-transition sidebar-mini " style="overflow-x: auto;">
         <?php $this->beginBody() ?>
 
-        <div class="wrapper relative">
+        <div class="relative wrapper">
             <!-- Navbar -->
 
 
@@ -568,11 +568,11 @@ if (
                 <?= $this->render('navbar', ['assetDir' => $assetDir]);   ?>
                 <?= $this->render('sidebar', ['assetDir' => $assetDir]); ?>
                 <!-- Content Wrapper. Contains page content -->
-                <main class="pt-3  " style=" background-color: #272727 ;">
+                <main class="pt-3 " style=" background-color: #272727 ;">
                     <?= $this->render('content', ['content' => $content, 'assetDir' => $assetDir]) ?>
                 </main>
             <?php else : ?>
-                <main class="pt-3  respon" style=" background-color: #000000 ;">
+                <main class="pt-3 respon" style=" background-color: #000000 ;">
                     <?= $this->render('content', ['content' => $content, 'assetDir' => $assetDir]) ?>
                 </main>
             <?php endif; ?>

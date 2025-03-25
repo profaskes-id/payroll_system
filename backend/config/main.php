@@ -14,13 +14,20 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
-        'modules' => [
+    'modules' => [
         'v1' => ['class' => 'app\modules\v1\Module',],
         'user' => [
             'class' => 'amnah\yii2\user\Module',
         ],
     ],
     'components' => [
+        'session' => [
+            'class' => 'yii\web\Session',
+            'cookieParams' => [
+                'httponly' => true,
+                'secure' => YII_ENV_PROD, // Hanya gunakan secure cookies di lingkungan produksi
+            ],
+        ],
         'formatter' => [
             'class' => 'yii\i18n\Formatter',
             'currencyCode' => 'IDR', // Kode mata uang untuk Indonesia

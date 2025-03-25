@@ -63,18 +63,22 @@ class PengajuanLemburController extends Controller
         $tahun = date('Y');
         $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, intval($tanggalAwal->nama_kode) + 1, $tahun));
         $lastdate = date('Y-m-d', mktime(0, 0, 0, $bulan + 1, intval($tanggalAwal->nama_kode), $tahun));
-        $tgl_mulai = $firstDayOfMonth;
-        $tgl_selesai = $lastdate;
+        $tgl_mulai =  Yii::$app->request->get() == [] ? $firstDayOfMonth :  Yii::$app->request->get()['PengajuanLemburSearch']['tanggal_mulai'];
+        $tgl_selesai =  Yii::$app->request->get() == [] ? $lastdate :  Yii::$app->request->get()['PengajuanLemburSearch']['tanggal_selesai'];
         $searchModel = new PengajuanLemburSearch();
         $dataProvider = $searchModel->search($this->request->queryParams, $tgl_mulai, $tgl_selesai);
+        // mematikan pagination
+        $dataProvider->pagination = false;
+        $total = 0;
+        $models = $dataProvider->getModels(); // Ambil semua model dari dataProvider
 
-        if ($this->request->isPost) {
-            $tgl_mulai = $this->request->post('PengajuanLemburSearch')['tanggal_mulai'];
-            $tgl_selesai = $this->request->post('PengajuanLemburSearch')['tanggal_selesai'];
-            $dataProvider = $searchModel->search($searchModel, $tgl_mulai, $tgl_selesai);
+        foreach ($models as $model) {
+            $total += $model->hitungan_jam; // Asumsi field hitungan_jam ada di model PengajuanLembur
         }
 
+
         return $this->render('index', [
+            'total' => $total,
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'tgl_mulai' => $tgl_mulai,
@@ -104,7 +108,6 @@ class PengajuanLemburController extends Controller
     public function actionCreate()
     {
         $model = new PengajuanLembur();
-
         $poinArray = [];
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
@@ -117,22 +120,54 @@ class PengajuanLemburController extends Controller
 
                 $jamMulai = strtotime($model->jam_mulai);
                 $jamSelesai = strtotime($model->jam_selesai);
-
-                // Menghitung selisih waktu dalam detik
                 $selisihDetik = $jamSelesai - $jamMulai;
 
-                // Mengkonversi selisih waktu ke dalam format jam:menit
-                $durasi = gmdate('H:i', $selisihDetik);
+                $model->durasi = gmdate('H:i', $selisihDetik);
 
-                // Menyimpan durasi ke dalam model
-                $model->durasi = $durasi;
+                // Menghitung durasi dalam menit
+                $durasiMenit = $selisihDetik / 60; // Durasi dalam menit
+                $durasiJam = floor($durasiMenit / 60); // Durasi dalam jam (dibulatkan ke bawah)
+                $durasiMenitSisa = $durasiMenit % 60; // Sisa menit setelah dibagi jam
 
+                // Menghitung jumlah jam lembur sesuai dengan aturan yang diberikan
+                $hitunganLembur = 0;
 
+                // Hitung jam pertama (selalu 1.5 jam untuk 1 jam pertama)
+                if ($durasiJam >= 1) {
+                    $hitunganLembur += 1.5; // 1 jam pertama dihitung 1.5 jam
+                    $durasiJam -= 1; // Kurangi jam pertama
+                }
+
+                // Hitung jam berikutnya (jam kedua dan seterusnya dihitung 2 jam per jam)
+                if ($durasiJam > 0) {
+                    $hitunganLembur += $durasiJam * 2; // Setiap jam setelah jam pertama dihitung 2 jam
+                }
+
+                // Menambahkan waktu sisa menit, jika ada (pembulatan ke bawah)
+                if ($durasiMenitSisa > 0) {
+                    // Pembulatan ke bawah:
+                    if ($durasiMenitSisa >= 30) {
+                        // Jika sisa menit lebih dari atau sama dengan 30 menit, hitung setengah jam tambahan
+                        $hitunganLembur += 1; // Tambah 1 jam untuk 30 menit atau lebih
+                    } else {
+                        // Jika sisa menit kurang dari 30 menit, hitung 0,5 jam (30 menit)
+                        $hitunganLembur += 0.5; // Tambah 0.5 jam
+                    }
+                }
+
+                // Menyimpan hasil hitungan lembur
+                $model->hitungan_jam = $hitunganLembur;
+
+                // Debugging output
+                // dd($model);
+
+                // Simpan data pengajuan lembur
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Pengajuan Lembur Berhasil Ditambahkan');
                 } else {
                     Yii::$app->session->setFlash('error', 'Pengajuan Lembur Gagal Ditambahkan');
                 }
+
                 return $this->redirect(['view', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur]);
             }
         } else {
@@ -144,6 +179,8 @@ class PengajuanLemburController extends Controller
             'poinArray' => $poinArray,
         ]);
     }
+
+
 
     /**
      * Updates an existing PengajuanLembur model.
@@ -162,26 +199,29 @@ class PengajuanLemburController extends Controller
             $model->disetujui_oleh = Yii::$app->user->identity->id;
             $model->disetujui_pada = date('Y-m-d H:i:s');
 
+            // Menghitung durasi lembur
             $jamMulai = strtotime($model->jam_mulai);
             $jamSelesai = strtotime($model->jam_selesai);
             $selisihDetik = $jamSelesai - $jamMulai;
-            $durasi = gmdate('H:i', $selisihDetik);
-            $model->durasi = $durasi;
+            $model->durasi = gmdate('H:i', $selisihDetik);
 
+            // Simpan pengajuan lembur yang telah diupdate
             if ($model->save()) {
 
+                // Kirim notifikasi kepada admin atau pihak terkait
                 $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
                 $sender = Yii::$app->user->identity->id;
 
                 $params = [
                     'judul' => 'Pengajuan lembur',
-                    'deskripsi' => 'Pengajuan Lembur Anda telah ditanggapi oleh atasan .',
+                    'deskripsi' => 'Pengajuan Lembur Anda telah ditanggapi oleh atasan.',
                     'nama_transaksi' => "lembur",
                     'id_transaksi' => $model['id_pengajuan_lembur'],
                 ];
+
                 $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan lembur Baru Dari " . $model->karyawan->nama);
 
-
+                // Redirect ke halaman view setelah berhasil diupdate
                 return $this->redirect(['view', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur]);
             }
         }
@@ -191,6 +231,7 @@ class PengajuanLemburController extends Controller
             'poinArray' => $poinArray
         ]);
     }
+
 
     /**
      * Deletes an existing PengajuanLembur model.

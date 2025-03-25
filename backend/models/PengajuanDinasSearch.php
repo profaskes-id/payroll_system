@@ -42,6 +42,45 @@ class PengajuanDinasSearch extends PengajuanDinas
 
     public function search($params, $tgl_mulai, $tgl_selesai)
     {
+        $query = PengajuanDinas::find()->where(['>=', 'tanggal_mulai', $tgl_mulai])->andWhere(['<=', 'tanggal_selesai', $tgl_selesai]);
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'sort' => ['defaultOrder' => ['status' => SORT_ASC]],
+
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'id_pengajuan_dinas' => $this->id_pengajuan_dinas,
+            'id_karyawan' => $this->id_karyawan,
+            // 'tanggal_mulai' => $this->tanggal_mulai,
+            // 'tanggal_selesai' => $this->tanggal_selesai,
+            'estimasi_biaya' => $this->estimasi_biaya,
+            'biaya_yang_disetujui' => $this->biaya_yang_disetujui,
+            'disetujui_oleh' => $this->disetujui_oleh,
+            'disetujui_pada' => $this->disetujui_pada,
+            'status' => $this->status,
+        ]);
+
+        $query->andFilterWhere(['like', 'keterangan_perjalanan', $this->keterangan_perjalanan]);
+
+        return $dataProvider;
+    }
+
+
+    public function searchApi($params, $tgl_mulai, $tgl_selesai)
+    {
         $query = PengajuanDinas::find()->select(['pengajuan_dinas.*', 'karyawan.nama'])->where(['>=', 'tanggal_mulai', $tgl_mulai])->andWhere(['<=', 'tanggal_selesai', $tgl_selesai])->leftJoin('karyawan', 'pengajuan_dinas.id_karyawan = karyawan.id_karyawan ')->asArray();
 
         // add conditions that should always apply here

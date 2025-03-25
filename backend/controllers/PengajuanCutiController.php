@@ -60,21 +60,25 @@ class PengajuanCutiController extends Controller
      */
     public function actionIndex()
     {
+        // if (Yii::$app->request->get() != []) {
+        //     dd(Yii::$app->request->get()['PengajuanCutiSearch']);
+        // }
         $tanggalAwal = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one();
         $bulan = date('m');
         $tahun = date('Y');
         $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, intval($tanggalAwal->nama_kode) + 1, $tahun));
         $lastdate = date('Y-m-d', mktime(0, 0, 0, $bulan + 1, intval($tanggalAwal->nama_kode), $tahun));
-        $tgl_mulai = $firstDayOfMonth;
-        $tgl_selesai = $lastdate;
+        $tgl_mulai =  Yii::$app->request->get() == [] ? $firstDayOfMonth :  Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_mulai'];
+        $tgl_selesai =  Yii::$app->request->get() == [] ? $lastdate :  Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_selesai'];
+        // dd($tgl_mulai, $tgl_selesai);
         $searchModel = new PengajuanCutiSearch();
         $dataProvider = $searchModel->search($this->request->queryParams, $tgl_mulai, $tgl_selesai);
 
-        if ($this->request->isPost) {
-            $tgl_mulai = $this->request->post('PengajuanCutiSearch')['tanggal_mulai'];
-            $tgl_selesai = $this->request->post('PengajuanCutiSearch')['tanggal_selesai'];
-            $dataProvider = $searchModel->search($searchModel, $tgl_mulai, $tgl_selesai);
-        }
+        // if ($this->request->isPost) {
+        //     $tgl_mulai = $this->request->post('PengajuanCutiSearch')['tanggal_mulai'];
+        //     $tgl_selesai = $this->request->post('PengajuanCutiSearch')['tanggal_selesai'];
+        //     $dataProvider = $searchModel->search($searchModel, $tgl_mulai, $tgl_selesai);
+        // }
 
         return $this->render('index', [
             'searchModel' => $searchModel,

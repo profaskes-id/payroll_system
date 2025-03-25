@@ -23,7 +23,7 @@ class HomeController extends ActiveController
 {
 
 
-public $modelClass = Absensi::class;
+    public $modelClass = Absensi::class;
 
     /**
      * Inisialisasi absensi karyawan.
@@ -44,10 +44,21 @@ public $modelClass = Absensi::class;
 
         $dataAbsensiHariIni = $this->getAbsensiHariIni($id_karyawan);
         $lokasiPenempatan = $this->getPenempatanKaryawan($id_karyawan);
+        if ($lokasiPenempatan == null) {
+            return [
+                'success' => false,
+                'message' => 'Lokasi penempatan karyawan tidak ditemukan, hubungi admin untuk melakukan pengaturan lokasi penempatan'
+            ];
+        }
         $jamKerjaKaryawan = $this->getJamKerjaKaryawan($id_karyawan);
+        if ($jamKerjaKaryawan == null) {
+            return [
+                'success' => false,
+                'message' => 'Jam kerja karyawan tidak ditemukan, harap hubungi admin untuk melakukan pengaturan jam kerja'
+            ];
+        }
         $isPulangCepat = $this->getIzinPulangCepat($id_karyawan);
         $hasilLembur = $this->getLemburAktif($id_karyawan);
-
         // Cek 24 jam
         $is24Jam = $this->cekAbsensi24Jam($id_karyawan, $jamKerjaKaryawan);
         if ($is24Jam) {
@@ -195,11 +206,11 @@ public $modelClass = Absensi::class;
     public function actionTidakMasuk($id_karyawan)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-    
+
         // Nonaktifkan CSRF validation untuk API
         $this->enableCsrfValidation = false;
 
-    
+
         // Ambil ID karyawan dari parameter URL
         if (!$id_karyawan) {
             return [
@@ -207,7 +218,7 @@ public $modelClass = Absensi::class;
                 'message' => 'ID Karyawan tidak ditemukan'
             ];
         }
-    
+
         // Validasi karyawan
         $karyawan = Karyawan::findOne($id_karyawan);
         if (!$karyawan) {
@@ -216,26 +227,26 @@ public $modelClass = Absensi::class;
                 'message' => 'Karyawan tidak ditemukan'
             ];
         }
-    
+
         $model = new Absensi();
-    
-        
+
+
         // Ambil data dari berbagai sumber
         $keterangan = Yii::$app->request->post('keterangan');
         $statusHadir = Yii::$app->request->post('kode_status_hadir');
-    
+
         // Jika data kosong, coba ambil dari raw input
         if ($keterangan === null || $statusHadir === null) {
             $rawInput = Yii::$app->request->getRawBody();
             $inputData = json_decode($rawInput, true);
-            
+
             $keterangan = $inputData['keterangan'] ?? $keterangan;
             $statusHadir = $inputData['kode_status_hadir'] ?? $statusHadir;
         }
-    
+
         // Proses upload lampiran
         $uploadedFile = null;
-        
+
         // Coba ambil file dari beberapa sumber
         if (isset($_FILES['lampiran'])) {
             // Dari $_FILES (multipart form-data)
@@ -245,28 +256,28 @@ public $modelClass = Absensi::class;
             $base64File = Yii::$app->request->post('lampiran');
             $uploadedFile = $this->base64ToUploadedFile($base64File);
         }
-    
+
         // Debug informasi file
         \Yii::info([
             'FILES' => $_FILES,
             'POST' => Yii::$app->request->post(),
             'uploadedFile' => $uploadedFile ? $uploadedFile->name : 'No file'
         ], 'file_upload_debug');
-    
+
         // Proses upload file
         if ($uploadedFile) {
 
-            
+
             // Tentukan direktori upload
             $uploadPath = \Yii::getAlias('@webroot/uploads/lampiran/');
-            
+
             // Pastikan direktori ada
             FileHelper::createDirectory($uploadPath, 0775, true);
-    
+
             // Generate nama file unik
             $fileName = $this->generateUniqueFileName($uploadedFile);
             $fullPath = $uploadPath . $fileName;
-    
+
             // Simpan file
             if ($uploadedFile->saveAs($fullPath)) {
                 // Set nama file ke model
@@ -278,7 +289,7 @@ public $modelClass = Absensi::class;
                 ];
             }
         }
-    
+
         // Set atribut model
         $model->id_karyawan = $id_karyawan;
         $model->jam_masuk = "00:00:00";
@@ -286,7 +297,7 @@ public $modelClass = Absensi::class;
         $model->tanggal = date('Y-m-d');
         $model->keterangan = $keterangan;
         $model->kode_status_hadir = $statusHadir;
-    
+
         // Cek jam kerja karyawan
         $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $id_karyawan])->one();
         if ($jamKerjaKaryawan && $jamKerjaKaryawan->jamKerja) {
@@ -294,7 +305,7 @@ public $modelClass = Absensi::class;
             $jadwalKerja = JadwalKerja::find()->asArray()
                 ->where(['id_jam_kerja' => $jamKerjaKaryawan->id_jam_kerja, 'nama_hari' => $hariIni])
                 ->one();
-    
+
             if ($jadwalKerja) {
                 $model->jam_masuk = $jadwalKerja['jam_masuk'];
                 $model->jam_pulang = $jadwalKerja['jam_keluar'];
@@ -303,7 +314,7 @@ public $modelClass = Absensi::class;
                 $model->jam_pulang = "00:00:00";
             }
         }
-    
+
         // Simpan model
         if ($model->save()) {
             return [
@@ -316,7 +327,7 @@ public $modelClass = Absensi::class;
             if (isset($fullPath) && file_exists($fullPath)) {
                 unlink($fullPath);
             }
-    
+
             return [
                 'success' => false,
                 'message' => 'Gagal menyimpan absensi',
@@ -324,7 +335,7 @@ public $modelClass = Absensi::class;
             ];
         }
     }
-    
+
     /**
      * Generate nama file unik
      * 
@@ -336,7 +347,7 @@ public $modelClass = Absensi::class;
         // Generate nama file unik dengan timestamp dan ekstensi asli
         return uniqid() . '_' . time() . '.' . $uploadedFile->extension;
     }
-    
+
     /**
      * Konversi base64 ke UploadedFile
      * 
@@ -346,14 +357,14 @@ public $modelClass = Absensi::class;
     private function base64ToUploadedFile($base64String)
     {
         if (!$base64String) return null;
-    
+
         // Decode base64
         $fileData = base64_decode($base64String);
-        
+
         // Simpan sementara
         $tempFile = tempnam(sys_get_temp_dir(), 'upload_');
         file_put_contents($tempFile, $fileData);
-    
+
         // Buat UploadedFile
         return new UploadedFile([
             'name' => 'uploaded_file',
@@ -899,10 +910,10 @@ public $modelClass = Absensi::class;
             if ($adaHariBesar) {
                 return null;
             } else {
-               $filteredJamKerja = array_filter($jamKerjaHari, function ($item) use ($hariIni) {
-                return $item['nama_hari'] == $hariIni;
-            });
-            return $filteredJamKerja;
+                $filteredJamKerja = array_filter($jamKerjaHari, function ($item) use ($hariIni) {
+                    return $item['nama_hari'] == $hariIni;
+                });
+                return $filteredJamKerja;
             }
         }
 
@@ -911,9 +922,17 @@ public $modelClass = Absensi::class;
 
     private function cekAbsensi24Jam($id_karyawan, $jamKerjaKaryawan)
     {
+
+        if (empty($jamKerjaKaryawan)) {
+            return false;
+        }
+
         // Ambil jadwal kerja hari ini
         $jamKerjaHari = $jamKerjaKaryawan->jamKerja->jadwalKerjas;
 
+        if ($jamKerjaHari == null) {
+            return false;
+        }
         // Cek apakah hari ini adalah shift 24 jam
         foreach ($jamKerjaHari as $key => $value) {
             // Periksa apakah hari ini adalah hari kerja 24 jam
@@ -924,6 +943,8 @@ public $modelClass = Absensi::class;
 
         return false;
     }
+
+
     private function getAbsensiHariIni($id_karyawan)
     {
         return $this->modelClass::find()

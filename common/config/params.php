@@ -1,5 +1,9 @@
 <?php
 return [
+    'base_parent_url' => 'https://payroll.profaskes.id',
+    'base_url' => 'https://payroll.profaskes.id',
+
+
     'bsDependencyEnabled' => false,
     'bsVersion' => '5.x',
 

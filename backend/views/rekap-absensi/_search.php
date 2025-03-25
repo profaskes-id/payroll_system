@@ -13,7 +13,7 @@ use kartik\select2\Select2;
 
 <div class="absensi-search">
 
-    <form method="POST" action=""> <!-- Ganti 'your_action_page.php' dengan halaman yang sesuai -->
+    <form method="GET" action=""> <!-- Ganti 'your_action_page.php' dengan halaman yang sesuai -->
 
         <div class="row " style="gap: 10px 0;">
 
@@ -56,7 +56,7 @@ use kartik\select2\Select2;
             </div>
 
             <div class="col-3">
-                <div class="form-group d-flex items-center w-100  justify-content-around">
+                <div class="items-center form-group d-flex w-100 justify-content-around">
                     <button class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
                         <i class="fas fa-search"></i>
                         <span>

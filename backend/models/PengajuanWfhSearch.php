@@ -67,6 +67,69 @@ class PengajuanWfhSearch extends PengajuanWfh
         }, array_values($filtered_result));
 
         // Buat query baru dengan ID yang telah difilter
+        $query = PengajuanWfh::find()->where(['in', 'id_pengajuan_wfh', $filteredIds]);
+
+        // Buat DataProvider
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'sort' => ['defaultOrder' => ['status' => SORT_DESC]]
+        ]);
+
+
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'id_pengajuan_wfh' => $this->id_pengajuan_wfh,
+            'id_karyawan' => $this->id_karyawan,
+            'longitude' => $this->longitude,
+            'latitude' => $this->latitude,
+            'status' => $this->status,
+        ]);
+
+        $query->andFilterWhere(['like', 'alasan', $this->alasan])
+            ->andFilterWhere(['like', 'lokasi', $this->lokasi])
+            ->andFilterWhere(['like', 'tanggal_array', $this->tanggal_array]);
+
+        return $dataProvider;
+    }
+
+
+
+    public function searchApi($params, $tgl_mulai, $tgl_selesai)
+    {
+        $query = PengajuanWfh::find();
+        $result = $query->asArray()->all();
+
+        $filtered_result = array_filter(
+            $result,
+            function ($data) use ($tgl_mulai, $tgl_selesai) {
+                $tanggal = json_decode($data['tanggal_array'], true);
+                if (!empty($tanggal)) {
+                    $firstDate = reset($tanggal);
+                    $lastDate = end($tanggal);
+                    return strtotime($firstDate) >= strtotime($tgl_mulai) &&
+                        strtotime($lastDate) <= strtotime($tgl_selesai);
+                }
+
+                return false; // Jika tanggal_array kosong, kembalikan false
+            }
+        );
+
+
+
+
+        $filteredIds = array_map(function ($item) {
+            return $item['id_pengajuan_wfh'];
+        }, array_values($filtered_result));
+
+        // Buat query baru dengan ID yang telah difilter
         $query = PengajuanWfh::find()->select(['pengajuan_wfh.*', 'karyawan.nama'])->where(['in', 'id_pengajuan_wfh', $filteredIds])->leftJoin('karyawan', 'pengajuan_wfh.id_karyawan = karyawan.id_karyawan')->asArray();
 
         // Buat DataProvider

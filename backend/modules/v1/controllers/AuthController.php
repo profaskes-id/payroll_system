@@ -25,7 +25,6 @@ class AuthController extends Controller
         $rawBody = \Yii::$app->request->getRawBody();
         $data = json_decode($rawBody, true);
 
-
         // Validasi input
         if (!isset($data['email']) || !isset($data['password'])) {
             \Yii::$app->response->statusCode = 400;
@@ -50,43 +49,38 @@ class AuthController extends Controller
 
         if ($user) {
             // Coba beberapa kemungkinan nama kolom password
-            $passwordColumns = ['password', 'password_hash', 'pwd', 'pass'];
+            if (isset($user['password'])) {
+                if (\Yii::$app->security->validatePassword($password, $user['password'])) {
 
-            foreach ($passwordColumns as $passwordColumn) {
-                if (isset($user[$passwordColumn])) {
-                    if (\Yii::$app->security->validatePassword($password, $user[$passwordColumn])) {
-                        // Generate token sederhana
-                        $token = \Yii::$app->security->generateRandomString();
+                    // Generate token sederhana
+                    $token = \Yii::$app->security->generateRandomString();
+                    \Yii::$app->session->set('api_token_' . $user['id'], $token);
+                    //     $url = $user['base_url'] . "/panel/v1/data-karyawan/login/?id_karyawan=" . $user['id_karyawan'];
 
-                        // Simpan token ke session
-                        \Yii::$app->session->set('api_token_' . $user['id'], $token);
-                        $karyawan = Karyawan::findOne(['email' => $user['email']]);
-                        return [
-                            'status' => 'success',
-                            'message' => 'Login berhasil',
-                            'access_token' => $token,
-                            'user' => [
-                                'id' => $user['id'],
-                                'email' => $user['email'],
-                                'id_karyawan' => $karyawan->id_karyawan,
-                                'nama' => $karyawan->nama,
-                                'kode_karyawan' => $karyawan->kode_karyawan,
-                        'is_atasan' => $karyawan->is_atasan,
-
-                            ],
-                        ];
-                    }
-                    break;
+                    return [
+                        'status' => 'success',
+                        'message' => 'Login berhasil',
+                        'access_token' => $token,
+                        'user' => [
+                            'id' => $user['id'],
+                            'email' => $user['email'],
+                            'id_karyawan' => $user['id_karyawan'],
+                            // 'nama' => $karyawan['nama'],
+                            // 'kode_karyawan' => $karyawan['kode_karyawan'],
+                            'base_url' => $user['base_url'],
+                            // 'is_atasan' => $karyawan['is_atasan'],
+                        ],
+                    ];
                 }
             }
         }
-
         \Yii::$app->response->statusCode = 401;
         return [
             'status' => 'error',
             'message' => 'email atau password salah'
         ];
     }
+
 
     // Contoh endpoint yang memerlukan autentikasi
     public function actionProtected()
@@ -141,149 +135,146 @@ class AuthController extends Controller
         ];
     }
 
-public function actionUpdateProfile()
-{
-    // Tambahkan logging
-    \Yii::info('Update Profile Request Data: ' . print_r($data, true));
+    public function actionUpdateProfile()
+    {
+        // Tambahkan logging
 
-    // Ambil raw body
-    $rawBody = \Yii::$app->request->getRawBody();
-    $data = json_decode($rawBody, true);
+        // Ambil raw body
+        $rawBody = \Yii::$app->request->getRawBody();
+        $data = json_decode($rawBody, true);
 
-    // Validasi input
-    if (!isset($data['id']) || !isset($data['current_password'])) {
-        \Yii::$app->response->statusCode = 400;
-        return [
-            'status' => 'error',
-            'message' => 'User ID dan current password diperlukan'
-        ];
-    }
-
-    // Cari user berdasarkan ID
-    $user = User::findOne($data['id']);
-    if (!$user) {
-        \Yii::$app->response->statusCode = 404;
-        return [
-            'status' => 'error',
-            'message' => 'User tidak ditemukan'
-        ];
-    }
-
-    // Set scenario
-    $user->scenario = 'account';
-
-    // Log informasi user
-    \Yii::info('User Found - Stored Password: ' . $user->password);
-    \Yii::info('Input Current Password: ' . $data['current_password']);
-
-    // Validasi password manual dengan metode bawaan model
-    $currentPasswordValid = $user->validatePassword($data['current_password']);
-    
-    if (!$currentPasswordValid) {
-        \Yii::error('Password validation failed');
-        \Yii::$app->response->statusCode = 401;
-        return [
-            'status' => 'error',
-            'message' => 'Password saat ini salah'
-        ];
-    }
-
-    // Cari karyawan berdasarkan email user
-    $karyawan = Karyawan::findOne(['email' => $user->email]);
-
-    if (!$karyawan) {
-        \Yii::$app->response->statusCode = 404;
-        return [
-            'status' => 'error',
-            'message' => 'Data karyawan tidak ditemukan'
-        ];
-    }
-
-    // Sanitasi input dengan pengecekan null dan empty
-    $nama = $karyawan->nama;
-    $email = $user->email;
-
-    // Cek dan update nama jika ada
-    if (isset($data['nama']) && $data['nama'] !== null && $data['nama'] !== '') {
-        $nama = $data['nama'];
-    }
-
-    // Cek dan update email jika ada
-    if (isset($data['email']) && $data['email'] !== null && $data['email'] !== '') {
-        $email = $data['email'];
-    }
-
-    // Cek perubahan email
-    $emailChanged = false;
-    if ($user->email !== $email) {
-        $user->email = $email;
-        $user->status = 2; // Set status menjadi 2 karena email berubah
-        $emailChanged = true;
-    }
-
-    // Update nama dan email karyawan
-    $karyawan->nama = $nama;
-    $karyawan->email = $email;
-    
-    // Simpan karyawan
-    if (!$karyawan->save()) {
-        \Yii::$app->response->statusCode = 500;
-        return [
-            'status' => 'error',
-            'message' => 'Gagal menyimpan data karyawan',
-            'errors' => $karyawan->errors
-        ];
-    }
-
-    // Set current password untuk validasi
-    $user->currentPassword = $data['current_password'];
-
-    // Update password jika ada input password baru
-    if (!empty($data['new_password']) && !empty($data['confirm_password'])) {
-        // Validasi password baru
-        if ($data['new_password'] !== $data['confirm_password']) {
+        // Validasi input
+        if (!isset($data['id']) || !isset($data['current_password'])) {
             \Yii::$app->response->statusCode = 400;
             return [
                 'status' => 'error',
-                'message' => 'Password baru dan konfirmasi password tidak cocok'
+                'message' => 'User ID dan current password diperlukan'
             ];
         }
 
-        // Gunakan method setNewPassword
-        if (!$user->setNewPassword($data['new_password'])) {
-            \Yii::error('Set New Password Failed: ' . print_r($user->errors, true));
+        // Cari user berdasarkan ID
+        $user = User::findOne($data['id']);
+        if (!$user) {
+            \Yii::$app->response->statusCode = 404;
             return [
                 'status' => 'error',
-                'message' => 'Gagal mengubah password',
-                'errors' => $user->errors
+                'message' => 'User tidak ditemukan'
             ];
         }
-    }
 
-    // Simpan perubahan user
-    if ($emailChanged || !empty($data['new_password'])) {
-        if (!$user->save()) {
+        // Set scenario
+        $user->scenario = 'account';
+
+        // Log informasi user
+        \Yii::info('User Found - Stored Password: ' . $user->password);
+        \Yii::info('Input Current Password: ' . $data['current_password']);
+
+        // Validasi password manual dengan metode bawaan model
+        $currentPasswordValid = $user->validatePassword($data['current_password']);
+
+        if (!$currentPasswordValid) {
+            \Yii::error('Password validation failed');
+            \Yii::$app->response->statusCode = 401;
+            return [
+                'status' => 'error',
+                'message' => 'Password saat ini salah'
+            ];
+        }
+
+        // Cari karyawan berdasarkan email user
+        $karyawan = Karyawan::findOne(['email' => $user->email]);
+
+        if (!$karyawan) {
+            \Yii::$app->response->statusCode = 404;
+            return [
+                'status' => 'error',
+                'message' => 'Data karyawan tidak ditemukan'
+            ];
+        }
+
+        // Sanitasi input dengan pengecekan null dan empty
+        $nama = $karyawan->nama;
+        $email = $user->email;
+
+        // Cek dan update nama jika ada
+        if (isset($data['nama']) && $data['nama'] !== null && $data['nama'] !== '') {
+            $nama = $data['nama'];
+        }
+
+        // Cek dan update email jika ada
+        if (isset($data['email']) && $data['email'] !== null && $data['email'] !== '') {
+            $email = $data['email'];
+        }
+
+        // Cek perubahan email
+        $emailChanged = false;
+        if ($user->email !== $email) {
+            $user->email = $email;
+            $user->status = 2; // Set status menjadi 2 karena email berubah
+            $emailChanged = true;
+        }
+
+        // Update nama dan email karyawan
+        $karyawan->nama = $nama;
+        $karyawan->email = $email;
+
+        // Simpan karyawan
+        if (!$karyawan->save()) {
             \Yii::$app->response->statusCode = 500;
             return [
                 'status' => 'error',
-                'message' => 'Gagal menyimpan perubahan user',
-                'errors' => $user->errors
+                'message' => 'Gagal menyimpan data karyawan',
+                'errors' => $karyawan->errors
             ];
         }
+
+        // Set current password untuk validasi
+        $user->currentPassword = $data['current_password'];
+
+        // Update password jika ada input password baru
+        if (!empty($data['new_password']) && !empty($data['confirm_password'])) {
+            // Validasi password baru
+            if ($data['new_password'] !== $data['confirm_password']) {
+                \Yii::$app->response->statusCode = 400;
+                return [
+                    'status' => 'error',
+                    'message' => 'Password baru dan konfirmasi password tidak cocok'
+                ];
+            }
+
+            // Gunakan method setNewPassword
+            if (!$user->setNewPassword($data['new_password'])) {
+                \Yii::error('Set New Password Failed: ' . print_r($user->errors, true));
+                return [
+                    'status' => 'error',
+                    'message' => 'Gagal mengubah password',
+                    'errors' => $user->errors
+                ];
+            }
+        }
+
+        // Simpan perubahan user
+        if ($emailChanged || !empty($data['new_password'])) {
+            if (!$user->save()) {
+                \Yii::$app->response->statusCode = 500;
+                return [
+                    'status' => 'error',
+                    'message' => 'Gagal menyimpan perubahan user',
+                    'errors' => $user->errors
+                ];
+            }
+        }
+
+        return [
+            'status' => 'success',
+            'message' => 'Profil berhasil diperbarui',
+            'data' => [
+                'nama' => $karyawan->nama,
+                'email' => $user->email,
+                'email_status' => $user->status
+            ]
+        ];
     }
-
-    return [
-        'status' => 'success',
-        'message' => 'Profil berhasil diperbarui',
-        'data' => [
-            'nama' => $karyawan->nama,
-            'email' => $user->email,
-            'email_status' => $user->status
-        ]
-    ];
-}
-
-
 
     // Aksi logout
     public function actionLogout()

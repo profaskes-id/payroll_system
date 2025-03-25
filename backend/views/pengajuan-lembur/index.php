@@ -49,6 +49,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'layout' => '{items}', // Hanya tampilkan items, hilangkan pagination
+        'pager' => false,
+        'showFooter' => true, // Tampilkan footer hanya jika $total tidak kosong
+        'footerRowOptions' => ['style' => 'font-weight:bold; background-color: #f5f5f5;'], // Styling footer
         'columns' => [
             [
                 'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
@@ -92,6 +96,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 'contentOptions' => ['style' => 'text-align: center;'],
             ],
             [
+                'contentOptions' => ['style' => 'text-align: center;'],
+                'headerOptions' => ['style' => 'text-align: center;'],
+                'label' => 'Hitungan Jam',
+                'value' => function ($model) {
+                    return $model->hitungan_jam ?? 0;
+                },
+                'footer' => " {$total} Jam", // Tampilkan footer hanyatruetidak kosong
+                'footerOptions' => ['style' => 'text-align: right; font-weight: bold;'], // Styling footer
+                'format' => 'raw',
+            ],
+
+            [
                 'label' => 'Tanggal',
                 'value' => function ($model) {
                     $tanggalFormat = new Tanggal();
@@ -121,7 +137,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 },
             ],
-        ],
+
+        ]
     ]); ?>
 
     <?php Pjax::end(); ?>

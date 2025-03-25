@@ -13,11 +13,24 @@ use yii\widgets\ActiveForm;
 <div class="atasan-karyawan-search">
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
-        'method' => 'post',
+        'method' => 'get',
     ]); ?>
 
     <div class="row">
-        <div class="col-md-9 col-12">
+        <div class="col-md-5 col-12">
+            <?php $nama_group_atasan = \yii\helpers\ArrayHelper::map(KaryawanHelper::getKaryawanData(), 'id_karyawan', 'nama');
+            echo $form->field($model, 'id_atasan')->widget(kartik\select2\Select2::classname(), [
+                'data' => $nama_group_atasan,
+                'language' => 'id',
+                'options' => ['placeholder' => 'Cari Atasan ...'],
+                'pluginOptions' => [
+                    'tags' => true,
+                    'allowClear' => true
+                ],
+            ])->label(false);
+            ?>
+        </div>
+        <div class="col-md-4 col-12">
             <?php $nama_group = \yii\helpers\ArrayHelper::map(KaryawanHelper::getKaryawanData(), 'id_karyawan', 'nama');
             echo $form->field($model, 'id_karyawan')->widget(kartik\select2\Select2::classname(), [
                 'data' => $nama_group,
@@ -33,7 +46,7 @@ use yii\widgets\ActiveForm;
 
 
         <div class="col-3">
-            <div class="form-group d-flex items-center w-100  justify-content-around">
+            <div class="items-center form-group d-flex w-100 justify-content-around">
                 <button class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
                     <i class="fas fa-search"></i>
                     <span>

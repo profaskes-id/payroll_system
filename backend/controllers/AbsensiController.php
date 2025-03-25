@@ -55,6 +55,55 @@ class AbsensiController extends Controller
      */
     public function actionIndex()
     {
+        // Default date if none is provided
+        $tanggalSet = date('Y-m-d');
+        $searchModel = new KaryawanSearch();
+
+        // Get the query parameters (this will include data sent via GET)
+        $queryParams = Yii::$app->request->get();
+
+        // Get the data provider using the default or GET parameters
+        $dataProvider = $searchModel->searchAbsensi($queryParams, $tanggalSet);
+
+        // Create new instances of Absensi and Bagian
+        $absensi = new Absensi();
+        $bagian = new Bagian();
+
+        // Check if there are GET parameters (this simulates form submission with GET)
+        $param_bagian = isset($queryParams['Bagian']['id_bagian']) ? $queryParams['Bagian']['id_bagian'] : null;
+        $param_tanggal = isset($queryParams['Absensi']['tanggal']) ? $queryParams['Absensi']['tanggal'] : null;
+
+        if ($param_tanggal) {
+            // Update the $tanggalSet if a date is provided
+            $tanggalSet = $param_tanggal;
+            // Refresh the dataProvider with the updated date
+            $dataProvider = $searchModel->searchAbsensi($queryParams, $tanggalSet);
+        }
+
+        if ($param_bagian) {
+            // Filter the dataProvider models based on the 'id_bagian' value
+            $filteredModels = [];
+            foreach ($dataProvider->models as $model) {
+                if (isset($model['data_pekerjaan']) && $model['data_pekerjaan']['id_bagian'] == intval($param_bagian)) {
+                    $filteredModels[] = $model;
+                }
+            }
+            // Set the filtered models to the dataProvider
+            $dataProvider->setModels($filteredModels);
+        }
+
+        // Render the view with all the necessary data
+        return $this->render('index', [
+            'absensi' => $absensi,
+            'bagian' => $bagian,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'tanggalSet' => $tanggalSet
+        ]);
+    }
+
+    /*     public function actionIndex()
+    {
         $tanggalSet = date('Y-m-d');
         $searchModel = new KaryawanSearch();
         $dataProvider = $searchModel->searchAbsensi(Yii::$app->request->queryParams, $tanggalSet);
@@ -89,7 +138,7 @@ class AbsensiController extends Controller
             'dataProvider' => $dataProvider,
             'tanggalSet' => $tanggalSet
         ]);
-    }
+    } */
 
 
     /**

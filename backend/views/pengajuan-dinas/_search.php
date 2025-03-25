@@ -15,7 +15,7 @@ use yii\widgets\ActiveForm;
 
         <?php $form = ActiveForm::begin([
             'action' => ['index'],
-            'method' => 'POST',
+            'method' => 'get',
         ]);
 
         ?>
@@ -41,8 +41,8 @@ use yii\widgets\ActiveForm;
                 <?= $form->field($model, 'tanggal_selesai')->textInput(['type' => 'date', 'value' => $tgl_selesai])->label("Sampai Dengan") ?>
             </div>
 
-            <div class="col-3 mt-4">
-                <div class="form-group d-flex items-center w-100  justify-content-around">
+            <div class="mt-4 col-3">
+                <div class="items-center form-group d-flex w-100 justify-content-around">
                     <button class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
                         <i class="fas fa-search"></i>
                         <span>

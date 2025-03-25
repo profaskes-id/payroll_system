@@ -5,6 +5,7 @@ namespace app\modules\v1\controllers;
 use amnah\yii2\user\models\User;
 use backend\models\AtasanKaryawan;
 use backend\models\helpers\EmailHelper;
+use backend\models\helpers\MobileNotificationHelper;
 use Yii;
 use backend\models\helpers\NotificationHelper;
 use backend\models\PengajuanLembur as PengajuanLemburModel;
@@ -58,31 +59,72 @@ class PengajuanLemburController extends ActiveController
       ];
     }
 
-    // Jika tidak ada error, proses data
+    // Menghitung durasi lembur
+    $jamMulai = strtotime($request->post('jam_mulai'));
+    $jamSelesai = strtotime($request->post('jam_selesai'));
+
+    // Menghitung selisih waktu dalam detik
+    $selisihDetik = $jamSelesai - $jamMulai;
+
+    // Mengkonversi selisih waktu ke dalam format jam:menit
+    $durasiMenit = $selisihDetik / 60; // Durasi dalam menit
+    $durasiJam = floor($durasiMenit / 60); // Durasi dalam jam (dibulatkan ke bawah)
+    $durasiMenitSisa = $durasiMenit % 60; // Sisa menit setelah dibagi jam
+
+    // Menghitung jumlah jam lembur sesuai dengan aturan yang diberikan
+    $hitunganLembur = 0;
+
+    // Hitung jam pertama (selalu 1.5 jam untuk 1 jam pertama)
+    if ($durasiJam >= 1) {
+      $hitunganLembur += 1.5; // 1 jam pertama dihitung 1.5 jam
+      $durasiJam -= 1; // Kurangi jam pertama
+    }
+
+    // Hitung jam berikutnya (jam kedua dan seterusnya dihitung 2 jam per jam)
+    if ($durasiJam > 0) {
+      $hitunganLembur += $durasiJam * 2; // Setiap jam setelah jam pertama dihitung 2 jam
+    }
+
+    // Menambahkan waktu sisa menit, jika ada (pembulatan ke bawah)
+    if ($durasiMenitSisa > 0) {
+      // Pembulatan ke bawah:
+      if ($durasiMenitSisa >= 30) {
+        // Jika sisa menit lebih dari atau sama dengan 30 menit, hitung setengah jam tambahan
+        $hitunganLembur += 1; // Tambah 1 jam untuk 30 menit atau lebih
+      } else {
+        // Jika sisa menit kurang dari 30 menit, hitung 0,5 jam (30 menit)
+        $hitunganLembur += 0.5; // Tambah 0.5 jam
+      }
+    }
+
+    // Menyimpan durasi dan hitungan lembur ke dalam model
     $model = new PengajuanLemburModel();
     $model->id_karyawan = $request->post('id_karyawan');
     $model->pekerjaan = $request->post('pekerjaan'); // Simpan sebagai JSON string
     $model->tanggal = $request->post('tanggal'); // Format: YYYY-MM-DD
     $model->jam_mulai = $request->post('jam_mulai');
     $model->jam_selesai = $request->post('jam_selesai');
+    $model->durasi = gmdate('H:i', $selisihDetik); // Format durasi dalam jam:menit
+    $model->hitungan_jam = $hitunganLembur; // Simpan hasil perhitungan jam lembur
     $model->status = $request->post('status', 0); // Default status = 0 jika tidak ada
 
     // Simpan model ke database
     if ($model->save()) {
-      // ? KIRIM NOTIFIKASI
+      // Kirim notifikasi
       $atasan = $this->getAtasanKaryawan($model->id_karyawan);
+      $adminUsers = null;
       if ($atasan != null) {
-        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['id' => $atasan['id_atasan']])->all();
+        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['id_karyawan' => $atasan['id_atasan']])->all();
       } else {
         $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['role_id' => [1, 3]])->all();
       }
+
       $params = [
         'judul' => 'Pengajuan lembur',
         'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan lembur.',
         'nama_transaksi' => "/panel/pengajuan-lembur/view?id_pengajuan_lembur=",
         'id_transaksi' => $model['id_pengajuan_lembur'],
       ];
-
 
       $sender = User::find()->select(['id', 'email', 'role_id',])->where(['id_karyawan' => $model->id_karyawan])->one();
       $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan lembur Baru Dari " . $model->karyawan->nama);
@@ -101,115 +143,179 @@ class PengajuanLemburController extends ActiveController
       ];
     }
   }
-  
-  
- public function actionCustomUpdate($id)
-{
+
+
+
+  public function actionCustomUpdate($id)
+  {
     // Set response format to JSON
     Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
     try {
-        // Cari model berdasarkan ID
-        $model = PengajuanLemburModel::findOne($id);
-        if (!$model) {
-            Yii::$app->response->statusCode = 404; // Not Found
-            return [
-                'status' => 'error',
-                'message' => 'Data tidak ditemukan.',
-            ];
+      // Cari model berdasarkan ID
+      $model = PengajuanLemburModel::findOne($id);
+      if (!$model) {
+        Yii::$app->response->statusCode = 404; // Not Found
+        return [
+          'status' => 'error',
+          'message' => 'Data tidak ditemukan.',
+        ];
+      }
+
+      // Ambil body parameters
+      $rawBody = Yii::$app->request->getRawBody();
+      $bodyParams = json_decode($rawBody, true);
+
+      // Validasi apakah ada data yang dikirim
+      if (empty($bodyParams)) {
+        Yii::$app->response->statusCode = 400; // Bad Request
+        return [
+          'status' => 'error',
+          'message' => 'Tidak ada data untuk diupdate.',
+        ];
+      }
+
+      // Validasi field yang diperlukan
+      $requiredFields = [
+        'id_karyawan' => 'Karyawan tidak boleh kosong.',
+        'pekerjaan' => 'Pekerjaan tidak boleh kosong.',
+        'tanggal' => 'Tanggal tidak boleh kosong.',
+        'jam_mulai' => 'Jam mulai tidak boleh kosong.',
+        'jam_selesai' => 'Jam selesai tidak boleh kosong.',
+      ];
+
+      $errors = [];
+      foreach ($requiredFields as $field => $message) {
+        if (!isset($bodyParams[$field]) || $bodyParams[$field] === null) {
+          $errors[] = [
+            'field' => $field,
+            'message' => $message,
+          ];
+        }
+      }
+
+      // Jika ada error, kembalikan response error
+      if (!empty($errors)) {
+        Yii::$app->response->statusCode = 400; // Bad Request
+        return [
+          'status' => 'error',
+          'errors' => $errors,
+        ];
+      }
+
+      // Update atribut model
+      foreach ($bodyParams as $key => $value) {
+        if ($model->hasAttribute($key)) {
+          $model->setAttribute($key, $value);
+        }
+      }
+
+      // Perhitungan durasi lembur
+      if (isset($bodyParams['jam_mulai']) && isset($bodyParams['jam_selesai'])) {
+        $jamMulai = strtotime($bodyParams['jam_mulai']);
+        $jamSelesai = strtotime($bodyParams['jam_selesai']);
+
+        // Menghitung selisih waktu dalam detik
+        $selisihDetik = $jamSelesai - $jamMulai;
+
+        // Mengkonversi selisih waktu ke dalam format jam:menit
+        $durasiMenit = $selisihDetik / 60; // Durasi dalam menit
+        $durasiJam = floor($durasiMenit / 60); // Durasi dalam jam (dibulatkan ke bawah)
+        $durasiMenitSisa = $durasiMenit % 60; // Sisa menit setelah dibagi jam
+
+        // Menghitung jumlah jam lembur sesuai dengan aturan yang diberikan
+        $hitunganLembur = 0;
+
+        // Hitung jam pertama (selalu 1.5 jam untuk 1 jam pertama)
+        if ($durasiJam >= 1) {
+          $hitunganLembur += 1.5; // 1 jam pertama dihitung 1.5 jam
+          $durasiJam -= 1; // Kurangi jam pertama
         }
 
-        // Ambil body parameters
-        $rawBody = Yii::$app->request->getRawBody();
-        $bodyParams = json_decode($rawBody, true);
-
-        // Validasi apakah ada data yang dikirim
-        if (empty($bodyParams)) {
-            Yii::$app->response->statusCode = 400; // Bad Request
-            return [
-                'status' => 'error',
-                'message' => 'Tidak ada data untuk diupdate.',
-            ];
+        // Hitung jam berikutnya (jam kedua dan seterusnya dihitung 2 jam per jam)
+        if ($durasiJam > 0) {
+          $hitunganLembur += $durasiJam * 2; // Setiap jam setelah jam pertama dihitung 2 jam
         }
 
-        // Validasi field yang diperlukan
-        $requiredFields = [
-            'id_karyawan' => 'Karyawan tidak boleh kosong.',
-            'pekerjaan' => 'Pekerjaan tidak boleh kosong.',
-            'tanggal' => 'Tanggal tidak boleh kosong.',
-            'jam_mulai' => 'Jam mulai tidak boleh kosong.',
-            'jam_selesai' => 'Jam selesai tidak boleh kosong.',
+        // Menambahkan waktu sisa menit, jika ada (pembulatan ke bawah)
+        if ($durasiMenitSisa > 0) {
+          // Pembulatan ke bawah:
+          if ($durasiMenitSisa >= 30) {
+            // Jika sisa menit lebih dari atau sama dengan 30 menit, hitung setengah jam tambahan
+            $hitunganLembur += 1; // Tambah 1 jam untuk 30 menit atau lebih
+          } else {
+            // Jika sisa menit kurang dari 30 menit, hitung 0,5 jam (30 menit)
+            $hitunganLembur += 0.5; // Tambah 0.5 jam
+          }
+        }
+
+        // Update durasi dan hitungan lembur
+        $model->durasi = gmdate('H:i', $selisihDetik); // Format durasi dalam jam:menit
+        $model->hitungan_jam = $hitunganLembur; // Simpan hasil perhitungan jam lembur
+      }
+
+      // Simpan model ke database
+      if ($model->save()) {
+        // KIRIM NOTIFIKASI
+        $atasan = $this->getAtasanKaryawan($model->id_karyawan);
+        if ($atasan != null) {
+          $adminUsers = User::find()->select(['id', 'email', 'role_id'])->where(['id' => $atasan['id_atasan']])->all();
+        } else {
+          $adminUsers = User::find()->select(['id', 'email', 'role_id'])->where(['role_id' => [1, 3]])->all();
+        }
+
+        $params = [
+          'judul' => 'Edit Pengajuan lembur',
+          'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah melakukan edit pada pengajuan lembur.',
+          'nama_transaksi' => "lembur",
+          'id_transaksi' => $model['id_pengajuan_lembur'],
         ];
 
-        $errors = [];
-        foreach ($requiredFields as $field => $message) {
-            if (!isset($bodyParams[$field]) || $bodyParams[$field] === null) {
-                $errors[] = [
-                    'field' => $field,
-                    'message' => $message,
-                ];
+        $sender = User::find()->select(['id', 'email', 'role_id'])->where(['id_karyawan' => $model->id_karyawan])->one();
+        $this->sendNotif($params, $sender, $model, $adminUsers, "Edit Pengajuan lembur " . $model->karyawan->nama);
+
+        foreach ($adminUsers as $admin) {
+          if ($admin['fcm_token']) {
+            $token = $admin['fcm_token'];
+            $title = 'Pengajuan Lembur';
+            $body = 'Pengajuan Lembur Dari ' . $model->karyawan->nama ?? 'karyawan';
+            $data = ['url' => '/profile'];
+
+            try {
+              $result = MobileNotificationHelper::sendNotification($token, $title, $body, $data);
+              echo "Status Code: " . $result['statusCode'] . "\n";
+              echo "Response: " . print_r($result['response'], true) . "\n";
+            } catch (\Exception $e) {
+              echo 'Error: ' . $e->getMessage();
             }
+          }
         }
 
-        // Jika ada error, kembalikan response error
-        if (!empty($errors)) {
-            Yii::$app->response->statusCode = 400; // Bad Request
-            return [
-                'status' => 'error',
-                'errors' => $errors,
-            ];
-        }
-
-        // Update atribut model
-        foreach ($bodyParams as $key => $value) {
-            if ($model->hasAttribute($key)) {
-                $model->setAttribute($key, $value);
-            }
-        }
-
-        // Simpan model ke database
-        if ($model->save()) {
-            // KIRIM NOTIFIKASI
-            $atasan = $this->getAtasanKaryawan($model->id_karyawan);
-            if ($atasan != null) {
-                $adminUsers = User::find()->select(['id', 'email', 'role_id'])->where(['id' => $atasan['id_atasan']])->all();
-            } else {
-                $adminUsers = User::find()->select(['id', 'email', 'role_id'])->where(['role_id' => [1, 3]])->all();
-            }
-            $params = [
-                'judul' => 'Edit Pengajuan lembur',
-                'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah melakukan edit pada pengajuan lembur.',
-                'nama_transaksi' => "/panel/pengajuan-lembur/view?id_pengajuan_lembur=",
-                'id_transaksi' => $model['id_pengajuan_lembur'],
-            ];
-
-            $sender = User::find()->select(['id', 'email', 'role_id'])->where(['id_karyawan' => $model->id_karyawan])->one();
-            $this->sendNotif($params, $sender, $model, $adminUsers, "Edit Pengajuan lembur " . $model->karyawan->nama);
-
-            return [
-                'status' => 'success',
-                'message' => 'Data berhasil diperbarui.',
-                'data' => $model,
-            ];
-        } else {
-            Yii::$app->response->statusCode = 500; // Internal Server Error
-            return [
-                'status' => 'error',
-                'message' => 'Gagal memperbarui data.',
-                'errors' => $model->getErrors(),
-            ];
-        }
-    } catch (\Exception $e) {
-        // Tangkap exception yang tidak terduga
-        Yii::error('Update Error: ' . $e->getMessage());
+        return [
+          'status' => 'success',
+          'message' => 'Data berhasil diperbarui.',
+          'data' => $model,
+        ];
+      } else {
         Yii::$app->response->statusCode = 500; // Internal Server Error
         return [
-            'status' => 'error',
-            'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+          'status' => 'error',
+          'message' => 'Gagal memperbarui data.',
+          'errors' => $model->getErrors(),
         ];
+      }
+    } catch (\Exception $e) {
+      // Tangkap exception yang tidak terduga
+      Yii::error('Update Error: ' . $e->getMessage());
+      Yii::$app->response->statusCode = 500; // Internal Server Error
+      return [
+        'status' => 'error',
+        'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+      ];
     }
-}
-  
+  }
+
+
   // Metode untuk mendapatkan detail pengajuan lembur berdasarkan ID
   public function actionGetByPengajuan($id_pengajuan_lembur)
   {
