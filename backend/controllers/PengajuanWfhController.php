@@ -71,11 +71,7 @@ class PengajuanWfhController extends Controller
         $searchModel = new PengajuanWfhSearch();
         $dataProvider = $searchModel->search($this->request->queryParams, $tgl_mulai, $tgl_selesai);
 
-        // if ($this->request->isPost) {
-        //     $tgl_mulai = $this->request->post('PengajuanWfhSearch')['tanggal_mulai'];
-        //     $tgl_selesai = $this->request->post('PengajuanWfhSearch')['tanggal_selesai'];
-        //     $dataProvider = $searchModel->search($searchModel, $tgl_mulai, $tgl_selesai);
-        // }
+
 
         return $this->render('index', [
             'searchModel' => $searchModel,

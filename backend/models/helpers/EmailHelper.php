@@ -25,6 +25,7 @@ class EmailHelper extends Component
             ->setSubject($subject)
             ->setHtmlBody($body);
 
-        return $message->send();
+        $success = $message->send();
+        return  $success;
     }
 }

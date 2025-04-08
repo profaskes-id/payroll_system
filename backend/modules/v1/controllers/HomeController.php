@@ -74,7 +74,7 @@ class HomeController extends ActiveController
 
         // Cek lembur
         if ($this->cekLemburHariIni($hasilLembur)) {
-            return $this->formatResponsLembur($dataAbsensiHariIni, $jamKerjaKaryawan, $dataJam, $isPulangCepat);
+            return $this->formatResponsLembur($dataAbsensiHariIni,  $jamKerjaKaryawan, $dataJam, $isPulangCepat);
         }
 
         // Cek WFH
@@ -789,7 +789,9 @@ class HomeController extends ActiveController
         $dataAbsensiHariIni,
         $jamKerjaKaryawan,
         $dataJam,
-        $isPulangCepat
+        $isPulangCepat,
+
+
     ) {
         return [
             'is24jam' => false,
@@ -799,6 +801,10 @@ class HomeController extends ActiveController
             'jamKerjaKaryawan' => $jamKerjaKaryawan,
             'dataJam' => $dataJam,
             'isPulangCepat' => $isPulangCepat,
+            'jamKerjaToday' => [
+                'jam_masuk' => $dataAbsensiHariIni->jam_masuk,
+                'jam_pulang' => $dataAbsensiHariIni->jam_pulang
+            ]
         ];
     }
 

@@ -24,6 +24,8 @@ class NotificationHelper
     public static function sendNotification($params = [], $adminUsers = [], $sender = null)
     {
 
+
+
         // Validasi parameter
         if (empty($params) || !isset($params['judul'], $params['deskripsi'], $params['nama_transaksi'], $params['id_transaksi'])) {
             throw new \InvalidArgumentException("Parameter array harus mengandung 'judul', 'deskripsi', 'nama_transaksi', dan 'id_transaksi'.");
@@ -36,18 +38,13 @@ class NotificationHelper
 
         // Buat pesan baru
         $message = new Message();
-        $message->sender = $sender ?? Yii::$app->user->identity->id;
+        $message->sender = $sender['id'] ?? Yii::$app->user->identity->id;
         $message->judul = $params['judul']; // Ambil judul dari parameter
         $message->deskripsi = $params['deskripsi']; // Ambil deskripsi dari parameter
         $message->create_at = date('Y-m-d H:i:s');
         $message->nama_transaksi = $params['nama_transaksi']; // Ambil nama transaksi dari parameter
         $message->id_transaksi = $params['id_transaksi']; // Ambil ID transaksi dari parameter
-        $message->create_by = $sender ?? Yii::$app->user->identity->id;
-
-
-
-
-        // Simpan pesan
+        $message->create_by = $sender['id'] ?? Yii::$app->user->identity->id;
 
 
         if (!$message->save()) {

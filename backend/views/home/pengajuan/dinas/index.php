@@ -17,7 +17,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
 ?>
 
-<div class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5">
+<div class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5 relative z-50">
     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home', 'title' => 'Pengajuan Dinas Luar']); ?>
 
 
@@ -25,7 +25,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
     <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
         <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="default-tab" data-tabs-toggle="#default-tab-content" role="tablist">
             <li class="me-2" role="presentation">
-                <button class="flex justify-between items-center space-x-1 p-4 border-b-2 rounded-t-lg " id="profile-tab" data-tabs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
+                <button class="flex items-center justify-between p-4 space-x-1 border-b-2 rounded-t-lg " id="profile-tab" data-tabs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
                     <div class="w-4 h-4 bg-blue-300 rounded-full"></div>
                     <span>
                         All
@@ -34,7 +34,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
             </li>
 
             <li class="me-2" role="presentation">
-                <button class="flex justify-between items-center space-x-1  p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="settings-tab" data-tabs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">
+                <button class="flex items-center justify-between p-4 space-x-1 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="settings-tab" data-tabs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">
                     <div class="w-4 h-4 bg-green-300 rounded-full"></div>
                     <span>
                         Disetujui
@@ -42,7 +42,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                 </button>
             </li>
             <li role="presentation">
-                <button class="flex justify-between items-center space-x-1  p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="contacts-tab" data-tabs-target="#contacts" type="button" role="tab" aria-controls="contacts" aria-selected="false">
+                <button class="flex items-center justify-between p-4 space-x-1 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="contacts-tab" data-tabs-target="#contacts" type="button" role="tab" aria-controls="contacts" aria-selected="false">
                     <div class="w-4 h-4 bg-red-300 rounded-full"></div>
                     <span>
                         Ditolak
@@ -53,15 +53,15 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
     </div>
     <div id="default-tab-content">
 
-        <a href="/panel/pengajuan/dinas-create" class=" my-3 w-full flex items-center justify-center py-1 px-4  gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-400 text-white hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
-        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800 mb-20" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <a href="/panel/pengajuan/dinas-create" class="flex items-center justify-center w-full px-4 py-1 my-3 text-sm font-medium text-white bg-blue-400 border border-transparent rounded-lg  gap-x-2 hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
+        <div class="hidden p-4 mb-20 rounded-lg bg-gray-50 dark:bg-gray-800" id="profile" role="tabpanel" aria-labelledby="profile-tab">
             <?php if (!empty($pengajuanDinas)) : ?>
-                <div class="w-full grid grid-cols-1 gap-y-4 ">
+                <div class="grid w-full grid-cols-1 gap-y-4 ">
                     <?php foreach ($pengajuanDinas as $key => $value) : ?>
                         <a href="<?php echo \yii\helpers\Url::to(['/pengajuan/dinas-detail/', 'id' => $value['id_pengajuan_dinas']]) ?>">
                             <div class="grid grid-cols-12 gap-5 ">
 
-                                <div class="p-2 text-sm col-span-12  bg-white rounded-md w-full">
+                                <div class="w-full col-span-12 p-2 text-sm bg-white rounded-md">
 
                                     <?php
                                     $teks = $value['keterangan_perjalanan'];
@@ -79,15 +79,15 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                                         <p><?= date('d-m-Y', strtotime($value['tanggal_selesai'])) ?></p>
                                     </div>
                                     <hr class="my-2">
-                                    <div class="flex justify-between items-center py-2 ">
+                                    <div class="flex items-center justify-between py-2 ">
 
                                         <div class="">
                                             <?php if ($value['status'] == '0') : ?>
-                                                <span class=" px-5 py-1 bg-yellow-300 text-black font-semibold rounded-full ">Pending</span>
+                                                <span class="px-5 py-1 font-semibold text-black bg-yellow-300 rounded-full ">Pending</span>
                                             <?php elseif ($value['status'] == '1') : ?>
-                                                <span class=" px-5 py-1 bg-green-500 text-white font-semibold rounded-full ">Disetujui</span>
+                                                <span class="px-5 py-1 font-semibold text-white bg-green-500 rounded-full ">Disetujui</span>
                                             <?php elseif ($value['status'] == '2') : ?>
-                                                <span class=" px-5 py-1 bg-red-500 text-white font-semibold rounded-full ">Ditolak</span>
+                                                <span class="px-5 py-1 font-semibold text-white bg-red-500 rounded-full ">Ditolak</span>
                                             <?php endif ?>
 
                                         </div>
@@ -100,22 +100,22 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                     <?php endforeach; ?>
                 </div>
             <?php else : ?>
-                <div class="p-2 text-sm   bg-white rounded-md w-full">
+                <div class="w-full p-2 text-sm bg-white rounded-md">
                     <p class="text-center">Tidak ada data</p>
                 </div>
             <?php endif ?>
         </div>
     </div>
 
-    <div class="hidden px-4 py-3 rounded-lg bg-gray-50  mb-20" id="settings" role="tabpanel" aria-labelledby="settings-tab">
-        <div class="w-full grid grid-cols-1  gap-y-4">
+    <div class="hidden px-4 py-3 mb-20 rounded-lg bg-gray-50" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+        <div class="grid w-full grid-cols-1 gap-y-4">
             <?php if (!empty($pengajuanDinas)): ?>
                 <?php foreach ($pengajuanDinas as $key => $value) : ?>
                     <?php if ($value['status'] == '1') : ?>
                         <a href="<?php echo \yii\helpers\Url::to(['/pengajuan/dinas-detail/', 'id' => $value['id_pengajuan_dinas']]) ?>">
-                            <div class="grid grid-cols-1 w-full">
-                                <div class="w-full grid grid-cols-1 ">
-                                    <div class="p-2 text-sm col-span-11  bg-white rounded-md w-full">
+                            <div class="grid w-full grid-cols-1">
+                                <div class="grid w-full grid-cols-1 ">
+                                    <div class="w-full col-span-11 p-2 text-sm bg-white rounded-md">
                                         <?php
                                         $teks = $value['keterangan_perjalanan'];
                                         $kata = explode(' ', $teks);
@@ -138,7 +138,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                     <?php endif ?>
                 <?php endforeach; ?>
             <?php else : ?>
-                <div class="p-2 text-sm   bg-white rounded-md w-full">
+                <div class="w-full p-2 text-sm bg-white rounded-md">
                     <p class="text-center">Tidak ada data</p>
                 </div>
             <?php endif ?>
@@ -147,15 +147,15 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
 
     <div class="hidden p-4 rounded-lg bg-gray-50 " id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
-        <div class="w-full grid grid-cols-1    gap-y-4">
+        <div class="grid w-full grid-cols-1 gap-y-4">
             <?php if (!empty($pengajuanDinas)): ?>
                 <?php foreach ($pengajuanDinas as $key => $value) : ?>
                     <?php if ($value['status'] == '2') : ?>
                         <a href="<?php echo \yii\helpers\Url::to(['/pengajuan/dinas-detail/', 'id' => $value['id_pengajuan_dinas']]) ?>">
-                            <div class="grid grid-cols-1 w-full">
-                                <div class="w-full grid grid-cols-1 ">
+                            <div class="grid w-full grid-cols-1">
+                                <div class="grid w-full grid-cols-1 ">
                                     <div class="grid grid-cols-1">
-                                        <div class="p-2 text-sm col-span-11  bg-white rounded-md w-full">
+                                        <div class="w-full col-span-11 p-2 text-sm bg-white rounded-md">
                                             <?php
                                             $teks = $value['keterangan_perjalanan'];
                                             $kata = explode(' ', $teks);
@@ -181,7 +181,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                     <?php endif ?>
                 <?php endforeach; ?>
             <?php else : ?>
-                <div class="p-2 text-sm   bg-white rounded-md w-full">
+                <div class="w-full p-2 text-sm bg-white rounded-md">
                     <p class="text-center">Tidak ada data</p>
                 </div>
             <?php endif ?>

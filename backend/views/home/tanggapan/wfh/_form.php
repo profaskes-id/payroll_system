@@ -2,6 +2,8 @@
 
 use backend\models\helpers\KaryawanHelper;
 use backend\models\helpers\StatusPengajuanHelper;
+use backend\models\Karyawan;
+use backend\models\MasterKode;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -13,20 +15,20 @@ use yii\widgets\ActiveForm;
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
-<div class="relative p-6 bg-white rounded-lg shadow-md">
+<div class="relative p-2 bg-white rounded-lg shadow-md md:p-6">
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <div class="grid grid-cols-1 gap-6">
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 
-        <div class="mb-5">
+        <div class="">
             <p class="block mb-2 text-sm font-medium text-gray-900 capitalize ">Karyawan</p>
-
             <?php
-            $data = \yii\helpers\ArrayHelper::map($karyawanBawahanAdmin, 'id_karyawan', 'id_karyawan');
+            $data = \yii\helpers\ArrayHelper::map(KaryawanHelper::getKaryawanData(), 'id_karyawan', 'nama');
             echo $form->field($model, 'id_karyawan')->dropDownList(
                 $data,
                 [
+                    'disabled' => true,
                     'prompt' => 'Pilih Karyawan ...',
                     'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '
                 ]
@@ -64,27 +66,29 @@ use yii\widgets\ActiveForm;
             </div>
         </div>
 
-        <?php if (!$model->isNewRecord) : ?>
-            <div>
-                <?= $form->field($model, 'catatan_admin')->textarea(['rows' => 2, 'class' => 'w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'])->label('Catatan Admin') ?>
-            </div>
-        <?php endif ?>
+
 
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
-                <?= $form->field($model, 'longitude')->textInput(['readonly' => 'true', "id" => "lng", 'class' => 'w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'])->label('Longitude') ?>
+                <?= $form->field($model, 'longitude')->textInput(['disabled' => 'true', "id" => "lng", 'class' => 'w-full disabled:bg-slate-200 rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'])->label('Longitude') ?>
             </div>
 
             <div>
-                <?= $form->field($model, 'latitude')->textInput(['readonly' => 'true', 'id' => "lat", 'class' => 'w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'])->label('Latitude') ?>
+                <?= $form->field($model, 'latitude')->textInput(['disabled' => 'true', 'id' => "lat", 'class' => 'w-full disabled:bg-slate-200 rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'])->label('Latitude') ?>
             </div>
         </div>
 
-        <div>
+
+        <div class="col-12">
+
             <?php
-            $data = \yii\helpers\ArrayHelper::map(StatusPengajuanHelper::getStatusPengajuan(), 'kode', 'nama_kode');
+            $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
+
+
             echo $form->field($model, 'status')->radioList($data, [
                 'item' => function ($index, $label, $name, $checked, $value) use ($model) {
+                    // Tentukan apakah radio button untuk value 1 harus checked
+
                     if ($model->isNewRecord) {
                         $isChecked = $value == 1 ? true : $checked;
                     } else {
@@ -94,12 +98,23 @@ use yii\widgets\ActiveForm;
                     return Html::radio($name, $isChecked, [
                         'value' => $value,
                         'label' => $label,
-                        'labelOptions' => ['class' => 'inline-flex items-center mr-4'],
+                        'labelOptions' => ['class' => 'radio-label mr-4'],
                     ]);
                 },
-            ])->label('Status');
+            ])->label('Status Pengajuan');
             ?>
         </div>
+
+
+        <!-- Catatan Admin Field (hanya jika bukan record baru) -->
+        <?php if (!$model->isNewRecord): ?>
+            <div class="">
+                <?= $form->field($model, 'catatan_admin')->textarea([
+                    'rows' => 2,
+                    'class' => 'w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                ]) ?>
+            </div>
+        <?php endif; ?>
 
     </div>
 

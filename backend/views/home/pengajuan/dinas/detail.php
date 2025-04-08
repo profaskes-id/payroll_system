@@ -33,7 +33,7 @@ use yii\widgets\ActiveForm;
         <div class="inline-flex items-center justify-center w-full mb-4 relative">
             <hr class="w-64 h-px my-1 bg-gray-200 border-0 dark:bg-gray-700">
         </div>
-        <?php if (!$model->files == []): ?>
+        <?php if (!$model->dokumentasi == []): ?>
             <div class="bg-white text-black relative  w-full  rounded-md p-2 min-h-32 mt-2">
                 <div class="flex justify-between items-center">
                     <p class="capitalize  text-gray-500 font-semibold">Dokumentasi Perjalanan</p>
@@ -41,7 +41,7 @@ use yii\widgets\ActiveForm;
                 </div>
 
                 <?php
-                $data = json_decode($model->files, true);
+                $data = json_decode($model->dokumentasi, true);
                 foreach ($data as $key => $item) : ?>
                     <?php $key++ ?>
                     <p class="my-1">

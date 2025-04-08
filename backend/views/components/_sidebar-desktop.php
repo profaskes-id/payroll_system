@@ -1,8 +1,14 @@
 <div class="flex flex-col justify-between w-64 h-screen border-gray-100 bg-slate-900 border-e">
     <div class="px-4 py-6">
-        <span class="grid w-32 h-10 text-xs text-gray-600 bg-gray-100 rounded-lg place-content-center">
-            Logo
-        </span>
+        <div class="flex items-center pb-3 mt-3 mb-3 user-panel">
+            <div class="image">
+                <img src="<?= Yii::getAlias('@root') ?>/images/logo.svg" alt="Profaskes Logo" class="brand-image img-circle " style="width: 60px; ">
+            </div>
+            <div class="flex flex-col justify-center ms-2">
+                <a href="#" style="font-size: 17.8px;" class="block font-bold text-white">Profaskes</a>
+                <a href="#" style="font-size:14px" class="block text-white">Payroll System</a>
+            </div>
+        </div>
 
         <ul class="mt-6 space-y-1">
             <li>
@@ -29,11 +35,6 @@
                 </a>
             </li>
 
-            <a
-                class="block px-4 py-2 text-sm font-medium text-white rounded-lg hover:bg-gray-100 hover:text-gray-700">
-                Account
-            </a>
-            </li>
 
             <li>
                 <details class="group [&_summary::-webkit-details-marker]:hidden">
@@ -101,16 +102,5 @@
         </ul>
     </div>
 
-    <div class="sticky inset-x-0 bottom-0 border-t border-gray-100">
-        <a href="#" class="flex items-center gap-2 p-4 bg-slate-900 hover:bg-gray-50">
 
-            <div>
-                <p class="text-xs text-white">
-                    <strong class="block font-medium">Eric Frusciante</strong>
-
-                    <span> eric@frusciante.com </span>
-                </p>
-            </div>
-        </a>
-    </div>
 </div>

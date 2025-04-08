@@ -110,8 +110,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                     'value' => function ($model) {
                         if ($model->status != 0) {
-                            if ($model->files != null) {
-                                $files = json_decode($model->files, true);
+                            if ($model->dokumentasi != null) {
+                                $files = json_decode($model->dokumentasi, true);
                                 if ($files) {
                                     $output = '<ul>';
                                     foreach ($files as $key => $file) {

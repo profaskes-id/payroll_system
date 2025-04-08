@@ -39,7 +39,7 @@ class MobileNotificationHelper
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Authorization: Bearer ' . 'ya29.a0AeXRPp6yOTAXkAKxzFdIymY3X4DgOpkFLTUwvIVt8NnytfeNZKiYeFX5haeq_UF4I5Ng0q0CLkczdE9_FuiYVVBPr4uPzkHs6zqXw4NcQW25AeWh6_CzlBQt9ALYBSKfMYqrvcPjv9CWxWJuG1Qmi69aajFxvbxgZGZfQmR5aCgYKAfMSARMSFQHGX2MiMTqC1t13-oIKx1rUdzRxuA0175',
+            'Authorization: Bearer ' . 'ya29.a0AeXRPp6P90PwZR3CeH9fCn1Ka9_iJrzFwjFgMe3M9oi0PlY9W-7EI3802GG-XnGPz3r2r7LDH9xnriXr1zBIo-uH4A8GSWiKnkwQrYqjFIsiE7CXEQaCHcBeXnKeXW-gSbl8QXCSRlBHlJMMstsjyBg4a7x-PRmLiDPAmjxlaCgYKAacSARMSFQHGX2MiG15ynl73h2p_kWn3o9D81g0175',
             'Content-Type: application/json',
         ]);
 

@@ -50,18 +50,18 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 
-<section class="overflow-x-hidden min-h-[80dvh] ">
+<section class="overflow-x-hidden ">
     <div class="">
-        <div class="h-[400px] lg:h-[350px]">
+        <div class="h-[400px]  md:h-[200px] lg:h-[300px]">
             <div class="bg-[#faf9f9] lg:bg-white h-[200px] lg:px-5">
 
                 <div class="grid grid-cols-12 pt-5">
 
-                    <section class="col-span-12 lg:col-span-6 ">
+                    <section class="col-span-12 ">
                         <div class="flex justify-between px-5 lg:items-start lg:flex-col ">
-                            <div class="hidden lg:block ">
+                            <div class="hidden w-full lg:block">
                                 <div class="flex items-center justify-between space-x-16 ">
-                                    <div class="flex justify-start align-center">
+                                    <div class="flex justify-between w-full align-center">
                                         <h1 id="clock" class="flex items-end justify-end text-6xl font-bold md:text-8xl">
                                             <span id="hours">00</span>:<span id="minutes">00</span><span class="text-[22px] lg:text-[50px]">:</span><span class="text-[22px] lg:text-[50px]" id="seconds">00</span>
                                         </h1>
@@ -111,15 +111,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     </section>
 
 
-                    <section class="col-span-12 lg:col-span-6" data-aos="fade-down" data-aos-duration="1000">
+                    <section class="col-span-12 my-10" data-aos="fade-down" data-aos-duration="1000">
                         <div class="relative content-start justify-center gap-5 p-5 lg:p-0">
                             <div class="w-full h-full bg-white  overflow-hidden rounded-[20px]">
                                 <div>
                                     <div class="">
                                         <a href="/panel/home/pengumuman">
-                                            <div class="grid w-full h-full grid-cols-12">
+                                            <div class="grid w-full h-full md:h-[150px] grid-cols-12">
                                                 <div class="h-full col-span-4 ">
-                                                    <img src="<?= Yii::getAlias('@root') . "/images/icons/toa.jpg" ?>" class="object-cover xl:object-left-bottom scale-100 xl:scale-75 xl:max-h-[400px] xl:-translate-y-10" alt="toa">
+                                                    <img src="<?= Yii::getAlias('@root') . "/images/icons/toa.jpg" ?>" class="object-cover md:h-[150px]" alt="toa">
 
                                                 </div>
                                                 <div class="relative flex flex-col items-start justify-start w-full h-full col-span-8 p-3">
@@ -145,7 +145,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 
-    <div data-aos="fade-up" data-aos-duration="800" class="w-[70px] h-[5px] bg-[#ede8fe]     -mt-24 lg:-mt-10 mx-auto"></div>
+    <div data-aos="fade-up" data-aos-duration="800" class="w-[70px] h-[5px] bg-[#ede8fe]     -mt-24 md:mt-10 mx-auto"></div>
 
 
     <div class="relative grid w-full grid-cols-12 gap-2 px-5 mt-5 mb-20 min-w-screen">

@@ -789,8 +789,8 @@ class TanggapanController extends Controller
     {
         $model = PengajuanDinas::findOne($id_pengajuan_dinas);
         if ($model) {
-            if ($model->files != null) {
-                $files = json_decode($model->files, true);
+            if ($model->dokumentasi != null) {
+                $files = json_decode($model->dokumentasi, true);
                 if ($files) {
                     foreach ($files as $file) {
                         if (file_exists(Yii::getAlias('@webroot') . '/' . $file)) {

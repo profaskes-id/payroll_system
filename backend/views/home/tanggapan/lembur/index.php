@@ -1,85 +1,145 @@
 <?php
 
+use backend\models\helpers\KaryawanHelper;
+use backend\models\MasterKode;
 use backend\models\Tanggal;
+use yii\widgets\ActiveForm;
 
 $tanggalFormater = new Tanggal();
 ?>
 
-<div class="w-full py-2 mx-5 overflow-x-hidden ">
+<link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" />
 
-    <div class="flex justify-end px-10">
-        <a href="<?= Yii::$app->urlManager->createUrl(['/tanggapan/wfh-create']) ?>" class="relative px-6 tw-add">
-            Tambah Pengajuan WFH
-        </a>
-    </div>
+<!-- Include jQuery (required for DataTables) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <table class="w-[100%] mt-5 text-sm divide-y-2 divide-gray-200">
-        <thead class="text-left border-t-2">
-            <tr class="divide-x ">
-                <th class="px-4 py-2 font-medium text-center text-gray-900 whitespace-nowrap">Aksi</th>
-                <th class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">Nama</th>
-                <th class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">Alasan</th>
-                <th class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">Tanggal</th>
-                <th class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">Lokasi</th>
-                <th class="px-4 py-2">Status</th>
+<!-- Include JS for DataTables -->
+<script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+
+
+
+<style>
+    .dt-input:first-child {
+        width: 50px;
+    }
+</style>
+
+
+<h1 class="p-5 text-2xl font-bold">Pengajuan Lembur</h1>
+
+
+
+<div class="relative px-5 overflow-x-auto">
+    <table class="w-full text-sm text-left text-gray-500 rtl:text-right dark:text-gray-400" id="table_id" class="display">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-1">
+                    Action
+                </th>
+                <th scope="col" class="px-6 py-1">
+                    Nama
+                </th>
+                <th scope="col" class="px-6 py-1">
+                    Pekerjaan
+                </th>
+                <th scope="col" class="px-6 py-1">
+                    Jam
+                </th>
+                <th scope="col" class="px-6 py-1">
+                    Durasi
+                </th>
+                <th scope="col" class="px-6 py-1">
+                    Tanggal
+                </th>
+                <th scope="col" class="px-6 py-1">
+                    Status
+                </th>
+
             </tr>
         </thead>
-
-        <tbody class="divide-y gray-200">
+        <tbody>
 
             <?php
-            foreach (array_reverse($pengajuanWfhList) as $item) {
+            foreach (array_reverse($pengajuanLemburList) as $item) {
                 $statusColor = '';
                 $statusText = '';
                 switch ($item['status']) {
                     case 0:
-                        $statusColor = 'bg-yellow-500';
+                        $statusColor = ' text-yellow-500';
                         $statusText = 'Pending';
                         break;
                     case 1:
-                        $statusColor = 'bg-green-500';
+                        $statusColor = ' text-green-500';
                         $statusText = 'Disetujui';
                         break;
                     case 2:
-                        $statusColor = 'bg-red-500';
+                        $statusColor = ' text-red-500';
                         $statusText = 'Ditolak';
                         break;
                 }
             ?>
-                <tr class="divide-x">
-                    <td class="w-[30px]  flex justify-center items-center text-gray-700 whitespace-nowrap py-1 px-2">
 
-                        <a href="<?= Yii::$app->urlManager->createUrl(['/tanggapan/wfh-view', 'id_pengajuan_wfh' => $item['id_pengajuan_wfh']]) ?>" class="relative flex items-center  justify-center tw-add w-[50px]">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M12 9a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3m0-4.5c5 0 9.27 3.11 11 7.5c-1.73 4.39-6 7.5-11 7.5S2.73 16.39 1 12c1.73-4.39 6-7.5 11-7.5M3.18 12a9.821 9.821 0 0 0 17.64 0a9.821 9.821 0 0 0-17.64 0" />
-                            </svg>
 
-                        </a>
+                <tr class="bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                    <td class="px-6">
+                        <p class="flex items-center justify-start">
+                            <a href="<?= Yii::$app->urlManager->createUrl(['/tanggapan/lembur-view', 'id_pengajuan_lembur' => $item['id_pengajuan_lembur']]) ?>" class="relative flex items-center  justify-center p-1.5 bg-[#488aec] rounded-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+                                    <path fill="white" d="M12 9a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3m0-4.5c5 0 9.27 3.11 11 7.5c-1.73 4.39-6 7.5-11 7.5S2.73 16.39 1 12c1.73-4.39 6-7.5 11-7.5M3.18 12a9.821 9.821 0 0 0 17.64 0a9.821 9.821 0 0 0-17.64 0" />
+                                </svg>
+
+                            </a>
+                        </p>
                     </td>
-                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap"><?= $item->karyawan->nama ?></td>
-                    <td class="px-4 py-2 text-xs text-gray-700 whitespace-nowrap"><?= $item->alasan ?></td>
-                    <td class="px-4 py-2 text-gray-700 whitespace-nowrap">
-
+                    <td class="px-6 py-1 ">
+                        <?= $item->karyawan->nama ?>
+                        </th>
+                    <td class="px-6 py-1 text-xs">
                         <?php
-                        $json_tanggal_array = $item['tanggal_array'];
-                        $tanggal_array = json_decode($json_tanggal_array, true);
-                        foreach ($tanggal_array as $tanggal) {
-                            echo "<p class='text-xs'>" . $tanggalFormater->getIndonesiaFormatTanggal($tanggal) . "</p>";
+                        // Misalnya $item->pekerjaan berisi string JSON
+                        $pekerjaan = json_decode($item->pekerjaan);
+
+                        // Cek apakah $pekerjaan berhasil di-decode menjadi array
+                        if (is_array($pekerjaan)) {
+                            echo '<ul>';  // Membuka tag <ul> untuk list poin
+                            foreach ($pekerjaan as $pekerjaanItem) {
+                                echo '<li>' . htmlspecialchars($pekerjaanItem) . '</li>';  // Menampilkan setiap item dalam <li>
+                            }
+                            echo '</ul>';  // Menutup tag <ul>
                         }
                         ?>
                     </td>
-                    <td class="px-4 py-2 text-gray-700 whitespace-nowrap"><?= $item->lokasi ?></td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                        <a
-                            href="#"
-                            class="inline-block px-4 py-2 text-xs font-medium text-white  <?= $statusColor ?> rounded-sm hover:bg-indigo-700">
-                            <?= $statusText ?>
 
-                        </a>
+
+
+                    <td class="px-6 py-1 text-xs">
+                        <?php echo "<p class='text-xs'>" . ($item->jam_mulai) . " - " . ($item->jam_selesai) .  "</p>";                        ?>
                     </td>
+
+                    <td class="px-6 py-1 text-xs">
+                        <?php echo "<p class='text-xs'>" . ($item->durasi) . "</p>";                        ?>
+                    </td>
+                    <td class="px-6 py-1 text-xs">
+                        <?php echo "<p class='text-xs'>" . $tanggalFormater->getIndonesiaFormatTanggal($item->tanggal) . "</p>";                        ?>
+                    </td>
+                    <td class="text-xs px-6 py-1 <?= $statusColor ?>">
+                        <?= $statusText ?>
+
+                    </td>
+
                 </tr>
+
+
             <?php } ?>
 
 
         </tbody>
     </table>
+</div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#table_id').DataTable(); // Initialize DataTables
+    });
+</script>

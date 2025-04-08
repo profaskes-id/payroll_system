@@ -12,7 +12,7 @@ class UserController extends ActiveController
     public $modelClass = User::class;
 
 
-    public function actionSaveToken($id_karyawan)
+    public function actionSaveToken($id)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -33,12 +33,12 @@ class UserController extends ActiveController
         $token = $data['fcm_token'];
 
         // Cari user berdasarkan id_karyawan
-        $user = User::findOne(['id_karyawan' => $id_karyawan]);
+        $user = User::findOne(['id' => $id]);
 
         if (!$user) {
             return [
                 'status' => 'error',
-                'message' => 'User dengan ID karyawan ' . $id_karyawan . ' tidak ditemukan.',
+                'message' => 'User dengan ID karyawan ' . $id . ' tidak ditemukan.',
             ];
         }
 
@@ -47,7 +47,7 @@ class UserController extends ActiveController
         if ($user->save()) {
             return [
                 'status' => 'success',
-                'message' => 'Token berhasil disimpan/diupdate untuk ID karyawan ' . $id_karyawan,
+                'message' => 'Token berhasil disimpan/diupdate untuk ID ' . $id,
             ];
         } else {
             return [

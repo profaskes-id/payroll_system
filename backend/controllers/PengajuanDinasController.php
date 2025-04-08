@@ -173,9 +173,9 @@ class PengajuanDinasController extends Controller
     public function actionDelete($id_pengajuan_dinas)
     {
         $model = $this->findModel($id_pengajuan_dinas);
-        if ($model->files != null) {
+        if ($model->dokumentasi != null) {
 
-            $files = json_decode($model->files, true);
+            $files = json_decode($model->dokumentasi, true);
 
             if ($files) {
                 foreach ($files as $file) {

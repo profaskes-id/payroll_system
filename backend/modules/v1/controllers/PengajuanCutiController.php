@@ -96,7 +96,7 @@ class PengajuanCutiController extends ActiveController
           $token = $admin['fcm_token'];
           $title = 'Pengajuan Cuti';
           $body = 'Pengajuan Cuti Dari ' . $model->karyawan->nama ?? 'karyawan';
-          $data = ['url' => '/profile'];
+          $data = ['url' => '/'];
 
           try {
             $result = MobileNotificationHelper::sendNotification($token, $title, $body, $data);
@@ -159,11 +159,16 @@ class PengajuanCutiController extends ActiveController
     Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
     $model = $this->modelClass::find()
-      ->select(['pengajuan_cuti.*', 'user.username as ditanggapi_oleh',])
+      ->select(['pengajuan_cuti.*', 'master_cuti.jenis_cuti as jenis_cuti', 'user.username as ditanggapi_oleh',])
       ->leftJoin('user', 'user.id  = pengajuan_cuti.ditanggapi_oleh')
+      ->leftJoin('master_cuti', 'master_cuti.id_master_cuti  = pengajuan_cuti.jenis_cuti')
       ->where(['id_pengajuan_cuti' => $id_pengajuan_cuti])
       ->asArray()
       ->one();
+    if (!$model) {
+      return ['error' => 'Data not found.'];
+    }
+
     return $model;
   }
 

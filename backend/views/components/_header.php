@@ -1,6 +1,6 @@
-<div class="grid grid-cols-12  items-center ">
+<div class="grid items-center grid-cols-12 ">
 
-    <div class="  mt-2 col-span-2">
+    <div class="relative z-50 col-span-2 mt-2 ">
         <a href="<?= $link ?? '/panel/home' ?>">
             <button class=" text-white font-medium rounded-lg text-sm py-2.5 mb-2" type="button">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
@@ -11,8 +11,8 @@
     </div>
 
 
-    <div class="col-span-8 grid place-items-center">
-        <h2 class="text-center font-semibold capitalize "><?= $title ?></h2>
+    <div class="grid col-span-8 place-items-center">
+        <h2 class="font-semibold text-center capitalize "><?= $title ?></h2>
     </div>
 
 

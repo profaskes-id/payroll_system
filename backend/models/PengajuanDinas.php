@@ -38,11 +38,11 @@ class PengajuanDinas extends \yii\db\ActiveRecord
         return [
             [['id_karyawan', 'keterangan_perjalanan', 'tanggal_mulai', 'tanggal_selesai', 'estimasi_biaya', 'status'], 'required'],
             [['id_karyawan', 'disetujui_oleh'], 'integer'],
-            [['keterangan_perjalanan', 'files', 'catatan_admin'], 'string'],
+            [['keterangan_perjalanan', 'catatan_admin', 'dokumentasi'], 'string'],
             [['tanggal_mulai', 'tanggal_selesai', 'disetujui_pada', "disetujui_oleh"], 'safe'],
             [['estimasi_biaya', 'biaya_yang_disetujui'], 'number'],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
-            [['files'], 'file', 'extensions' => 'jpg, jpeg, png, pdf', 'maxFiles' => 10],
+            [['dokumentasi'], 'file', 'extensions' => 'jpg, jpeg, png, pdf', 'maxFiles' => 10],
 
         ];
     }
@@ -63,8 +63,9 @@ class PengajuanDinas extends \yii\db\ActiveRecord
             'disetujui_oleh' => 'Ditanggapi Oleh',
             'disetujui_pada' => 'Ditanggapi Pada',
             'status' => 'status',
-            'files' => 'File',
+            'dokumentasi' => 'dokumentasi',
             'catatan_admin' => 'Catatan Admin',
+
 
         ];
     }

@@ -122,7 +122,7 @@ class PengajuanLemburController extends ActiveController
       $params = [
         'judul' => 'Pengajuan lembur',
         'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan lembur.',
-        'nama_transaksi' => "/panel/pengajuan-lembur/view?id_pengajuan_lembur=",
+        'nama_transaksi' => "lembur",
         'id_transaksi' => $model['id_pengajuan_lembur'],
       ];
 
@@ -279,7 +279,7 @@ class PengajuanLemburController extends ActiveController
             $token = $admin['fcm_token'];
             $title = 'Pengajuan Lembur';
             $body = 'Pengajuan Lembur Dari ' . $model->karyawan->nama ?? 'karyawan';
-            $data = ['url' => '/profile'];
+            $data = ['url' => '/'];
 
             try {
               $result = MobileNotificationHelper::sendNotification($token, $title, $body, $data);

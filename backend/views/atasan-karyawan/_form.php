@@ -58,7 +58,7 @@ use yii\widgets\ActiveForm;
                     'pluginOptions' => [
                         'allowClear' => true
                     ],
-                ])->label('Atasan Karyawan anjay');
+                ])->label('Atasan Karyawan');
             }
             ?>
         </div>

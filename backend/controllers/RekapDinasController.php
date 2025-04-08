@@ -128,7 +128,7 @@ class RekapDinasController extends Controller
     public function actionDelete($id_pengajuan_dinas)
     {
         $model = $this->findModel($id_pengajuan_dinas);
-        $files = json_decode($model->files, true);
+        $files = json_decode($model->dokumentasi, true);
 
         if ($files) {
             foreach ($files as $file) {

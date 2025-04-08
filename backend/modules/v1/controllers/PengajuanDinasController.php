@@ -97,7 +97,7 @@ class PengajuanDinasController extends ActiveController
           $token = $admin['fcm_token'];
           $title = 'Pengajuan Dinas';
           $body = 'Pengajuan Dinas Dari ' . $model->karyawan->nama ?? 'karyawan';
-          $data = ['url' => '/profile'];
+          $data = ['url' => '/'];
 
           try {
             $result = MobileNotificationHelper::sendNotification($token, $title, $body, $data);
@@ -108,9 +108,6 @@ class PengajuanDinasController extends ActiveController
           }
         }
       };
-
-
-
 
 
       return [
@@ -164,10 +161,11 @@ class PengajuanDinasController extends ActiveController
     \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
     // Inisiasi model
-    $model = new PengajuanDinas();
+    $model =  PengajuanDinas::find()->where(['id_karyawan' => $id_karyawan])->one();
 
     // Ambil file upload
     $model->dokumentasi = UploadedFile::getInstanceByName('dokumentasi');
+
 
     if ($model->dokumentasi) {
       // Tentukan path upload

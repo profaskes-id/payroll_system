@@ -69,6 +69,7 @@ class PengajuanWfhController extends ActiveController
     $model->latitude = $request->post('latitude');
     $model->tanggal_array = $request->post('tanggal_array'); // Simpan sebagai JSON string
 
+
     // Simpan model ke database
     if ($model->save()) {
       // ? KIRIM NOTIFIKASI
@@ -88,23 +89,23 @@ class PengajuanWfhController extends ActiveController
       $sender = User::find()->select(['id', 'email', 'role_id',])->where(['id_karyawan' => $model->id_karyawan])->one();
       $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan WFH Baru Dari " . $model->karyawan->nama);
 
-      foreach ($adminUsers as $admin) {
-        if ($admin['fcm_token']) {
+      // foreach ($adminUsers as $admin) {
+      //   if ($admin['fcm_token']) {
 
-          $token = $admin['fcm_token'];
-          $title = 'Pengajuan WFH';
-          $body = 'Pengajuan WFH Dari ' . $model->karyawan->nama ?? 'karyawan';
-          $data = ['url' => '/profile'];
+      //     $token = $admin['fcm_token'];
+      //     $title = 'Pengajuan WFH';
+      //     $body = 'Pengajuan WFH Dari ' . $model->karyawan->nama ?? 'karyawan';
+      //     $data = ['url' => '/'];
 
-          try {
-            $result = MobileNotificationHelper::sendNotification($token, $title, $body, $data);
-            echo "Status Code: " . $result['statusCode'] . "\n";
-            echo "Response: " . print_r($result['response'], true) . "\n";
-          } catch (\Exception $e) {
-            echo 'Error: ' . $e->getMessage();
-          }
-        }
-      };
+      //     try {
+      //       $result = MobileNotificationHelper::sendNotification($token, $title, $body, $data);
+      //       echo "Status Code: " . $result['statusCode'] . "\n";
+      //       echo "Response: " . print_r($result['response'], true) . "\n";
+      //     } catch (\Exception $e) {
+      //       echo 'Error: ' . $e->getMessage();
+      // }
+      // }
+      // };
 
 
       return [

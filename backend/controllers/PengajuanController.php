@@ -131,7 +131,7 @@ class PengajuanController extends \yii\web\Controller
                     $params = [
                         'judul' => 'Pengajuan cuti',
                         'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan cuti.',
-                        'nama_transaksi' => "/panel/pengajuan-cuti/view?id_pengajuan_cuti=",
+                        'nama_transaksi' => "cuti",
                         'id_transaksi' => $model['id_pengajuan_cuti'],
                     ];
                     $this->sendNotif($params, $model, $adminUsers, "Pengajuan cuti Baru Dari " . $model->karyawan->nama);
@@ -223,7 +223,7 @@ class PengajuanController extends \yii\web\Controller
                     $params = [
                         'judul' => 'Pengajuan lembur',
                         'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan lembur.',
-                        'nama_transaksi' => "/panel/pengajuan-lembur/view?id_pengajuan_lembur=",
+                        'nama_transaksi' => "lembur",
                         'id_transaksi' => $model['id_pengajuan_lembur'],
                     ];
                     $this->sendNotif($params, $model, $adminUsers, "Pengajuan lembur Baru Dari " . $model->karyawan->nama);
@@ -244,6 +244,7 @@ class PengajuanController extends \yii\web\Controller
     {
 
         $pengajuanLembur = PengajuanLembur::find()->where(['id_pengajuan_lembur' => $id])->one();
+
         $poinArray = json_decode($pengajuanLembur->pekerjaan);
         if ($this->request->isPost) {
             if ($pengajuanLembur->load($this->request->post())) {
@@ -327,7 +328,7 @@ class PengajuanController extends \yii\web\Controller
                     $params = [
                         'judul' => 'Pengajuan Dinas',
                         'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan dinas luar.',
-                        'nama_transaksi' => "/panel/pengajuan-dinas/view?id_pengajuan_dinas=",
+                        'nama_transaksi' => "dinas",
                         'id_transaksi' => $model['id_pengajuan_dinas'],
                     ];
                     $this->sendNotif($params, $model, $adminUsers, "Pengajuan Dinas Baru Dari " . $model->karyawan->nama);
@@ -354,7 +355,7 @@ class PengajuanController extends \yii\web\Controller
     {
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
         $model = PengajuanDinas::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
-        $files = $model->files;
+        $files = $model->dokumentasi;
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $dataGambar = UploadedFile::getInstances($model, 'files');
@@ -382,7 +383,7 @@ class PengajuanController extends \yii\web\Controller
                 }
 
                 // Simpan informasi file di database
-                $model->files = json_encode($filePaths); // Simpan dalam format JSON
+                $model->dokumentasi = json_encode($filePaths); // Simpan dalam format JSON
 
 
                 if ($model->save()) {
@@ -401,15 +402,15 @@ class PengajuanController extends \yii\web\Controller
 
         $model = PengajuanDinas::find()->where(['id_pengajuan_dinas' => $id])->one();
 
-        if ($model->files) {
-            $data = json_decode($model->files, true);
+        if ($model->dokumentasi) {
+            $data = json_decode($model->dokumentasi, true);
             foreach ($data as $key => $item) {
                 if (file_exists(Yii::getAlias('@webroot') . '/' . $item)) {
                     unlink(Yii::getAlias('@webroot') . '/' . $item);
                 }
             }
         }
-        $model->files = null;
+        $model->dokumentasi = null;
         if ($model->save()) {
             Yii::$app->session->setFlash('success', 'Files Berhasil Di hapus.');
             return $this->redirect(['/pengajuan/dinas']);
@@ -463,7 +464,7 @@ class PengajuanController extends \yii\web\Controller
                     $params = [
                         'judul' => 'Pengajuan WFH',
                         'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan WFH.',
-                        'nama_transaksi' => "/panel/pengajuan-wfh/view?id_pengajuan_wfh=",
+                        'nama_transaksi' => "wfh",
                         'id_transaksi' => $model['id_pengajuan_wfh'],
                     ];
 
@@ -541,8 +542,7 @@ class PengajuanController extends \yii\web\Controller
         // return $this->renderPartial('@backend/views/home/pengajuan/email', compact('model', 'adminUsers', 'subject'));
         $msgToCheck = $this->renderPartial('@backend/views/home/pengajuan/email_user', compact('model', 'params'));
 
-        // $msgToCheck = $this->renderPartial('@backend/views/home/pengajuan/email');
-        // Mengirim email ke setiap pengguna
+
         foreach ($adminUsers as $atasan) {
             $to = $atasan['email'];
             if (EmailHelper::sendEmail($to, $subject, $msgToCheck)) {

@@ -120,6 +120,13 @@ class PengajuanLemburController extends Controller
 
                 $jamMulai = strtotime($model->jam_mulai);
                 $jamSelesai = strtotime($model->jam_selesai);
+
+                // Pembulatan jam_selesai jika menitnya adalah 59
+                if (date('i', $jamSelesai) == 59) {
+                    $jamSelesai = strtotime('+1 hour', $jamSelesai);
+                    $jamSelesai = strtotime(date('Y-m-d H:00', $jamSelesai)); // Set menit ke 0
+                }
+
                 $selisihDetik = $jamSelesai - $jamMulai;
 
                 $model->durasi = gmdate('H:i', $selisihDetik);

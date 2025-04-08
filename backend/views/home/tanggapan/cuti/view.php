@@ -7,6 +7,8 @@ use backend\models\Tanggal;
 use yii\helpers\Html;
 
 $tanggalFormater = new Tanggal();
+
+
 ?>
 
 <div class="container p-6 mx-auto">
@@ -14,9 +16,9 @@ $tanggalFormater = new Tanggal();
 
     <div class="flex items-center justify-between">
 
-        <h1 class="mb-4 text-2xl font-bold">Detail Pengajuan WFH</h1>
+        <h1 class="mb-4 text-2xl font-bold">Detail Pengajuan cuti</h1>
         <p class="">
-            <?= Html::a('Back', ['/tanggapan/wfh'], ['class' => 'costume-btn']) ?>
+            <?php echo Html::a('Back', ['/tanggapan/cuti'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 
@@ -24,8 +26,8 @@ $tanggalFormater = new Tanggal();
     <div class="flex items-center justify-between my-5">
         <div class="flex justify-start space-x-4">
 
-            <?= Html::a('Tanggapi', ['wfh-update', 'id' => $model['id_pengajuan_wfh']], ['class' => 'tw-add px-6 relative']) ?>
-            <?= Html::a('Delete', ['wfh-delete', 'id_pengajuan_wfh' => $model['id_pengajuan_wfh']], [
+            <?php echo Html::a('Tanggapi', ['cuti-update', 'id_pengajuan_cuti' => $model['id_pengajuan_cuti']], ['class' => 'tw-add px-6 relative']) ?>
+            <?php echo Html::a('Delete', ['cuti-delete', 'id_pengajuan_cuti' => $model['id_pengajuan_cuti']], [
                 'class' => 'tw-add bg-rose-500 px-5 relative'
             ]) ?>
         </div>
@@ -48,39 +50,29 @@ $tanggalFormater = new Tanggal();
 
                 <tr>
                     <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Karyawan</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['karyawan']['nama']) ?></td>
+                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?php echo Html::encode($model['karyawan']['nama']) ?></td>
                 </tr>
                 <tr>
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Alasan</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['alasan']) ?></td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Jenis Cuti</td>
+                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= $model['jenisCuti']['jenis_cuti'] ?></td>
                 </tr>
                 <tr>
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Lokasi</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['lokasi']) ?></td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Alasan Cuti</td>
+                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= $model['alasan_cuti'] ?></td>
                 </tr>
                 <tr>
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Alamat</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['alamat']) ?></td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Diajukan Pada</td>
+                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= $tanggalFormater->getIndonesiaFormatTanggal($model['tanggal_pengajuan']);   ?></td>
                 </tr>
                 <tr>
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Longitude</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['longitude']) ?></td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Tanggal Mulai</td>
+                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= $tanggalFormater->getIndonesiaFormatTanggal($model['tanggal_mulai']);   ?></td>
+
                 </tr>
                 <tr>
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Latitude</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['latitude']) ?></td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Tanggal</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
-                        <?php
-                        $json_tanggal_array = $model['tanggal_array'];
-                        $tanggal_array = json_decode($json_tanggal_array, true);
-                        foreach ($tanggal_array as $tanggal) {
-                            echo "<p class='text-base'>" . $tanggalFormater->getIndonesiaFormatTanggal($tanggal) . "</p>";
-                        }
-                        ?>
-                    </td>
+
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Tanggal Selesai</td>
+                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= $tanggalFormater->getIndonesiaFormatTanggal($model['tanggal_selesai']);   ?></td>
                 </tr>
                 <tr>
                     <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Status</td>
@@ -100,16 +92,17 @@ $tanggalFormater = new Tanggal();
                 </tr>
                 <tr>
                     <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Disetujui Pada</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['disetujui_pada'] ?? 'Belum disetujui') ?></td>
+                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['ditanggapi_pada'] ?? 'Belum ditanggapi') ?></td>
                 </tr>
                 <tr>
                     <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Disetujui Oleh</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['disetujui_oleh'] ?? 'Belum disetujui') ?></td>
+                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['ditanggapi_oleh'] ?? 'Belum ditanggapi') ?></td>
                 </tr>
                 <tr>
                     <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Catatan Admin</td>
                     <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['catatan_admin'] ?? 'Tidak ada catatan') ?></td>
                 </tr>
+
             </tbody>
         </table>
     </div>
