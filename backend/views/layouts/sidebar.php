@@ -27,9 +27,12 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
         <div class="px-5 mx-auto d-flex justify-content-center align-items-center w-100">
             <?= Html::a('<i class="fa fa-solid fa-user"></i>', ['/user/profile'], ['class' => 'nav-link']) ?>
             <?= Html::a('<i class="fa fa-solid fa-cog"></i>', ['/user/account'], ['class' => 'nav-link']) ?>
-            <?php if (Yii::$app->user->can('super_admin')) : ?>
-                <?= Html::a('<i class="fa fa-solid fa-users"></i>', ['/user/admin'], ['class' => 'nav-link']) ?>
-            <?php endif; ?>
+            <?php // if (Yii::$app->user->can('super_admin')) : 
+            ?>
+            <?php // Html::a('<i class="fa fa-solid fa-users"></i>', ['/user/admin'], ['class' => 'nav-link']) 
+            ?>
+            <?php // endif; 
+            ?>
             <?= Html::a('<i class="fas fa-sign-out-alt"></i>', ['/user/logout'], ['data-method' => 'post', 'class' => 'nav-link']) ?>
         </div>
         <hr style="background-color: white; margin: 0; padding: 0;" />
@@ -70,6 +73,39 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                 ],
                             ],
                             [
+                                'label' => 'Pengaturan Data',
+                                'icon' => 'th',
+                                'items' => [
+                                    [ // Submenu: Pengaturan Karyawan
+                                        'label' => 'Data Karyawan',
+                                        'icon' => 'fa fa-users-cog',
+                                        'items' => [
+                                            ['label' => 'Profile Perusahaan', 'icon' => 'fa fa-building', 'url' => ['/perusahaan/index']],
+                                            ['label' => 'Jabatan', 'icon' => 'fa fa-user-tie', 'url' => ['/jabatan/index']],
+                                            ['label' => 'Karyawan', 'icon' => 'fa fa-users', 'url' => ['/karyawan/index']],
+                                            [
+                                                'label' => 'User',
+                                                'icon' => 'fa fa-users',
+                                                'url' => ['/user/admin'],
+                                                'visible' => Yii::$app->user->can('super_admin'), // 👈 Kondisi ditambahkan di sini
+                                            ],
+                                            ['label' => 'Atasan dan Penempatan', 'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index']],
+                                        ],
+                                    ],
+                                    [ // Submenu: Pengaturan Jam
+                                        'label' => 'Pengaturan Jam',
+                                        'icon' => 'fa fa-clock',
+                                        'items' => [
+                                            ['label' => 'Jam Kerja', 'icon' => 'fa fa-clock', 'url' => ['/jam-kerja/index']],
+                                            ['label' => 'Shift Kerja', 'icon' => 'fa fa-cogs', 'url' => ['/shift-kerja/index']],
+                                            ['label' => 'Jam Kerja Karyawan', 'icon' => 'fa fa-user-clock', 'url' => ['/jam-kerja-karyawan/index']],
+                                        ],
+                                    ],
+
+                                ],
+                            ],
+
+                            [
                                 'label' => 'Transaksi',
                                 'icon' => 'th',
                                 'items' => [
@@ -92,20 +128,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                     ],
                                 ],
                             ],
-                            [
-                                'label' => 'Pengaturan Data',
-                                'icon' => 'th',
-                                'items' => [
-                                    ['label' => 'Profile Perusahaan',  'icon' => 'fa fa-building', 'url' => ['/perusahaan/index'],],
-                                    ['label' => 'Jabatan',  'icon' => 'fa fa-user-tie', 'url' => ['/jabatan/index'],],
-                                    ['label' => 'Karyawan',  'icon' => 'fa fa-users', 'url' => ['/karyawan/index'],],
-                                    ['label' => 'Atasan dan Penempatan',  'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index'],],
-                                    ['label' => 'Jam Kerja',  'icon' => 'fa fa-clock', 'url' => ['/jam-kerja/index'],],
-                                    ['label' => 'Shift Kerja',  'icon' => 'fa fa-cogs', 'url' => ['/shift-kerja/index'],],
-                                    ['label' => 'Jam Kerja Karyawan',  'icon' => 'fa fa-user-clock', 'url' => ['/jam-kerja-karyawan/index'],],
 
-                                ],
-                            ],
                             ['label' => 'Absensi',  'icon' => 'fa fa-user-check', 'url' => ['/absensi/index'],],
                             [
                                 'label' => 'Pengajuan',

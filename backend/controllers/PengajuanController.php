@@ -190,7 +190,6 @@ class PengajuanController extends \yii\web\Controller
 
     public function actionLemburCreate()
     {
-
         $this->layout = 'mobile-main';
         $model = new PengajuanLembur();
 
@@ -202,13 +201,52 @@ class PengajuanController extends \yii\web\Controller
                 $model->pekerjaan = json_encode(Yii::$app->request->post('pekerjaan'));
                 $model->tanggal = date('Y-m-d H:i:s');
                 $model->status = 0;
+
                 $jamMulai = strtotime($model->jam_mulai);
                 $jamSelesai = strtotime($model->jam_selesai);
 
-                $selisihDetik = $jamSelesai - $jamMulai;
-                $durasi = gmdate('H:i', $selisihDetik);
+                // Jika jam selesai lebih kecil dari jam mulai, berarti sudah berbeda hari
+                if ($jamSelesai < $jamMulai) {
+                    $jamSelesai += 24 * 60 * 60; // Tambahkan 24 jam dalam detik
+                }
 
-                $model->durasi = $durasi;
+                // Menghitung selisih waktu dalam detik
+                $selisihDetik = $jamSelesai - $jamMulai;
+
+                // Mengkonversi selisih waktu ke dalam format jam:menit
+                $durasiMenit = $selisihDetik / 60; // Durasi dalam menit
+                $durasiJam = floor($durasiMenit / 60); // Durasi dalam jam (dibulatkan ke bawah)
+                $durasiMenitSisa = $durasiMenit % 60; // Sisa menit setelah dibagi jam
+
+                // Menghitung jumlah jam lembur sesuai dengan aturan yang diberikan
+                $hitunganLembur = 0;
+
+                // Hitung jam pertama (selalu 1.5 jam untuk 1 jam pertama)
+                if ($durasiJam >= 1) {
+                    $hitunganLembur += 1.5; // 1 jam pertama dihitung 1.5 jam
+                    $durasiJam -= 1; // Kurangi jam pertama
+                }
+
+                // Hitung jam berikutnya (jam kedua dan seterusnya dihitung 2 jam per jam)
+                if ($durasiJam > 0) {
+                    $hitunganLembur += $durasiJam * 2; // Setiap jam setelah jam pertama dihitung 2 jam
+                }
+
+                // Menambahkan waktu sisa menit, jika ada (pembulatan ke bawah)
+                if ($durasiMenitSisa > 0) {
+                    // Pembulatan ke bawah:
+                    if ($durasiMenitSisa >= 30) {
+                        // Jika sisa menit lebih dari atau sama dengan 30 menit, hitung setengah jam tambahan
+                        $hitunganLembur += 1; // Tambah 1 jam untuk 30 menit atau lebih
+                    } else {
+                        // Jika sisa menit kurang dari 30 menit, hitung 0,5 jam (30 menit)
+                        $hitunganLembur += 0.5; // Tambah 0.5 jam
+                    }
+                }
+
+                // Menyimpan durasi dan hitungan lembur ke dalam model
+                $model->durasi = gmdate('H:i', $selisihDetik); // Format durasi dalam jam:menit
+                $model->hitungan_jam = $hitunganLembur; // Simpan hasil perhitungan jam lembur  
                 if ($model->save()) {
 
 

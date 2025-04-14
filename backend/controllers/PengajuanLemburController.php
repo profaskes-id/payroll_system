@@ -121,14 +121,21 @@ class PengajuanLemburController extends Controller
                 $jamMulai = strtotime($model->jam_mulai);
                 $jamSelesai = strtotime($model->jam_selesai);
 
+                // Jika jam selesai lebih kecil dari jam mulai, berarti sudah berbeda hari
+                if ($jamSelesai < $jamMulai) {
+                    $jamSelesai += 24 * 60 * 60; // Tambahkan 24 jam dalam detik
+                }
+
                 // Pembulatan jam_selesai jika menitnya adalah 59
                 if (date('i', $jamSelesai) == 59) {
                     $jamSelesai = strtotime('+1 hour', $jamSelesai);
                     $jamSelesai = strtotime(date('Y-m-d H:00', $jamSelesai)); // Set menit ke 0
                 }
 
+                // Menghitung selisih waktu dalam detik
                 $selisihDetik = $jamSelesai - $jamMulai;
 
+                // Mengkonversi selisih waktu ke dalam format jam:menit
                 $model->durasi = gmdate('H:i', $selisihDetik);
 
                 // Menghitung durasi dalam menit
@@ -165,8 +172,6 @@ class PengajuanLemburController extends Controller
                 // Menyimpan hasil hitungan lembur
                 $model->hitungan_jam = $hitunganLembur;
 
-                // Debugging output
-                // dd($model);
 
                 // Simpan data pengajuan lembur
                 if ($model->save()) {

@@ -63,10 +63,19 @@ class PengajuanLemburController extends ActiveController
     $jamMulai = strtotime($request->post('jam_mulai'));
     $jamSelesai = strtotime($request->post('jam_selesai'));
 
+    // Jika jam selesai lebih kecil dari jam mulai, berarti sudah berbeda hari
+    if ($jamSelesai < $jamMulai) {
+      $jamSelesai += 24 * 60 * 60; // Tambahkan 24 jam dalam detik
+    }
+
     // Menghitung selisih waktu dalam detik
     $selisihDetik = $jamSelesai - $jamMulai;
 
     // Mengkonversi selisih waktu ke dalam format jam:menit
+    $model = new PengajuanLemburModel();
+    $model->durasi = gmdate('H:i', $selisihDetik); // Format durasi dalam jam:menit
+
+    // Menghitung durasi dalam menit
     $durasiMenit = $selisihDetik / 60; // Durasi dalam menit
     $durasiJam = floor($durasiMenit / 60); // Durasi dalam jam (dibulatkan ke bawah)
     $durasiMenitSisa = $durasiMenit % 60; // Sisa menit setelah dibagi jam
@@ -97,26 +106,25 @@ class PengajuanLemburController extends ActiveController
       }
     }
 
-    // Menyimpan durasi dan hitungan lembur ke dalam model
-    $model = new PengajuanLemburModel();
+    // Menyimpan hasil hitungan lembur
     $model->id_karyawan = $request->post('id_karyawan');
     $model->pekerjaan = $request->post('pekerjaan'); // Simpan sebagai JSON string
     $model->tanggal = $request->post('tanggal'); // Format: YYYY-MM-DD
     $model->jam_mulai = $request->post('jam_mulai');
     $model->jam_selesai = $request->post('jam_selesai');
-    $model->durasi = gmdate('H:i', $selisihDetik); // Format durasi dalam jam:menit
-    $model->hitungan_jam = $hitunganLembur; // Simpan hasil perhitungan jam lembur
+    $model->hitungan_jam = $hitunganLembur;
     $model->status = $request->post('status', 0); // Default status = 0 jika tidak ada
 
     // Simpan model ke database
+    dd($model);
     if ($model->save()) {
       // Kirim notifikasi
       $atasan = $this->getAtasanKaryawan($model->id_karyawan);
       $adminUsers = null;
       if ($atasan != null) {
-        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['id_karyawan' => $atasan['id_atasan']])->all();
+        $adminUsers = User::find()->select(['id', 'email', 'role_id'])->where(['id_karyawan' => $atasan['id_atasan']])->all();
       } else {
-        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['role_id' => [1, 3]])->all();
+        $adminUsers = User::find()->select(['id', 'email', 'role_id'])->where(['role_id' => [1, 3]])->all();
       }
 
       $params = [
@@ -126,7 +134,7 @@ class PengajuanLemburController extends ActiveController
         'id_transaksi' => $model['id_pengajuan_lembur'],
       ];
 
-      $sender = User::find()->select(['id', 'email', 'role_id',])->where(['id_karyawan' => $model->id_karyawan])->one();
+      $sender = User::find()->select(['id', 'email', 'role_id'])->where(['id_karyawan' => $model->id_karyawan])->one();
       $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan lembur Baru Dari " . $model->karyawan->nama);
 
       return [
