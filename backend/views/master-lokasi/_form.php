@@ -8,7 +8,9 @@ use yii\widgets\ActiveForm;
 /** @var yii\web\View $this */
 /** @var backend\models\MasterLokasi $model */
 /** @var yii\widgets\ActiveForm $form */
+$this->title = 'master lokasi Lokasi';
 ?>
+
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
@@ -70,14 +72,35 @@ use yii\widgets\ActiveForm;
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 <script>
-    var map = L.map('map').setView([<?= $model->latitude ?? -7.250445 ?>, <?= $model->longtitude ?? 112.768845 ?>], 13); // Koordinat default
+    // Inisialisasi peta
+    var map = L.map('map').setView([-7.250445, 112.768845], 13); // Koordinat default
 
+    // Menambahkan layer peta
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
     }).addTo(map);
 
     var marker;
 
+    // Mendapatkan lokasi saat ini
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+
+            // Set peta ke lokasi saat ini
+            map.setView([lat, lng], 13);
+            marker = L.marker([lat, lng]).addTo(map);
+            document.getElementById('lat').value = lat;
+            document.getElementById('lng').value = lng;
+        }, function() {
+            alert("Geolocation service failed.");
+        });
+    } else {
+        alert("Your browser doesn't support geolocation.");
+    }
+
+    // Event click pada peta
     map.on('click', function(e) {
         if (marker) {
             map.removeLayer(marker);
