@@ -19,7 +19,7 @@ use yii\widgets\ActiveForm;
 
     <div class="row">
 
-        <div class="col-5">
+        <div class="col-md-5">
 
             <?php $nama_kode = \yii\helpers\ArrayHelper::map(SettinganUmum::find()->all(), 'id_settingan_umum', 'nama_setting');
             echo $form->field($model, 'id_settingan_umum')->widget(\kartik\select2\Select2::classname(), [
@@ -34,7 +34,7 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
 
-        <div class="col-4">
+        <div class="col-md-4">
             <?php
             $statusOptions = [
                 0 => 'Tidak Aktif',

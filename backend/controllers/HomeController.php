@@ -691,19 +691,9 @@ class HomeController extends Controller
             } else {
                 Yii::$app->session->setFlash('error', 'Gagal mengirim pengajuan shift.');
             }
-            // $selectedShift = $post['shift_kerja']; // nama sesuai name="shift_kerja" di form
-
-            // // Update shift karyawan
-            // $nowShift->id_shift_kerja = $selectedShift;
-            // if ($nowShift->save()) {
-            //     Yii::$app->session->setFlash('success', 'Shift berhasil diubah.');
-            // } else {
-            //     Yii::$app->session->setFlash('error', 'Gagal mengubah shift.');
-            // }
 
             return $this->redirect(['pengajuan-shift']);
         }
-        // dd($allDataShift);
         return $this->render('shift/pengajuan-shift/index', [
             'model' => $model,
             'allDataShift' => $allDataShift,

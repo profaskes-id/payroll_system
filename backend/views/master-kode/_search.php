@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
     ]); ?>
 
     <div class="row">
-        <div class="col-md-5 col-6">
+        <div class="col-md-5 col-12">
             <?php $nama_group = \yii\helpers\ArrayHelper::map(MasterKode::find()->all(), 'nama_group', 'nama_group');
             echo $form->field($model, 'nama_group')->widget(Select2::classname(), [
                 'data' => $nama_group,
@@ -30,7 +30,7 @@ use yii\widgets\ActiveForm;
             ])->label(false);
             ?>
         </div>
-        <div class="col-md-4 col-6">
+        <div class="col-md-4 col-12">
             <?php $nama_kode = \yii\helpers\ArrayHelper::map(MasterKode::find()->all(), 'nama_kode', 'nama_kode');
             echo $form->field($model, 'nama_kode')->widget(Select2::classname(), [
                 'data' => $nama_kode,
@@ -44,7 +44,7 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
         <div class="col-3">
-            <div class="form-group d-flex items-center w-100  justify-content-around">
+            <div class="items-center form-group d-flex w-100 justify-content-around">
                 <button class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
                     <i class="fas fa-search"></i>
                     <span>

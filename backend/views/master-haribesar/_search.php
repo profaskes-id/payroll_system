@@ -21,10 +21,10 @@ use yii\widgets\ActiveForm;
     ]); ?>
 
     <div class="row">
-        <div class="col-md-5 col-6">
+        <div class="col-md-5 ">
             <?= $form->field($model, 'tanggal')->textInput(['type' => 'date', 'class' => 'form-control'])->label(false) ?>
         </div>
-        <div class="col-md-4 col-6">
+        <div class="col-md-4 ">
             <?php $nama_kode = \yii\helpers\ArrayHelper::map(MasterHaribesar::find()->all(), 'nama_hari', 'nama_hari');
             echo $form->field($model, 'nama_hari')->widget(Select2::classname(), [
                 'data' => $nama_kode,
@@ -38,7 +38,7 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
         <div class="col-3">
-            <div class="form-group d-flex items-center w-100  justify-content-around">
+            <div class="items-center form-group d-flex w-100 justify-content-around">
                 <button class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
                     <i class="fas fa-search"></i>
                     <span>
