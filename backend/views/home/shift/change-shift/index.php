@@ -1,0 +1,49 @@
+<?php
+
+use yii\helpers\Html;
+use yii\helpers\Url;
+?>
+
+
+
+<div class="relative z-50 max-w-md p-6 mx-auto mt-10 bg-white rounded-lg shadow-md">
+    <h2 class="mb-4 text-xl font-semibold text-indigo-600">Ubah Shift Kerja</h2>
+
+    <?php if (!empty($currentShift)): ?>
+        <div class="p-4 mb-4 bg-gray-100 rounded">
+            <p><strong>Shift Saat Ini:</strong> <?= Html::encode($currentShift['nama_shift']) ?></p>
+            <p><strong>Jam Masuk:</strong> <?= $currentShift['jam_masuk'] ?></p>
+            <p><strong>Jam Keluar:</strong> <?= $currentShift['jam_keluar'] ?></p>
+        </div>
+    <?php endif; ?>
+
+    <?php if (Yii::$app->session->hasFlash('success')): ?>
+        <div class="mb-4 text-green-600">
+            <?= Yii::$app->session->getFlash('success') ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (Yii::$app->session->hasFlash('error')): ?>
+        <div class="mb-4 text-red-600">
+            <?= Yii::$app->session->getFlash('error') ?>
+        </div>
+    <?php endif; ?>
+
+    <form method="post" action="<?= Url::to(['change-shift', 'id_karyawan' => $id_karyawan]) ?>" class="space-y-4">
+        <div>
+            <label for="shift" class="block mb-1 text-gray-700">Pilih Shift Baru</label>
+            <select name="shift_kerja" id="shift" class="w-full p-2 border rounded select2">
+                <?php foreach ($allDataShift as $shift): ?>
+                    <option value="<?= $shift['id_shift_kerja'] ?>"
+                        <?= ($shift['id_shift_kerja'] == $currentShift['id_shift_kerja']) ? 'selected' : '' ?>>
+                        <?= Html::encode($shift['nama_shift']) ?> (<?= $shift['jam_masuk'] ?> - <?= $shift['jam_keluar'] ?>)
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <button type="submit" class="w-full px-4 py-2 text-white bg-indigo-600 rounded hover:bg-indigo-700">
+            Simpan Perubahan
+        </button>
+    </form>
+</div>

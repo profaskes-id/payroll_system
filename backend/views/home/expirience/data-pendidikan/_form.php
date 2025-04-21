@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="pengalaman-kerja-form table-container">
+<div class="relative z-50 pengalaman-kerja-form table-container">
 
     <?php $form = ActiveForm::begin(); ?>
 

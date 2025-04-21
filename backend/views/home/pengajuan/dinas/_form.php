@@ -7,7 +7,7 @@ $this->title = 'Pengajuan Dinas Luar';
 
 $form = ActiveForm::begin(); ?>
 
-<div class="relative min-h-[85dvh]">
+<div class="relative min-h-[85dvh] relative">
 
 
     <div class="mb-5">

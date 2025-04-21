@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </p>
     </div>
 
-    <ol style="margin: 0 !important; padding: 0 !important">
+    <div style="margin: 0 !important; padding: 0 !important">
         <div class="table-container table-responsive">
             <p class="d-flex justify-content-start " style="gap: 10px;">
                 <?= Html::a('Tanggapi', ['update', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur], ['class' => 'add-button']) ?>
@@ -133,5 +133,5 @@ $this->params['breadcrumbs'][] = $this->title;
             ]) ?>
 
         </div>
-    </ol>
+    </div>
 </div>

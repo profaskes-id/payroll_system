@@ -7,6 +7,7 @@ use backend\models\SubkategoriExpensesSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use Yii;
 
 /**
  * SubkategoriExpensesController implements the CRUD actions for SubkategoriExpenses model.
@@ -25,6 +26,21 @@ class SubkategoriExpensesController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                    ],
+                ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'rules' => [
+
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Allow authenticated users
+                            'matchCallback' => function ($rule, $action) {
+                                $user = Yii::$app->user;
+                                // Check if the user does  have the 'admin' or 'super admin' role
+                                return $user->can('admin') || $user->can('super_admin');
+                            },
+                        ],
                     ],
                 ],
             ]

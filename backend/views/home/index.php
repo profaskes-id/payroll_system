@@ -3,6 +3,7 @@
 use backend\assets\AppAsset;
 use backend\models\Absensi;
 use backend\models\Karyawan;
+use backend\models\SettinganUmum;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -143,51 +144,90 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
+    <div data-aos="fade-up" data-aos-duration="800" class="w-[70px] h-[5px] bg-slate-900 rounded-xl   -mt-24 md:mt-10 mx-auto"></div>
 
 
-    <div data-aos="fade-up" data-aos-duration="800" class="w-[70px] h-[5px] bg-[#ede8fe]     -mt-24 md:mt-10 mx-auto"></div>
+
+    <?php if ($jamKerjaToday && $jamKerjaToday['id_shift_kerja'] != null): ?>
+
+        <?php
+        $setting = SettinganUmum::find()
+            ->where(['kode_setting' => Yii::$app->params['change_shift']])
+            ->select('nilai_setting')
+            ->scalar(); // ambil langsung nilai_setting-nya
+        ?>
+
+
+        <?php if ($setting == 1): ?>
+
+            <div class="flex justify-end w-[90%] mx-auto rounded-full overflow-hidden mt-10 relative">
+                <a class="block w-full p-3 overflow-hidden text-center text-white bg-slate-900" href="/panel/home/change-shift?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>">
+                    <div class="flex flex-row items-center justify-around overflow-hidden">
+                        <p class="font-semibold"><?= $dataShift['nama_shift'] ?? '-' ?></p>
+                        <p class="font-semibold"><?= $dataShift['jam_masuk'] ?? '-' ?></p>
+                        <p class="font-semibold"><?= $dataShift['jam_keluar'] ?? '-' ?></p>
+                    </div>
+                </a>
+            </div>
+        <?php else: ?>
+            <div class="flex justify-end w-[90%] mx-auto rounded-full overflow-hidden mt-10 relative">
+                <a class="block w-full p-3 overflow-hidden text-center text-white bg-slate-900" href="/panel/home/pengajuan-shift?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>">
+                    <div class="flex flex-row items-center justify-around overflow-hidden">
+                        <p class="font-semibold"><?= $dataShift['nama_shift'] ?? '-' ?></p>
+                        <p class="font-semibold"><?= $dataShift['jam_masuk'] ?? '-' ?></p>
+                        <p class="font-semibold"><?= $dataShift['jam_keluar'] ?? '-' ?></p>
+                    </div>
+                </a>
+            </div>
+        <?php endif; ?>
+
+
+
+    <?php endif; ?>
+
+
 
 
     <div class="relative grid w-full grid-cols-12 gap-2 px-5 mt-5 mb-20 min-w-screen">
 
         <div class="w-[120px]  aspect-square bg-[#fff] rounded-full absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2  overflow-hidden     ">
 
-            <div class=" flex justify-center items-center flex-col bg-[#ffc27c] w-full h-full rounded-[50px] rotate-180" data-aos="zoom-in" data-aos-delay="1000" style="z-index: -99999; position: relative;" data-aos-duration="500">
+            <div class=" flex justify-center items-center flex-col bg-sky-600 w-full h-full rounded-[50px] rotate-180" data-aos="zoom-in" data-aos-delay="1000" style="z-index: -99999; position: relative;" data-aos-duration="500">
             </div>
 
         </div>
 
 
         <a href="/panel/pengajuan/wfh" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-right">
-            <div class=" flex justify-center items-center flex-col bg-[#ede8fe] py-5 max-h-[200px] relative z-50 rounded-[50px] ">
+            <div class=" flex justify-center items-center flex-col bg-slate-900 py-5 max-h-[200px] relative z-50 rounded-[50px] ">
                 <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                     <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/wfh.svg" alt="calendar" width="40px" height="40px">
                 </div>
-                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-black/80"><span>Pengajuan</span> <span>WFH</span></p>
+                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white"><span>Pengajuan</span> <span>WFH</span></p>
             </div>
         </a>
         <a href="/panel/pengajuan/cuti" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-left">
-            <div class=" flex justify-center items-center flex-col bg-[#f2fee8] py-5 max-h-[200px] relative z-50 rounded-[50px] ">
+            <div class=" flex justify-center items-center flex-col bg-blue-500 py-5 max-h-[200px] relative z-50 rounded-[50px] ">
                 <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                     <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/calendar.png" alt="calendar" width="40px" height="40px">
                 </div>
-                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-black/80"><span>Pengajuan</span> <span>Cuti</span></p>
+                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white"><span>Pengajuan</span> <span>Cuti</span></p>
             </div>
         </a>
         <a href="/panel/pengajuan/lembur" class="col-span-6 " data-aos-duration="1000" data-aos="fade-up-right">
-            <div class=" flex-col col-span-6 bg-[#ffe3e3] py-5 max-h-[200px] relative z-50 rounded-[50px] flex justify-center items-center">
+            <div class=" flex-col col-span-6 bg-blue-500 py-5 max-h-[200px] relative z-50 rounded-[50px] flex justify-center items-center">
                 <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                     <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/alarm.png" alt="calendar" width="30px" height="30px">
                 </div>
-                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-black/80"><span>Pengajuan</span> <span>Lembur</span></p>
+                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white"><span>Pengajuan</span> <span>Lembur</span></p>
             </div>
         </a>
         <a href="/panel/pengajuan/dinas" class="col-span-6 " data-aos-duration="1000" data-aos="fade-up-left">
-            <div class=" flex-col col-span-6 bg-[#ebeefd] py-5 max-h-[200px] relative z-50 rounded-[50px] flex justify-center items-center">
+            <div class=" flex-col col-span-6 bg-slate-900 py-5 max-h-[200px] relative z-50 rounded-[50px] flex justify-center items-center">
                 <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                     <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/building.png" alt="building" width="30px" height="30px">
                 </div>
-                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-black/80" style="font-size: 15px !important;"><span>Pengajuan</span> <span>Dinas Luar</span></p>
+                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white" style="font-size: 15px !important;"><span>Pengajuan</span> <span>Dinas Luar</span></p>
             </div>
         </a>
     </div>

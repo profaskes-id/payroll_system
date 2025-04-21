@@ -17,6 +17,7 @@ use backend\models\Message;
 use backend\models\MessageReceiver;
 use backend\models\PengajuanCuti;
 use backend\models\PengajuanLembur;
+use backend\models\PengajuanShift;
 use backend\models\PengajuanWfh;
 use backend\models\PengalamanKerja;
 use backend\models\Pengumuman;
@@ -69,7 +70,7 @@ class HomeController extends Controller
 
     public function beforeAction($action)
     {
-        if ($action->id == 'open-message' || $action->id == 'view' || $action->id == 'expirience-pekerjaan-delete' || $action->id == 'expirience-pendidikan-delete' || $action->id == 'data-keluarga-delete' || $action->id == 'riwayat-pelatihan-delete' || $action->id == 'riwayat-kesehatan-delete') {
+        if ($action->id == 'open-message' || $action->id == 'view' || $action->id == 'expirience-pekerjaan-delete' || $action->id == 'expirience-pendidikan-delete' || $action->id == 'data-keluarga-delete' || $action->id == 'riwayat-pelatihan-delete' || $action->id == 'riwayat-kesehatan-delete' || $action->id == 'change-shift' || $action->id == 'pengajuan-shift') {
             // Menonaktifkan CSRF verification untuk aksi 'view'
             $this->enableCsrfValidation = false;
         }
@@ -106,7 +107,13 @@ class HomeController extends Controller
             $minutes = floor(($duration % 3600) / 60);
             $lama_kerja = sprintf('%02d:%02d', $hours, $minutes);
         }
-        return $this->render('index', compact('is_ada_notif', 'karyawan', 'pengumuman', 'absensi', 'lama_kerja'));
+
+        $jamKerjaToday = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
+        $dataShift = [];
+        if ($jamKerjaToday != null) {
+            $dataShift = ShiftKerja::find()->where(['id_shift_kerja' => $jamKerjaToday->id_shift_kerja])->one();
+        }
+        return $this->render('index', compact('is_ada_notif', 'karyawan', 'pengumuman', 'absensi', 'lama_kerja', 'jamKerjaToday', 'dataShift'));
     }
 
     public function actionView($id_user)
@@ -619,6 +626,92 @@ class HomeController extends Controller
             'model' => $model
         ]);
     }
+
+
+
+    // change shidt
+
+    public function actionChangeShift($id_karyawan)
+    {
+        $this->layout = 'mobile-main';
+
+        $nowShift = JamKerjaKaryawan::find()->where(['id_karyawan' => $id_karyawan])->one();
+        $allDataShift = ShiftKerja::find()->asArray()->all();
+        $currentShift = [];
+        if ($nowShift && $nowShift->id_shift_kerja) {
+            $currentShift = ShiftKerja::find()
+                ->where(['id_shift_kerja' => $nowShift->id_shift_kerja])
+                ->asArray()
+                ->one();
+        }
+
+
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post();
+            $selectedShift = $post['shift_kerja']; // nama sesuai name="shift_kerja" di form
+
+            // Update shift karyawan
+            $nowShift->id_shift_kerja = $selectedShift;
+            if ($nowShift->save()) {
+                Yii::$app->session->setFlash('success', 'Shift berhasil diubah.');
+            } else {
+                Yii::$app->session->setFlash('error', 'Gagal mengubah shift.');
+            }
+
+            return $this->redirect(['change-shift', 'id_karyawan' => $id_karyawan]);
+        }
+
+        return $this->render('shift/change-shift/index', [
+            'currentShift' => $currentShift,
+            'allDataShift' => $allDataShift,
+            'id_karyawan' => $id_karyawan,
+
+        ]);
+    }
+    public function actionPengajuanShift()
+    {
+        $this->layout = 'mobile-main';
+
+        $nowShift = JamKerjaKaryawan::find()->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan])->one();
+        $allDataShift = ShiftKerja::find()->asArray()->all();
+
+        $model = new PengajuanShift();
+
+
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post();
+            $model->load($post);
+            $model->id_karyawan = Yii::$app->user->identity->id_karyawan;
+            $model->diajukan_pada = date('Y-m-d');
+            $model->status = 0;
+
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Pengajuan Shift berhasil dikirim.');
+                return $this->redirect(['pengajuan-shift']);
+            } else {
+                Yii::$app->session->setFlash('error', 'Gagal mengirim pengajuan shift.');
+            }
+            // $selectedShift = $post['shift_kerja']; // nama sesuai name="shift_kerja" di form
+
+            // // Update shift karyawan
+            // $nowShift->id_shift_kerja = $selectedShift;
+            // if ($nowShift->save()) {
+            //     Yii::$app->session->setFlash('success', 'Shift berhasil diubah.');
+            // } else {
+            //     Yii::$app->session->setFlash('error', 'Gagal mengubah shift.');
+            // }
+
+            return $this->redirect(['pengajuan-shift']);
+        }
+        // dd($allDataShift);
+        return $this->render('shift/pengajuan-shift/index', [
+            'model' => $model,
+            'allDataShift' => $allDataShift,
+            'id_karyawan' => Yii::$app->user->identity->id_karyawan,
+
+        ]);
+    }
+
 
 
     // ?================================Expirience`

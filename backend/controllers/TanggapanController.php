@@ -11,6 +11,7 @@ use backend\models\MasterKode;
 use backend\models\PengajuanCuti;
 use backend\models\PengajuanDinas;
 use backend\models\PengajuanLembur;
+use backend\models\PengajuanShift;
 use backend\models\PengajuanWfh;
 use backend\models\PengajuanWfhSearch;
 use backend\models\RekapCuti;
@@ -656,8 +657,6 @@ class TanggapanController extends Controller
     }
 
 
-
-
     public function actionDinasView($id_pengajuan_dinas)
     {
         $this->layout = 'mobile-main';
@@ -723,6 +722,93 @@ class TanggapanController extends Controller
         Yii::$app->session->setFlash('error', 'Gagal Menghapus Pengajuan');
         return $this->redirect(['/tanggapan/dinas']);
     }
+
+
+
+
+
+    public function actionShift()
+    {
+        $this->layout = 'mobile-main';
+        $id_admin = Yii::$app->user->identity->id_karyawan;
+        $karyawanBawahanAdmin = AtasanKaryawan::find()
+            ->where(['id_atasan' => $id_admin])
+            ->asArray()
+            ->all();
+
+        $idKaryawanList = array_column($karyawanBawahanAdmin, 'id_karyawan');
+        $pengajuanShiftList = PengajuanShift::find()
+            ->where(['id_karyawan' => $idKaryawanList])
+            ->all();
+        $model = new PengajuanShift();
+        $tanggalAwal = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one();
+        $bulan = date('m');
+        $tahun = date('Y');
+        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, intval($tanggalAwal->nama_kode) + 1, $tahun));
+        $lastdate = date('Y-m-d', mktime(0, 0, 0, $bulan + 1, intval($tanggalAwal->nama_kode), $tahun));
+        $tgl_mulai =  Yii::$app->request->get() == [] ? $firstDayOfMonth :  Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_mulai'];
+        $tgl_selesai =  Yii::$app->request->get() == [] ? $lastdate :  Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_selesai'];
+
+        return $this->render('/home/tanggapan/shift/index', compact('pengajuanShiftList', 'model', 'karyawanBawahanAdmin', 'tgl_mulai', 'tgl_selesai'));
+    }
+
+
+    public function actionShiftView($id_pengajuan_shift)
+    {
+        $this->layout = 'mobile-main';
+        $model = PengajuanShift::find()->where(['id_pengajuan_shift' => $id_pengajuan_shift])->one();
+        return $this->render('/home/tanggapan/shift/view', compact('model'));
+    }
+
+
+    public function actionShiftUpdate($id)
+    {
+        $id_admin = Yii::$app->user->identity->id_karyawan;
+
+
+        $karyawanBawahanAdmin = AtasanKaryawan::find()
+            ->where(['id_atasan' => $id_admin])
+            ->asArray()
+            ->all();
+
+        $pengajuanDinas = PengajuanShift::find()->where(['id_pengajuan_shift' => $id])->one();
+
+
+        $model = PengajuanShift::findOne($id);
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->ditanggapi_oleh = Yii::$app->user->identity->id;
+            $model->ditanggapi_pada = date('Y-m-d H:i:s');
+
+            if ($model->save()) {
+                # code...
+
+                $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+                $sender = Yii::$app->user->identity->id;
+
+                $params = [
+                    'judul' => 'Pengajuan Perubahan shift',
+                    'deskripsi' => 'Pengajuan Perubahan Shift luar Anda Telah Ditanggapi Oleh Atasan.',
+                    'nama_transaksi' => "shift",
+                    'id_transaksi' => $model['id_pengajuan_shift'],
+                ];
+                $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan perubahan shift Baru Dari " . $model->karyawan->nama);
+
+
+                return $this->redirect(['/tanggapan/shift-view', 'id_pengajuan_shift' => $model->id_pengajuan_shift]);
+            }
+            Yii::$app->session->setFlash('error', 'gagal mengupdate pengajuan');
+        }
+
+
+        $this->layout = 'mobile-main';
+        return $this->render('/home/tanggapan/shift/update', [
+            'model' => $pengajuanDinas,
+            'karyawanBawahanAdmin' => $karyawanBawahanAdmin,
+        ]);
+    }
+
+
 
 
     public  function hitungHariKerja($tanggal_mulai, $tanggal_selesai, $containsNumber)

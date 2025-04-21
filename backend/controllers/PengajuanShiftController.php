@@ -2,17 +2,17 @@
 
 namespace backend\controllers;
 
-use backend\models\Faq;
-use backend\models\FaqSearch;
+use backend\models\PengajuanShift;
+use backend\models\PengajuanShiftSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use Yii;
 
 /**
- * FaqController implements the CRUD actions for Faq model.
+ * PengajuanShiftController implements the CRUD actions for PengajuanShift model.
  */
-class FaqController extends Controller
+class PengajuanShiftController extends Controller
 {
     /**
      * @inheritDoc
@@ -46,14 +46,15 @@ class FaqController extends Controller
             ]
         );
     }
+
     /**
-     * Lists all Faq models.
+     * Lists all PengajuanShift models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new FaqSearch();
+        $searchModel = new PengajuanShiftSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -63,30 +64,30 @@ class FaqController extends Controller
     }
 
     /**
-     * Displays a single Faq model.
-     * @param int $id_faq Id Faq
+     * Displays a single PengajuanShift model.
+     * @param int $id_pengajuan_shift Id Pengajuan Shift
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id_faq)
+    public function actionView($id_pengajuan_shift)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id_faq),
+            'model' => $this->findModel($id_pengajuan_shift),
         ]);
     }
 
     /**
-     * Creates a new Faq model.
+     * Creates a new PengajuanShift model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Faq();
+        $model = new PengajuanShift();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_faq' => $model->id_faq]);
+                return $this->redirect(['view', 'id_pengajuan_shift' => $model->id_pengajuan_shift]);
             }
         } else {
             $model->loadDefaultValues();
@@ -98,18 +99,18 @@ class FaqController extends Controller
     }
 
     /**
-     * Updates an existing Faq model.
+     * Updates an existing PengajuanShift model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id_faq Id Faq
+     * @param int $id_pengajuan_shift Id Pengajuan Shift
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id_faq)
+    public function actionUpdate($id_pengajuan_shift)
     {
-        $model = $this->findModel($id_faq);
+        $model = $this->findModel($id_pengajuan_shift);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_faq' => $model->id_faq]);
+            return $this->redirect(['view', 'id_pengajuan_shift' => $model->id_pengajuan_shift]);
         }
 
         return $this->render('update', [
@@ -118,29 +119,29 @@ class FaqController extends Controller
     }
 
     /**
-     * Deletes an existing Faq model.
+     * Deletes an existing PengajuanShift model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id_faq Id Faq
+     * @param int $id_pengajuan_shift Id Pengajuan Shift
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id_faq)
+    public function actionDelete($id_pengajuan_shift)
     {
-        $this->findModel($id_faq)->delete();
+        $this->findModel($id_pengajuan_shift)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Faq model based on its primary key value.
+     * Finds the PengajuanShift model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id_faq Id Faq
-     * @return Faq the loaded model
+     * @param int $id_pengajuan_shift Id Pengajuan Shift
+     * @return PengajuanShift the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id_faq)
+    protected function findModel($id_pengajuan_shift)
     {
-        if (($model = Faq::findOne(['id_faq' => $id_faq])) !== null) {
+        if (($model = PengajuanShift::findOne(['id_pengajuan_shift' => $id_pengajuan_shift])) !== null) {
             return $model;
         }
 

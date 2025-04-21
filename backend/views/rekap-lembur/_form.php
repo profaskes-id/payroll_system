@@ -10,7 +10,8 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="pengajuan-lembur-form">
+<div class="pengajuan-lembur-form table-container">
+
 
     <?php $form = ActiveForm::begin(); ?>
 
