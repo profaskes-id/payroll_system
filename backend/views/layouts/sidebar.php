@@ -100,6 +100,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                             ['label' => 'Jam Kerja', 'icon' => 'fa fa-clock', 'url' => ['/jam-kerja/index']],
                                             ['label' => 'Shift Kerja', 'icon' => 'fa fa-cogs', 'url' => ['/shift-kerja/index']],
                                             ['label' => 'Jam Kerja Karyawan', 'icon' => 'fa fa-user-clock', 'url' => ['/jam-kerja-karyawan/index']],
+                                            ['label' => 'Jadwal ShiftKaryawan', 'icon' => 'fa fa-user-clock', 'url' => ['/jadwal-shift/index']],
                                         ],
                                     ],
 
@@ -115,15 +116,12 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                     ['label' => 'Tunjangan Karyawan',  'icon' => 'fa fa-user-tie', 'url' => ['/tunjangan-detail/index'],],
                                     // ['label' => 'Potongan',  'icon' => 'fa fa-minus-circle', 'url' => ['/potongan/index'],],
                                     ['label' => 'Potongan Karyawan',  'icon' => 'fa fa-user-slash', 'url' => ['/potongan-detail/index'],],
-                                    // ['label' => 'Potongan Gaji',  'icon' => 'fa fa-dollar-sign', 'url' => ['/gaji-potongan/index'],],
-                                    // ['label' => 'Tunjangan Gaji',  'icon' => 'fa fa-money-bill-wave', 'url' => ['/gaji-tunjangan/index'],],
                                     [
                                         'label' => 'Pengeluaran',
                                         'icon' => 'th',
                                         'items' => [
                                             ['label' => 'Kategori',  'icon' => 'fa fa-building', 'url' => ['/kategori-expenses/index'],],
                                             ['label' => 'Sub Kategori',  'icon' => 'fa fa-user-tie', 'url' => ['/subkategori-expenses/index'],],
-                                            // ['label' => 'Header',  'icon' => 'fa fa-users', 'url' => ['/expenses-header/index'],],
                                             ['label' => 'Biaya & Beban',  'icon' => 'fa fa-users', 'url' => ['/expenses-detail/index'],],
                                         ],
                                     ],
@@ -140,6 +138,12 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                     ['label' => 'Pengajuan lembur',  'icon' => 'fa fa-hourglass', 'url' => ['/pengajuan-lembur/index'],],
                                     ['label' => 'Pengajuan Dinas',  'icon' => 'fa fa-map-marker-alt', 'url' => ['/pengajuan-dinas/index'],],
                                     ['label' => 'Penggantian Shift',  'icon' => 'fa fa fa-briefcase', 'url' => ['/pengajuan-shift/index'],],
+                                    [
+                                        'label' => 'Pulang Cepat <span class="right badge badge-warning">' . $jumlahPulangCepatToday . '</span>',
+                                        'icon' => 'fas fa-clock',
+                                        'url' => ['/izin-pulang-cepat/index'],
+                                        'options' => ['class' => 'nav-item'], // Opsional, untuk styling
+                                    ],
                                 ],
                             ],
                             [
@@ -148,18 +152,10 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                 'items' => [
                                     ['label' => 'Rekap Absensi',  'icon' => 'fa fa-table', 'url' => ['/rekap-absensi/index'],],
                                     ['label' => 'Rekap Cuti',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-cuti/index'],],
-                                    // ['label' => 'Rekap Lembur',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-lembur/index'],],
-                                    // ['label' => 'Rekap dinas',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-dinas/index'],],
-                                    // ['label' => 'Rekap WFH',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-wfh/index'],],
                                 ],
                             ],
                             ['label' => 'Pengumuman',  'icon' => 'fa fa-bullhorn', 'url' => ['/pengumuman/index'],],
-                            [
-                                'label' => 'Pulang Cepat <span class="right badge badge-warning">' . $jumlahPulangCepatToday . '</span>',
-                                'icon' => 'fas fa-clock',
-                                'url' => ['/izin-pulang-cepat/index'],
-                                'options' => ['class' => 'nav-item'], // Opsional, untuk styling
-                            ],
+
                             ['label' => 'Download Mobile App',  'icon' => 'fa fa-mobile ', 'url' => ['/download/index'],],
 
                         ],
@@ -184,6 +180,8 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                     ['label' => 'Jam Kerja',  'icon' => 'fa fa-clock', 'url' => ['/jam-kerja/index'],],
                                     ['label' => 'Shift Kerja',  'icon' => 'fa fa-cogs', 'url' => ['/shift-kerja/index'],],
                                     ['label' => 'Jam Kerja Karyawan',  'icon' => 'fa fa-user-clock', 'url' => ['/jam-kerja-karyawan/index'],],
+                                    ['label' => 'Jadwal Shift Karyawan', 'icon' => 'fa fa-calendar-check', 'url' => ['/jadwal-shift/index']],
+
 
                                 ],
                             ],

@@ -73,6 +73,22 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
+                'attribute' => 'tanggal_awal',
+                'label' => "Tanggal Awal",
+                'value' => function ($model) {
+                    $tanggal = new Tanggal();
+                    return $tanggal->getIndonesiaFormatTanggal($model->tanggal_awal);
+                }
+            ],
+            [
+                'attribute' => 'tanggal_akhir',
+                'label' => "Tanggal Akhir",
+                'value' => function ($model) {
+                    $tanggal = new Tanggal();
+                    return $tanggal->getIndonesiaFormatTanggal($model->tanggal_akhir);
+                }
+            ],
+            [
                 'attribute' => 'diajukan_pada',
                 'label' => "Diajukan Pada",
                 'value' => function ($model) {

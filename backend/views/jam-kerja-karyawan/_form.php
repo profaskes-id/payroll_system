@@ -48,9 +48,11 @@ use yii\widgets\ActiveForm;
         <div class="col-12">
             <?php
             $shiftKerja = new ShiftKerja();
-            $data = $shiftKerja->getShiftKerjaAll();
-            $nama_kode = \yii\helpers\ArrayHelper::map($data, 'id_shift_kerja', 'tampilan');
-            echo $form->field($model, 'id_shift_kerja')->radioList($nama_kode, [
+            $data  = [
+                0 => "Non Shift ",
+                1 => "Shift ",
+            ];
+            echo $form->field($model, 'is_shift')->radioList($data, [
                 'item' => function ($index, $label, $name, $checked, $value) {
                     return Html::radio($name, $checked, [
                         'class' => 'radio',

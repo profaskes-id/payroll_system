@@ -207,12 +207,11 @@ class RekapAbsensiController extends Controller
 
         //    ! get all data dari tanggal awal dan akhir bulan
         $tanggal_bulanan = $model->getTanggalFromFirstAndLastMonth($bulan, $tahun);
-
         //! get detail data karyawan, data pekerjaan, bagian, nama jam kerja
         $dataKaryawan = $model->getAllDetailDataKaryawan($karyawan);
 
         // memasukan absensi ke masing masing data karyawan
-        $absensiAndTelat = $model->getIncludeKaryawanAndAbsenData($bulan, $tahun, $dataKaryawan, $absensi);
+        $absensiAndTelat = $model->getIncludeKaryawanAndAbsenData($bulan, $tahun, $dataKaryawan, $absensi, $firstDayOfMonth, $lastDayOfMonth);
         $keterlambatanPerTanggal = $absensiAndTelat['keterlambatanPerTanggal'];
 
         $rekapanAbsensi = [];

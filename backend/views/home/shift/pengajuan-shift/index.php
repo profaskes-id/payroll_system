@@ -43,6 +43,17 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'id_shift_kerja')->dropDownList($pendidikan, ['class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5', 'prompt' => 'Select shift kerja'])->label('Shift Kerja') ?>
         </div>
 
+        <div class="col-12">
+            <?= $form->field($model, 'tanggal_awal')->input('date', [
+                'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
+            ])->label('Tanggal Awal') ?>
+        </div>
+
+        <div class="col-12">
+            <?= $form->field($model, 'tanggal_akhir')->input('date', [
+                'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
+            ])->label('Tanggal Akhir') ?>
+        </div>
 
 
         <?= Html::submitButton('Simpan Perubahan', [

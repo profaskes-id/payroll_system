@@ -17,6 +17,8 @@ class m250415_155114_create_pengajuan_shift_table extends Migration
             'id_karyawan' => $this->integer()->notNull(),
             'id_shift_kerja' => $this->integer()->notNull(),
             'diajukan_pada' => $this->date()->notNull(),
+            'tanggal_awal' => $this->date()->notNull(),
+            'tanggal_akhir' => $this->date()->notNull(),
             'status' => $this->smallInteger()->defaultValue(0),
             'ditanggapi_oleh' => $this->integer()->null(),
             'ditanggapi_pada' => $this->date()->null(),

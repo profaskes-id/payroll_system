@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\JadwalShift;
 use backend\models\PengajuanShift;
 use backend\models\PengajuanShiftSearch;
 use yii\web\Controller;
@@ -109,7 +110,57 @@ class PengajuanShiftController extends Controller
     {
         $model = $this->findModel($id_pengajuan_shift);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+
+            if ($model->status == '1') {
+
+                $tanggalMulai = $model['tanggal_awal']; // dari form
+                $tanggalSelesai = $model['tanggal_akhir']; // dari form
+                $start = new \DateTime($tanggalMulai);
+                $end = new \DateTime($tanggalSelesai);
+                $end = $end->modify('+1 day'); // supaya termasuk tanggal selesai
+
+                $successCount = 0;
+                $failedCount = 0;
+
+                $interval = new \DateInterval('P1D');
+                $dateRange = new \DatePeriod($start, $interval, $end);
+
+                foreach ($dateRange as $date) {
+                    $tanggal = $date->format('Y-m-d');
+
+                    // Cek apakah data untuk tanggal & karyawan ini sudah ada
+                    $jadwal = JadwalShift::findOne([
+                        'id_karyawan' => $model->id_karyawan,
+                        'tanggal' => $tanggal
+                    ]);
+
+
+
+
+                    if (!$jadwal) {
+                        $jadwal = new JadwalShift();
+                        $jadwal->id_karyawan = $model->id_karyawan;
+                        $jadwal->tanggal = $tanggal;
+                        $jadwal->id_shift_kerja = $model->id_shift_kerja;
+                    }
+                    $jadwal->id_shift_kerja = $model->id_shift_kerja;
+
+                    if ($jadwal->save()) {
+                        $successCount++;
+                    } else {
+                        $failedCount++;
+                    }
+                }
+                if ($successCount > 0) {
+                    Yii::$app->session->setFlash('success', "$successCount shift berhasil diubah.");
+                }
+                if ($failedCount > 0) {
+                    Yii::$app->session->setFlash('error', "$failedCount shift gagal diubah.");
+                }
+            }
+            $model->save();
+
             return $this->redirect(['view', 'id_pengajuan_shift' => $model->id_pengajuan_shift]);
         }
 

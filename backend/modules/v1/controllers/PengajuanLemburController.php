@@ -9,6 +9,7 @@ use backend\models\helpers\MobileNotificationHelper;
 use Yii;
 use backend\models\helpers\NotificationHelper;
 use backend\models\PengajuanLembur as PengajuanLemburModel;
+use backend\models\SettinganUmum;
 use yii\rest\ActiveController;
 use yii\web\NotFoundHttpException;
 
@@ -27,11 +28,8 @@ class PengajuanLemburController extends ActiveController
   public function actionCreate()
   {
     Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-    // Ambil data dari request
     $request = Yii::$app->request;
 
-    // Validasi field yang diperlukan
     $requiredFields = [
       'id_karyawan' => 'Karyawan tidak boleh kosong.',
       'pekerjaan' => 'Pekerjaan tidak boleh kosong.',
@@ -43,84 +41,65 @@ class PengajuanLemburController extends ActiveController
     $errors = [];
     foreach ($requiredFields as $field => $message) {
       if (!$request->post($field)) {
-        $errors[] = [
-          'field' => $field,
-          'message' => $message,
-        ];
+        $errors[] = ['field' => $field, 'message' => $message];
       }
     }
 
-    // Jika ada error, kembalikan response error
     if (!empty($errors)) {
-      Yii::$app->response->statusCode = 400; // Bad Request
+      Yii::$app->response->statusCode = 400;
       return [
         'status' => 'error',
         'errors' => $errors,
       ];
     }
 
-    // Menghitung durasi lembur
     $jamMulai = strtotime($request->post('jam_mulai'));
     $jamSelesai = strtotime($request->post('jam_selesai'));
-
-    // Jika jam selesai lebih kecil dari jam mulai, berarti sudah berbeda hari
     if ($jamSelesai < $jamMulai) {
-      $jamSelesai += 24 * 60 * 60; // Tambahkan 24 jam dalam detik
+      $jamSelesai += 24 * 60 * 60;
     }
 
-    // Menghitung selisih waktu dalam detik
     $selisihDetik = $jamSelesai - $jamMulai;
+    $durasiMenit = $selisihDetik / 60;
+    $durasiJam = floor($durasiMenit / 60);
+    $durasiMenitSisa = $durasiMenit % 60;
 
-    // Mengkonversi selisih waktu ke dalam format jam:menit
-    $model = new PengajuanLemburModel();
-    $model->durasi = gmdate('H:i', $selisihDetik); // Format durasi dalam jam:menit
+    // Ambil settingan kalkulasi_jam_lembur
+    $settingKalkulasi = SettinganUmum::find()
+      ->where(['kode_setting' => 'kalkulasi_jam_lembur'])
+      ->one();
 
-    // Menghitung durasi dalam menit
-    $durasiMenit = $selisihDetik / 60; // Durasi dalam menit
-    $durasiJam = floor($durasiMenit / 60); // Durasi dalam jam (dibulatkan ke bawah)
-    $durasiMenitSisa = $durasiMenit % 60; // Sisa menit setelah dibagi jam
-
-    // Menghitung jumlah jam lembur sesuai dengan aturan yang diberikan
     $hitunganLembur = 0;
 
-    // Hitung jam pertama (selalu 1.5 jam untuk 1 jam pertama)
-    if ($durasiJam >= 1) {
-      $hitunganLembur += 1.5; // 1 jam pertama dihitung 1.5 jam
-      $durasiJam -= 1; // Kurangi jam pertama
-    }
-
-    // Hitung jam berikutnya (jam kedua dan seterusnya dihitung 2 jam per jam)
-    if ($durasiJam > 0) {
-      $hitunganLembur += $durasiJam * 2; // Setiap jam setelah jam pertama dihitung 2 jam
-    }
-
-    // Menambahkan waktu sisa menit, jika ada (pembulatan ke bawah)
-    if ($durasiMenitSisa > 0) {
-      // Pembulatan ke bawah:
-      if ($durasiMenitSisa >= 30) {
-        // Jika sisa menit lebih dari atau sama dengan 30 menit, hitung setengah jam tambahan
-        $hitunganLembur += 1; // Tambah 1 jam untuk 30 menit atau lebih
-      } else {
-        // Jika sisa menit kurang dari 30 menit, hitung 0,5 jam (30 menit)
-        $hitunganLembur += 0.5; // Tambah 0.5 jam
+    if ($settingKalkulasi !== null && intval($settingKalkulasi->nilai_setting) === 0) {
+      // Versi pengali 1.5 dan 2.0
+      if ($durasiJam >= 1) {
+        $hitunganLembur += 1.5;
+        $durasiJam -= 1;
       }
+      if ($durasiJam > 0) {
+        $hitunganLembur += $durasiJam * 2;
+      }
+      if ($durasiMenitSisa > 0) {
+        $hitunganLembur += ($durasiMenitSisa >= 30) ? 1 : 0.5;
+      }
+    } else {
+      // Versi 1:1 (normal)
+      $hitunganLembur = round($durasiMenit / 60, 2);
     }
 
-    // Menyimpan hasil hitungan lembur
+    $model = new PengajuanLemburModel();
     $model->id_karyawan = $request->post('id_karyawan');
-    $model->pekerjaan = $request->post('pekerjaan'); // Simpan sebagai JSON string
-    $model->tanggal = $request->post('tanggal'); // Format: YYYY-MM-DD
+    $model->pekerjaan = $request->post('pekerjaan');
+    $model->tanggal = $request->post('tanggal');
     $model->jam_mulai = $request->post('jam_mulai');
     $model->jam_selesai = $request->post('jam_selesai');
+    $model->durasi = gmdate('H:i', $selisihDetik);
     $model->hitungan_jam = $hitunganLembur;
-    $model->status = $request->post('status', 0); // Default status = 0 jika tidak ada
+    $model->status = $request->post('status', 0);
 
-    // Simpan model ke database
-    dd($model);
     if ($model->save()) {
-      // Kirim notifikasi
       $atasan = $this->getAtasanKaryawan($model->id_karyawan);
-      $adminUsers = null;
       if ($atasan != null) {
         $adminUsers = User::find()->select(['id', 'email', 'role_id'])->where(['id_karyawan' => $atasan['id_atasan']])->all();
       } else {
@@ -143,7 +122,7 @@ class PengajuanLemburController extends ActiveController
         'data' => $model,
       ];
     } else {
-      Yii::$app->response->statusCode = 500; // Internal Server Error
+      Yii::$app->response->statusCode = 500;
       return [
         'status' => 'error',
         'message' => 'Gagal menyimpan data.',
@@ -151,7 +130,6 @@ class PengajuanLemburController extends ActiveController
       ];
     }
   }
-
 
 
   public function actionCustomUpdate($id)
@@ -234,28 +212,51 @@ class PengajuanLemburController extends ActiveController
         // Menghitung jumlah jam lembur sesuai dengan aturan yang diberikan
         $hitunganLembur = 0;
 
-        // Hitung jam pertama (selalu 1.5 jam untuk 1 jam pertama)
-        if ($durasiJam >= 1) {
-          $hitunganLembur += 1.5; // 1 jam pertama dihitung 1.5 jam
-          $durasiJam -= 1; // Kurangi jam pertama
-        }
+        // Perhitungan durasi lembur
+        if (isset($bodyParams['jam_mulai']) && isset($bodyParams['jam_selesai'])) {
+          $jamMulai = strtotime($bodyParams['jam_mulai']);
+          $jamSelesai = strtotime($bodyParams['jam_selesai']);
 
-        // Hitung jam berikutnya (jam kedua dan seterusnya dihitung 2 jam per jam)
-        if ($durasiJam > 0) {
-          $hitunganLembur += $durasiJam * 2; // Setiap jam setelah jam pertama dihitung 2 jam
-        }
-
-        // Menambahkan waktu sisa menit, jika ada (pembulatan ke bawah)
-        if ($durasiMenitSisa > 0) {
-          // Pembulatan ke bawah:
-          if ($durasiMenitSisa >= 30) {
-            // Jika sisa menit lebih dari atau sama dengan 30 menit, hitung setengah jam tambahan
-            $hitunganLembur += 1; // Tambah 1 jam untuk 30 menit atau lebih
-          } else {
-            // Jika sisa menit kurang dari 30 menit, hitung 0,5 jam (30 menit)
-            $hitunganLembur += 0.5; // Tambah 0.5 jam
+          // Jika jam selesai lebih kecil dari jam mulai, berarti sudah beda hari
+          if ($jamSelesai < $jamMulai) {
+            $jamSelesai += 24 * 60 * 60;
           }
+
+          $selisihDetik = $jamSelesai - $jamMulai;
+          $durasiMenit = $selisihDetik / 60;
+          $durasiJam = floor($durasiMenit / 60);
+          $durasiMenitSisa = $durasiMenit % 60;
+
+          // Ambil setting kalkulasi jam lembur
+          $settingKalkulasi = SettinganUmum::find()
+            ->where(['kode_setting' => 'kalkulasi_jam_lembur'])
+            ->one();
+
+          $hitunganLembur = 0;
+
+          if ($settingKalkulasi !== null && intval($settingKalkulasi->nilai_setting) === 0) {
+            // Perhitungan versi pengali: 1.5 dan 2
+            if ($durasiJam >= 1) {
+              $hitunganLembur += 1.5;
+              $durasiJam -= 1;
+            }
+
+            if ($durasiJam > 0) {
+              $hitunganLembur += $durasiJam * 2;
+            }
+
+            if ($durasiMenitSisa > 0) {
+              $hitunganLembur += ($durasiMenitSisa >= 30) ? 1 : 0.5;
+            }
+          } else {
+            // Perhitungan 1:1
+            $hitunganLembur = round($durasiMenit / 60, 2);
+          }
+
+          $model->durasi = gmdate('H:i', $selisihDetik);
+          $model->hitungan_jam = $hitunganLembur;
         }
+
 
         // Update durasi dan hitungan lembur
         $model->durasi = gmdate('H:i', $selisihDetik); // Format durasi dalam jam:menit

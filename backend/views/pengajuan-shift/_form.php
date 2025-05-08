@@ -46,6 +46,14 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
 
+        <div class="col-md-6">
+            <?= $form->field($model, 'tanggal_awal')->input('date')->label('Tanggal Awal') ?>
+        </div>
+
+        <div class="col-md-6">
+            <?= $form->field($model, 'tanggal_akhir')->input('date')->label('Tanggal Akhir') ?>
+        </div>
+
 
 
         <div class="col-md-6">

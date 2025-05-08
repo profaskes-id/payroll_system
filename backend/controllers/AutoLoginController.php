@@ -63,7 +63,6 @@ class AutoLoginController extends Controller
             $user->newPassword = $password;
             $user->setRegisterAttributes(2, 1);
             $user->base_url = Yii::$app->params['base_url'];
-
             if ($user->save()) {
                 // Simpan profil user ke database utama (db)
                 $profile = new Profile();

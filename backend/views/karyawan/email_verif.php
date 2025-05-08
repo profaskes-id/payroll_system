@@ -3,100 +3,100 @@
 use backend\models\MasterKode;
 
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback');
-
-// $whatsappMasterCode = MasterKode::findOne(['group' => 'whatsapp', 'kode' => 'WA01']);
-// $whatsappAdmin = $whatsappMasterCode->kode_name ?? '';
-// $emailMasterCode = MasterKode::findOne(['group' => 'email', 'kode' => 'EM01']);
-// $emailAdmin = $emailMasterCode->kode_name ?? '';
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
-            font-family: "Roboto Condensed", sans-serif;
-            background: rgba(0, 0, 0, 0.05);
+            font-family: "Source Sans Pro", sans-serif;
+            background-color: #f5f6fa;
+            margin: 0;
+            padding: 0;
         }
 
         .center-card {
-            width: 100%;
             max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
+            margin: 40px auto;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         .card-header {
-            margin: 30px auto;
-            padding-top: 20px;
-            width: 100%;
-            max-width: 800px;
-            background-color: #0d6efd;
+            background-color: #007bff;
             color: white;
             text-align: center;
-            padding-bottom: 10px;
-            border-radius: 10px;
+            padding: 20px;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
 
         .content-card {
-            border-radius: 10px;
-            background-color: #fff;
-            width: 100%;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
+            background-color: #ffffff;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .card-body {
-            padding: 20px;
+        .login-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            color: #ffffff;
+            background-color: #007bff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
         }
 
-        .imgbox {
-            width: 90%;
-            margin: auto;
+        .login-link:hover {
+            background-color: #0056b3;
+        }
 
-            border-radius: 10px;
+        .card-body p {
+            line-height: 1.8;
+            font-size: 16px;
+            color: #333;
+        }
 
+        img {
+            max-width: 100%;
+            border-radius: 10px 10px 0 0;
         }
     </style>
 </head>
 
 <body>
-    <div class="row">
-        <div class="center-card col-md-8 mx-auto"> <!-- Tambahkan kelas mx-auto untuk menengahkan card -->
-            <div class="card card-info card-outline">
-                <picture>
-                    <source media="(max-width: 768px)" srcset="https://www.profaskes.id/images/others/email-phone.jpg">
-                    <source media="(min-width: 769px)" srcset="https://www.profaskes.id/images/others/email.jpg">
-                    <img src="https://www.profaskes.id/images/others/email-phone.jpg" alt="Gambar default">
-                </picture>
+    <div class="center-card">
+        <div class="card-header">
+            Akses Payroll Profaskes
+        </div>
+        <picture>
+            <source media="(max-width: 768px)" srcset="https://www.profaskes.id/images/others/email-phone.jpg">
+            <source media="(min-width: 769px)" srcset="https://www.profaskes.id/images/others/email.jpg">
+            <img src="https://www.profaskes.id/images/others/email-phone.jpg" alt="Ilustrasi Email">
+        </picture>
 
-                <div class="content-card">
-                    <div class="card-body">
-                        <h2 style="text-transform : capitalize;">Akses Payroll Profaskes </h2>
+        <div class="content-card">
+            <div class="card-body">
+                <p>Yth. Pengguna,</p>
 
-                        <p>
-                            Dear,
-                            <br />
-                            Anda telah di daftarkan dalan sistem payroll profaskes.id, berikut adalah akses masuk ke akun anda
-                            <br />
-                            <br />
-                        </p>
+                <p>Anda telah didaftarkan dalam sistem payroll <strong>Profaskes.id</strong>. Berikut adalah tautan untuk mengakses akun Anda:</p>
 
-                        <p>Anda Dapat Login Menggunakan Link berikut</p>
-                        <?= Yii::getAlias('@root') . '/panel/auto-login/login?token=' . $ciphertext . '&id=' . $model->kode_karyawan ?>
-                        <br />
-                        <br />
-                        harap untuk melakukan penggantian password di profil aplikasi anda demi keamanan akun anda
+                <a class="login-link" href="<?= Yii::getAlias('@root') . '/panel/auto-login/login?token=' . $ciphertext . '&id=' . $model->kode_karyawan ?>">
+                    Klik di sini untuk Login
+                </a>
 
-                        Terima kasih atas perhatian Anda dan selamat menggunakan layanan kami.
-                        </p>
+                <p>Setelah berhasil login, harap segera mengganti kata sandi Anda melalui menu profil untuk menjaga keamanan akun.</p>
 
-                        <p>Admin Profaskes</p>
-                    </div>
-                </div>
+                <p>Terima kasih atas perhatian Anda.</p>
+
+                <p>Hormat kami,<br>Admin Profaskes</p>
             </div>
         </div>
     </div>

@@ -148,7 +148,7 @@ class Absensi extends \yii\db\ActiveRecord
                 'mk.nama_kode as jabatan',
                 'thk.total_hari',
                 'jk.nama_jam_kerja',
-                'jkk.id_shift_kerja',
+                'jkk.is_shift',
             ])
             ->asArray()
             ->where(['karyawan.is_aktif' => 1])
@@ -165,18 +165,44 @@ class Absensi extends \yii\db\ActiveRecord
 
 
 
-    static function getIncludeKaryawanAndAbsenData($bulan, $tahun, $dataKaryawan, $absensi)
+    static function getIncludeKaryawanAndAbsenData($bulan, $tahun, $dataKaryawan, $absensi, $firstDayOfMonth, $lastDayOfMonth)
     {
+
+
+        $lemburData = PengajuanLembur::find()
+            ->where(['between', 'tanggal', $firstDayOfMonth, $lastDayOfMonth])
+            // ->andWhere(['status' => 1]) // status 1 = disetujui, sesuaikan jika beda
+            ->asArray()
+            ->all();
+
+
+
+
+
+        $lemburPerKaryawan = [];
+
+        foreach ($lemburData as $lembur) {
+            $id = $lembur['id_karyawan'];
+            $jam = $lembur['hitungan_jam'] ?? 0;
+
+            if (!isset($lemburPerKaryawan[$id])) {
+                $lemburPerKaryawan[$id] = [
+                    'total_lembur' => 0,
+                    'jumlah_jam_lembur' => 0,
+                ];
+            }
+
+            $lemburPerKaryawan[$id]['total_lembur'] += 1;
+            $lemburPerKaryawan[$id]['jumlah_jam_lembur'] += (float) $jam;
+        }
+
+
         // ====================================================
         $hasil = [];
         $totalHari = date('t', mktime(0, 0, 0, $bulan, 1, $tahun));
         $totalTerlambat = 0;
         $totalHadir = 0;
         $detikTerlambat = 0;
-        $dataJamMasukKantor = "00:00:00";
-
-
-
 
         $keterlambatanPerTanggal = array_fill(1, $totalHari, 0);
 
@@ -227,20 +253,6 @@ class Absensi extends \yii\db\ActiveRecord
 
 
                         if ($statusHadir == 'H') {
-                            $jamMasuk = strtotime($record['jam_masuk']);
-
-                            if ($record['jam_masuk_kerja'] == null) {
-                                if ($karyawan['id_shift_kerja'] == null) {
-                                    $jamMasukKerja = strtotime($record['jam_masuk_kerja'] ?? "08:00:00");
-                                } else {
-
-                                    $sk = ShiftKerja::findOne(['id_shift_kerja' => $karyawan['id_shift_kerja']]);
-                                    $jamMasukKerja = strtotime($sk->jam_mulai ?? "08:00:00");
-                                }
-                            } else {
-                                $jamMasukKerja = strtotime($record['jam_masuk_kerja'] ?? "08:00:00");
-                            }
-
                             if ($record['is_terlambat'] == 1 && $record['is_lembur'] == 0 && $record['is_wfh'] == 0) {
                                 $is_terlambat = 1;
                                 $lama_terlambat = $record['lama_terlambat'];
@@ -288,6 +300,21 @@ class Absensi extends \yii\db\ActiveRecord
                     'jam_masuk_karyawan' => null,
                     'jam_masuk_kantor' => null,
                     'detik_terlambat' => $detikTerlambat,
+                ];
+                $idKaryawan = $karyawan['id_karyawan'];
+                $lemburInfo = $lemburPerKaryawan[$idKaryawan] ?? ['total_lembur' => 0, 'jumlah_jam_lembur' => 0];
+
+                $karyawanData[] = [
+                    'status_hadir' => null,
+                    'jam_masuk_karyawan' => null,
+                    'jam_masuk_kantor' => null,
+                    'total_lembur' => $lemburInfo['total_lembur'],
+                ];
+                $karyawanData[] = [
+                    'status_hadir' => null,
+                    'jam_masuk_karyawan' => null,
+                    'jam_masuk_kantor' => null,
+                    'jumlah_jam_lembur' => $lemburInfo['jumlah_jam_lembur'],
                 ];
             }
 

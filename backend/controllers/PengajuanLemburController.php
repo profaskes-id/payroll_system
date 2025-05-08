@@ -8,6 +8,7 @@ use backend\models\helpers\NotificationHelper;
 use backend\models\MasterKode;
 use backend\models\PengajuanLembur;
 use backend\models\PengajuanLemburSearch;
+use backend\models\SettinganUmum;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -146,32 +147,43 @@ class PengajuanLemburController extends Controller
                 // Menghitung jumlah jam lembur sesuai dengan aturan yang diberikan
                 $hitunganLembur = 0;
 
-                // Hitung jam pertama (selalu 1.5 jam untuk 1 jam pertama)
-                if ($durasiJam >= 1) {
-                    $hitunganLembur += 1.5; // 1 jam pertama dihitung 1.5 jam
-                    $durasiJam -= 1; // Kurangi jam pertama
-                }
+                // Ambil settingan umum kalkulasi_jam_lembur
+                $settingKalkulasi = SettinganUmum::find()
+                    ->where(['kode_setting' => 'kalkulasi_jam_lembur'])
+                    ->one();
 
-                // Hitung jam berikutnya (jam kedua dan seterusnya dihitung 2 jam per jam)
-                if ($durasiJam > 0) {
-                    $hitunganLembur += $durasiJam * 2; // Setiap jam setelah jam pertama dihitung 2 jam
-                }
 
-                // Menambahkan waktu sisa menit, jika ada (pembulatan ke bawah)
-                if ($durasiMenitSisa > 0) {
-                    // Pembulatan ke bawah:
-                    if ($durasiMenitSisa >= 30) {
-                        // Jika sisa menit lebih dari atau sama dengan 30 menit, hitung setengah jam tambahan
-                        $hitunganLembur += 1; // Tambah 1 jam untuk 30 menit atau lebih
-                    } else {
-                        // Jika sisa menit kurang dari 30 menit, hitung 0,5 jam (30 menit)
-                        $hitunganLembur += 0.5; // Tambah 0.5 jam
+                $hitunganLembur = 0;
+
+                if ($settingKalkulasi && $settingKalkulasi->nilai_setting == 0) {
+                    // Perhitungan versi 1 (seperti sebelumnya)
+
+                    // Hitung jam pertama (selalu 1.5 jam untuk 1 jam pertama)
+                    if ($durasiJam >= 1) {
+                        $hitunganLembur += 1.5; // 1 jam pertama dihitung 1.5 jam
+                        $durasiJam -= 1; // Kurangi jam pertama
                     }
+
+                    // Hitung jam berikutnya (jam kedua dan seterusnya dihitung 2 jam per jam)
+                    if ($durasiJam > 0) {
+                        $hitunganLembur += $durasiJam * 2; // Setiap jam setelah jam pertama dihitung 2 jam
+                    }
+
+                    // Menambahkan waktu sisa menit
+                    if ($durasiMenitSisa > 0) {
+                        if ($durasiMenitSisa >= 30) {
+                            $hitunganLembur += 1; // Tambah 1 jam
+                        } else {
+                            $hitunganLembur += 0.5; // Tambah 0.5 jam
+                        }
+                    }
+                } else {
+                    // Perhitungan versi 2 (1:1, tanpa pengali)
+                    $hitunganLembur = round($durasiMenit / 60, 2); // Hitung jam lembur dengan 2 digit desimal
                 }
 
                 // Menyimpan hasil hitungan lembur
                 $model->hitungan_jam = $hitunganLembur;
-
 
                 // Simpan data pengajuan lembur
                 if ($model->save()) {

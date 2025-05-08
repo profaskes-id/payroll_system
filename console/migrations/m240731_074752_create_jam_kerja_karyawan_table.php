@@ -17,6 +17,7 @@ class m240731_074752_create_jam_kerja_karyawan_table extends Migration
             'id_karyawan' => $this->integer()->notNull(),
             'id_jam_kerja' => $this->integer()->notNull(),
             'max_terlambat' => $this->time()->notNull()->defaultValue('00:00:00'),
+            'is_shift' => $this->integer()->notNull()->defaultValue(0),
         ]);
 
         $this->createIndex(

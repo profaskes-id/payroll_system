@@ -13,6 +13,7 @@ use backend\models\PengajuanDinas;
 use backend\models\PengajuanLembur;
 use backend\models\PengajuanWfh;
 use backend\models\RekapCuti;
+use backend\models\SettinganUmum;
 use DateTime;
 use Yii;
 use yii\filters\VerbFilter;
@@ -114,6 +115,8 @@ class PengajuanController extends \yii\web\Controller
         $rekapCuti = RekapCuti::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tahun' => date('Y')])->all();
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
+                $model->tanggal_mulai = $this->request->post('PengajuanCuti')['tanggal_mulai'];
+                $model->tanggal_selesai = $this->request->post('PengajuanCuti')['tanggal_selesai'];
                 $model->id_karyawan = $karyawan->id_karyawan;
                 $model->tanggal_pengajuan = date('Y-m-d H:i:s');
                 $model->jenis_cuti = Yii::$app->request->post('jenis_cuti');
@@ -192,8 +195,8 @@ class PengajuanController extends \yii\web\Controller
     {
         $this->layout = 'mobile-main';
         $model = new PengajuanLembur();
-
         $poinArray = [];
+
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
@@ -205,57 +208,57 @@ class PengajuanController extends \yii\web\Controller
                 $jamMulai = strtotime($model->jam_mulai);
                 $jamSelesai = strtotime($model->jam_selesai);
 
-                // Jika jam selesai lebih kecil dari jam mulai, berarti sudah berbeda hari
                 if ($jamSelesai < $jamMulai) {
-                    $jamSelesai += 24 * 60 * 60; // Tambahkan 24 jam dalam detik
+                    $jamSelesai += 24 * 60 * 60;
                 }
 
-                // Menghitung selisih waktu dalam detik
                 $selisihDetik = $jamSelesai - $jamMulai;
 
-                // Mengkonversi selisih waktu ke dalam format jam:menit
-                $durasiMenit = $selisihDetik / 60; // Durasi dalam menit
-                $durasiJam = floor($durasiMenit / 60); // Durasi dalam jam (dibulatkan ke bawah)
-                $durasiMenitSisa = $durasiMenit % 60; // Sisa menit setelah dibagi jam
+                $durasiMenit = $selisihDetik / 60;
+                $durasiJam = floor($durasiMenit / 60);
+                $durasiMenitSisa = $durasiMenit % 60;
 
-                // Menghitung jumlah jam lembur sesuai dengan aturan yang diberikan
                 $hitunganLembur = 0;
 
-                // Hitung jam pertama (selalu 1.5 jam untuk 1 jam pertama)
-                if ($durasiJam >= 1) {
-                    $hitunganLembur += 1.5; // 1 jam pertama dihitung 1.5 jam
-                    $durasiJam -= 1; // Kurangi jam pertama
-                }
+                // Ambil settingan kalkulasi_jam_lembur
+                $settingKalkulasi = SettinganUmum::find()
+                    ->where(['kode_setting' => 'kalkulasi_jam_lembur'])
+                    ->one();
 
-                // Hitung jam berikutnya (jam kedua dan seterusnya dihitung 2 jam per jam)
-                if ($durasiJam > 0) {
-                    $hitunganLembur += $durasiJam * 2; // Setiap jam setelah jam pertama dihitung 2 jam
-                }
+                if ($settingKalkulasi !== null && intval($settingKalkulasi->nilai_setting) === 0) {
+                    // Versi pengali 1.5 dan 2.0
 
-                // Menambahkan waktu sisa menit, jika ada (pembulatan ke bawah)
-                if ($durasiMenitSisa > 0) {
-                    // Pembulatan ke bawah:
-                    if ($durasiMenitSisa >= 30) {
-                        // Jika sisa menit lebih dari atau sama dengan 30 menit, hitung setengah jam tambahan
-                        $hitunganLembur += 1; // Tambah 1 jam untuk 30 menit atau lebih
-                    } else {
-                        // Jika sisa menit kurang dari 30 menit, hitung 0,5 jam (30 menit)
-                        $hitunganLembur += 0.5; // Tambah 0.5 jam
+                    if ($durasiJam >= 1) {
+                        $hitunganLembur += 1.5;
+                        $durasiJam -= 1;
                     }
+
+                    if ($durasiJam > 0) {
+                        $hitunganLembur += $durasiJam * 2;
+                    }
+
+                    if ($durasiMenitSisa > 0) {
+                        if ($durasiMenitSisa >= 30) {
+                            $hitunganLembur += 1;
+                        } else {
+                            $hitunganLembur += 0.5;
+                        }
+                    }
+                } else {
+                    // Versi 1:1
+                    $hitunganLembur = round($durasiMenit / 60, 2);
                 }
 
-                // Menyimpan durasi dan hitungan lembur ke dalam model
-                $model->durasi = gmdate('H:i', $selisihDetik); // Format durasi dalam jam:menit
-                $model->hitungan_jam = $hitunganLembur; // Simpan hasil perhitungan jam lembur  
+                $model->durasi = gmdate('H:i', $selisihDetik);
+                $model->hitungan_jam = $hitunganLembur;
+
                 if ($model->save()) {
-
-
-                    // ? KIRIM NOTIFIKASI
+                    // Kirim notifikasi ke atasan
                     $atasan = $this->getAtasanKaryawan($karyawan->id_karyawan);
                     if ($atasan != null) {
-                        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['id' => $atasan['id_atasan']])->all();
+                        $adminUsers = User::find()->select(['id', 'email', 'role_id'])->where(['id' => $atasan['id_atasan']])->all();
                     } else {
-                        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['role_id' => [1, 3]])->all();
+                        $adminUsers = User::find()->select(['id', 'email', 'role_id'])->where(['role_id' => [1, 3]])->all();
                     }
 
                     $params = [
@@ -265,7 +268,6 @@ class PengajuanController extends \yii\web\Controller
                         'id_transaksi' => $model['id_pengajuan_lembur'],
                     ];
                     $this->sendNotif($params, $model, $adminUsers, "Pengajuan lembur Baru Dari " . $model->karyawan->nama);
-
 
                     Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
                     return $this->redirect(['/pengajuan/lembur']);
@@ -278,6 +280,8 @@ class PengajuanController extends \yii\web\Controller
 
         return $this->render('home/pengajuan/lembur/create', compact('model', 'poinArray'));
     }
+
+
     public function actionLemburUpdate($id)
     {
 

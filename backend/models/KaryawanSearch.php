@@ -139,7 +139,7 @@ class KaryawanSearch extends Karyawan
                 'MAX(jk.id_jam_kerja_karyawan) AS id_jam_kerja_karyawan',
                 'MAX(jk.id_jam_kerja) AS id_jam_kerja',
                 'MAX(jk.max_terlambat) AS max_terlambat',
-                'MAX(jk.id_shift_kerja) AS id_shift_kerja',
+                'MAX(jk.is_shift) AS is_shift',
                 'MAX(j.nama_jam_kerja) AS nama_jam_kerja',
                 'MAX(mk.nama_kode) AS jenis_shift',
                 'MAX(wj.id_jadwal_kerja) AS id_jadwal_kerja',
@@ -239,8 +239,14 @@ class KaryawanSearch extends Karyawan
 
                 $dataShif = [];
 
-                if ($row['id_shift_kerja']) {
-                    $dataShif = $shifKerja->getShiftKerjaById($row['id_shift_kerja']);
+
+                if ($row['is_shift'] == 1) {
+                    $tanggalHariIni = date('Y-m-d');
+                    $jadwalShiftHariIni = JadwalShift::find()
+                        ->where(['id_karyawan' => $row['id_karyawan'], 'tanggal' => $tanggalHariIni])
+                        ->asArray()
+                        ->one();
+                    $dataShif = $shifKerja->getShiftKerjaById($jadwalShiftHariIni['id_shift_kerja']);
                 } else {
                     Yii::$app->session->setFlash('warning', "Data shift kerja tidak ada pada nama {$row['nama_karyawan']}");
                 }
@@ -254,8 +260,6 @@ class KaryawanSearch extends Karyawan
                             'nama_hari' => $row['nama_hari'],
                             'jam_masuk' => $dataShif['jam_masuk'],
                             'jam_keluar' => $dataShif['jam_keluar'],
-                            // 'mulai_istirahat' => $dataShif['mulai_istirahat'],
-                            // 'berakhir_istirahat' => $dataShif['berakhir_istirahat'],
                             'jumlah_jam' => $dataShif['jumlah_jam'],
                         ];
                     }
@@ -302,7 +306,7 @@ class KaryawanSearch extends Karyawan
                 'karyawan.id_karyawan',
                 'karyawan.nama',
                 'jam_kerja_karyawan.id_jam_kerja', // Pilih kolom tertentu dari jam_kerja_karyawan
-                'jam_kerja_karyawan.id_shift_kerja', // Contoh kolom lain dari jam_kerja_karyawan
+                'jam_kerja_karyawan.is_shift', // Contoh kolom lain dari jam_kerja_karyawan
                 'jam_kerja_karyawan.id_jam_kerja', // Contoh kolom lain dari jam_kerja_karyawan
                 'jam_kerja_karyawan.max_terlambat', // Contoh kolom lain dari jam_kerja_karyawan
                 'jam_kerja.*',

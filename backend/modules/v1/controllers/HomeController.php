@@ -6,6 +6,7 @@ use backend\models\Absensi as Absensi;
 use backend\models\AtasanKaryawan;
 use backend\models\IzinPulangCepat;
 use backend\models\JadwalKerja;
+use backend\models\JadwalShift;
 use backend\models\JamKerjaKaryawan;
 use backend\models\Karyawan;
 use backend\models\MasterHaribesar;
@@ -67,12 +68,12 @@ class HomeController extends ActiveController
 
         // Cek shift kerja
         $jamKerjaToday = $this->getJamKerjaToday($jamKerjaKaryawan);
+
         $dataJam = [
             'karyawan' => $jamKerjaKaryawan,
             'lembur' => $hasilLembur,
         ];
 
-        // Cek lembur
         if ($this->cekLemburHariIni($hasilLembur)) {
             return $this->formatResponsLembur($dataAbsensiHariIni,  $jamKerjaKaryawan, $dataJam, $isPulangCepat);
         }
@@ -392,7 +393,7 @@ class HomeController extends ActiveController
         // Set response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Ambil input raw JSON
+
         $rawInput = Yii::$app->request->getRawBody();
         $data = Json::decode($rawInput);
 
@@ -454,9 +455,14 @@ class HomeController extends ActiveController
                 ->one();
 
             // Cek keterlambatan
-            if ($jamKerjaKaryawan && $jamKerjaKaryawan->id_shift_kerja !== null) {
-                // Cek berdasarkan shift kerja
-                $shift = ShiftKerja::findOne($jamKerjaKaryawan->id_shift_kerja);
+            if ($jamKerjaKaryawan && $jamKerjaKaryawan->is_shift == 1) {
+
+                $tanggalHariIni = date('Y-m-d');
+                $jadwalShiftHariIni = JadwalShift::find()
+                    ->where(['id_karyawan' => $jamKerjaKaryawan['id_karyawan'], 'tanggal' => $tanggalHariIni])
+                    ->asArray()
+                    ->one();
+                $shift = ShiftKerja::find()->where(['id_shift_kerja' => $jadwalShiftHariIni['id_shift_kerja']])->one();
 
                 if ($shift && strtotime($model->jam_masuk) > strtotime($shift->jam_masuk)) {
                     $model->is_terlambat = 1;
@@ -595,9 +601,14 @@ class HomeController extends ActiveController
                 ->one();
 
             // Cek keterlambatan
-            if ($jamKerjaKaryawan && $jamKerjaKaryawan->id_shift_kerja !== null) {
-                // Cek berdasarkan shift kerja
-                $shift = ShiftKerja::findOne($jamKerjaKaryawan->id_shift_kerja);
+            if ($jamKerjaKaryawan && $jamKerjaKaryawan->is_shift == 1) {
+
+                $tanggalHariIni = date('Y-m-d');
+                $jadwalShiftHariIni = JadwalShift::find()
+                    ->where(['id_karyawan' => $jamKerjaKaryawan['id_karyawan'], 'tanggal' => $tanggalHariIni])
+                    ->asArray()
+                    ->one();
+                $shift = ShiftKerja::find()->where(['id_shift_kerja' => $jadwalShiftHariIni['id_shift_kerja']])->one();
 
                 if ($shift && strtotime($model->jam_masuk) > strtotime($shift->jam_masuk)) {
                     $model->is_terlambat = 1;
@@ -874,14 +885,23 @@ class HomeController extends ActiveController
 
     private function getJamKerjaToday($jamKerjaKaryawan)
     {
+
         $hariIni = date('w') == '0' ? 0 : date('w');
         // Untuk shift kerja
-        if ($jamKerjaKaryawan['id_shift_kerja'] != null) {
+
+        if ($jamKerjaKaryawan['is_shift'] == 1) {
+
+            $tanggalHariIni = date('Y-m-d');
+            $jadwalShiftHariIni = JadwalShift::find()
+                ->where(['id_karyawan' => $jamKerjaKaryawan['id_karyawan'], 'tanggal' => $tanggalHariIni])
+                ->asArray()
+                ->one();
+            $dataShift = ShiftKerja::find()->where(['id_shift_kerja' => $jadwalShiftHariIni['id_shift_kerja']])->one();
             $jadwalKerjaKaryawan = JadwalKerja::find()->asArray()
                 ->where([
                     'id_jam_kerja' => $jamKerjaKaryawan['id_jam_kerja'],
                     'nama_hari' => date('N'),
-                    'id_shift_kerja' => $jamKerjaKaryawan['id_shift_kerja']
+                    'id_shift_kerja' => $dataShift['id_shift_kerja']
                 ])
                 ->one();
 

@@ -12,7 +12,7 @@
             <p class="text-sm text-gray-500 capitalize">Alasan Cuti</p>
             <p><?= $model['alasan_cuti'] ?></p>
             <hr class="my-2">
-            <p class="text-sm text-gray-500 capitalize">diajukan pada</p>
+            <p class="text-sm text-gray-500 capitalize">tanggal mulai & selesai </p>
             <div class="flex space-x-3 text-sm text-gray-500">
                 <p><?= date('d-m-Y', strtotime($model['tanggal_mulai'])) ?></p>
                 <p><?= date('d-m-Y', strtotime($model['tanggal_selesai'])) ?></p>

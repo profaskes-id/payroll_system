@@ -29,10 +29,8 @@ class PengajuanCutiController extends ActiveController
   {
     Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-    // Ambil data dari request
     $request = Yii::$app->request;
 
-    // Validasi field yang diperlukan
     $requiredFields = [
       'id_karyawan' => 'Karyawan tidak boleh kosong.',
       'jenis_cuti' => 'Jenis cuti tidak boleh kosong.',
@@ -51,25 +49,23 @@ class PengajuanCutiController extends ActiveController
       }
     }
 
-    // Jika ada error, kembalikan response error
     if (!empty($errors)) {
-      Yii::$app->response->statusCode = 400; // Bad Request
+      Yii::$app->response->statusCode = 400;
       return [
         'status' => 'error',
         'errors' => $errors,
       ];
     }
 
-    // Jika tidak ada error, proses data
     $model = new PengajuanCutiModel();
     $model->id_karyawan = $request->post('id_karyawan');
     $model->jenis_cuti = $request->post('jenis_cuti');
     $model->alasan_cuti = $request->post('alasan_cuti');
-    $model->tanggal_pengajuan = $request->post('tanggal_pengajuan', date('Y-m-d')); // Default ke tanggal hari ini jika tidak ada
+    $model->tanggal_pengajuan = $request->post('tanggal_pengajuan', date('Y-m-d'));
     $model->tanggal_mulai = $request->post('tanggal_mulai');
     $model->tanggal_selesai = $request->post('tanggal_selesai');
-    $model->status = $request->post('status', 0); // Default status = 0 jika tidak ada
-    $model->sisa_hari = $request->post('sisa_hari', 10); // Default sisa_hari = 10 jika tidak ada
+    $model->status = $request->post('status', 0);
+    $model->sisa_hari = $request->post('sisa_hari', 10);
 
     // Simpan model ke database
     if ($model->save()) {
@@ -134,14 +130,13 @@ class PengajuanCutiController extends ActiveController
       ->where(['id_karyawan' => $id_karyawan])
       ->asArray()
       ->one();
-    // Ambil seluruh data jenis cuti dengan status aktif
+
     $jenisCuti = MasterCuti::find()
       ->where(['status' => 1])
       ->orderBy(['jenis_cuti' => SORT_ASC])
       ->asArray()
       ->all();
 
-    // Filter jenis cuti berdasarkan kode jenis kelamin
     if ($karyawan['kode_jenis_kelamin'] == 'L') { // Laki-laki
       $jenisCuti = array_filter($jenisCuti, function ($cuti) {
         return $cuti['jenis_cuti'] !== 'Cuti Hamil';
@@ -153,7 +148,6 @@ class PengajuanCutiController extends ActiveController
     return ['karyawan' => $karyawan, 'jenis_cuti' => $jenisCuti, 'rekap_cuti' => $rekapCuti];
   }
 
-  // Metode untuk mendapatkan detail pengajuan cuti berdasarkan ID
   public function actionGetByPengajuan($id_pengajuan_cuti)
   {
     Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;

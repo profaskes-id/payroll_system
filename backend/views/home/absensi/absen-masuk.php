@@ -1,5 +1,7 @@
 <?php
 
+use backend\models\JadwalShift;
+use backend\models\ShiftKerja;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
@@ -67,12 +69,27 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
-
-    <section class="grid grid-cols-10  relative overflow-x-hidden min-h-[90dvh]">
-
-
+    <section class="grid grid-cols-10  relative overflow-x-hidden min-h-[90dvh] ">
         <div class="fixed bottom-0 z-40 hidden w-1/2 -translate-x-1/2 left-1/2 lg:block ">
             <?= $this->render('@backend/views/components/_footer'); ?>
+        </div>
+
+        <div id="modal-puang" class="hidden w-[80vw] md:w-[40vw] p-5 absolute left-1/2 -translate-x-1/2 top-1/2 z-50 -translate-y-1/2 rounded-xl   border-red-400 border bg-white h-[150px]">
+            <div id="close-modal-pulang" class="absolute -top-2 px-2.5 py-1 text-white -translate-x-6 bg-red-500 rounded-full cursor-pointer -right-10">
+                X
+            </div>
+            <h1 class="text-xl font-bold capitalize">jam kerja anda telah selesai</h1>
+            <p class="font-normal capitalize">segera lngkapi absensi pulang anda, dengan click tombol absensi pulang</p>
+
+
+            <div class="flex flex-col items-center justify-around mb-5 space-y-3 lg:flex-row lg:space-y-0 ">
+
+
+                <a href="pengajuan/lebur" class="px-5 py-2 font-bold text-white bg-red-500 rounded-lg">
+                    Ajukan Lembur
+                </a>
+
+            </div>
         </div>
 
 
@@ -82,7 +99,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="w-full col-span-12">
 
                     <?= $this->render('@backend/views/components/fragment/_time'); ?>
-
                     <?php if ($jamKerjaToday): ?>
 
                         <style>
@@ -117,6 +133,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <div class="w-full ">
                                 <p class="mt-2 -mb-3 text-xs text-center">Jam Kerja </p>
                                 <div class="capitalize flex justify-around items-center bg-orange-500/10 p-1 text-[13px] w-[80%] mx-auto mt-3 rounded-full">
+
                                     <p><?= date('H:i ', strtotime($jamKerjaToday['jam_masuk'] ?? '00:00:00')) ?></p>
                                     <p>S/D</p>
                                     <p><?= date('H:i ', strtotime($jamKerjaToday['jam_keluar'] ?? '00:00:00')) ?></p>
@@ -286,7 +303,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 
-
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 <?php
@@ -325,7 +341,6 @@ $dataAtasanPenempatanJson = json_encode($dataAtasanPenempatan, JSON_PRETTY_PRINT
 <script>
     let todayJson = <?= $dataTodayJson ?>;
     let AtasanKaryawanJson = <?= $dataAtasanPenempatanJson ?>;
-    // console.info(AtasanKaryawanJson.radius)
 
     jam_masuk = todayJson?.today?.jam_masuk;
     max_telat = todayJson?.karyawan?.max_terlambat;
@@ -340,7 +355,6 @@ $dataAtasanPenempatanJson = json_encode($dataAtasanPenempatan, JSON_PRETTY_PRINT
         let longitudeBig = document.querySelector('.longitude');
         let Latismall = document.querySelector('.lati');
         let Longismall = document.querySelector('.longi');
-
         navigator.geolocation.watchPosition(function(position) {
             latitudeBig.value = position.coords.latitude.toFixed(10);
             longitudeBig.value = position.coords.longitude.toFixed(10);
@@ -393,8 +407,6 @@ $dataAtasanPenempatanJson = json_encode($dataAtasanPenempatan, JSON_PRETTY_PRINT
 
 
     submitButton.addEventListener('click', function() {
-
-
         function getWaktuSaatIni() {
             const sekarang = new Date();
             return {
@@ -490,4 +502,16 @@ $dataAtasanPenempatanJson = json_encode($dataAtasanPenempatan, JSON_PRETTY_PRINT
 
 
     setInterval(cekWaktu, 1000);
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var closeButton = document.getElementById('close-modal-pulang');
+        var modal = document.getElementById('modal-puang');
+
+        closeButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            modal.style.display = 'none';
+        });
+    });
 </script>

@@ -69,16 +69,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                     'attribute' => 'Jenis Shift',
                     'value' => function ($model) {
-                        if ($model['id_shift_kerja'] == null) {
-                            return '<p>-</p>';
-                        } else {
-                            $jkk = new JamKerjaKaryawan();
-                            $data = $jkk->shiftKerja($model['id_shift_kerja']);
-                            if ($data == null) {
-                                return '<p>-</p>';
+                        if ($model['is_shift']) {
+                            if ($model['is_shift'] == 1) {
+                                return 'Shift';
+                            } else {
+                                return 'Non Shift';
                             }
-                            return $data['nama_shift'];
                         }
+                        return '<p class="text-danger">(Belum Diset)</p>';
                     }
                 ],
 

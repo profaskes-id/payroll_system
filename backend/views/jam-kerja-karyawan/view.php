@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 
@@ -53,12 +53,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 [
                     'attribute' => 'Jenis Shift',
+                    'format' => 'raw',
                     'value' => function ($model) {
-                        $data = $model->shiftKerja($model->id_shift_kerja);
-                        if ($data == null) {
-                            return '-';
+
+                        if ($model['is_shift']) {
+                            if ($model['is_shift'] == 1) {
+                                return 'Shift';
+                            } else {
+                                return 'Non Shift';
+                            }
                         }
-                        return $data['nama_shift'] . " ({$data['jam_masuk']} - {$data['jam_keluar']})";
+                        return '<p class="text-danger">Belum Di Set</p>';
                     }
                 ],
 

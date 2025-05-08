@@ -33,5 +33,6 @@ return [
     "email-admin" => "email-admin",
     "no-telfon-admin" => "no-telfon-admin",
     "change_shift" => "change_shift",
+    "kalkulasi_jam_lembur" => "kalkulasi_jam_lembur",
 
 ];

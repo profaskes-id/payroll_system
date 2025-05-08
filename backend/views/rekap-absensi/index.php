@@ -47,7 +47,7 @@ $tanggal = new Tanggal;
 
 
     <div class="table-container table-responsive">
-        <p class="text-muted text-capitalize text-xs">jika data karyawan tidak ada, silahkan tambahkan data jam kerja karyawan</p>
+        <p class="text-xs text-muted text-capitalize">jika data karyawan tidak ada, silahkan tambahkan data jam kerja karyawan</p>
         <table class="table table-bordered table-responsive">
             <thead>
 
@@ -56,7 +56,7 @@ $tanggal = new Tanggal;
                     <th rowspan="3" style="vertical-align: middle;" class="text-center ">Bagian & Jabatan</th>
                 </tr>
                 <tr>
-                    <th class="text-center" colspan="<?= count($tanggal_bulanan) + 4 - 1  ?>">
+                    <th class="text-center" colspan="<?= count($tanggal_bulanan) + 6 - 1  ?>">
                         <h3>
                             Rekapan Absensi Bulan <?= $tanggal->getBulan($bulan) . ' Tahun ' . $tahun ?>
                         </h3>
@@ -79,6 +79,8 @@ $tanggal = new Tanggal;
                     <td>Total Hadir</td>
                     <td>Jumlah Terlambat</td>
                     <td>Total Telambat</td>
+                    <td>Total Lembur</td>
+                    <td>Lama Lembur</td>
                 </tr>
             </thead>
 
@@ -119,24 +121,33 @@ $tanggal = new Tanggal;
                                 <td <?php if ($day_of_week == 0) echo 'style="  background-color: #aaa; color:white;"'; ?>>
                                     <p style=" width: 50px; padding:0;   text-align: center; vertical-align: middle;">
 
-                                        <?php if ($key == (count($karyawan) - 1)): ?>
+                                        <!-- bagian akhir rekap absensi -->
+                                        <?php
+                                        $lastIndex = count($karyawan);
+                                        switch ($key) {
+                                            case $lastIndex - 5:
+                                                echo $data['total_hadir'];
+                                                break;
+                                            case $lastIndex - 4:
+                                                echo $data['total_terlambat'];
+                                                break;
+                                            case $lastIndex - 3:
+                                                $jam = floor($data['detik_terlambat'] / 3600);
+                                                $menit = floor(($data['detik_terlambat'] % 3600) / 60);
+                                                $detik = $data['detik_terlambat'] % 60;
+                                                $formattedTime = sprintf('%02d:%02d:%02d', $jam, $menit, $detik);
+                                                echo "<span style='font-weight:600; text-align:center;'>$formattedTime</span>";
+                                                break;
+                                            case $lastIndex - 2:
+                                                echo $data['total_lembur'];
+                                                break;
+                                            case $lastIndex - 1:
+                                                echo $data['jumlah_jam_lembur'];
+                                                break;
+                                        }
+                                        ?>
 
-                                            <?php
-                                            $jam = floor($data['detik_terlambat'] / 3600); // Menghitung jam
-                                            $menit = floor(($data['detik_terlambat'] % 3600) / 60); // Menghitung menit
-                                            $detik = $data['detik_terlambat'] % 60; // Menghitung detik
 
-                                            $formattedTime = sprintf('%02d:%02d:%02d', $jam, $menit, $detik);
-                                            ?>
-
-                                            <span style="font-weight:600; text-align:center; "><?= $formattedTime ?></span>
-                                        <?php endif; ?>
-                                        <?php if ($key == (count($karyawan) - 2)): ?>
-                                            <?= $data['total_terlambat'] ?>
-                                        <?php endif; ?>
-                                        <?php if ($key == (count($karyawan) - 3)): ?>
-                                            <?= $data['total_hadir'] ?>
-                                        <?php endif; ?>
                                         <?php if ($data !== null && $data['status_hadir'] !== null && $data['jam_masuk_karyawan'] !== null): ?>
                                             <?php
                                             $jamKerjakaryawan = $data['jam_masuk_karyawan']; //karyawan masuj

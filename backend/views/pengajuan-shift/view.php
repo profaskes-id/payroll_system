@@ -11,6 +11,8 @@ $this->title = "penggantian shift oleh : " . $model->karyawan->nama;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Pengajuan Shifts'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+$tanggalFormat = new Tanggal();
+
 ?>
 <div class="pengajuan-shift-view">
 
@@ -49,9 +51,24 @@ $this->params['breadcrumbs'][] = $this->title;
                         },
                     ],
                     [
+                        'label' => "Tanggal Awal",
+                        'value' => function ($model) use ($tanggalFormat) {
+                            if ($model->tanggal_awal != null) {
+                                return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_awal);
+                            }
+                        }
+                    ],
+                    [
                         'label' => "Tanggal",
-                        'value' => function ($model) {
-                            $tanggalFormat = new Tanggal();
+                        'value' => function ($model) use ($tanggalFormat) {
+                            if ($model->tanggal_akhir != null) {
+                                return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_akhir);
+                            }
+                        }
+                    ],
+                    [
+                        'label' => "Tanggal",
+                        'value' => function ($model) use ($tanggalFormat) {
                             if ($model->diajukan_pada != null) {
                                 return $tanggalFormat->getIndonesiaFormatTanggal($model->diajukan_pada);
                             }

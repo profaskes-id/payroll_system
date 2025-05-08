@@ -148,7 +148,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 
-    <?php if ($jamKerjaToday && $jamKerjaToday['id_shift_kerja'] != null): ?>
+    <?php if ($jamKerjaToday && $jamKerjaToday['is_shift'] != 0): ?>
 
         <?php
         $setting = SettinganUmum::find()
@@ -157,21 +157,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ->scalar(); // ambil langsung nilai_setting-nya
         ?>
 
-
-        <?php if ($setting == 1): ?>
-
-            <div class="flex justify-end w-[90%] mx-auto rounded-full overflow-hidden mt-10 relative">
-                <a class="block w-full p-3 overflow-hidden text-center text-white bg-slate-900" href="/panel/home/change-shift?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>">
-                    <div class="flex flex-row items-center justify-around overflow-hidden">
-                        <p class="font-semibold"><?= $dataShift['nama_shift'] ?? '-' ?></p>
-                        <p class="font-semibold"><?= $dataShift['jam_masuk'] ?? '-' ?></p>
-                        <p class="font-semibold"><?= $dataShift['jam_keluar'] ?? '-' ?></p>
-                    </div>
-                </a>
+        <?php if ($dataShift === null): ?>
+            <div class="mt-10 font-semibold text-center text-red-600">
+                Data shift Anda belum ada untuk hari ini.
             </div>
         <?php else: ?>
             <div class="flex justify-end w-[90%] mx-auto rounded-full overflow-hidden mt-10 relative">
-                <a class="block w-full p-3 overflow-hidden text-center text-white bg-slate-900" href="/panel/home/pengajuan-shift?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>">
+                <a class="block w-full p-3 overflow-hidden text-center text-white bg-slate-900"
+                    href="/panel/home/<?= $setting == 1 ? 'change-shift' : 'pengajuan-shift' ?>?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>">
                     <div class="flex flex-row items-center justify-around overflow-hidden">
                         <p class="font-semibold"><?= $dataShift['nama_shift'] ?? '-' ?></p>
                         <p class="font-semibold"><?= $dataShift['jam_masuk'] ?? '-' ?></p>
@@ -183,8 +176,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 
+
     <?php endif; ?>
 
+
+    <p class="relative pt-2 text-center">
+        <a href="/panel/home/lihat-shift?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>" class="mt-4 underline capitalize text-primary underline-offset-2">Show More</a>
+    </p>
 
 
 

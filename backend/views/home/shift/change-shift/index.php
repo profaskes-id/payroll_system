@@ -42,6 +42,17 @@ use yii\helpers\Url;
             </select>
         </div>
 
+
+        <div class="col-12 ">
+            <label class="block mb-1 " for="tanggal-awal">Tanggal Awal</label>
+            <input type="date" name="tanggal_awal" id="tanggal-awal" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" value="<?= isset($model->tanggal_awal) ? htmlspecialchars($model->tanggal_awal) : '' ?>">
+        </div>
+        <div class="col-12">
+            <label class="block mb-1 " for="tanggal-akhir">Tanggal Akhir</label>
+            <input type="date" name="tanggal_akhir" id="tanggal-akhir" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" value="<?= isset($model->tanggal_akhir) ? htmlspecialchars($model->tanggal_akhir) : '' ?>">
+        </div>
+
+
         <button type="submit" class="w-full px-4 py-2 text-white bg-indigo-600 rounded hover:bg-indigo-700">
             Simpan Perubahan
         </button>
