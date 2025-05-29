@@ -71,7 +71,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         return '<p>Belum Di Set<p>';
                     }
                 ],
-               
                 [
                     'label' => 'Apakah Lembur',
                     'format' => 'raw',
@@ -83,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => 'Apakah WFH',
                     'format' => 'raw',
                     'value' => function ($model) {
-                        return $model->is_wfh = 1 ? "Iya" : "Tidak";
+                        return $model['is_wfh'] == 1 ? "Iya" : "Tidak";
                     }
                 ],
                 [

@@ -111,7 +111,7 @@ class JadwalKerjaController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                // dd($this->request->post());
+
                 // Hapus data shift lama untuk jam kerja ini (opsional)
                 JadwalKerja::deleteAll(['nama_hari' => $model->nama_hari, 'id_jam_kerja' => $id_jam_kerja]);
                 // Siapkan data untuk batch insert

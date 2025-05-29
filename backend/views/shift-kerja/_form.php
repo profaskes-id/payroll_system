@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <div class="row">
-        <div class="col-md-6 col-12">
+        <div class=" col-12">
             <?= $form->field($model, 'nama_shift')->textInput() ?>
         </div>
 
@@ -37,7 +37,7 @@ use yii\widgets\ActiveForm;
         </div>
 
 
-        <div class="col-md-6 col-12">
+        <div class="col-12">
             <?= $form->field($model, 'jumlah_jam')->textInput(['maxlength' => true, 'type' => 'number']) ?>
         </div>
 

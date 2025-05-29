@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\JadwalShift $model */
 
-$this->title = Yii::t('app', 'Create Jadwal Shift');
+$this->title = Yii::t('app', 'Tambah Jadwal Shift');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Jadwal Shifts'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

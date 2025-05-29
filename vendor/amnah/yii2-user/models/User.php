@@ -165,7 +165,7 @@ class User extends ActiveRecord implements IdentityInterface
             'banned_at' => Yii::t('user', 'Banned At'),
             'banned_reason' => Yii::t('user', 'Banned Reason'),
             'fcm_token' => Yii::t('user', 'Fcm Token'),
-            'base_url' => Yii::t('user', 'base_url'),
+            'base_url' => Yii::t('user', 'Base Url'),
             "id_karyawan" => Yii::t('user', 'Id Karyawan'),
             // virtual attributes set above
             'currentPassword' => Yii::t('user', 'Current Password'),

@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="costume-container">
             <p class="">
-                <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+                <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
             </p>
         </div>
 
@@ -52,6 +52,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'updated_at',
                 'banned_at',
                 'banned_reason',
+                'fcm_token',
+                'base_url',
             ],
         ]) ?>
     </div>

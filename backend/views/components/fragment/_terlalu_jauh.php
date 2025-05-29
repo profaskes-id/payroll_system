@@ -19,6 +19,7 @@ use yii\widgets\ActiveForm;
     </button>
 </div>
 
+
 <div id="popup-modal-terlalujauh" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full" style="z-index: 9999 !important; ">
     <div class="relative w-full max-w-md max-h-full p-4 ">
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -35,6 +36,22 @@ use yii\widgets\ActiveForm;
                 <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'longi'])->label(false) ?>
                 <?= $formAbsen->field($model, 'alasan_terlalu_jauh')->textarea(['class' => 'py-1 w-full border border-gray-200 rounded-md', 'required' => true, 'rows' => 7, 'placeholder' => 'Alasan Anda Terlalu Jauh Dari Lokasi Penempatan Kerja'])->label(false) ?>
 
+                <?php if ($dataJam['karyawan']['is_shift'] && $manual_shift == 0): ?>
+                    <?= $formAbsen->field($model, 'id_shift')->radioList([
+                        5 => 'Shift 1 (06:00 - 14:00)',
+                        6 => 'Shift 2 (14:00 - 22:00)',
+                        7 => 'Shift 3 (22:00 - 06:00)'
+                    ], [
+                        'item' => function ($index, $label, $name, $checked, $value) {
+                            return "<div class='flex items-center mb-4'>
+            <input id='shift-terlalujauh-{$value}' type='radio' name='{$name}' value='{$value}' class='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 shift-radio focus:ring-blue-500'>
+            <label for='shift-terlalujauh-{$value}' class='text-sm font-medium text-gray-900 ms-2'>{$label}</label>
+        </div>";
+                        }
+                    ])->label(false) ?>
+                <?php endif; ?>
+
+
                 <div class="flex items-center justify-end space-x-4">
 
                     <button type="submit" class="text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300  font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
@@ -48,3 +65,19 @@ use yii\widgets\ActiveForm;
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ketika modal terlalu jauh akan ditampilkan
+        document.querySelector('[data-modal-toggle="popup-modal-terlalujauh"]').addEventListener('click', function() {
+            // Cari radio button yang dipilih di form utama
+            const selectedShift = document.querySelector('#my-form .shift-radio:checked');
+
+            if (selectedShift) {
+                const shiftValue = selectedShift.value;
+                // Set nilai yang sama di form terlalu jauh
+                document.querySelector(`#my-form-terlalujauh input.shift-radio[value="${shiftValue}"]`).checked = true;
+            }
+        });
+    });
+</script>

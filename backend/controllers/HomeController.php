@@ -7,6 +7,7 @@ use backend\models\Absensi;
 use backend\models\AtasanKaryawan;
 use backend\models\DataKeluarga;
 use backend\models\DataPekerjaan;
+use backend\models\helpers\ManualSHiftHelper;
 use backend\models\IzinPulangCepat;
 use backend\models\JadwalKerja;
 use backend\models\JadwalShift;
@@ -25,6 +26,7 @@ use backend\models\Pengumuman;
 use backend\models\RiwayatKesehatan;
 use backend\models\RiwayatPelatihan;
 use backend\models\RiwayatPendidikan;
+use backend\models\SettinganUmum;
 use backend\models\ShiftKerja;
 use PhpParser\Node\Expr\AssignOp\ShiftLeft;
 use Yii;
@@ -129,7 +131,10 @@ class HomeController extends Controller
             }
         }
 
-        return $this->render('index', compact('is_ada_notif', 'karyawan', 'pengumuman', 'absensi', 'lama_kerja', 'jamKerjaToday', 'dataShift'));
+
+        $manual_shift =   ManualSHiftHelper::isManual();
+
+        return $this->render('index', compact('is_ada_notif', 'karyawan', 'pengumuman', 'absensi', 'lama_kerja', 'jamKerjaToday', 'dataShift', 'manual_shift'));
     }
 
     public function actionView($id_user)
@@ -190,12 +195,14 @@ class HomeController extends Controller
 
     public function actionAbsenMasuk()
     {
+        $manual_shift = ManualSHiftHelper::isManual();
         $this->layout = 'mobile-main';
         $model = new Absensi();
         $isTerlambatActive = false;
         if ($this->request->isPost) {
-
+            // dd(Yii::$app->request->post());
             $karyawan = Karyawan::find()->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan])->one();
+            $isAda = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
 
             $model->id_karyawan = $karyawan->id_karyawan;
             $model->tanggal = date('Y-m-d');
@@ -206,60 +213,129 @@ class HomeController extends Controller
             $model->keterangan = $model->is_lembur ? 'Lembur' : '-';
             $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
             $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
-            if ($model->save()) {
-                Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil');
-                $isTerlambatActive = true;
+            $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
+
+            if ($jamKerjaKaryawan && $jamKerjaKaryawan->is_shift == 1) {
+
+                // Jika sistem pakai shift dan manual_shift aktif, baru cek keterlambatan
+                if ($manual_shift == 1) {
+                    $tanggalHariIni = date('Y-m-d');
+                    $jadwalShiftHariIni = JadwalShift::find()
+                        ->where([
+                            'id_karyawan' => $jamKerjaKaryawan->id_karyawan,
+                            'tanggal' => $tanggalHariIni
+                        ])
+                        ->asArray()
+                        ->one();
+
+                    if ($jadwalShiftHariIni) {
+                        $shif = ShiftKerja::find()->where(['id_shift_kerja' => $jadwalShiftHariIni['id_shift_kerja']])->one();
+                        if ($shif && strtotime($model->jam_masuk) > strtotime($shif->jam_masuk)) {
+                            $model->is_terlambat = 1;
+                            $lamaTerlambat = gmdate('H:i:s', strtotime($model->jam_masuk) - strtotime($shif->jam_masuk));
+                            $model->lama_terlambat = $lamaTerlambat;
+                        }
+                    }
+                } else {
+                    $AbsensiPost = Yii::$app->request->post('Absensi');
+                    $shiftMasuk = $AbsensiPost['id_shift'] ?? null;
+
+                    if ($shiftMasuk) {
+                        $dataShift = ShiftKerja::find()->where(['id_shift_kerja' => $shiftMasuk])->one();
+                        $jamMasukShift = $dataShift['jam_masuk']; // Misalnya '15:00:00'
+
+                        $jamSekarang = date('H:i:s'); // '14:21:00'
+
+                        // Konversi ke timestamp untuk perbandingan
+                        $timestampShift = strtotime($jamMasukShift);
+                        $timestampSekarang = strtotime($jamSekarang);
+
+                        if ($timestampSekarang > $timestampShift) {
+                            // Hitung keterlambatan dalam detik
+                            $selisihDetik = $timestampSekarang - $timestampShift;
+
+                            // Konversi ke jam dan menit
+                            $jamTerlambat = floor($selisihDetik / 3600);
+                            $menitTerlambat = floor(($selisihDetik % 3600) / 60);
+
+                            $model->is_terlambat = 1;
+                            $model->lama_terlambat = "$jamTerlambat:$menitTerlambat:00";
+                        } else {
+                            Yii::$app->session->setFlash('success', 'Anda Tidak Terlambat');
+                        }
+                    }
+                }
+            } else {
+                // Jika bukan shift, bisa langsung cek keterlambatan tanpa perlu cek manual_shift
+
+                $JamKerja = JadwalKerja::find()->where(['id_jam_kerja' => $jamKerjaKaryawan['id_jam_kerja']])->one();
+                if ($JamKerja && strtotime($model->jam_masuk) > strtotime($JamKerja->jam_masuk)) {
+                    $model->is_terlambat = 1;
+                    $lamaTerlambat = gmdate('H:i:s', strtotime($model->jam_masuk) - strtotime($JamKerja->jam_masuk));
+                    $model->lama_terlambat = $lamaTerlambat;
+                }
+            }
+
+            // Simpan data absensi jika belum ada
+            if (!$isAda) {
+
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil');
+                }
+            } else {
+                Yii::$app->session->setFlash('success', 'Absen Masuk Anda Sudah Ada');
             }
         }
+
         $dataProvider = new ActiveDataProvider([
             'query' => Absensi::find(),
         ]);
 
         $karyawan = Karyawan::find()->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan, 'is_aktif' => 1])->one();
-
         $atasanPenempatan = AtasanKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
 
-
-        // mengmbil data atasan karyawan
+        // Mengambil data atasan karyawan
         if ($atasanPenempatan) {
             $masterLokasi = $atasanPenempatan->masterLokasi;
         } else {
             Yii::$app->session->setFlash('error', 'Data Atasan Dan Penempatan Kerja belum ada, Silahkan Hubungi Admin');
             return $this->redirect(['/']);
         }
-        // data absensi
+
+        // Data absensi
         $absensiToday = Absensi::find()->where(['tanggal' => date('Y-m-d'), 'id_karyawan' => $karyawan->id_karyawan])->all();
         $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
 
-
-        //puang cepat danlembur
+        // Pengajuan lembur dan izin pulang cepat
         $lembur = PengajuanLembur::find()->asArray()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
         $isPulangCepat = IzinPulangCepat::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
         $hasilLembur = [];
 
         if ($lembur) {
             foreach ($lembur as $l) {
-
                 if (isset($l['tanggal']) && $l['tanggal'] >= date('Y-m-d') && $l['status'] == '1') {
                     $hasilLembur[] = $l;
                 }
             }
         }
+
         if (!$jamKerjaKaryawan) {
             throw new NotFoundHttpException('Admin Belum Melakukan Settingan Jam Kerja Pada Akun Anda');
         }
+
         $hariIni = date('w') == '0' ? 0 : date('w');
 
-        // mengambiljam kerja keryawan minggu ini
+        // Mengambil jam kerja karyawan minggu ini
         $jamKerjaHari = $jamKerjaKaryawan->jamKerja->jadwalKerjas;
 
-        // cek apakah 24 jam ?
+        // Cek apakah 24 jam?
         foreach ($jamKerjaHari as $key => $value) {
             if ($value['nama_hari'] == date("N") && $value['is_24jam'] == 1) {
                 $absensiTerakhir = Absensi::find()
                     ->where(['id_karyawan' => $karyawan->id_karyawan])
                     ->orderBy(['tanggal' => SORT_DESC])
-                    ->one();            // $absensiHariIni = Absensi::find()->where
+                    ->one();
+
                 return $this->render('absensi/absen-24jam', [
                     'model' => $model,
                     'jamKerjaKaryawan' => $value,
@@ -270,27 +346,33 @@ class HomeController extends Controller
             }
         }
 
-
-
-
+        $jamKerjaToday = null;
 
         if ($jamKerjaKaryawan['is_shift'] == 1) {
 
             $jadwalKerjaKaryawan = JadwalKerja::find()->asArray()->where(['id_jam_kerja' => $jamKerjaKaryawan['id_jam_kerja'], 'nama_hari' => date('N')])->one();
 
             if ($jadwalKerjaKaryawan !== null) {
-
                 $tanggalHariIni = date('Y-m-d');
+
+
                 $jadwalShiftHariIni = JadwalShift::find()
                     ->where(['id_karyawan' => $jamKerjaKaryawan['id_karyawan'], 'tanggal' => $tanggalHariIni])
                     ->asArray()
                     ->one();
 
-                $shifKerja = ShiftKerja::find()->asArray()->where(['id_shift_kerja' => $jadwalShiftHariIni['id_shift_kerja']])->one();
-                if (strtotime($shifKerja['jam_masuk']) > strtotime($shifKerja['jam_keluar'])) {
-                    $jamKerjaToday = $shifKerja;
+
+                if ($jadwalShiftHariIni) {
+                    $shifKerja = ShiftKerja::find()->asArray()->where(['id_shift_kerja' => $jadwalShiftHariIni['id_shift_kerja']])->one();
+                } else {
+                    $shifKerja = [];
                 }
-                $jamKerjaToday = $shifKerja;
+
+                if (!empty($shifKerja)) {
+                    $jamKerjaToday = $shifKerja;
+                } else {
+                    $jamKerjaToday = [];
+                }
             } else {
                 $jamKerjaToday = [];
             }
@@ -326,17 +408,17 @@ class HomeController extends Controller
         }
 
 
+
         $dataJam = [
             'karyawan' => $jamKerjaKaryawan,
             'today' => $jamKerjaToday,
             'lembur' => $hasilLembur,
+            'manual_shift' => $manual_shift
         ];
 
 
         if (isset($dataJam['lembur'])) {
-
-
-            $tanggalHariIni = date('Y-m-d'); // Format tanggal hari ini (asumsi format tanggal dalam array sama)
+            $tanggalHariIni = date('Y-m-d');
             $adaLemburHariIni = false;
 
             foreach ($dataJam['lembur'] as $lembur) {
@@ -346,8 +428,6 @@ class HomeController extends Controller
                 }
             }
 
-
-
             if ($adaLemburHariIni && !$jamKerjaToday) {
                 return $this->render('absensi/absen-lembur', [
                     'model' => $model,
@@ -355,26 +435,22 @@ class HomeController extends Controller
                     'dataProvider' => $dataProvider,
                     'jamKerjaKaryawan' => $jamKerjaKaryawan,
                     'dataJam' => $dataJam,
-                    // 'isTerlambatActive' => $isTerlambatActive,
                     'isPulangCepat' => $isPulangCepat,
+                    'manual_shift' => $manual_shift
                 ]);
             }
         }
 
-
-        // wfh
+        // WFH
         $wfhData = $this->wfhData($karyawan->id_karyawan);
-        $today = date('Y-m-d'); // Ambil tanggal hari ini
-        $is_wfh = false; // Inisialisasi is_wfh
+        $today = date('Y-m-d');
+        $is_wfh = false;
 
-
-        foreach ($wfhData  as $data) {
+        foreach ($wfhData as $data) {
             $tanggalArray = json_decode($data['tanggal_array'], true);
-            if (!empty($tanggalArray)) {
-                if (in_array($today, $tanggalArray)) {
-                    $is_wfh = true;
-                    break;
-                }
+            if (!empty($tanggalArray) && in_array($today, $tanggalArray)) {
+                $is_wfh = true;
+                break;
             }
         }
 
@@ -389,22 +465,23 @@ class HomeController extends Controller
                 'isPulangCepat' => $isPulangCepat,
                 'jamKerjaToday' => $jamKerjaToday,
                 'masterLokasi' => $masterLokasi,
+                'manual_shift' => $manual_shift
             ]);
         }
 
 
-
-
-        if ($jamKerjaKaryawan['is_shift'] == 1) {
-            $tanggalHariIni = date('Y-m-d');
-            $jadwalShiftHariIni = JadwalShift::find()
-                ->where(['id_karyawan' => $jamKerjaKaryawan['id_karyawan'], 'tanggal' => $tanggalHariIni])
-                ->asArray()
-                ->one();
-            $shifKerja = new ShiftKerja();
-            $dataShif = $shifKerja->getShiftKerjaById($jadwalShiftHariIni['id_shift_kerja']);
-            $jamKerjaToday = $dataShif;
-        };
+        // dd([
+        //     'model' => $model,
+        //     'absensiToday' => $absensiToday,
+        //     'dataProvider' => $dataProvider,
+        //     'jamKerjaKaryawan' => $jamKerjaKaryawan,
+        //     'dataJam' => $dataJam,
+        //     'isTerlambatActive' => $isTerlambatActive,
+        //     'isPulangCepat' => $isPulangCepat,
+        //     'jamKerjaToday' => $jamKerjaToday,
+        //     'masterLokasi' => $masterLokasi,
+        //     'manual_shift' => $manual_shift
+        // ]);
 
 
         return $this->render('absensi/absen-masuk', [
@@ -417,9 +494,8 @@ class HomeController extends Controller
             'isPulangCepat' => $isPulangCepat,
             'jamKerjaToday' => $jamKerjaToday,
             'masterLokasi' => $masterLokasi,
+            'manual_shift' => $manual_shift
         ]);
-
-        return $this->redirect(['absen-masuk']);
     }
 
 
@@ -526,11 +602,13 @@ class HomeController extends Controller
 
     public function actionAbsenTerlalujauh()
     {
+        $manual_shift = ManualSHiftHelper::isManual(); // nilai 0 atau 1
         $karyawan = Karyawan::find()->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan])->one();
         $isAda = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
 
         $model = new Absensi();
         if ($this->request->isPost) {
+
             $model->id_karyawan = $karyawan->id_karyawan;
             $model->tanggal = date('Y-m-d');
             $model->kode_status_hadir = "H";
@@ -538,33 +616,73 @@ class HomeController extends Controller
             $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
             $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
             $model->alasan_terlalu_jauh = Yii::$app->request->post('Absensi')['alasan_terlalu_jauh'];
-
+            // Hanya lakukan pengecekan keterlambatan jika manual_shift == 1
             $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
-            if ($jamKerjaKaryawan['is_shift'] == 1) {
-                //dapatkan jam masuk dari shiftsekarang
 
-                $tanggalHariIni = date('Y-m-d');
-                $jadwalShiftHariIni = JadwalShift::find()
-                    ->where(['id_karyawan' => $jamKerjaKaryawan['id_karyawan'], 'tanggal' => $tanggalHariIni])
-                    ->asArray()
-                    ->one();
+            if ($jamKerjaKaryawan && $jamKerjaKaryawan->is_shift == 1) {
 
-                $shif = ShiftKerja::find()->where(['id_shift_kerja' => $jadwalShiftHariIni['id_shift_kerja']])->one();
+                // Jika sistem pakai shift dan manual_shift aktif, baru cek keterlambatan
+                if ($manual_shift == 1) {
+                    $tanggalHariIni = date('Y-m-d');
+                    $jadwalShiftHariIni = JadwalShift::find()
+                        ->where([
+                            'id_karyawan' => $jamKerjaKaryawan->id_karyawan,
+                            'tanggal' => $tanggalHariIni
+                        ])
+                        ->asArray()
+                        ->one();
 
-                if (strtotime($model['jam_masuk']) > strtotime($shif->jam_masuk)) {
-                    $model->is_terlambat = 1;
-                    $lamaTerlambat = gmdate('H:i:s', strtotime($model->jam_masuk) - strtotime($shif['jam_masuk']));
-                    $model->lama_terlambat = $lamaTerlambat;
+                    if ($jadwalShiftHariIni) {
+                        $shif = ShiftKerja::find()->where(['id_shift_kerja' => $jadwalShiftHariIni['id_shift_kerja']])->one();
+                        if ($shif && strtotime($model->jam_masuk) > strtotime($shif->jam_masuk)) {
+                            $model->is_terlambat = 1;
+                            $lamaTerlambat = gmdate('H:i:s', strtotime($model->jam_masuk) - strtotime($shif->jam_masuk));
+                            $model->lama_terlambat = $lamaTerlambat;
+                        }
+                    }
+                } else {
+                    $AbsensiPost = Yii::$app->request->post('Absensi');
+                    $shiftMasuk = $AbsensiPost['id_shift'] ?? null;
+
+                    if ($shiftMasuk) {
+                        $dataShift = ShiftKerja::find()->where(['id_shift_kerja' => $shiftMasuk])->one();
+                        $jamMasukShift = $dataShift['jam_masuk']; // Misalnya '15:00:00'
+
+                        $jamSekarang = date('H:i:s'); // '14:21:00'
+
+                        // Konversi ke timestamp untuk perbandingan
+                        $timestampShift = strtotime($jamMasukShift);
+                        $timestampSekarang = strtotime($jamSekarang);
+
+                        if ($timestampSekarang > $timestampShift) {
+                            // Hitung keterlambatan dalam detik
+                            $selisihDetik = $timestampSekarang - $timestampShift;
+
+                            // Konversi ke jam dan menit
+                            $jamTerlambat = floor($selisihDetik / 3600);
+                            $menitTerlambat = floor(($selisihDetik % 3600) / 60);
+
+                            $model->is_terlambat = 1;
+                            $model->lama_terlambat = "$jamTerlambat:$menitTerlambat:00";
+                        } else {
+                            Yii::$app->session->setFlash('success', 'Anda Tidak Terlambat');
+                        }
+                    }
                 }
             } else {
+                // Jika bukan shift, bisa langsung cek keterlambatan tanpa perlu cek manual_shift
+
                 $JamKerja = JadwalKerja::find()->where(['id_jam_kerja' => $jamKerjaKaryawan['id_jam_kerja']])->one();
-                if (strtotime($model['jam_masuk']) > strtotime($JamKerja['jam_masuk'])) {
+                if ($JamKerja && strtotime($model->jam_masuk) > strtotime($JamKerja->jam_masuk)) {
                     $model->is_terlambat = 1;
-                    $lamaTerlambat = gmdate('H:i:s', strtotime($model->jam_masuk) - strtotime($JamKerja['jam_masuk']));
+                    $lamaTerlambat = gmdate('H:i:s', strtotime($model->jam_masuk) - strtotime($JamKerja->jam_masuk));
                     $model->lama_terlambat = $lamaTerlambat;
                 }
             }
+
+            // Simpan data absensi jika belum ada
             if (!$isAda) {
+
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil, Anda Terlalu Jauh');
                 }
@@ -575,6 +693,7 @@ class HomeController extends Controller
 
         return $this->redirect(['absen-masuk']);
     }
+
 
     public function actionAbsenPulang()
     {
@@ -1313,4 +1432,257 @@ class HomeController extends Controller
 
         return $result;
     }
+
+
+    // commnad code
+
+    /*     public function actionAbsenMasuk()
+    {
+
+        $manual_shift =   ManualSHiftHelper::isManual();
+        $this->layout = 'mobile-main';
+        $model = new Absensi();
+        $isTerlambatActive = false;
+        if ($this->request->isPost) {
+
+            $karyawan = Karyawan::find()->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan])->one();
+
+            $model->id_karyawan = $karyawan->id_karyawan;
+            $model->tanggal = date('Y-m-d');
+            $model->kode_status_hadir = "H";
+            $model->jam_masuk = date('H:i:s');
+            $model->is_lembur = Yii::$app->request->post('Absensi')['is_lembur'] ?? 0;
+            $model->is_wfh = Yii::$app->request->post('Absensi')['is_wfh'] ?? 0;
+            $model->keterangan = $model->is_lembur ? 'Lembur' : '-';
+            $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
+            $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil');
+                $isTerlambatActive = true;
+            }
+        }
+        $dataProvider = new ActiveDataProvider([
+            'query' => Absensi::find(),
+        ]);
+
+        $karyawan = Karyawan::find()->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan, 'is_aktif' => 1])->one();
+
+        $atasanPenempatan = AtasanKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
+
+
+        // mengmbil data atasan karyawan
+        if ($atasanPenempatan) {
+            $masterLokasi = $atasanPenempatan->masterLokasi;
+        } else {
+            Yii::$app->session->setFlash('error', 'Data Atasan Dan Penempatan Kerja belum ada, Silahkan Hubungi Admin');
+            return $this->redirect(['/']);
+        }
+        // data absensi
+        $absensiToday = Absensi::find()->where(['tanggal' => date('Y-m-d'), 'id_karyawan' => $karyawan->id_karyawan])->all();
+        $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
+
+
+        //puang cepat danlembur
+        $lembur = PengajuanLembur::find()->asArray()->where(['id_karyawan' => $karyawan->id_karyawan])->all();
+        $isPulangCepat = IzinPulangCepat::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
+        $hasilLembur = [];
+
+        if ($lembur) {
+            foreach ($lembur as $l) {
+
+                if (isset($l['tanggal']) && $l['tanggal'] >= date('Y-m-d') && $l['status'] == '1') {
+                    $hasilLembur[] = $l;
+                }
+            }
+        }
+        if (!$jamKerjaKaryawan) {
+            throw new NotFoundHttpException('Admin Belum Melakukan Settingan Jam Kerja Pada Akun Anda');
+        }
+        $hariIni = date('w') == '0' ? 0 : date('w');
+
+        // mengambiljam kerja keryawan minggu ini
+        $jamKerjaHari = $jamKerjaKaryawan->jamKerja->jadwalKerjas;
+
+        // cek apakah 24 jam ?
+        foreach ($jamKerjaHari as $key => $value) {
+            if ($value['nama_hari'] == date("N") && $value['is_24jam'] == 1) {
+                $absensiTerakhir = Absensi::find()
+                    ->where(['id_karyawan' => $karyawan->id_karyawan])
+                    ->orderBy(['tanggal' => SORT_DESC])
+                    ->one();            // $absensiHariIni = Absensi::find()->where
+                return $this->render('absensi/absen-24jam', [
+                    'model' => $model,
+                    'jamKerjaKaryawan' => $value,
+                    'absensiTerakhir' => $absensiTerakhir,
+                    'isPulangCepat' => $isPulangCepat,
+                    'masterLokasi' => $masterLokasi,
+                ]);
+            }
+        }
+
+
+
+
+
+        if ($jamKerjaKaryawan['is_shift'] == 1) {
+
+            $jadwalKerjaKaryawan = JadwalKerja::find()->asArray()->where(['id_jam_kerja' => $jamKerjaKaryawan['id_jam_kerja'], 'nama_hari' => date('N')])->one();
+
+            if ($jadwalKerjaKaryawan !== null) {
+                $tanggalHariIni = date('Y-m-d');
+
+
+                $jadwalShiftHariIni = JadwalShift::find()
+                    ->where(['id_karyawan' => $jamKerjaKaryawan['id_karyawan'], 'tanggal' => $tanggalHariIni])
+                    ->asArray()
+                    ->one();
+
+
+                if ($jadwalShiftHariIni) {
+                    $shifKerja = ShiftKerja::find()->asArray()->where(['id_shift_kerja' => $jadwalShiftHariIni['id_shift_kerja']])->one();
+                } else {
+                    $shifKerja = [];
+                }
+
+                if (!empty($shifKerja) && strtotime($shifKerja['jam_masuk']) > strtotime($shifKerja['jam_keluar'])) {
+                    $jamKerjaToday = $shifKerja;
+                } else {
+                    $jamKerjaToday = [];
+                }
+            } else {
+                $jamKerjaToday = [];
+            }
+        } else {
+
+            // dd($jamKerjaKaryawan->jamKerja);
+            $jamKerjaHari = $jamKerjaKaryawan->jamKerja->jadwalKerjas;
+            if ($hariIni != 0) {
+                $hariBesar = MasterHaribesar::find()->select('tanggal')->asArray()->all();
+
+                // Ambil tanggal hari ini
+                $tanggalHariIni = date('Y-m-d');
+                $adaHariBesar = false;
+                foreach ($hariBesar as $hari) {
+                    if ($hari['tanggal'] === $tanggalHariIni) {
+                        $adaHariBesar = true;
+                        break;
+                    }
+                }
+
+                if ($adaHariBesar) {
+                    $jamKerjaToday = null;
+                } else {
+                    $filteredJamKerja = array_filter($jamKerjaHari, function ($item) use ($hariIni) {
+                        return $item['nama_hari'] == $hariIni;
+                    });
+
+                    $jamKerjaToday = reset($filteredJamKerja);
+                }
+            } else {
+                $jamKerjaToday = null;
+            }
+        }
+
+
+        $dataJam = [
+            'karyawan' => $jamKerjaKaryawan,
+            'today' => $jamKerjaToday,
+            'lembur' => $hasilLembur,
+            'manual_shift' => $manual_shift
+        ];
+
+
+
+        if (isset($dataJam['lembur'])) {
+
+
+            $tanggalHariIni = date('Y-m-d'); // Format tanggal hari ini (asumsi format tanggal dalam array sama)
+            $adaLemburHariIni = false;
+
+            foreach ($dataJam['lembur'] as $lembur) {
+                if (isset($lembur['tanggal']) && $lembur['tanggal'] == $tanggalHariIni) {
+                    $adaLemburHariIni = true;
+                    break;
+                }
+            }
+
+
+
+            if ($adaLemburHariIni && !$jamKerjaToday) {
+                return $this->render('absensi/absen-lembur', [
+                    'model' => $model,
+                    'absensiToday' => $absensiToday,
+                    'dataProvider' => $dataProvider,
+                    'jamKerjaKaryawan' => $jamKerjaKaryawan,
+                    'dataJam' => $dataJam,
+                    // 'isTerlambatActive' => $isTerlambatActive,
+                    'isPulangCepat' => $isPulangCepat,
+                ]);
+            }
+        }
+
+
+        // wfh
+        $wfhData = $this->wfhData($karyawan->id_karyawan);
+        $today = date('Y-m-d'); // Ambil tanggal hari ini
+        $is_wfh = false; // Inisialisasi is_wfh
+
+
+        foreach ($wfhData  as $data) {
+            $tanggalArray = json_decode($data['tanggal_array'], true);
+            if (!empty($tanggalArray)) {
+                if (in_array($today, $tanggalArray)) {
+                    $is_wfh = true;
+                    break;
+                }
+            }
+        }
+
+        if ($is_wfh) {
+            return $this->render('absensi/absen-wfh', [
+                'model' => $model,
+                'absensiToday' => $absensiToday,
+                'dataProvider' => $dataProvider,
+                'jamKerjaKaryawan' => $jamKerjaKaryawan,
+                'dataJam' => $dataJam,
+                'isTerlambatActive' => $isTerlambatActive,
+                'isPulangCepat' => $isPulangCepat,
+                'jamKerjaToday' => $jamKerjaToday,
+                'masterLokasi' => $masterLokasi,
+            ]);
+        }
+
+
+
+
+        if ($jamKerjaKaryawan['is_shift'] == 1) {
+            $tanggalHariIni = date('Y-m-d');
+            $jadwalShiftHariIni = JadwalShift::find()
+                ->where(['id_karyawan' => $jamKerjaKaryawan['id_karyawan'], 'tanggal' => $tanggalHariIni])
+                ->asArray()
+                ->one();
+
+            if (!empty($jadwalShiftHariIni) && isset($jadwalShiftHariIni['id_shift_kerja'])) {
+                $shifKerja = new ShiftKerja();
+                $dataShif = $shifKerja->getShiftKerjaById($jadwalShiftHariIni['id_shift_kerja']);
+                $jamKerjaToday = $dataShif;
+            } else {
+                $jamKerjaToday = []; // Jadwal tidak ditemukan
+            }
+        }
+
+        return $this->render('absensi/absen-masuk', [
+            'model' => $model,
+            'absensiToday' => $absensiToday,
+            'dataProvider' => $dataProvider,
+            'jamKerjaKaryawan' => $jamKerjaKaryawan,
+            'dataJam' => $dataJam,
+            'isTerlambatActive' => $isTerlambatActive,
+            'isPulangCepat' => $isPulangCepat,
+            'jamKerjaToday' => $jamKerjaToday,
+            'masterLokasi' => $masterLokasi,
+        ]);
+
+        return $this->redirect(['absen-masuk']);
+    } */
 }

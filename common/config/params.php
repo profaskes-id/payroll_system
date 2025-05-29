@@ -34,5 +34,7 @@ return [
     "no-telfon-admin" => "no-telfon-admin",
     "change_shift" => "change_shift",
     "kalkulasi_jam_lembur" => "kalkulasi_jam_lembur",
+    "manual_shift" => "manual_shift",
+    "ajukan_lembur" => "ajukan_lembur",
 
 ];

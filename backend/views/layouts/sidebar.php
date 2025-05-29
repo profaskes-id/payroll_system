@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\IzinPulangCepat;
+use backend\models\SettinganUmum;
 use yii\helpers\Html;
 ?>
 
@@ -79,28 +80,28 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                 'items' => [
                                     [ // Submenu: Pengaturan Karyawan
                                         'label' => 'Data Karyawan',
-                                        'icon' => 'fa fa-users-cog',
+                                        'icon' => 'fa fa-people-arrows',
                                         'items' => [
-                                            ['label' => 'Profile Perusahaan', 'icon' => 'fa fa-building', 'url' => ['/perusahaan/index']],
-                                            ['label' => 'Jabatan', 'icon' => 'fa fa-user-tie', 'url' => ['/jabatan/index']],
-                                            ['label' => 'Karyawan', 'icon' => 'fa fa-users', 'url' => ['/karyawan/index']],
                                             [
                                                 'label' => 'User',
                                                 'icon' => 'fa fa-users',
                                                 'url' => ['/user/admin'],
                                                 'visible' => Yii::$app->user->can('super_admin'), // 👈 Kondisi ditambahkan di sini
                                             ],
+                                            ['label' => 'Profile Perusahaan', 'icon' => 'fa fa-building', 'url' => ['/perusahaan/index']],
+                                            ['label' => 'Jabatan', 'icon' => 'fa fa-user-tie', 'url' => ['/jabatan/index']],
+                                            ['label' => 'Karyawan', 'icon' => 'fa fa-users', 'url' => ['/karyawan/index']],
                                             ['label' => 'Atasan dan Penempatan', 'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index']],
                                         ],
                                     ],
                                     [ // Submenu: Pengaturan Jam
                                         'label' => 'Pengaturan Jam',
-                                        'icon' => 'fa fa-clock',
+                                        'icon' => 'fa fa-hourglass-start',
                                         'items' => [
                                             ['label' => 'Jam Kerja', 'icon' => 'fa fa-clock', 'url' => ['/jam-kerja/index']],
                                             ['label' => 'Shift Kerja', 'icon' => 'fa fa-cogs', 'url' => ['/shift-kerja/index']],
                                             ['label' => 'Jam Kerja Karyawan', 'icon' => 'fa fa-user-clock', 'url' => ['/jam-kerja-karyawan/index']],
-                                            ['label' => 'Jadwal ShiftKaryawan', 'icon' => 'fa fa-user-clock', 'url' => ['/jadwal-shift/index']],
+                                            ['label' => 'Jadwal Shift Karyawan', 'icon' => 'fa fa-calendar-check', 'url' => ['/jadwal-shift/index'], 'visible' => SettinganUmum::find()->where(['kode_setting' => 'manual_shift'])->one()['nilai_setting'] == 1],
                                         ],
                                     ],
 
@@ -169,19 +170,31 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                     echo \hail812\adminlte\widgets\Menu::widget([
                         'items' => [
                             ['label' => 'Dashboard',  'icon' => 'home', 'url' => ['/']],
+
                             [
                                 'label' => 'Pengaturan Data',
                                 'icon' => 'th',
                                 'items' => [
-                                    ['label' => 'Profile Perusahaan',  'icon' => 'fa fa-building', 'url' => ['/perusahaan/index'],],
-                                    ['label' => 'Jabatan',  'icon' => 'fa fa-user-tie', 'url' => ['/jabatan/index'],],
-                                    ['label' => 'Karyawan',  'icon' => 'fa fa-users', 'url' => ['/karyawan/index'],],
-                                    ['label' => 'Atasan dan Penempatan',  'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index'],],
-                                    ['label' => 'Jam Kerja',  'icon' => 'fa fa-clock', 'url' => ['/jam-kerja/index'],],
-                                    ['label' => 'Shift Kerja',  'icon' => 'fa fa-cogs', 'url' => ['/shift-kerja/index'],],
-                                    ['label' => 'Jam Kerja Karyawan',  'icon' => 'fa fa-user-clock', 'url' => ['/jam-kerja-karyawan/index'],],
-                                    ['label' => 'Jadwal Shift Karyawan', 'icon' => 'fa fa-calendar-check', 'url' => ['/jadwal-shift/index']],
-
+                                    [ // Submenu: Pengaturan Karyawan
+                                        'label' => 'Data Karyawan',
+                                        'icon' => 'fa fa-people-arrows',
+                                        'items' => [
+                                            ['label' => 'Profile Perusahaan', 'icon' => 'fa fa-building', 'url' => ['/perusahaan/index']],
+                                            ['label' => 'Jabatan', 'icon' => 'fa fa-user-tie', 'url' => ['/jabatan/index']],
+                                            ['label' => 'Karyawan', 'icon' => 'fa fa-users', 'url' => ['/karyawan/index']],
+                                            ['label' => 'Atasan dan Penempatan', 'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index']],
+                                        ],
+                                    ],
+                                    [ // Submenu: Pengaturan Jam
+                                        'label' => 'Pengaturan Jam',
+                                        'icon' => 'fa fa-hourglass-start',
+                                        'items' => [
+                                            ['label' => 'Jam Kerja', 'icon' => 'fa fa-clock', 'url' => ['/jam-kerja/index']],
+                                            ['label' => 'Shift Kerja', 'icon' => 'fa fa-cogs', 'url' => ['/shift-kerja/index']],
+                                            ['label' => 'Jam Kerja Karyawan', 'icon' => 'fa fa-user-clock', 'url' => ['/jam-kerja-karyawan/index']],
+                                            ['label' => 'Jadwal Shift Karyawan', 'icon' => 'fa fa-calendar-check', 'url' => ['/jadwal-shift/index'], 'visible' => SettinganUmum::find()->where(['kode_setting' => 'manual_shift'])->one()['nilai_setting'] == 1],
+                                        ],
+                                    ],
 
                                 ],
                             ],
@@ -195,6 +208,12 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                     ['label' => 'Pengajuan lembur',  'icon' => 'fa fa-hourglass', 'url' => ['/pengajuan-lembur/index'],],
                                     ['label' => 'Pengajuan Dinas',  'icon' => 'fa fa-map-marker-alt', 'url' => ['/pengajuan-dinas/index'],],
                                     ['label' => 'Penggantian Shift',  'icon' => 'fa fa fa-briefcase', 'url' => ['/pengajuan-shift/index'],],
+                                    [
+                                        'label' => 'Pulang Cepat <span class="right badge badge-warning">' . $jumlahPulangCepatToday . '</span>',
+                                        'icon' => 'fas fa-clock',
+                                        'url' => ['/izin-pulang-cepat/index'],
+                                        'options' => ['class' => 'nav-item'], // Opsional, untuk styling
+                                    ],
                                 ],
                             ],
                             [
@@ -203,18 +222,10 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                 'items' => [
                                     ['label' => 'Rekap Absensi',  'icon' => 'fa fa-table', 'url' => ['/rekap-absensi/index'],],
                                     ['label' => 'Rekap Cuti',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-cuti/index'],],
-                                    // ['label' => 'Rekap Lembur',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-lembur/index'],],
-                                    // ['label' => 'Rekap dinas',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-dinas/index'],],
-                                    // ['label' => 'Rekap WFH',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-wfh/index'],],
                                 ],
                             ],
                             ['label' => 'Pengumuman',  'icon' => 'fa fa-bullhorn', 'url' => ['/pengumuman/index'],],
-                            [
-                                'label' => 'Pulang Cepat <span class="right badge badge-warning">' . $jumlahPulangCepatToday . '</span>',
-                                'icon' => 'fas fa-clock',
-                                'url' => ['/izin-pulang-cepat/index'],
-                                'options' => ['class' => 'nav-item'], // Opsional, untuk styling
-                            ],
+
                             ['label' => 'Download Mobile App',  'icon' => 'fa fa-mobile ', 'url' => ['/download/index'],],
 
                         ],

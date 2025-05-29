@@ -38,12 +38,13 @@ class Absensi extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public $id_shift;
     public function rules()
     {
         return [
             [['id_karyawan', 'tanggal', 'kode_status_hadir'], 'required'],
             [['id_karyawan', 'is_lembur', 'is_wfh', 'is_terlambat', 'is_24jam'], 'integer'],
-            [['tanggal', 'jam_masuk', 'jam_pulang', 'lama_terlambat', 'tanggal_pulang'], 'safe'],
+            [['tanggal', 'jam_masuk', 'jam_pulang', 'lama_terlambat', 'tanggal_pulang', 'id_shift'], 'safe'],
             [['keterangan', 'alasan_terlambat', 'alasan_terlalu_jauh'], 'string'],
             [['latitude', 'longitude'], 'number'],
             [['lampiran'], 'string', 'max' => 255],
@@ -76,6 +77,7 @@ class Absensi extends \yii\db\ActiveRecord
             'is_terlambat' => 'Apakah Terlambat',
             'lama_terlambat' => 'Lama Terlambat',
             'is_24jam' => 'Is 24jam',
+            'id_shift' => 'id_shift',
             'tanggal_pulang' => 'Tanggal Pulang',
         ];
     }
@@ -255,8 +257,10 @@ class Absensi extends \yii\db\ActiveRecord
                         if ($statusHadir == 'H') {
                             if ($record['is_terlambat'] == 1 && $record['is_lembur'] == 0 && $record['is_wfh'] == 0) {
                                 $is_terlambat = 1;
-                                $lama_terlambat = $record['lama_terlambat'];
-                                $jamMenitDetik = explode(':', $record['lama_terlambat']);
+                                $lama_terlambat = $record['lama_terlambat'] ?? "00:00:00";
+                                $lama_terlambat = is_string($lama_terlambat) && $lama_terlambat !== '' ? $lama_terlambat : "00:00:00";
+                                $jamMenitDetik = explode(':', $lama_terlambat);
+
                                 $detikTerlambat += ($jamMenitDetik[0] * 3600) + ($jamMenitDetik[1] * 60) + $jamMenitDetik[2];
                                 $totalTerlambat++;
                                 // $selisihDetik = $jamMasuk - $jamMasukKerja;

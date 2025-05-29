@@ -8,9 +8,7 @@ use yii\helpers\Html;
  * @var amnah\yii2\user\models\Profile $profile
  */
 
-$this->title = Yii::t('user', 'Update {modelClass}: ', [
-  'modelClass' => 'User',
-]) . ' ' . $user->id;
+$this->title = Yii::t('user', 'Update Data User');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('user', 'Users'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $user->id, 'url' => ['view', 'id' => $user->id]];
 $this->params['breadcrumbs'][] = Yii::t('user', 'Update');
@@ -21,7 +19,7 @@ $this->params['breadcrumbs'][] = Yii::t('user', 'Update');
 
   <div class="costume-container">
     <p class="">
-      <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+      <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
     </p>
   </div>
 

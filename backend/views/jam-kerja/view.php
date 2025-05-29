@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 
@@ -66,7 +66,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <h4>Jadwal Kerja</h4>
                 <?php if (strtolower($model->jenisShift->nama_kode) == "shift"): ?>
 
-                    <button data-toggle="modal" data-target="#exampleModal" class="tambah-button mb-3">
+                    <button data-toggle="modal" data-target="#exampleModal" class="mb-3 tambah-button">
                         Tambah Data Hari dan Shift
                     </button>
 
@@ -111,7 +111,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'label' => 'SHIFT',
                             'value' => function ($model)  use ($jenisShift) {
                                 $dataShift = $jenisShift->getShiftKerjaById($model['id_shift_kerja']);
-                                return $dataShift['nama_shift'];
+                                return $dataShift['nama_shift'] ?? '-';
                             }
                         ]
 

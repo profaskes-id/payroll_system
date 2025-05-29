@@ -60,6 +60,11 @@ $role = $module->model("Role");
 
     <?= $form->field($user, 'banned_reason'); ?>
 
+
+    <div class="col-12">
+        <?= $form->field($user, 'base_url'); ?>
+    </div>
+
     <div class="form-group">
         <?= Html::submitButton($user->isNewRecord ? Yii::t('user', 'Create') : Yii::t('user', 'Update'), ['class' => $user->isNewRecord ? 'add-button' : 'add-button']) ?>
     </div>

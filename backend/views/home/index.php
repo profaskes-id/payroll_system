@@ -162,28 +162,26 @@ $this->params['breadcrumbs'][] = $this->title;
                 Data shift Anda belum ada untuk hari ini.
             </div>
         <?php else: ?>
-            <div class="flex justify-end w-[90%] mx-auto rounded-full overflow-hidden mt-10 relative">
-                <a class="block w-full p-3 overflow-hidden text-center text-white bg-slate-900"
-                    href="/panel/home/<?= $setting == 1 ? 'change-shift' : 'pengajuan-shift' ?>?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>">
-                    <div class="flex flex-row items-center justify-around overflow-hidden">
-                        <p class="font-semibold"><?= $dataShift['nama_shift'] ?? '-' ?></p>
-                        <p class="font-semibold"><?= $dataShift['jam_masuk'] ?? '-' ?></p>
-                        <p class="font-semibold"><?= $dataShift['jam_keluar'] ?? '-' ?></p>
-                    </div>
-                </a>
-            </div>
+            <?php if ($manual_shift == 1): ?>
+                <div class="flex justify-end w-[90%] mx-auto rounded-full overflow-hidden mt-10 relative">
+                    <a class="block w-full p-3 overflow-hidden text-center text-white bg-slate-900"
+                        href="/panel/home/<?= $setting == 1 ? 'change-shift' : 'pengajuan-shift' ?>?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>">
+                        <div class="flex flex-row items-center justify-around overflow-hidden">
+                            <p class="font-semibold"><?= $dataShift['nama_shift'] ?? '-' ?></p>
+                            <p class="font-semibold"><?= $dataShift['jam_masuk'] ?? '-' ?></p>
+                            <p class="font-semibold"><?= $dataShift['jam_keluar'] ?? '-' ?></p>
+                        </div>
+                    </a>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
 
-
-
-
+        <?php if ($manual_shift == 1): ?>
+            <p class="relative pt-2 text-center">
+                <a href="/panel/home/lihat-shift?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>" class="mt-4 underline capitalize text-primary underline-offset-2">Show More</a>
+            </p>
+        <?php endif; ?>
     <?php endif; ?>
-
-
-    <p class="relative pt-2 text-center">
-        <a href="/panel/home/lihat-shift?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>" class="mt-4 underline capitalize text-primary underline-offset-2">Show More</a>
-    </p>
-
 
 
     <div class="relative grid w-full grid-cols-12 gap-2 px-5 mt-5 mb-20 min-w-screen">

@@ -11,9 +11,7 @@ use backend\models\JamKerjaKaryawan;
 use backend\models\Karyawan;
 use backend\models\MasterHaribesar;
 use backend\models\PengajuanLembur;
-use backend\models\PengajuanShift;
 use backend\models\PengajuanWfh;
-use backend\models\SettinganUmum;
 use backend\models\ShiftKerja;
 use yii\rest\ActiveController;
 use yii\web\Response;
@@ -48,20 +46,13 @@ class HomeController extends ActiveController
         $dataAbsensiHariIni = $this->getAbsensiHariIni($id_karyawan);
         $lokasiPenempatan = $this->getPenempatanKaryawan($id_karyawan);
         $jamKerjaKaryawan = $this->getJamKerjaKaryawan($id_karyawan);
-        $change_shift =  $this->getChangeShift();
 
-        if ($jamKerjaKaryawan == null) {
-            return [
-                'success' => false,
-                'message' => 'Jam kerja karyawan tidak ditemukan, harap hubungi admin untuk melakukan pengaturan jam kerja'
-            ];
-        }
         $isPulangCepat = $this->getIzinPulangCepat($id_karyawan);
         $hasilLembur = $this->getLemburAktif($id_karyawan);
         // Cek 24 jam
         $is24Jam = $this->cekAbsensi24Jam($id_karyawan, $jamKerjaKaryawan);
         if ($is24Jam) {
-            return $this->formatRespons24Jam($jamKerjaKaryawan, $lokasiPenempatan, $isPulangCepat, $change_shift);
+            return $this->formatRespons24Jam($jamKerjaKaryawan, $lokasiPenempatan, $isPulangCepat);
         }
 
         // Cek shift kerja
@@ -74,7 +65,7 @@ class HomeController extends ActiveController
 
         if ($dataAbsensiHariIni != null) {
             if ($this->cekLemburHariIni($hasilLembur)) {
-                return $this->formatResponsLembur($dataAbsensiHariIni,  $jamKerjaKaryawan, $dataJam, $isPulangCepat, $change_shift);
+                return $this->formatResponsLembur($dataAbsensiHariIni,  $jamKerjaKaryawan, $dataJam, $isPulangCepat);
             }
         }
 
@@ -87,8 +78,7 @@ class HomeController extends ActiveController
                 $dataJam,
                 $isPulangCepat,
                 $jamKerjaToday,
-                $lokasiPenempatan,
-                $change_shift
+                $lokasiPenempatan
             );
         }
 
@@ -99,8 +89,7 @@ class HomeController extends ActiveController
             $dataJam,
             $isPulangCepat,
             $jamKerjaToday,
-            $lokasiPenempatan,
-            $change_shift
+            $lokasiPenempatan
         );
     }
 
@@ -338,7 +327,6 @@ class HomeController extends ActiveController
             ];
         }
     }
-
 
     /**
      * Generate nama file unik
@@ -761,143 +749,6 @@ class HomeController extends ActiveController
 
 
 
-    public function actionLihatShift($id_karyawan, $params = null)
-    {
-        if ($params != null) {
-            $bulan = $params['bulan'];
-            $tahun = $params['tahun'];
-        } else {
-
-            $bulan = date('m');
-            $tahun = date('Y');
-        }
-        $this->layout = 'mobile-main';
-        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, 1, $tahun));
-        $lastDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, date('t', mktime(0, 0, 0, $bulan, 1, $tahun)), $tahun));
-
-        $model = JadwalShift::find()
-            ->where(['id_karyawan' => $id_karyawan])
-            ->andWhere(['between', 'tanggal', $firstDayOfMonth, $lastDayOfMonth])
-            ->asArray()
-            ->all();
-        dd($model);
-    }
-
-
-    public function actionChangeShiftApi($id_karyawan)
-    {
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-        if (Yii::$app->request->isGet) {
-            $nowShift = JamKerjaKaryawan::find()->where(['id_karyawan' => $id_karyawan])->one();
-            $allDataShift = ShiftKerja::find()->asArray()->all();
-            $currentShift = [];
-
-            if ($nowShift && $nowShift['is_shift'] == 1) {
-                $tanggalHariIni = date('Y-m-d');
-                $jadwalShiftHariIni = JadwalShift::find()
-                    ->where(['id_karyawan' => $nowShift['id_karyawan'], 'tanggal' => $tanggalHariIni])
-                    ->one();
-                if ($jadwalShiftHariIni) {
-                    $currentShift = ShiftKerja::find()
-                        ->where(['id_shift_kerja' => $jadwalShiftHariIni['id_shift_kerja']])
-                        ->asArray()
-                        ->one();
-                }
-            }
-
-            return [
-                'status' => 'success',
-                'current_shift' => $currentShift,
-                'all_data_shift' => $allDataShift,
-                'id_karyawan' => $id_karyawan,
-            ];
-        }
-
-        if (Yii::$app->request->isPost) {
-            $post = Yii::$app->request->post();
-
-            $selectedShift = $post['shift_kerja'] ?? null;
-            $tanggalMulai = $post['tanggal_awal'] ?? null;
-            $tanggalSelesai = $post['tanggal_akhir'] ?? null;
-
-            if (!$selectedShift || !$tanggalMulai || !$tanggalSelesai) {
-                return ['status' => 'error', 'message' => 'Data tidak lengkap'];
-            }
-
-            $start = new \DateTime($tanggalMulai);
-            $end = (new \DateTime($tanggalSelesai))->modify('+1 day');
-            $interval = new \DateInterval('P1D');
-            $dateRange = new \DatePeriod($start, $interval, $end);
-
-            $successCount = 0;
-            $failedCount = 0;
-
-            foreach ($dateRange as $date) {
-                $tanggal = $date->format('Y-m-d');
-
-                $jadwal = JadwalShift::findOne([
-                    'id_karyawan' => $id_karyawan,
-                    'tanggal' => $tanggal
-                ]) ?? new JadwalShift();
-
-                $jadwal->id_karyawan = $id_karyawan;
-                $jadwal->tanggal = $tanggal;
-                $jadwal->id_shift_kerja = $selectedShift;
-
-                if ($jadwal->save()) {
-                    $successCount++;
-                } else {
-                    $failedCount++;
-                }
-            }
-
-            return [
-                'status' => 'completed',
-                'success' => $successCount,
-                'failed' => $failedCount
-            ];
-        }
-
-        return ['status' => 'error', 'message' => 'Invalid request method'];
-    }
-
-    public function actionPengajuanShiftApi($id_karyawan)
-    {
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-        if (Yii::$app->request->isGet) {
-            $allDataShift = ShiftKerja::find()->asArray()->all();
-            $id_karyawan = $id_karyawan;
-
-            return [
-                'status' => 'success',
-                'all_data_shift' => $allDataShift,
-                'id_karyawan' => $id_karyawan,
-            ];
-        }
-
-        if (Yii::$app->request->isPost) {
-            $model = new PengajuanShift();
-            $post = Yii::$app->request->post();
-
-            $model->load($post, '');
-            $model->id_karyawan = $id_karyawan;
-            $model->diajukan_pada = date('Y-m-d');
-            $model->status = 0;
-
-            if ($model->save()) {
-                return ['status' => 'success', 'message' => 'Pengajuan shift berhasil dikirim.'];
-            } else {
-                return ['status' => 'error', 'message' => 'Gagal mengirim pengajuan shift.', 'errors' => $model->errors];
-            }
-        }
-
-        return ['status' => 'error', 'message' => 'Invalid request method'];
-    }
-
-
-
 
     // ===========================
 
@@ -939,7 +790,7 @@ class HomeController extends ActiveController
         $jamKerjaKaryawan,
         $dataJam,
         $isPulangCepat,
-        $change_shift,
+
 
     ) {
         return [
@@ -953,8 +804,7 @@ class HomeController extends ActiveController
             'jamKerjaToday' => [
                 'jam_masuk' => $dataAbsensiHariIni->jam_masuk,
                 'jam_pulang' => $dataAbsensiHariIni->jam_pulang
-            ],
-            'change_shift' => $change_shift
+            ]
         ];
     }
 
@@ -965,8 +815,7 @@ class HomeController extends ActiveController
         $dataJam,
         $isPulangCepat,
         $jamKerjaToday,
-        $lokasiPenempatan,
-        $change_shift
+        $lokasiPenempatan
     ) {
         return [
             'is24jam' => false,
@@ -978,7 +827,6 @@ class HomeController extends ActiveController
             'isPulangCepat' => $isPulangCepat,
             'jamKerjaToday' => $jamKerjaToday,
             'masterLokasi' => $lokasiPenempatan,
-            'change_shift' => $change_shift
         ];
     }
 
@@ -988,8 +836,7 @@ class HomeController extends ActiveController
         $dataJam,
         $isPulangCepat,
         $jamKerjaToday,
-        $lokasiPenempatan,
-        $change_shift
+        $lokasiPenempatan
     ) {
         return [
             'is24jam' => false,
@@ -1002,7 +849,6 @@ class HomeController extends ActiveController
             'isPulangCepat' => $isPulangCepat,
             'jamKerjaToday' => $jamKerjaToday,
             'masterLokasi' => $lokasiPenempatan,
-            'change_shift' => $change_shift
         ];
     }
 
@@ -1032,6 +878,7 @@ class HomeController extends ActiveController
         $hariIni = date('w') == '0' ? 0 : date('w');
         // Untuk shift kerja
 
+
         if ($jamKerjaKaryawan['is_shift'] == 1) {
 
             $tanggalHariIni = date('Y-m-d');
@@ -1043,7 +890,7 @@ class HomeController extends ActiveController
             $jadwalKerjaKaryawan = JadwalKerja::find()->asArray()
                 ->where([
                     'id_jam_kerja' => $jamKerjaKaryawan['id_jam_kerja'],
-                    // 'nama_hari' => date('N'),
+                    // 'tanggal' => date('N'),
                     'id_shift_kerja' => $dataShift['id_shift_kerja']
                 ])
                 ->one();
@@ -1116,13 +963,6 @@ class HomeController extends ActiveController
     }
 
 
-    private function getChangeShift()
-    {
-        $data = SettinganUmum::find()->where(['kode_setting' => 'change_shift'])->asArray()->one();
-        return $data['nilai_setting'] ?? 0;
-    }
-
-
     private function getAbsensiHariIni($id_karyawan)
     {
         return $this->modelClass::find()
@@ -1165,7 +1005,7 @@ class HomeController extends ActiveController
 
 
     // Fungsi-fungsi format respons
-    private function formatRespons24Jam($jamKerjaKaryawan, $lokasiPenempatan, $isPulangCepat, $change_shift)
+    private function formatRespons24Jam($jamKerjaKaryawan, $lokasiPenempatan, $isPulangCepat)
     {
         $absensiTerakhir = Absensi::find()
             ->where(['id_karyawan' => $jamKerjaKaryawan->id_karyawan])
@@ -1180,7 +1020,6 @@ class HomeController extends ActiveController
             'absensiTerakhir' => $absensiTerakhir,
             'isPulangCepat' => $isPulangCepat,
             'masterLokasi' => $lokasiPenempatan,
-            'change_shift' => $change_shift
         ];
     }
 

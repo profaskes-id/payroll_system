@@ -9,256 +9,247 @@ use yii\helpers\ArrayHelper;
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-
 $this->title = 'Absensis';
-
 $this->params['breadcrumbs'][] = $this->title;
 
+// CSS Variables
+
+$modals = [
+    [
+        'id' => 'popup-modal',
+        'title' => 'Anda Akan Melakukan Aksi Absen Masuk ?',
+        'confirm_id' => 'submitButton'
+    ],
+    [
+        'id' => 'popup-modal-keluar',
+        'title' => 'Anda Akan Melakukan Aksi Absen Pulang ?',
+        'confirm_id' => 'submitButtonKeluar'
+    ]
+];
+$buttonStyles = [
+    'masuk' => 'bg-gradient-to-r from-[#EB5A2B] to-[#EA792B] shadow-[#EB5A2B]',
+    'pulang' => 'bg-gradient-to-r from-[#CE1705] to-[#EF0802] shadow-[#D51405]',
+    'disabled' => 'bg-gradient-to-r from-[#686161] to-[#2b2b2b] shadow-[#9b9b9b]',
+];
+
+$modalStyles = [
+    'container' => 'hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full',
+    'content' => 'relative bg-white rounded-lg shadow dark:bg-gray-700 p-4 md:p-5 text-center',
+    'button' => [
+        'confirm' => 'text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center',
+        'cancel' => 'py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700'
+    ]
+];
+
+$iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full grid place-items-center';
 ?>
 
+<section class="min-h-[90dvh] relative overflow-x-hidden">
+    <!-- Confirmation Modals -->
 
-<section class="">
-
-    <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative w-full max-w-md max-h-full p-4">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal">
-                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                    </svg>
-                    <span class="sr-only">Close modal</span>
-                </button>
-                <div class="p-4 text-center md:p-5">
-                    <svg class="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
-                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Anda Akan Melakukan Aksi Absen Masuk ?</h3>
-                    <button id="submitButton" data-modal-hide="popup-modal" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
-                        Ya, Yakin
+    <?php foreach ($modals as $modal): ?>
+        <div id="<?= $modal['id'] ?>" tabindex="-1" class="<?= $modalStyles['container'] ?>">
+            <div class="relative w-full max-w-md max-h-full p-4">
+                <div class="<?= $modalStyles['content'] ?>">
+                    <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="<?= $modal['id'] ?>">
+                        <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                        </svg>
+                        <span class="sr-only">Close modal</span>
                     </button>
-                    <button data-modal-hide="popup-modal" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Batalkan </button>
+                    <div class="p-4 text-center md:p-5">
+                        <svg class="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-gray-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400"><?= $modal['title'] ?></h3>
+                        <button id="<?= $modal['confirm_id'] ?>" data-modal-hide="<?= $modal['id'] ?>" type="button" class="<?= $modalStyles['button']['confirm'] ?>">
+                            Ya, Yakin
+                        </button>
+                        <button data-modal-hide="<?= $modal['id'] ?>" type="button" class="<?= $modalStyles['button']['cancel'] ?>">Batalkan</button>
+                    </div>
                 </div>
             </div>
+        </div>
+    <?php endforeach; ?>
+
+    <!-- Pulang Notification Modal -->
+    <div id="modal-pulang" class="hidden w-[80vw] md:w-[40vw] p-5 absolute left-1/2 -translate-x-1/2 top-1/2 z-50 -translate-y-1/2 rounded-xl border-red-400 border bg-white h-[150px]">
+        <div id="close-modal-pulang" class="absolute -top-2 px-2.5 py-1 text-white -translate-x-6 bg-red-500 rounded-full cursor-pointer -right-10">X</div>
+        <h1 class="text-xl font-bold capitalize">jam kerja anda telah selesai</h1>
+        <p class="font-normal capitalize">segera lngkapi absensi pulang anda, dengan click tombol absensi pulang</p>
+        <div class="flex flex-col items-center justify-around mb-5 space-y-3 lg:flex-row lg:space-y-0">
+            <a href="pengajuan/lebur" class="px-5 py-2 font-bold text-white bg-red-500 rounded-lg">Ajukan Lembur</a>
         </div>
     </div>
 
 
 
-
-
-    <div id="popup-modal-keluar" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative w-full max-w-md max-h-full p-4">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal-keluar">
-                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                    </svg>
-                    <span class="sr-only">Close modal</span>
-                </button>
-                <div class="p-4 text-center md:p-5">
-                    <svg class="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
-                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Anda Akan Melakukan Aksi Absen Pulang ?</h3>
-                    <button id="submitButtonKeluar" data-modal-hide="popup-modal-keluar" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
-                        Ya, Yakin
-                    </button>
-                    <button data-modal-hide="popup-modal-keluar" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Batalkan </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <section class="grid grid-cols-10  relative overflow-x-hidden min-h-[90dvh] ">
-        <div class="fixed bottom-0 z-40 hidden w-1/2 -translate-x-1/2 left-1/2 lg:block ">
-            <?= $this->render('@backend/views/components/_footer'); ?>
-        </div>
-
-        <div id="modal-puang" class="hidden w-[80vw] md:w-[40vw] p-5 absolute left-1/2 -translate-x-1/2 top-1/2 z-50 -translate-y-1/2 rounded-xl   border-red-400 border bg-white h-[150px]">
-            <div id="close-modal-pulang" class="absolute -top-2 px-2.5 py-1 text-white -translate-x-6 bg-red-500 rounded-full cursor-pointer -right-10">
-                X
-            </div>
-            <h1 class="text-xl font-bold capitalize">jam kerja anda telah selesai</h1>
-            <p class="font-normal capitalize">segera lngkapi absensi pulang anda, dengan click tombol absensi pulang</p>
-
-
-            <div class="flex flex-col items-center justify-around mb-5 space-y-3 lg:flex-row lg:space-y-0 ">
-
-
-                <a href="pengajuan/lebur" class="px-5 py-2 font-bold text-white bg-red-500 rounded-lg">
-                    Ajukan Lembur
-                </a>
-
-            </div>
-        </div>
-
-
-        <!-- content -->
-        <div class="w-full col-span-12 px-5 pt-5 ">
+    <!-- Main Content -->
+    <section class="grid grid-cols-12">
+        <div class="w-full col-span-12 px-5 pt-5">
             <div class="grid grid-cols-12 place-items-center">
                 <div class="w-full col-span-12">
+                    <?= $this->render('@backend/views/components/fragment/_time') ?>
 
-                    <?= $this->render('@backend/views/components/fragment/_time'); ?>
-                    <?php if ($jamKerjaToday): ?>
+                    <?php
+                    $isShift = $dataJam['karyawan']['is_shift'] ?? null;
+                    $manualShift = $manual_shift ?? null;
+                    ?>
 
-                        <style>
-                            .moving-text {
-                                display: flex;
-                                animation: move 10s linear infinite;
-                            }
-
-                            @keyframes move {
-                                0% {
-                                    transform: translateX(100%);
-                                }
-
-                                100% {
-                                    transform: translateX(-100%);
-                                }
-                            }
-                        </style>
-                        <div class="flex flex-col items-center justify-center space-y-3 lg:flex-row lg:space-y-0">
-                            <div class="w-full ">
-                                <p class="mt-2 -mb-3 text-xs text-center capitalize ">Lokasi Anda</p>
-                                <div class="bg-sky-500/10 rounded-full p-1 overflow-hidden max-w-[80dvw]  mt-3 mx-auto">
-                                    <a href="/panel/home/your-location">
-                                        <div class="">
-                                            <div class="moving-text capitalize flex justify-around items-center text-[12px] ">
-                                                <p id="alamat" style="text-wrap: nowrap !important;"></p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="w-full ">
-                                <p class="mt-2 -mb-3 text-xs text-center">Jam Kerja </p>
-                                <div class="capitalize flex justify-around items-center bg-orange-500/10 p-1 text-[13px] w-[80%] mx-auto mt-3 rounded-full">
-
-                                    <p><?= date('H:i ', strtotime($jamKerjaToday['jam_masuk'] ?? '00:00:00')) ?></p>
-                                    <p>S/D</p>
-                                    <p><?= date('H:i ', strtotime($jamKerjaToday['jam_keluar'] ?? '00:00:00')) ?></p>
-                                </div>
-                            </div>
-                        </div>
-                    <?php else: ?>
-
-                        <p class="mt-10 text-center text-gray-500">Sekarang bukan Hari Kerja, Anda Bisa Mengajukan Pengajuan Lembur Di Luar Hari Kerja, <br><a href="/panel/pengajuan/lembur" class="text-blue-500">Klik Disini Untuk Megajukan Lembur</a></p>
-
+                    <?php if ($jamKerjaToday || $manualShift == 1): ?>
+                        <?= $this->render('utils/_working_hours_info', [
+                            'jamKerjaToday' => $jamKerjaToday
+                        ]) ?>
+                    <?php elseif ($isShift == 1 && $manualShift == 0): ?>
+                        <p class="mt-10 text-center text-gray-500">
+                            Shift anda akan direkap otomatis sesuai jam absensi anda
+                        </p>
                     <?php endif; ?>
 
-                    <br>
-                    <br>
-                    <?php if ($dataJam['today']) : ?>
 
-                        <?php if (count($absensiToday) > 0) : ?>
-                            <?php if (empty($absensiToday[0]->jam_pulang)) : ?>
-                                <?php $formAbsen = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',  'action' => ['home/absen-pulang']]); ?>
+
+
+
+                    <br><br>
+
+
+                    <?php if ($dataJam['today'] || $manual_shift == 0) : ?>
+
+
+                        <?php if (count($absensiToday) > 0): ?>
+                            <?php if (empty($absensiToday[0]->jam_pulang)): ?>
+                                <?php $formAbsen = ActiveForm::begin([
+                                    'method' => 'post',
+                                    'id' => 'my-form',
+                                    'action' => ['home/absen-pulang']
+                                ]) ?>
 
                                 <div class="flex flex-col items-center justify-center space-y-3 lg:flex-row lg:space-y-0">
-
                                     <div class="grid place-items-center border border-[#D51405]/10 p-3 rounded-full">
-                                        <button class="all-none border border-[#D51405]/50 p-3 rounded-full disabled:opacity-50" disabled data-modal-target="popup-modal-keluar" data-modal-toggle="popup-modal-keluar" type="button" id="pulang-button">
-                                            <div class=" flex relative  w-[225px] h-[225px] bg-gradient-to-r from-[#CE1705] to-[#EF0802] shadow-2xl shadow-[#D51405] rounded-full  ">
-                                                <?= Html::img('@root/images/icons/click.svg', ['alt' => 'absen', 'class' => ' w-full  h-full -mt-3 object-cover scale-[0.7] ']) ?>
-                                                <p class="absolute m-0 font-normal text-white -translate-x-1/2 bottom-5 left-1/2">Absen Pulang</p>
+                                        <button class="all-none border border-[#D51405]/50 p-3 rounded-full disabled:opacity-50"
+                                            disabled data-modal-target="popup-modal-keluar"
+                                            data-modal-toggle="popup-modal-keluar"
+                                            type="button"
+                                            id="pulang-button">
+                                            <div class="flex relative w-[225px] h-[225px] <?= $buttonStyles['pulang'] ?> shadow-2xl rounded-full">
+                                                <?= Html::img('@root/images/icons/click.svg', [
+                                                    'alt' => 'absen',
+                                                    'class' => 'w-full h-full -mt-3 object-cover scale-[0.7]'
+                                                ]) ?>
+                                                <p class="absolute m-0 font-normal text-white -translate-x-1/2 bottom-5 left-1/2">
+                                                    Absen Pulang
+                                                </p>
                                             </div>
                                         </button>
                                     </div>
                                 </div>
-                                <p class="my-5 text-xs text-center text-gray-500" id="message">Absen Pulang Aktif Hanya Saat Jam Pulang</p>
-                                <?php ActiveForm::end(); ?>
-                            <?php else : ?>
+                                <p class="my-5 text-xs text-center text-gray-500" id="message">
+                                    Absen Pulang Aktif Hanya Saat Jam Pulang
+                                </p>
+                                <?php ActiveForm::end() ?>
+                            <?php else: ?>
                                 <div class="flex flex-col items-center justify-center space-y-3 lg:flex-row lg:space-y-0">
-
                                     <button class="all-none" type="button" disabled>
-                                        <div class="flex relative  w-[225px] h-[225px] bg-gradient-to-r from-[#686161] to-[#2b2b2b] shadow-2xl shadow-[#9b9b9b] rounded-full  ">
-                                            <?= Html::img('@root/images/icons/click.svg', ['alt' => 'absen', 'class' => ' w-full  h-full -mt-3 object-cover scale-[0.7] ']) ?>
-                                            <p class="absolute m-0 font-normal text-white -translate-x-1/2 bottom-5 left-1/2">Selesai</p>
+                                        <div class="flex relative w-[225px] h-[225px] <?= $buttonStyles['disabled'] ?> shadow-2xl rounded-full">
+                                            <?= Html::img('@root/images/icons/click.svg', [
+                                                'alt' => 'absen',
+                                                'class' => 'w-full h-full -mt-3 object-cover scale-[0.7]'
+                                            ]) ?>
+                                            <p class="absolute m-0 font-normal text-white -translate-x-1/2 bottom-5 left-1/2">
+                                                Selesai
+                                            </p>
                                         </div>
                                     </button>
                                 </div>
                             <?php endif ?>
-
-
-                        <?php else : ?>
-                            <?php $formAbsen = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',  'action' => ['home/absen-masuk']]); ?>
+                        <?php else: ?>
+                            <?php $formAbsen = ActiveForm::begin([
+                                'method' => 'post',
+                                'id' => 'my-form',
+                                'action' => ['home/absen-masuk']
+                            ]) ?>
                             <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'latitude'])->label(false) ?>
                             <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'longitude'])->label(false) ?>
 
-                            <div class="flex flex-col items-center justify-center space-y-3 lg:flex-row lg:space-y-0">
+                            <?php if ($dataJam['karyawan']['is_shift'] && $manual_shift == 0): ?>
+                                <?= $formAbsen->field($model, 'id_shift')->radioList([
+                                    1 => 'Shift 1 (06:00 - 14:00)',
+                                    2 => 'Shift 2 (14:00 - 22:00)',
+                                    3 => 'Shift 3 (22:00 - 06:00)'
+                                ], [
+                                    'item' => function ($index, $label, $name, $checked, $value) {
+                                        return "<div class='flex items-center mb-4'>
+            <input id='shift-main-{$value}' type='radio' name='{$name}' value='{$value}' class='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 shift-radio focus:ring-blue-500'>
+            <label for='shift-main-{$value}' class='text-sm font-medium text-gray-900 ms-2'>{$label}</label>
+        </div>";
+                                    }
+                                ])->label(false) ?>
 
+                            <?php endif; ?>
+
+                            <!-- Tombol Absen Masuk -->
+                            <div class="flex flex-col items-center justify-center space-y-3 lg:flex-row lg:space-y-0">
                                 <div class="grid place-items-center border border-[#EB5A2B]/10 p-4 rounded-full">
-                                    <button class="all-none border border-[#EB5A2B]/50 p-4 rounded-full" data-modal-target="popup-modal" data-modal-toggle="popup-modal" type="button">
-                                        <div class=" flex relative w-[225px] h-[225px] bg-gradient-to-r from-[#EB5A2B] to-[#EA792B] shadow-2xl shadow-[#EB5A2B] rounded-full  ">
-                                            <?= Html::img('@root/images/icons/click.svg', ['alt' => 'absen', 'class' => ' w-full  h-full -mt-3 object-cover scale-[0.7] ']) ?>
-                                            <p class="absolute m-0 font-normal text-white -translate-x-1/2 bottom-5 left-1/2">Absen Masuk</p>
+                                    <button class="all-none border border-[#EB5A2B]/50 p-4 rounded-full"
+                                        data-modal-target="popup-modal"
+                                        data-modal-toggle="popup-modal"
+                                        type="button">
+                                        <div class="flex relative w-[225px] h-[225px] <?= $buttonStyles['masuk'] ?> shadow-2xl rounded-full">
+                                            <?= Html::img('@root/images/icons/click.svg', [
+                                                'alt' => 'absen',
+                                                'class' => 'w-full h-full -mt-3 object-cover scale-[0.7]'
+                                            ]) ?>
+                                            <p class="absolute m-0 font-normal text-white -translate-x-1/2 bottom-5 left-1/2">
+                                                Absen Masuk
+                                            </p>
                                         </div>
                                     </button>
                                 </div>
                             </div>
-                            <?php ActiveForm::end(); ?>
+                            <?php ActiveForm::end() ?>
                         <?php endif ?>
-
-
-
                     <?php endif ?>
+
 
 
                 </div>
             </div>
-            <!-- ? mobile izin -->
+
+            <!-- Mobile Action Buttons -->
             <div class="flex items-center justify-between pb-32">
-                <?php if (count($absensiToday) > 0) : ?>
-                    <?php if (empty($absensiToday[0]->jam_pulang)) : ?>
+                <?php if (count($absensiToday) > 0): ?>
+                    <?php if (empty($absensiToday[0]->jam_pulang)): ?>
                         <div class="grid mt-5 place-items-center">
                             <a href="/panel/home/pulang-cepat">
                                 <div class="grid place-items-center">
-                                    <div class="w-[60px] h-[60px]  border bg-red-50 border-gray rounded-full grid place-items-center">
+                                    <div class="<?= $iconButtonStyles ?>">
                                         <div class="grid w-8 h-8 font-black text-center text-white rounded-full place-items-center bg-rose-500">
                                             <span class="w-1 h-5 bg-white rounded-xl"></span>
                                         </div>
                                     </div>
-                                    <p class="mt-2 font-medium text-center capitalize">Pulang Cepat </p>
+                                    <p class="mt-2 font-medium text-center capitalize">Pulang Cepat</p>
                                 </div>
                             </a>
                         </div>
-                    <?php else : ?>
-
-                        <?php if ($isPulangCepat): ?>
-                            <div class="grid mt-5 place-items-center">
-                                <a href="/panel/home/pulang-cepat">
-                                    <div class="grid place-items-center">
-                                        <div class="w-[60px] h-[60px]  border bg-red-50 border-gray rounded-full grid place-items-center">
-                                            <div class="grid w-8 h-8 font-black text-center text-white bg-yellow-400 rounded-full place-items-center">
-                                                <span class="w-1 h-5 bg-white rounded-xl"></span>
-                                            </div>
+                    <?php else: ?>
+                        <div class="grid mt-5 place-items-center">
+                            <a href="<?= $isPulangCepat ? '/panel/home/pulang-cepat' : '#' ?>">
+                                <div class="grid place-items-center">
+                                    <div class="<?= $iconButtonStyles ?>">
+                                        <div class="grid w-8 h-8 font-black text-center text-white <?= $isPulangCepat ? 'bg-yellow-400' : 'bg-gray-400' ?> rounded-full place-items-center">
+                                            <span class="w-1 h-5 bg-white rounded-xl"></span>
                                         </div>
-                                        <p class="mt-2 font-medium text-center capitalize">Pulang Cepat </p>
                                     </div>
-                                </a>
-                            </div>
-                        <?php else: ?>
-                            <div class="grid mt-5 place-items-center">
-                                <a href="">
-                                    <div class="grid place-items-center">
-                                        <div class="w-[60px] h-[60px]  border bg-red-50 border-gray rounded-full grid place-items-center">
-                                            <div class="grid w-8 h-8 font-black text-center text-white bg-gray-400 rounded-full place-items-center">
-                                                <span class="w-1 h-5 bg-white rounded-xl"></span>
-                                            </div>
-                                        </div>
-                                        <p class="mt-2 font-medium text-center capitalize">Pulang Cepat </p>
-                                    </div>
-                                </a>
-                            </div>
-                        <?php endif ?>
+                                    <p class="mt-2 font-medium text-center capitalize">Pulang Cepat</p>
+                                </div>
+                            </a>
+                        </div>
                     <?php endif ?>
-
-                <?php else : ?>
+                <?php else: ?>
                     <div class="grid mt-5 place-items-center">
                         <a href="/panel/home/create">
-
                             <div class="grid place-items-center">
-                                <div class="w-[60px] h-[60px]  border bg-red-50 border-gray rounded-full grid place-items-center">
+                                <div class="<?= $iconButtonStyles ?>">
                                     <div class="grid w-8 h-8 font-black text-center text-white rounded-full place-items-center bg-rose-500">
                                         <span class="w-5 h-1 bg-white rounded-xl"></span>
                                     </div>
@@ -269,39 +260,35 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                 <?php endif ?>
 
+                <?= $this->render('@backend/views/components/fragment/_terlambat', ['model' => $model]) ?>
+                <?= $this->render('@backend/views/components/fragment/_terlalu_jauh', ['model' => $model, 'dataJam' => $dataJam, 'manual_shift' => $manual_shift]) ?>
 
-                <?= $this->render('@backend/views/components/fragment/_terlambat', ['model' => $model]); ?>
-                <?= $this->render('@backend/views/components/fragment/_terlalu_jauh', ['model' => $model]); ?>
                 <div class="grid mt-5 place-items-center">
-
-                    <?= Html::a('
-              <div class="grid place-items-center">
-              <div class="w-[60px] h-[60px] bg-orange-50 border border-gray rounded-full grid place-items-center">
-              <div class="font-black text-white w-8 h-8 text-center flex justify-center ps-1.5 items-start flex-col space-y-1 rounded-sm bg-orange-500">
-              <span class="w-5 h-1 bg-white rounded-xl"></span>
-              <span class="w-5 h-1 bg-white rounded-xl"></span>
-              <span class="w-2 h-1 bg-white rounded-xl"></span>
-              </div>
-              </div>
-              <p class="mt-2 font-medium text-center capitalize">Lihat History</p>
-              </div>
-              ', ['/home/view', 'id_user' => Yii::$app->user->identity->id]) ?>
+                    <?= Html::a(
+                        '
+                        <div class="grid place-items-center">
+                            <div class="w-[60px] h-[60px] bg-orange-50 border border-gray rounded-full grid place-items-center">
+                                <div class="font-black text-white w-8 h-8 text-center flex justify-center ps-1.5 items-start flex-col space-y-1 rounded-sm bg-orange-500">
+                                    <span class="w-5 h-1 bg-white rounded-xl"></span>
+                                    <span class="w-5 h-1 bg-white rounded-xl"></span>
+                                    <span class="w-2 h-1 bg-white rounded-xl"></span>
+                                </div>
+                            </div>
+                            <p class="mt-2 font-medium text-center capitalize">Lihat History</p>
+                        </div>',
+                        ['/home/view', 'id_user' => Yii::$app->user->identity->id]
+                    )
+                    ?>
                 </div>
             </div>
         </div>
-
-
     </section>
 
+    <!-- Footer -->
     <div class="fixed bottom-0 left-0 right-0 z-50 lg:hidden">
-
-        <?= $this->render('@backend/views/components/_footer'); ?>
+        <?= $this->render('@backend/views/components/_footer') ?>
     </div>
-
-
 </section>
-
-
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
@@ -332,13 +319,32 @@ $redirectUrl = Yii::getAlias('@web');
 </script>
 
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ketika modal terlalu jauh akan ditampilkan
+        document.querySelector('[data-modal-toggle="popup-modal-terlalujauh"]').addEventListener('click', function() {
+            // Cari radio button yang dipilih di form utama
+            const selectedShift = document.querySelector('#my-form .shift-radio:checked');
+
+            if (selectedShift) {
+                const shiftValue = selectedShift.value;
+                // Set nilai yang sama di form terlalu jauh
+                document.querySelector(`#my-form-terlalujauh input.shift-radio[value="${shiftValue}"]`).checked = true;
+            }
+        });
+    });
+</script>
+
+
 <?php
 $dataToday = ArrayHelper::toArray($dataJam);
 $dataTodayJson = json_encode($dataToday, JSON_PRETTY_PRINT);
 $dataAtasanPenempatan = ArrayHelper::toArray($masterLokasi);
 $dataAtasanPenempatanJson = json_encode($dataAtasanPenempatan, JSON_PRETTY_PRINT);
+$manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT);
 ?>
 <script>
+    let manual_shift = <?= $manual_shift ?>;
     let todayJson = <?= $dataTodayJson ?>;
     let AtasanKaryawanJson = <?= $dataAtasanPenempatanJson ?>;
 
@@ -389,12 +395,16 @@ $dataAtasanPenempatanJson = json_encode($dataAtasanPenempatan, JSON_PRETTY_PRINT
             .then(response => response.json())
             .then(data => {
                 var alamatLengkap = data.display_name;
-                document.getElementById('alamat').textContent = alamatLengkap;
+                var elemenAlamat = document.getElementById('alamat');
+                if (elemenAlamat) {
+                    elemenAlamat.textContent = alamatLengkap;
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
             });
     }
+
 
     submitButtonKeluar.addEventListener('click', function() {
         form.submit();
@@ -405,8 +415,25 @@ $dataAtasanPenempatanJson = json_encode($dataAtasanPenempatan, JSON_PRETTY_PRINT
     let globatLong = 0;
 
 
-
     submitButton.addEventListener('click', function() {
+        const alasanTerlambat = document.querySelector('#alasanTerlambat');
+        const alasanterlalujauh = document.querySelector('#alasanterlalujauh');
+        if (manual_shift == 0) {
+            // Cek jarak saja, tidak perlu cek jam
+            let from = L.latLng(globatLat, globatLong);
+            let to = L.latLng(AtasanKaryawanJson.latitude, AtasanKaryawanJson.longtitude);
+            let distance = from.distanceTo(to);
+
+            if (distance.toFixed(0) <= AtasanKaryawanJson.radius) {
+                form.submit();
+            } else {
+                alasanterlalujauh.classList.toggle('hidden');
+            }
+
+            return; // selesai, keluar dari event handler
+        }
+
+        // Lanjut ke pengecekan waktu jika manual_shift != 0
         function getWaktuSaatIni() {
             const sekarang = new Date();
             return {
@@ -422,11 +449,8 @@ $dataAtasanPenempatanJson = json_encode($dataAtasanPenempatan, JSON_PRETTY_PRINT
             detik
         } = getWaktuSaatIni();
 
-
-
         const [batasJam, batasMenit, batasDetik] = jam_masuk.split(':').map(Number);
         const [maximalTelatJam, maximalTelatbatasMenit, maximalTelatbatasDetik] = max_telat.split(':').map(Number);
-
 
         function isSebelumBatas(jam, menit, detik) {
             if (jam < batasJam) return true;
@@ -441,14 +465,12 @@ $dataAtasanPenempatanJson = json_encode($dataAtasanPenempatan, JSON_PRETTY_PRINT
             return false;
         }
 
-        const alasanTerlambat = document.querySelector('#alasanTerlambat');
-        const alasanterlalujauh = document.querySelector('#alasanterlalujauh');
 
         let from = L.latLng(globatLat, globatLong);
         let to = L.latLng(AtasanKaryawanJson.latitude, AtasanKaryawanJson.longtitude);
         let distance = from.distanceTo(to);
-        if (isSebelumBatas(jam, menit, detik)) {
 
+        if (isSebelumBatas(jam, menit, detik)) {
             if (distance.toFixed(0) <= AtasanKaryawanJson.radius) {
                 form.submit();
             } else {
@@ -457,19 +479,17 @@ $dataAtasanPenempatanJson = json_encode($dataAtasanPenempatan, JSON_PRETTY_PRINT
             }
         } else if (isTerlambat(jam, menit, detik)) {
             if (jam === batasJam && menit <= maximalTelatbatasMenit) {
-
                 if (distance.toFixed(0) <= AtasanKaryawanJson.radius) {
                     form.submit();
                 } else {
                     alasanterlalujauh.classList.toggle('hidden');
                 }
-
             } else {
-                //terlambat diluar masa tenggang
+                // terlambat diluar masa tenggang
                 alasanTerlambat.classList.toggle('hidden');
             }
         } else {
-            //terlambat diluar masa tenggang
+            // terlambat diluar masa tenggang
             alasanTerlambat.classList.toggle('hidden');
         }
     });
@@ -485,18 +505,24 @@ $dataAtasanPenempatanJson = json_encode($dataAtasanPenempatan, JSON_PRETTY_PRINT
         // Jika currentTime tidak diberikan, gunakan waktu saat ini
         const sekarang = currentTime ? new Date(currentTime) : new Date();
 
-        // Mengambil jam, menit, dan detik dari waktu jam pulang
-        const [jam, menit, detik] = jam_pulang.split(':').map(Number);
+        if (jam_pulang) {
 
-        // Membuat objek Date untuk waktu jam pulang
-        const waktuPulang = new Date(sekarang);
-        waktuPulang.setHours(jam, menit, detik, 0);
+            // Mengambil jam, menit, dan detik dari waktu jam pulang
+            const [jam, menit, detik] = jam_pulang.split(':').map(Number);
 
-        // Mengecek apakah waktu saat ini sudah melewati jam pulang
-        if (sekarang >= waktuPulang) {
-            const message = document.querySelector('#message');
-            message.classList.add('hidden');
-            pulang_button.disabled = false;
+
+            // Membuat objek Date untuk waktu jam pulang
+            const waktuPulang = new Date(sekarang - sekarang.getTimezoneOffset() * 60 * 1000);
+            waktuPulang.setHours(jam, menit, detik, 0);
+
+            // Mengecek apakah waktu saat ini sudah melewati jam pulang
+            if (sekarang >= waktuPulang) {
+                const message = document.querySelector('#message');
+                if (message) {
+                    message.classList.add('hidden');
+                    pulang_button.disabled = false;
+                }
+            }
         }
     }
 
@@ -507,7 +533,7 @@ $dataAtasanPenempatanJson = json_encode($dataAtasanPenempatan, JSON_PRETTY_PRINT
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var closeButton = document.getElementById('close-modal-pulang');
-        var modal = document.getElementById('modal-puang');
+        var modal = document.getElementById('modal-pulang');
 
         closeButton.addEventListener('click', function(e) {
             e.preventDefault();
