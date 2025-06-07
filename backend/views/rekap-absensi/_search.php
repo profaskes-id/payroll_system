@@ -3,7 +3,6 @@
 use backend\models\Karyawan;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-
 use kartik\select2\Select2;
 
 /** @var yii\web\View $this */
@@ -13,71 +12,57 @@ use kartik\select2\Select2;
 
 <div class="absensi-search">
 
-    <form method="GET" action=""> <!-- Ganti 'your_action_page.php' dengan halaman yang sesuai -->
+    <form method="GET" action="">
+        <div class="row" style="gap: 10px 0;">
 
-        <div class="row " style="gap: 10px 0;">
-
-            <div class="col-6 col-md-5 ">
-                <!-- <label for="bulan">Bulan:</label> -->
-                <select name="bulan" id="bulan" class="form-control w-100 " style="width: 100%; display: block;">
-                    <?php
-                    $bulanArray = [
-                        1 => 'Januari',
-                        2 => 'Februari',
-                        3 => 'Maret',
-                        4 => 'April',
-                        5 => 'Mei',
-                        6 => 'Juni',
-                        7 => 'Juli',
-                        8 => 'Agustus',
-                        9 => 'September',
-                        10 => 'Oktober',
-                        11 => 'November',
-                        12 => 'Desember',
-                    ];
-                    $currentMonth = $bulan; // Mengambil bulan saat ini
-                    foreach ($bulanArray as $key => $value) {
-                        echo "<option value='{$key}' " . ($key == $currentMonth ? 'selected' : '') . ">{$value}</option>";
-                    }
-                    ?>
-                </select>
+            <div class="col-12 col-md-5">
+                <label for="tanggal_awal">Tanggal Awal:</label>
+                <input type="date" name="tanggal_awal" id="tanggal_awal" class="form-control w-100"
+                    value="<?= $tanggal_awal ?>" required>
             </div>
 
-            <div class="col-6 col-md-4">
-                <!-- <label for="tahun">Tahun:</label> -->
-                <select name="tahun" id="tahun" class="form-control w-100">
-                    <?php
-                    $currentYear = $tahun; // Mengambil tahun saat ini
-                    for ($year = $currentYear - 5; $year <= $currentYear + 5; $year++) { // Menampilkan 5 tahun ke belakang dan 5 tahun ke depan
-                        echo "<option value='{$year}' " . ($year == $currentYear ? 'selected' : '') . ">{$year}</option>";
-                    }
-                    ?>
-                </select>
+            <div class="col-12 col-md-5">
+                <label for="tanggal_akhir">Tanggal Akhir:</label>
+                <input type="date" name="tanggal_akhir" id="tanggal_akhir" class="form-control w-100"
+                    value="<?= $tanggal_akhir ?>" readonly>
             </div>
 
-            <div class="col-3">
-                <div class="items-center form-group d-flex w-100 justify-content-around">
-                    <button class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+            <div class="col-12 col-md-2">
+                <div class="items-center form-group d-flex w-100 justify-content-around" style="padding-top: 25px;">
+                    <button class="add-button" type="submit">
                         <i class="fas fa-search"></i>
-                        <span>
-                            Search
-                        </span>
+                        <span>Search</span>
                     </button>
 
                     <a class="reset-button" href="<?= \yii\helpers\Url::to(['index']) ?>">
                         <i class="fas fa-undo"></i>
-                        <span>
-                            Reset
-                        </span>
+                        <span>Reset</span>
                     </a>
                 </div>
             </div>
         </div>
-
-
-
+    </form>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tanggalAwalInput = document.getElementById('tanggal_awal');
+        const tanggalAkhirInput = document.getElementById('tanggal_akhir');
 
+        function calculateEndDate() {
+            if (tanggalAwalInput.value) {
+                const startDate = new Date(tanggalAwalInput.value);
+                const endDate = new Date(startDate);
 
-</form>
+                endDate.setMonth(endDate.getMonth() + 1);
+                endDate.setDate(endDate.getDate() - 1);
+
+                const formattedDate = endDate.toISOString().split('T')[0];
+                tanggalAkhirInput.value = formattedDate;
+            }
+        }
+
+        // HANYA hitung ulang jika user mengubah tanggal_awal
+        tanggalAwalInput.addEventListener('change', calculateEndDate);
+    });
+</script>

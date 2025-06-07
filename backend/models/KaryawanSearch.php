@@ -235,14 +235,32 @@ class KaryawanSearch extends Karyawan
                 }
 
                 if (strtolower($row['jenis_shift']) == 'shift') {
-                    $dataShif = [];
+                    $dataShif = [
+                        'jam_masuk' => "",
+                        'jam_keluar' => "",
+                        'jumlah_jam' => ""
+                    ];
+
                     if ($row['is_shift'] == 1) {
                         $tanggalHariIni = date('Y-m-d');
                         $jadwalShiftHariIni = JadwalShift::find()
                             ->where(['id_karyawan' => $row['id_karyawan'], 'tanggal' => $tanggalHariIni])
                             ->asArray()
                             ->one();
-                        $dataShif = $shifKerja->getShiftKerjaById($jadwalShiftHariIni['id_shift_kerja']);
+                        if ($jadwalShiftHariIni) {
+                            $shift = $shifKerja->getShiftKerjaById($jadwalShiftHariIni['id_shift_kerja']);
+                            if ($shift) {
+                                $dataShif = [
+                                    'jam_masuk' => $shift['jam_masuk'] ?? "",
+                                    'jam_keluar' => $shift['jam_keluar'] ?? "",
+                                    'jumlah_jam' => $shift['jumlah_jam'] ?? ""
+                                ];
+                            } else {
+                                Yii::$app->session->setFlash('warning', "Data shift kerja tidak ditemukan untuk ID shift: {$jadwalShiftHariIni['id_shift_kerja']}");
+                            }
+                        } else {
+                            Yii::$app->session->setFlash('warning', "Tidak ada jadwal shift hari ini untuk karyawan {$row['nama_karyawan']}");
+                        }
                     } else {
                         Yii::$app->session->setFlash('warning', "Data shift kerja tidak ada pada nama {$row['nama_karyawan']}");
                     }

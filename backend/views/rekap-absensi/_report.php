@@ -22,27 +22,28 @@ $tanggal = new Tanggal();
 
     <div class="table-container table-responsive">
 
-        <table style="font-size: 12px; border: 1px solid gray; width:100%;">
+        <table style="text-align: center; font-size: 12px; border: 1px solid gray; width:100%;">
             <tr style=" border: 1px solid #252525;">
-
-                <th rowspan="3" class="text-center ">Nama dan Kode Karyawan</th>
-                <th rowspan="3" style="vertical-align: middle;" class="text-center ">Bagian & Jabatan</th>
+                <th style=" border: 1px solid #252525; vertical-align: middle;" rowspan="3" class="text-center ">Nama dan Kode Karyawan</th>
+                <th style=" border: 1px solid #252525; vertical-align: middle;" rowspan="3" class="text-center ">Bagian & Jabatan</th>
             </tr>
             <tr style="border: 1px solid #252525;">
-                <th class="text-center" colspan="<?= count($tanggal_bulanan) + 3  ?>">
+                <th style=" border: 1px solid #252525;" class="text-center" colspan="<?= count($tanggal_bulanan) + 3  ?>">
                     <h3>
-                        Rekapan Absensi Bulan <?= $tanggal->getBulan($bulan) . ' Tahun ' . $tahun ?>
+                        Rekapan Absensi dari <?= $tanggal->getIndonesiaFormatTanggal($tanggal_awal) ?> S/D <?= $tanggal->getIndonesiaFormatTanggal($tanggal_akhir) ?>
+
                     </h3>
                 </th>
             </tr>
             <tr style="border: 1px solid #252525; text-align:center;">
                 <?php foreach ($tanggal_bulanan as $key => $item) : ?>
                     <?php
-                    if (!isset($tanggal_bulanan[$key - 1])) {
-                        $day_of_week = 1;
-                    } else {
-                        $date = date_create($tanggal_bulanan[$key]  . '-' . $bulan . '-' . $tahun);
-                        $day_of_week = date_format($date, 'w');
+                    $day_of_week = 1; // default: Senin
+                    if (isset($tanggal_bulanan[$key]) && !empty($tanggal_bulanan[$key])) {
+                        $date = date_create($tanggal_bulanan[$key]);
+                        if ($date) {
+                            $day_of_week = (int) date_format($date, 'w');
+                        }
                     }
                     ?>
 
@@ -59,6 +60,8 @@ $tanggal = new Tanggal();
                 <td style="border: 1px solid #808080; padding: 5px;">Total Hadir</td>
                 <td style="border: 1px solid #808080; padding: 5px;">Jumlah Terlambat</td>
                 <td style="border: 1px solid #808080; padding: 5px;">Total Telambat</td>
+                <td style="border: 1px solid #808080; padding: 5px;">Total Lembur</td>
+                <td style="border: 1px solid #808080; padding: 5px;">Jumlah jam Lembur</td>
                 <!-- <td>Tidak Tadir</td> -->
             </tr>
 
@@ -84,11 +87,12 @@ $tanggal = new Tanggal();
 
                         <?php else : ?>
                             <?php
-                            if (!isset($tanggal_bulanan[$key - 1])) {
-                                $day_of_week = 1;
-                            } else {
-                                $date = date_create($tanggal_bulanan[$key - 1]  . '-' . $bulan . '-' . $tahun);
-                                $day_of_week = date_format($date, 'w');
+                            $day_of_week = 1; // default: Senin
+                            if (isset($tanggal_bulanan[$key - 1]) && !empty($tanggal_bulanan[$key - 1])) {
+                                $date = date_create($tanggal_bulanan[$key - 1]);
+                                if ($date) {
+                                    $day_of_week = (int) date_format($date, 'w');
+                                }
                             }
                             ?>
 
@@ -100,24 +104,30 @@ $tanggal = new Tanggal();
                                 <p style="max-width: 20px; padding:0;   text-align: center  !important; vertical-align: middle; ">
 
 
-                                    <?php if ($key == (count($karyawan) - 1)): ?>
 
-                                        <?php
-                                        $jam = floor($data['detik_terlambat'] / 3600); // Menghitung jam
-                                        $menit = floor(($data['detik_terlambat'] % 3600) / 60); // Menghitung menit
-                                        $detik = $data['detik_terlambat'] % 60; // Menghitung detik
 
-                                        $formattedTime = sprintf('%02d:%02d:%02d', $jam, $menit, $detik);
+                                    <?php if ($key == (count($karyawan) - 5)): ?>
+                                        <?= $data['total_hadir']
                                         ?>
-
-                                        <span style="font-weight:600;  text-align:center; "><?= $formattedTime ?></span>
                                     <?php endif; ?>
-                                    <?php if ($key == (count($karyawan) - 2)): ?>
-                                        <?= $data['total_terlambat'] ?>
+                                    <?php if ($key == (count($karyawan) - 4)): ?>
+                                        <?= $data['total_terlambat']
+                                        ?>
                                     <?php endif; ?>
                                     <?php if ($key == (count($karyawan) - 3)): ?>
-                                        <?= $data['total_hadir'] ?>
+                                        <?= gmdate('H:i:s', $data['detik_terlambat']) ?>
                                     <?php endif; ?>
+
+                                    <?php if ($key == (count($karyawan) - 2)): ?>
+                                        <?= $data['total_lembur']
+                                        ?>
+                                    <?php endif; ?>
+                                    <?php if ($key == (count($karyawan) - 1)): ?>
+                                        <?= $data['jumlah_jam_lembur']
+                                        ?>
+                                    <?php endif; ?>
+
+
                                     <?php if ($data !== null && $data['status_hadir'] !== null && $data['jam_masuk_karyawan'] !== null): ?>
                                         <?php
                                         $jamKerjakaryawan = $data['jam_masuk_karyawan']; //karyawan masuj
@@ -161,90 +171,64 @@ $tanggal = new Tanggal();
                 </tr>
             <?php endforeach ?>
 
-            <tr style="border: 1px solid #252525;">
+            <!-- 1 -->
+            <tr>
+                <th style="font-size:13px; background-color: #facc15; color:#000">Hadir</th>
+                <th style="font-size:11px; background-color: #facc15; color:#000"></th>
 
-                <th style="border: 1px solid #808080; padding: 5px; font-size:13px; background-color: #facc15; color:#000">Hadir</th>
-                <th style="border: 1px solid #808080; padding: 5px; font-size:11px; background-color: #facc15; color:#000"></th>
                 <?php
                 $lastKey = array_key_last($rekapanAbsensi); // Mendapatkan kunci terakhir
                 foreach ($rekapanAbsensi as $key => $rekapan) :
-                    if (!isset($tanggal_bulanan[$key])) {
-                        $day_of_week = 1;
-                    } else {
-                        $date = date_create($tanggal_bulanan[$key - 1] . '-' . $bulan . '-' . $tahun);
-                        $day_of_week = date_format($date, 'w');
-                    }
+                    $isLast = ($key === $lastKey);
+                    $colspan = $isLast ? 'colspan="1"' : ''; // Tambahkan colspan jika terakhir
                 ?>
-                    <?php if ($day_of_week == 0): ?>
-                        <td style="border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: #aaa; color:#000"><?= '' ?? '' ?></td>
-                    <?php else : ?>
-                        <?php
-                        // Tentukan warna background
-                        $bgColor = ($key === $lastKey) ? 'fff' : '#facc15'; // Ubah menjadi lightblue jika ini adalah elemen terakhir
-                        ?>
-                        <td style="border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: <?= $bgColor ?>; color:#000"><?= $rekapan ? ($rekapan > 0 ? $rekapan : '') : '' ?></td>
-                    <?php endif; ?>
-                <?php endforeach ?>
-                <td style=" border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: #fff; color:#000"></td>
+                    <td style="font-weight:600; text-align:center; background-color: #facc15; color:#000" <?php echo $colspan; ?>>
+                        <?php echo $rekapan ? ($rekapan > 0 ? $rekapan : '') : '' ?>
+                    </td>
+                <?php endforeach; ?>
+                <td colspan="5"></td>
+
             </tr>
 
-            <!--  2 -->
-            <tr style="border: 1px solid #252525;">
 
-                <th style=" border: 1px solid #808080; padding: 5px; font-size:13px; background-color: #84cc16; color:#000">Tidak Hadir</th>
-                <th style=" border: 1px solid #808080; padding: 5px; font-size:13px; background-color: #84cc16; color:#000"></th>
+
+            <!-- 2 -->
+            <tr>
+                <th style="font-size:13px; background-color: #84cc16; color:#000">Tidak Hadir</th>
+                <th style="font-size:11px; background-color: #84cc16; color:#000"></th>
+
                 <?php
                 $lastKey = array_key_last($rekapanAbsensi); // Mendapatkan kunci terakhir
                 foreach ($rekapanAbsensi as $key => $rekapan) :
-                    if (!isset($tanggal_bulanan[$key])) {
-                        $day_of_week = 1;
-                    } else {
-                        $date = date_create($tanggal_bulanan[$key - 1] . '-' . $bulan . '-' . $tahun);
-                        $day_of_week = date_format($date, 'w');
-                    }
+                    if ($key !== $lastKey) :
                 ?>
-                    <?php if ($day_of_week == 0): ?>
-                        <td style=" border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: #aaa; color:#000"><?= '' ?? '' ?></td>
-                    <?php else : ?>
-                        <?php
-                        $data = ($rekapan && $rekapan > 0) ? $karyawanTotal - $rekapan : '';
-                        $data = ($data < 0) ? '' : $data;
+                        <td style="font-weight:600; text-align:center; background-color: #84cc16; color:#000">
+                            <?php echo ($rekapan && isset($hasil)) ? (count($hasil) - $rekapan) : ''; ?>
+                        </td>
+                <?php
+                    endif;
+                endforeach;
 
-                        // Tentukan background color
-                        $bgColor = ($key === $lastKey) ? '#fff' : '#84cc16'; // Ubah menjadi putih jika ini adalah elemen terakhir
-                        ?>
-                        <td style=" border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: <?= $bgColor ?>; color:#000"><?php echo $data ?></td>
-                    <?php endif; ?>
-                <?php endforeach ?>
-                <td style=" border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: #fff; color:#000"></td>
+                ?>
+                <td colspan="6" style="font-weight:600; text-align:center; background-color: #fff; color:#000">
+                </td>
             </tr>
+
+
 
             <!-- 3 -->
-            <tr style="border: 1px solid #252525;">
-
-                <th style=" border: 1px solid #808080; padding: 5px; font-size:13px; background-color: #f43f5e; color:#fff">Terlambat</th>
-                <th style=" border: 1px solid #808080; padding: 5px; font-size:13px; background-color: #f43f5e; color:#fff"></th>
+            <tr>
+                <th style="font-size:13px; background-color: #f43f5e; color:#fff">Terlambat</th>
+                <th style="font-size:13px; background-color: #f43f5e; color:#fff"></th>
                 <?php foreach ($keterlambatanPerTanggal as $key => $terlambattgl) :  ?>
                     <?php
-                    if (!isset($tanggal_bulanan[$key])) {
-                        $day_of_week = 1;
-                    } else {
-                        $date = date_create($tanggal_bulanan[$key - 1]  . '-' . $bulan . '-' . $tahun);
-                        $day_of_week = date_format($date, 'w');
-                    }
+                    $dataTerlambat = ($terlambattgl && $terlambattgl > 0) ?  $terlambattgl : '';
+                    $dataTerlambat = ($dataTerlambat <= 0) ? '' : $dataTerlambat;
                     ?>
-                    <?php if ($day_of_week == 0): ?>
-                        <td style="border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: #aaa; color:#fff"><?= '' ?? '' ?></td>
-                    <?php else : ?>
-                        <?php
-                        $dataTerlambat = ($terlambattgl && $terlambattgl > 0) ?  $terlambattgl : '';
-                        $dataTerlambat = ($dataTerlambat <= 0) ? '' : $dataTerlambat;
-                        ?>
-                        <td style="border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: #f43f5e; color:#fff"><?php echo $dataTerlambat ?></td>
-                    <?php endif; ?>
+                    <td style="font-weight:600; text-align:center; background-color: #f43f5e; color:#fff"><?php echo $dataTerlambat ?></td>
                 <?php endforeach ?>
-                <td style="border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: #fff; color:#fff"></td>
-                <td style="border: 1px solid #808080; padding: 5px; font-weight:600; text-align:center; background-color: #fff; color:#fff"></td>
+                <td colspan="1" style="font-weight:600; text-align:center; background-color: #f43f5e; color:#fff"><?php echo count($keterlambatanPerTanggal) ?></td>
+                <td colspan="5" style="font-weight:600; text-align:center; background-color: #fff; color:#fff"></td>
             </tr>
 
         </table>

@@ -125,7 +125,7 @@ if ($model->isNewRecord) {
                 </div>
 
                 <div class="col-md-6">
-                    <?= $form->field($model, 'jumlah_jam')->textInput(['type' => 'number', 'id' => 'jumlah-jam',])->label('Jumlah Jam Kerja') ?>
+                    <?= $form->field($model, 'jumlah_jam')->textInput(['type' => 'decimal', 'id' => 'jumlah-jam',])->label('Jumlah Jam Kerja') ?>
                 </div>
             </div>
 

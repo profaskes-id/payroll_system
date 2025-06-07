@@ -5,6 +5,7 @@ namespace backend\models;
 use DateTime;
 use Exception;
 use PhpParser\Node\Expr\Cast\Array_;
+use PhpParser\Node\Expr\Cast\Double;
 use Symfony\Component\VarDumper\VarDumper;
 use Yii;
 
@@ -38,13 +39,12 @@ class Absensi extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public $id_shift;
     public function rules()
     {
         return [
             [['id_karyawan', 'tanggal', 'kode_status_hadir'], 'required'],
             [['id_karyawan', 'is_lembur', 'is_wfh', 'is_terlambat', 'is_24jam'], 'integer'],
-            [['tanggal', 'jam_masuk', 'jam_pulang', 'lama_terlambat', 'tanggal_pulang', 'id_shift'], 'safe'],
+            [['tanggal', 'jam_masuk', 'jam_pulang', 'lama_terlambat', 'tanggal_pulang', 'id_shift', 'kelebihan_jam_pulang'], 'safe'],
             [['keterangan', 'alasan_terlambat', 'alasan_terlalu_jauh'], 'string'],
             [['latitude', 'longitude'], 'number'],
             [['lampiran'], 'string', 'max' => 255],
@@ -79,6 +79,7 @@ class Absensi extends \yii\db\ActiveRecord
             'is_24jam' => 'Is 24jam',
             'id_shift' => 'id_shift',
             'tanggal_pulang' => 'Tanggal Pulang',
+            'kelebihan_jam_pulang' => 'kelebihan jam pulang',
         ];
     }
 
@@ -127,12 +128,29 @@ class Absensi extends \yii\db\ActiveRecord
     }
 
 
-    static function getTanggalFromFirstAndLastMonth($bulan, $tahun)
+    // static function getTanggalFromFirstAndLastMonth($bulan, $tahun)
+    // {
+    //     $tanggal_bulanan = array();
+    //     for ($i = 1; $i <= date('t', mktime(0, 0, 0, $bulan, 1, $tahun)); $i++) {
+    //         $tanggal_bulanan[] = date('d', mktime(0, 0, 0, $bulan, $i, $tahun));
+    //     }
+
+    //     return $tanggal_bulanan;
+    // }
+    static function getTanggalFromFirstAndLastMonth($firstDayOfMonth, $lastDayOfMonth)
     {
         $tanggal_bulanan = array();
-        for ($i = 1; $i <= date('t', mktime(0, 0, 0, $bulan, 1, $tahun)); $i++) {
-            $tanggal_bulanan[] = date('d', mktime(0, 0, 0, $bulan, $i, $tahun));
+
+        // Ubah ke timestamp jika belum
+        $start = strtotime($firstDayOfMonth);
+        $end = strtotime($lastDayOfMonth);
+
+        while ($start <= $end) {
+            $tanggal_bulanan[] = date('Y-m-d', $start); // atau 'd' kalau hanya ingin tanggal
+            $start = strtotime("+1 day", $start);
         }
+
+        // dd($tanggal_bulanan);
         return $tanggal_bulanan;
     }
 
@@ -167,41 +185,80 @@ class Absensi extends \yii\db\ActiveRecord
 
 
 
-    static function getIncludeKaryawanAndAbsenData($bulan, $tahun, $dataKaryawan, $absensi, $firstDayOfMonth, $lastDayOfMonth)
+    static function getIncludeKaryawanAndAbsenData($dataKaryawan, $absensi, $firstDayOfMonth, $lastDayOfMonth, $tanggal_bulanan)
+    // static function getIncludeKaryawanAndAbsenData($bulan, $tahun, $dataKaryawan, $absensi, $firstDayOfMonth, $lastDayOfMonth)
     {
+        $SETTINGAN_LEMBUR = SettinganUmum::find()->where(['kode_setting' => Yii::$app->params['ajukan_lembur']])->asArray()->one();
+
+        if ($SETTINGAN_LEMBUR) {
+
+            $lemburPerKaryawan = [];
+            // jika diajukan
+            if ($SETTINGAN_LEMBUR['nilai_setting'] == 1) {
+                $lemburData = PengajuanLembur::find()
+                    ->where(['between', 'tanggal', $firstDayOfMonth, $lastDayOfMonth])
+                    ->andWhere(['!=', 'status', 2]) // status selain 2
+                    ->asArray()
+                    ->all();
 
 
-        $lemburData = PengajuanLembur::find()
-            ->where(['between', 'tanggal', $firstDayOfMonth, $lastDayOfMonth])
-            // ->andWhere(['status' => 1]) // status 1 = disetujui, sesuaikan jika beda
-            ->asArray()
-            ->all();
+                foreach ($lemburData as $lembur) {
+                    $id = $lembur['id_karyawan'];
+                    $jam = $lembur['hitungan_jam'] ?? 0;
 
+                    if (!isset($lemburPerKaryawan[$id])) {
+                        $lemburPerKaryawan[$id] = [
+                            'total_lembur' => 0,
+                            'jumlah_jam_lembur' => 0,
+                        ];
+                    }
 
+                    $lemburPerKaryawan[$id]['total_lembur'] += 1;
+                    $lemburPerKaryawan[$id]['jumlah_jam_lembur'] += (float) $jam;
+                }
+            } else {
 
+                // jika tidak diajukan
+                $absensi = Absensi::find()
+                    ->where(['between', 'tanggal', $firstDayOfMonth, $lastDayOfMonth])
+                    ->asArray()
+                    ->all();
 
+                foreach ($absensi as $absen) {
+                    $id = $absen['id_karyawan'];
 
-        $lemburPerKaryawan = [];
+                    if (!isset($lemburPerKaryawan[$id])) {
+                        $lemburPerKaryawan[$id] = [
+                            'total_lembur' => 0, // jumlah hari lembur
+                            'jumlah_jam_lembur' => 0, // total menit
+                        ];
+                    }
 
-        foreach ($lemburData as $lembur) {
-            $id = $lembur['id_karyawan'];
-            $jam = $lembur['hitungan_jam'] ?? 0;
+                    if (!empty($absen['kelebihan_jam_pulang'])) {
+                        // Konversi waktu (HH:MM atau HH:MM:SS) ke total menit
+                        $waktu = $absen['kelebihan_jam_pulang'];
+                        $parts = explode(':', $waktu);
 
-            if (!isset($lemburPerKaryawan[$id])) {
-                $lemburPerKaryawan[$id] = [
-                    'total_lembur' => 0,
-                    'jumlah_jam_lembur' => 0,
-                ];
+                        $jam = isset($parts[0]) ? (int)$parts[0] : 0;
+                        $menit = isset($parts[1]) ? (int)$parts[1] : 0;
+
+                        $totalMenit = ($jam * 60) + $menit;
+
+                        $lemburPerKaryawan[$id]['total_lembur'] += 1; // hari lembur
+                        $lemburPerKaryawan[$id]['jumlah_jam_lembur'] += (float) $totalMenit / 60;
+                    }
+                }
             }
-
-            $lemburPerKaryawan[$id]['total_lembur'] += 1;
-            $lemburPerKaryawan[$id]['jumlah_jam_lembur'] += (float) $jam;
         }
+
+
 
 
         // ====================================================
         $hasil = [];
-        $totalHari = date('t', mktime(0, 0, 0, $bulan, 1, $tahun));
+        // $totalHari = date('t', mktime(0, 0, 0, $bulan, 1, $tahun));
+        $totalHari = self::getTotalHari($firstDayOfMonth, $lastDayOfMonth);
+
         $totalTerlambat = 0;
         $totalHadir = 0;
         $detikTerlambat = 0;
@@ -209,7 +266,6 @@ class Absensi extends \yii\db\ActiveRecord
         $keterlambatanPerTanggal = array_fill(1, $totalHari, 0);
 
         foreach ($dataKaryawan as $karyawan) {
-
 
             $nama_jam_kerja = $karyawan["nama_jam_kerja"];
             if ($nama_jam_kerja == null) {
@@ -228,11 +284,14 @@ class Absensi extends \yii\db\ActiveRecord
                 ];
 
 
+                // $absensiRecord = [];
                 for ($i = 1; $i <= $totalHari; $i++) {
-                    $tanggal = date('Y-m-d', mktime(0, 0, 0, $bulan, $i, $tahun));
+                    $tanggal = $tanggal_bulanan[$i - 1];
                     $absensiRecord = array_filter($absensi, function ($record) use ($karyawan, $tanggal) {
+
                         return $record['id_karyawan'] == $karyawan['id_karyawan'] && $record['tanggal'] == $tanggal;
                     });
+
 
                     $statusHadir = null;
                     $is_lembur = 0;
@@ -244,17 +303,18 @@ class Absensi extends \yii\db\ActiveRecord
                     $jamMasukKantor = null;
 
                     if (!empty($absensiRecord)) {
-                        // dd($absensiRecord);
                         $record = array_values($absensiRecord)[0];
+
                         $statusHadir = $record['kode_status_hadir'];
                         $is_24jam = $record['is_24jam'];
                         $is_lembur = $record['is_lembur'];
                         $is_wfh = $record['is_wfh'];
                         $jamMasukKaryawan = $record['jam_masuk'];
-                        $jamMasukKantor = $record['jam_masuk_kerja'];
+                        $jamMasukKantor = $record['jam_masuk_kerja'] ?? null;
 
 
                         if ($statusHadir == 'H') {
+
                             if ($record['is_terlambat'] == 1 && $record['is_lembur'] == 0 && $record['is_wfh'] == 0) {
                                 $is_terlambat = 1;
                                 $lama_terlambat = $record['lama_terlambat'] ?? "00:00:00";
@@ -287,6 +347,9 @@ class Absensi extends \yii\db\ActiveRecord
                     ];
                 }
 
+                // dd($karyawanData);
+
+
                 $karyawanData[] = [
                     'status_hadir' => null,
                     'jam_masuk_karyawan' => null,
@@ -312,13 +375,13 @@ class Absensi extends \yii\db\ActiveRecord
                     'status_hadir' => null,
                     'jam_masuk_karyawan' => null,
                     'jam_masuk_kantor' => null,
-                    'total_lembur' => $lemburInfo['total_lembur'],
+                    'total_lembur' => $lemburInfo['total_lembur'] ?? 0,
                 ];
                 $karyawanData[] = [
                     'status_hadir' => null,
                     'jam_masuk_karyawan' => null,
                     'jam_masuk_kantor' => null,
-                    'jumlah_jam_lembur' => $lemburInfo['jumlah_jam_lembur'],
+                    'jumlah_jam_lembur' => $lemburInfo['jumlah_jam_lembur'] ?? 0,
                 ];
             }
 
@@ -393,7 +456,7 @@ class Absensi extends \yii\db\ActiveRecord
     }
 
 
-    static function getAbsnesiDataWereHadir($model, $bulan, $tahun)
+    static function getAbsnesiDataWereHadir($model, $firstDayOfMonth, $lastDayOfMonth)
     {
         return $model::find()
             ->select(['absensi.id_absensi', 'absensi.tanggal', 'absensi.kode_status_hadir'])
@@ -401,7 +464,17 @@ class Absensi extends \yii\db\ActiveRecord
             ->leftJoin('{{%karyawan}} k', 'absensi.id_karyawan = k.id_karyawan')
             ->where(['kode_status_hadir' => 'H'])
             ->andWhere(['k.is_aktif' => 1])
-            ->andWhere(['between', 'tanggal', "$tahun-$bulan-01", "$tahun-$bulan-" . date('t', strtotime("$tahun-$bulan-01"))])
+            ->orderBy(['absensi.tanggal' => SORT_ASC])
+            ->andWhere(['between', 'absensi.tanggal', "$firstDayOfMonth", "$lastDayOfMonth"])
             ->all();
+    }
+
+    public static function getTotalHari($firstDayOfMonth, $lastDayOfMonth)
+    {
+        $start = new DateTime($firstDayOfMonth);
+        $end = new DateTime($lastDayOfMonth);
+
+        $diff = $start->diff($end);
+        return $diff->days + 1;
     }
 }

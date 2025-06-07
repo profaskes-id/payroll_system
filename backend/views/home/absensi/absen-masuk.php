@@ -113,7 +113,7 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                     <br><br>
 
 
-                    <?php if ($dataJam['today'] || $manual_shift == 0) : ?>
+                    <?php if ($dataJam['today'] || $manualShift == 0) : ?>
 
 
                         <?php if (count($absensiToday) > 0): ?>
@@ -173,15 +173,15 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
 
                             <?php if ($dataJam['karyawan']['is_shift'] && $manual_shift == 0): ?>
                                 <?= $formAbsen->field($model, 'id_shift')->radioList([
-                                    1 => 'Shift 1 (06:00 - 14:00)',
-                                    2 => 'Shift 2 (14:00 - 22:00)',
-                                    3 => 'Shift 3 (22:00 - 06:00)'
+                                    5 => 'Shift 1 (07:00 - 15:00)',
+                                    6 => 'Shift 2 (15:00 - 22:00)',
+                                    7 => 'Shift 3 (22:00 - 06:00)'
                                 ], [
                                     'item' => function ($index, $label, $name, $checked, $value) {
                                         return "<div class='flex items-center mb-4'>
-            <input id='shift-main-{$value}' type='radio' name='{$name}' value='{$value}' class='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 shift-radio focus:ring-blue-500'>
-            <label for='shift-main-{$value}' class='text-sm font-medium text-gray-900 ms-2'>{$label}</label>
-        </div>";
+                            <input id='shift-main-{$value}' type='radio' name='{$name}' value='{$value}' class='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 shift-radio focus:ring-blue-500'>
+                            <label for='shift-main-{$value}' class='text-sm font-medium text-gray-900 ms-2'>{$label}</label>
+                        </div>";
                                     }
                                 ])->label(false) ?>
 
@@ -319,6 +319,15 @@ $redirectUrl = Yii::getAlias('@web');
 </script>
 
 
+<style>
+    .swal2-confirm {
+        background-color: #3085d6 !important;
+        color: white !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+</style>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Ketika modal terlalu jauh akan ditampilkan
@@ -380,9 +389,11 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT);
                 icon: 'error',
                 title: 'Oops...',
                 text: 'Terjadi kesalahan: ' + error.message,
-                confirmButtonColor: "#3085d6",
-                footer: '<a href="">Mengapa ini terjadi?</a>'
+                confirmButtonColor: "#3085d6", // Warna biru biasa
+                confirmButtonText: 'OK',
+                footer: '<p>Pastikan izin lokasi diaktifkan</p>'
             });
+
         }, {
             enableHighAccuracy: true,
             timeout: 10000, // Ubah timeout menjadi 10 detik
@@ -498,36 +509,38 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT);
 
 <script>
     const pulang_button = document.querySelector('#pulang-button');
+
     const jam_pulang = todayJson?.today?.jam_keluar;
 
     // Fungsi untuk mengaktifkan tombol jika waktu saat ini telah melewati jam pulang
-    function cekWaktu(currentTime) {
-        // Jika currentTime tidak diberikan, gunakan waktu saat ini
-        const sekarang = currentTime ? new Date(currentTime) : new Date();
 
-        if (jam_pulang) {
-
-            // Mengambil jam, menit, dan detik dari waktu jam pulang
-            const [jam, menit, detik] = jam_pulang.split(':').map(Number);
-
-
-            // Membuat objek Date untuk waktu jam pulang
-            const waktuPulang = new Date(sekarang - sekarang.getTimezoneOffset() * 60 * 1000);
-            waktuPulang.setHours(jam, menit, detik, 0);
-
-            // Mengecek apakah waktu saat ini sudah melewati jam pulang
-            if (sekarang >= waktuPulang) {
-                const message = document.querySelector('#message');
-                if (message) {
-                    message.classList.add('hidden');
-                    pulang_button.disabled = false;
-                }
-            }
-        }
+    if (manual_shift == 0) {
+        pulang_button.removeAttribute('disabled');
     }
 
 
-    setInterval(cekWaktu, 1000);
+    function cekWaktu(currentTime) {
+        // Gunakan waktu saat ini jika tidak ada parameter
+        const sekarang = currentTime ? new Date(currentTime) : new Date();
+
+        // Ambil jam, menit, dan detik dari jam_pulang (format "HH:mm:ss")
+
+        const [jam, menit, detik] = jam_pulang.split(':').map(Number);
+
+        // Buat objek waktu pulang pada hari yang sama
+        const waktuPulang = new Date(sekarang);
+        console.log("🚀 ~ cekWaktu ~ waktuPulang:", waktuPulang)
+        waktuPulang.setHours(jam, menit, detik, 0);
+
+        // Bandingkan waktu sekarang dengan waktu pulang
+        if (sekarang >= waktuPulang) {
+            const message = document.querySelector('#message');
+            if (message) {
+                message.classList.add('hidden');
+                pulang_button.disabled = false;
+            }
+        }
+    }
 </script>
 
 <script>

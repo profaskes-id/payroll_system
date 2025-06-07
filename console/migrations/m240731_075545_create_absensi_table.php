@@ -26,6 +26,8 @@ class m240731_075545_create_absensi_table extends Migration
             'alasan_terlambat' => $this->text()->defaultValue(null), // Status description (nullable)
             'is_lembur' => $this->smallInteger()->defaultValue(0), // Status description (nullable)
             'is_wfh' => $this->smallInteger()->defaultValue(0), // Status description (nullable)
+            "id_shift" => $this->integer()->defaultValue(null),
+            "kelebihan_jam_pulang" => $this->time()->defaultValue(null),
         ]);
 
         // Create index for foreign key to karyawan

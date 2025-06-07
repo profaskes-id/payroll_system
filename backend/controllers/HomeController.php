@@ -200,7 +200,6 @@ class HomeController extends Controller
         $model = new Absensi();
         $isTerlambatActive = false;
         if ($this->request->isPost) {
-            // dd(Yii::$app->request->post());
             $karyawan = Karyawan::find()->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan])->one();
             $isAda = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
 
@@ -214,6 +213,7 @@ class HomeController extends Controller
             $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
             $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
             $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
+
 
             if ($jamKerjaKaryawan && $jamKerjaKaryawan->is_shift == 1) {
 
@@ -230,6 +230,9 @@ class HomeController extends Controller
 
                     if ($jadwalShiftHariIni) {
                         $shif = ShiftKerja::find()->where(['id_shift_kerja' => $jadwalShiftHariIni['id_shift_kerja']])->one();
+                        if ($shif) {
+                            $model->id_shift = $shif->id_shift_kerja;
+                        }
                         if ($shif && strtotime($model->jam_masuk) > strtotime($shif->jam_masuk)) {
                             $model->is_terlambat = 1;
                             $lamaTerlambat = gmdate('H:i:s', strtotime($model->jam_masuk) - strtotime($shif->jam_masuk));
@@ -242,6 +245,9 @@ class HomeController extends Controller
 
                     if ($shiftMasuk) {
                         $dataShift = ShiftKerja::find()->where(['id_shift_kerja' => $shiftMasuk])->one();
+                        if ($dataShift) {
+                            $model->id_shift = $dataShift->id_shift_kerja;
+                        }
                         $jamMasukShift = $dataShift['jam_masuk']; // Misalnya '15:00:00'
 
                         $jamSekarang = date('H:i:s'); // '14:21:00'
@@ -348,6 +354,7 @@ class HomeController extends Controller
 
         $jamKerjaToday = null;
 
+
         if ($jamKerjaKaryawan['is_shift'] == 1) {
 
             $jadwalKerjaKaryawan = JadwalKerja::find()->asArray()->where(['id_jam_kerja' => $jamKerjaKaryawan['id_jam_kerja'], 'nama_hari' => date('N')])->one();
@@ -360,7 +367,6 @@ class HomeController extends Controller
                     ->where(['id_karyawan' => $jamKerjaKaryawan['id_karyawan'], 'tanggal' => $tanggalHariIni])
                     ->asArray()
                     ->one();
-
 
                 if ($jadwalShiftHariIni) {
                     $shifKerja = ShiftKerja::find()->asArray()->where(['id_shift_kerja' => $jadwalShiftHariIni['id_shift_kerja']])->one();
@@ -406,6 +412,7 @@ class HomeController extends Controller
                 $jamKerjaToday = null;
             }
         }
+
 
 
 
@@ -573,6 +580,9 @@ class HomeController extends Controller
                     ->one();
 
                 $shif = ShiftKerja::find()->where(['id_shift_kerja' => $jadwalShiftHariIni['id_shift_kerja']])->one();
+                if ($shif) {
+                    $model->id_shift = $shif->id_shift_kerja;
+                }
                 if (strtotime($model['jam_masuk']) > strtotime($shif->jam_masuk)) {
                     $model->is_terlambat = 1;
                     $lamaTerlambat = gmdate('H:i:s', strtotime($model->jam_masuk) - strtotime($shif['jam_masuk']));
@@ -634,6 +644,9 @@ class HomeController extends Controller
 
                     if ($jadwalShiftHariIni) {
                         $shif = ShiftKerja::find()->where(['id_shift_kerja' => $jadwalShiftHariIni['id_shift_kerja']])->one();
+                        if ($shif) {
+                            $model->id_shift = $shif->id_shift_kerja;
+                        }
                         if ($shif && strtotime($model->jam_masuk) > strtotime($shif->jam_masuk)) {
                             $model->is_terlambat = 1;
                             $lamaTerlambat = gmdate('H:i:s', strtotime($model->jam_masuk) - strtotime($shif->jam_masuk));
@@ -646,6 +659,9 @@ class HomeController extends Controller
 
                     if ($shiftMasuk) {
                         $dataShift = ShiftKerja::find()->where(['id_shift_kerja' => $shiftMasuk])->one();
+                        if ($dataShift) {
+                            $model->id_shift = $dataShift->id_shift_kerja;
+                        }
                         $jamMasukShift = $dataShift['jam_masuk']; // Misalnya '15:00:00'
 
                         $jamSekarang = date('H:i:s'); // '14:21:00'
@@ -697,11 +713,34 @@ class HomeController extends Controller
 
     public function actionAbsenPulang()
     {
-        $karyawan = Karyawan::find()->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan])->one();
+        $karyawanId = Yii::$app->user->identity->id_karyawan;
+        $karyawan = Karyawan::find()->select('id_karyawan')->where(['id_karyawan' => $karyawanId])->asArray()->one();
 
-        $model = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
+        if (!$karyawan) {
+            return $this->redirect(['absen-masuk']);
+        }
+
+        $model = Absensi::find()->where(['id_karyawan' => $karyawan['id_karyawan'], 'tanggal' => date('Y-m-d')])->one();
+        $settinganUmumlembur = SettinganUmum::find()->where(['kode_setting' => Yii::$app->params['ajukan_lembur']])->asArray()->one();
+
+        // Check if overtime requests are allowed
+        if ($settinganUmumlembur && $settinganUmumlembur['nilai_setting'] == 0) {
+            $jamSekarang = date('H:i:s');
+            $jamKerja = JamKerjaKaryawan::find()->select(['is_shift', 'id_jam_kerja'])->where(['id_karyawan' => $karyawan['id_karyawan']])->asArray()->one();
+
+            if ($jamKerja) {
+                $jam_pulang_seharusnya = $this->getJamPulangSeharusnya($model, $jamKerja);
+                if ($jam_pulang_seharusnya && strtotime($jamSekarang) > strtotime($jam_pulang_seharusnya)) {
+                    $kelebihanWaktu = $this->hitungKelebihanWaktu($jamSekarang, $jam_pulang_seharusnya);
+                }
+            }
+        }
+
+        // Handle post request to save the absence record
         if ($this->request->isPost) {
             $model->jam_pulang = date('H:i:s');
+            $model->kelebihan_jam_pulang = $kelebihanWaktu ?? null; // Use null if not set
+
             if ($model->save()) {
                 return $this->redirect(['absen-masuk']);
             }
@@ -711,6 +750,31 @@ class HomeController extends Controller
 
         return $this->redirect(['absen-masuk']);
     }
+
+    private function getJamPulangSeharusnya($model, $jamKerja)
+    {
+        if ($jamKerja['is_shift'] == 1 && $model['id_shift']) {
+            $shiftKaryawanHariIni = ShiftKerja::find()->where(['id_shift_kerja' => $model['id_shift']])->one();
+            return $shiftKaryawanHariIni ? $shiftKaryawanHariIni['jam_keluar'] : null;
+        } else {
+            $jadwalKerja = JadwalKerja::find()
+                ->where(['id_jam_kerja' => $jamKerja['id_jam_kerja'], 'nama_hari' => date('N')])
+                ->asArray()
+                ->one();
+            return $jadwalKerja ? $jadwalKerja['jam_keluar'] : null;
+        }
+    }
+
+    private function hitungKelebihanWaktu($jamSekarang, $jamPulangSeharusnya)
+    {
+        $selisihDetik = strtotime($jamSekarang) - strtotime($jamPulangSeharusnya);
+        $jam = floor($selisihDetik / 3600);
+        $menit = floor(($selisihDetik % 3600) / 60);
+        return sprintf('%02d:%02d', $jam, $menit);
+    }
+
+
+
 
     public function actionCreate()
     {

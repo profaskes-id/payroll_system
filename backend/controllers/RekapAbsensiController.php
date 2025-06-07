@@ -70,16 +70,43 @@ class RekapAbsensiController extends Controller
      */
     public function actionIndex()
     {
-        // Ambil bulan dan tahun dari parameter GET, jika tidak ada, gunakan nilai default
-        $bulan = Yii::$app->request->get('bulan', date('m'));  // Ambil bulan dari GET atau default ke bulan saat ini
-        $tahun = Yii::$app->request->get('tahun', date('Y'));  // Ambil tahun dari GET atau default ke tahun saat ini
+        // Ambil parameter dari GET jika tersedia
+        $tanggal_awal = Yii::$app->request->get('tanggal_awal');
+        $tanggal_akhir = Yii::$app->request->get('tanggal_akhir');
 
-        // Ambil data rekapan berdasarkan bulan dan tahun yang dipilih
-        $data = $this->RekapData(['bulan' => $bulan, 'tahun' => $tahun]);
+        // Jika GET tidak ada, set default: 27 bulan lalu - 26 bulan ini
+        if (!$tanggal_awal || !$tanggal_akhir) {
+            $today = new \DateTime();
+
+            // Buat objek tanggal_awal dari tanggal 27 bulan lalu
+            $tanggal_awal_dt = (new \DateTime('first day of last month'))->setDate(
+                (int)$today->format('Y'),
+                (int)$today->format('m') - 1,
+                27
+            );
+            $tanggal_awal = $tanggal_awal_dt->format('Y-m-d');
+
+            // Tanggal akhir: 26 bulan ini
+            $tanggal_akhir_dt = (clone $today)->setDate(
+                (int)$today->format('Y'),
+                (int)$today->format('m'),
+                26
+            );
+            $tanggal_akhir = $tanggal_akhir_dt->format('Y-m-d');
+        }
+
+        // Debug untuk verifikasi
+        // dd($tanggal_awal, $tanggal_akhir); // Uncomment jika ingin cek
+
+        // Ambil data rekapan berdasarkan tanggal
+        $data = $this->RekapData([
+            'tanggal_awal' => $tanggal_awal,
+            'tanggal_akhir' => $tanggal_akhir
+        ]);
 
         return $this->render('index', [
-            'bulan' => $bulan,
-            'tahun' => $tahun,
+            'tanggal_awal' => $tanggal_awal,
+            'tanggal_akhir' => $tanggal_akhir,
             'hasil' => $data['hasil'],
             'rekapanAbsensi' => $data['rekapanAbsensi'],
             'tanggal_bulanan' => $data['tanggal_bulanan'],
@@ -91,17 +118,46 @@ class RekapAbsensiController extends Controller
 
 
 
+
+
     public function actionExel()
     {
 
-        $bulan = date('m');
-        $tahun = date('Y');
-        $data = $this->RekapData();
+        $tanggal_awal = Yii::$app->request->get('tanggal_awal');
+        $tanggal_akhir = Yii::$app->request->get('tanggal_akhir');
+
+        // Jika GET tidak ada, set default: 27 bulan lalu - 26 bulan ini
+        if (!$tanggal_awal || !$tanggal_akhir) {
+            $today = new \DateTime();
+
+            // Buat objek tanggal_awal dari tanggal 27 bulan lalu
+            $tanggal_awal_dt = (new \DateTime('first day of last month'))->setDate(
+                (int)$today->format('Y'),
+                (int)$today->format('m') - 1,
+                27
+            );
+            $tanggal_awal = $tanggal_awal_dt->format('Y-m-d');
+
+            // Tanggal akhir: 26 bulan ini
+            $tanggal_akhir_dt = (clone $today)->setDate(
+                (int)$today->format('Y'),
+                (int)$today->format('m'),
+                26
+            );
+            $tanggal_akhir = $tanggal_akhir_dt->format('Y-m-d');
+        }
+
+
+        $data = $this->RekapData([
+            'tanggal_awal' => $tanggal_awal,
+            'tanggal_akhir' => $tanggal_akhir
+        ]);
+
 
 
         return $this->renderPartial('exel2', [
-            'bulan' => $bulan,
-            'tahun' => $tahun,
+            'tanggal_awal' => $tanggal_awal,
+            'tanggal_akhir' => $tanggal_akhir,
             'hasil' => $data['hasil'],
             'rekapanAbsensi' => $data['rekapanAbsensi'],
             'tanggal_bulanan' => $data['tanggal_bulanan'],
@@ -113,14 +169,41 @@ class RekapAbsensiController extends Controller
 
     public function actionReport()
     {
+        $tanggal_awal = Yii::$app->request->get('tanggal_awal');
+        $tanggal_akhir = Yii::$app->request->get('tanggal_akhir');
 
-        $bulan = date('m');
-        $tahun = date('Y');
-        $data = $this->RekapData();
+        // Jika GET tidak ada, set default: 27 bulan lalu - 26 bulan ini
+        if (!$tanggal_awal || !$tanggal_akhir) {
+            $today = new \DateTime();
+
+            // Buat objek tanggal_awal dari tanggal 27 bulan lalu
+            $tanggal_awal_dt = (new \DateTime('first day of last month'))->setDate(
+                (int)$today->format('Y'),
+                (int)$today->format('m') - 1,
+                27
+            );
+            $tanggal_awal = $tanggal_awal_dt->format('Y-m-d');
+
+            // Tanggal akhir: 26 bulan ini
+            $tanggal_akhir_dt = (clone $today)->setDate(
+                (int)$today->format('Y'),
+                (int)$today->format('m'),
+                26
+            );
+            $tanggal_akhir = $tanggal_akhir_dt->format('Y-m-d');
+        }
+
+
+        // Ambil data rekapan berdasarkan tanggal
+        $data = $this->RekapData([
+            'tanggal_awal' => $tanggal_awal,
+            'tanggal_akhir' => $tanggal_akhir
+        ]);
+
 
         $content = $this->renderPartial('_report', [
-            'bulan' => $bulan,
-            'tahun' => $tahun,
+            'tanggal_awal' => $tanggal_awal,
+            'tanggal_akhir' => $tanggal_akhir,
             'hasil' => $data['hasil'],
             'rekapanAbsensi' => $data['rekapanAbsensi'],
             'tanggal_bulanan' => $data['tanggal_bulanan'],
@@ -137,7 +220,7 @@ class RekapAbsensiController extends Controller
             'content' => $content,
             'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
             'cssInline' => '.kv-heading-1{font-size:18px}',
-            'options' => ['title' => 'Report Rekap Absensi ' . date('F')],
+            'options' => ['title' => 'Report Rekap Absensi  dari ' . $tanggal_awal . ' sampai ' . $tanggal_akhir],
             'methods' => [
 
                 'SetFooter' => ['{PAGENO}'],
@@ -185,56 +268,63 @@ class RekapAbsensiController extends Controller
         $model  = new Absensi();
         $karyawan = new Karyawan();
 
-        //! mengambil parameter
-        if ($params != null) {
-            $bulan = $params['bulan'];
-            $tahun = $params['tahun'];
-        } else {
 
-            $bulan = date('m');
-            $tahun = date('Y');
-        }
-
-        // !inisiasi awaldan akhir bulan
-        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, 1, $tahun));
-        $lastDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, date('t', mktime(0, 0, 0, $bulan, 1, $tahun)), $tahun));
+        $firstDayOfMonth = $params['tanggal_awal'];
+        $lastDayOfMonth = $params['tanggal_akhir'];
 
         // ! Get total karyawan
         $karyawanTotal = $karyawan::find()->where(['is_aktif' => 1])->count();
-
+        // dd($karyawanTotal);
         //! mendapatkan seluruh data absensi karyawan,jam-karyawan dari firstDayOfMonth - lastDayOfMonth
         $absensi = $model->getAllAbsensiFromFirstAndLastMonth($model, $firstDayOfMonth, $lastDayOfMonth);
-
+        // dd($absensi);
         //    ! get all data dari tanggal awal dan akhir bulan
-        $tanggal_bulanan = $model->getTanggalFromFirstAndLastMonth($bulan, $tahun);
-        //! get detail data karyawan, data pekerjaan, bagian, nama jam kerja
+        $tanggal_bulanan = $model->getTanggalFromFirstAndLastMonth($firstDayOfMonth, $lastDayOfMonth);
         $dataKaryawan = $model->getAllDetailDataKaryawan($karyawan);
 
         // memasukan absensi ke masing masing data karyawan
-        $absensiAndTelat = $model->getIncludeKaryawanAndAbsenData($bulan, $tahun, $dataKaryawan, $absensi, $firstDayOfMonth, $lastDayOfMonth);
+        $absensiAndTelat = $model->getIncludeKaryawanAndAbsenData($dataKaryawan, $absensi, $firstDayOfMonth, $lastDayOfMonth, $tanggal_bulanan);
         $keterlambatanPerTanggal = $absensiAndTelat['keterlambatanPerTanggal'];
 
         $rekapanAbsensi = [];
         $tanggalBulan = $tanggal_bulanan;
-        $dataAbsensiHadir = $model->getAbsnesiDataWereHadir($model, $bulan, $tahun);
+        $firstDayOfMonth = $params['tanggal_awal'];  // "2025-01-27"
+        $lastDayOfMonth = $params['tanggal_akhir'];  // "2025-02-26"
 
+        // Ambil data absensi
+        $dataAbsensiHadir = $model->getAbsnesiDataWereHadir($model, $firstDayOfMonth, $lastDayOfMonth);
+
+        // Siapkan tanggal bulanan (semua tanggal dari awal ke akhir)
+        $tanggalBulan = [];
+        $start = new DateTime($firstDayOfMonth);
+        $end = new DateTime($lastDayOfMonth);
+        while ($start <= $end) {
+            $tanggalBulan[] = $start->format('Y-m-d');
+            $start->modify('+1 day');
+        }
+
+        // Hitung jumlah absensi hadir per tanggal
+        $rekapanAbsensi = [];
         foreach ($dataAbsensiHadir as $absensi) {
-            $tanggal = date('j', strtotime($absensi['tanggal']));
+            $tanggal = $absensi['tanggal'];
             $rekapanAbsensi[$tanggal] = isset($rekapanAbsensi[$tanggal]) ? $rekapanAbsensi[$tanggal] + 1 : 1;
         }
 
+        // Pastikan setiap tanggal ada, kalau tidak, isi 0
         foreach ($tanggalBulan as $tanggal) {
-            $newtgl = intval($tanggal);
-            if (!isset($rekapanAbsensi[$newtgl])) {
-                $rekapanAbsensi[$newtgl] = 0;
+            if (!isset($rekapanAbsensi[$tanggal])) {
+                $rekapanAbsensi[$tanggal] = 0;
             }
         }
+
+        // Urutkan berdasarkan tanggal
+        ksort($rekapanAbsensi);
+
+        // Hitung total hadir
         $totalAbsensiHadir = count($dataAbsensiHadir);
         $rekapanAbsensi[] = $totalAbsensiHadir;
-        $rekapanAbsensi[] = 0;
 
-        ksort($rekapanAbsensi);
-        $keterlambatanPerTanggal[] = 0;
+
 
         return [
             'tanggal_bulanan' => $tanggal_bulanan,
