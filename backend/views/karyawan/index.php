@@ -90,6 +90,52 @@ $tanggalFormater = new Tanggal();
                     }
                 ],
                 [
+                    'label' => 'Status',
+                    'format' => 'raw',
+                    'contentOptions' => ['style' => 'width: 10%; text-align: center;'],
+                    'value' => function ($model) use ($tanggalFormater, $statusKontrak) {
+                        if (!$model->is_aktif == 1) {
+                            return '<span class=""></span>';
+                        }
+                        if (empty($model->dataPekerjaans)) {
+                            return "";
+                        }
+
+
+                        $filteredDataPekerjaans = $model->dataPekerjaans;
+                        $pekerjaanAktif = null;
+                        foreach ($filteredDataPekerjaans as $pekerjaan) {
+                            if ($pekerjaan->is_aktif == 1) {
+                                $pekerjaanAktif = $pekerjaan;
+                                break;
+                            }
+                        }
+
+                        // Jika tidak ada data aktif
+                        if (!$pekerjaanAktif) {
+                            return "Tidak ada pekerjaan aktif.";
+                        }
+
+                        // Ambil status dari pekerjaan aktif
+                        $statusAktif = $pekerjaanAktif->status;
+
+                        // Hitung berapa kali status ini muncul
+                        $jumlah = 0;
+                        foreach ($filteredDataPekerjaans as $pekerjaan) {
+
+                            if ($pekerjaan->status == $statusAktif) {
+                                $jumlah++;
+                            }
+                        }
+
+                        $statusAktif = $pekerjaan->statusPekerjaan->nama_kode;
+
+                        // Kembalikan dalam format yang diminta
+                        return  $jumlah > 1 ? "$statusAktif ($jumlah)" : "$statusAktif";
+                    },
+
+                ],
+                [
                     'label' => 'Tanggal Masuk',
                     'format' => 'raw',
                     'value' => function ($model) use ($tanggalFormater, $statusKontrak) {
@@ -110,7 +156,7 @@ $tanggalFormater = new Tanggal();
                             return $dataPekerjaan->dari;  // 'dari' is the field with the date
                         }, $filteredDataPekerjaans);
 
-                        $earliestDate = min($dates);
+                        $earliestDate = max($dates);
                         return $tanggalFormater->getIndonesiaFormatTanggal(Yii::$app->formatter->asDate($earliestDate, 'php:Y-m-d'));
                     },
 

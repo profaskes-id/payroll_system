@@ -6,6 +6,7 @@ use backend\models\Absensi;
 use backend\models\AbsensiSearch;
 use backend\models\AtasanKaryawan;
 use backend\models\Karyawan;
+use backend\models\MasterKode;
 use backend\models\TotalHariKerja;
 use DateInterval;
 use DateTime;
@@ -74,6 +75,10 @@ class RekapAbsensiController extends Controller
         $tanggal_awal = Yii::$app->request->get('tanggal_awal');
         $tanggal_akhir = Yii::$app->request->get('tanggal_akhir');
 
+        $tanggal_cut_of = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one()['nama_kode'];
+
+
+
         // Jika GET tidak ada, set default: 27 bulan lalu - 26 bulan ini
         if (!$tanggal_awal || !$tanggal_akhir) {
             $today = new \DateTime();
@@ -82,7 +87,7 @@ class RekapAbsensiController extends Controller
             $tanggal_awal_dt = (new \DateTime('first day of last month'))->setDate(
                 (int)$today->format('Y'),
                 (int)$today->format('m') - 1,
-                27
+                (int) $tanggal_cut_of
             );
             $tanggal_awal = $tanggal_awal_dt->format('Y-m-d');
 
@@ -90,7 +95,7 @@ class RekapAbsensiController extends Controller
             $tanggal_akhir_dt = (clone $today)->setDate(
                 (int)$today->format('Y'),
                 (int)$today->format('m'),
-                26
+                (int)($tanggal_cut_of - $tanggal_cut_of - 1)
             );
             $tanggal_akhir = $tanggal_akhir_dt->format('Y-m-d');
         }
@@ -126,6 +131,9 @@ class RekapAbsensiController extends Controller
         $tanggal_awal = Yii::$app->request->get('tanggal_awal');
         $tanggal_akhir = Yii::$app->request->get('tanggal_akhir');
 
+        $tanggal_cut_of = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one()['nama_kode'];
+
+
         // Jika GET tidak ada, set default: 27 bulan lalu - 26 bulan ini
         if (!$tanggal_awal || !$tanggal_akhir) {
             $today = new \DateTime();
@@ -134,7 +142,8 @@ class RekapAbsensiController extends Controller
             $tanggal_awal_dt = (new \DateTime('first day of last month'))->setDate(
                 (int)$today->format('Y'),
                 (int)$today->format('m') - 1,
-                27
+                (int) $tanggal_cut_of
+
             );
             $tanggal_awal = $tanggal_awal_dt->format('Y-m-d');
 
@@ -142,7 +151,7 @@ class RekapAbsensiController extends Controller
             $tanggal_akhir_dt = (clone $today)->setDate(
                 (int)$today->format('Y'),
                 (int)$today->format('m'),
-                26
+                (int)($tanggal_cut_of - $tanggal_cut_of - 1)
             );
             $tanggal_akhir = $tanggal_akhir_dt->format('Y-m-d');
         }
@@ -172,7 +181,11 @@ class RekapAbsensiController extends Controller
         $tanggal_awal = Yii::$app->request->get('tanggal_awal');
         $tanggal_akhir = Yii::$app->request->get('tanggal_akhir');
 
+        $tanggal_cut_of = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one()['nama_kode'];
+
+
         // Jika GET tidak ada, set default: 27 bulan lalu - 26 bulan ini
+
         if (!$tanggal_awal || !$tanggal_akhir) {
             $today = new \DateTime();
 
@@ -180,7 +193,8 @@ class RekapAbsensiController extends Controller
             $tanggal_awal_dt = (new \DateTime('first day of last month'))->setDate(
                 (int)$today->format('Y'),
                 (int)$today->format('m') - 1,
-                27
+                (int) $tanggal_cut_of
+
             );
             $tanggal_awal = $tanggal_awal_dt->format('Y-m-d');
 
@@ -188,7 +202,7 @@ class RekapAbsensiController extends Controller
             $tanggal_akhir_dt = (clone $today)->setDate(
                 (int)$today->format('Y'),
                 (int)$today->format('m'),
-                26
+                (int)($tanggal_cut_of - $tanggal_cut_of - 1)
             );
             $tanggal_akhir = $tanggal_akhir_dt->format('Y-m-d');
         }

@@ -85,7 +85,7 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                                             [
                                                 'label' => 'User',
                                                 'icon' => 'fa fa-users',
-                                                'url' => ['/user/admin'],
+                                                'url' => ['/user/admin/index'],
                                                 'visible' => Yii::$app->user->can('super_admin'), // 👈 Kondisi ditambahkan di sini
                                             ],
                                             ['label' => 'Profile Perusahaan', 'icon' => 'fa fa-building', 'url' => ['/perusahaan/index']],

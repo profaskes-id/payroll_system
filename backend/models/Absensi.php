@@ -39,12 +39,14 @@ class Absensi extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+    public $id_shift_kerja;
     public function rules()
     {
         return [
             [['id_karyawan', 'tanggal', 'kode_status_hadir'], 'required'],
-            [['id_karyawan', 'is_lembur', 'is_wfh', 'is_terlambat', 'is_24jam'], 'integer'],
-            [['tanggal', 'jam_masuk', 'jam_pulang', 'lama_terlambat', 'tanggal_pulang', 'id_shift', 'kelebihan_jam_pulang'], 'safe'],
+            [['id_karyawan', 'is_lembur', 'is_wfh', 'is_terlambat', 'is_24jam', 'id_shift_kerja'], 'integer'],
+            [['tanggal', 'jam_masuk', 'jam_pulang', 'lama_terlambat', 'tanggal_pulang', 'id_shift', 'kelebihan_jam_pulang', 'id_shift_kerja'], 'safe'],
             [['keterangan', 'alasan_terlambat', 'alasan_terlalu_jauh'], 'string'],
             [['latitude', 'longitude'], 'number'],
             [['lampiran'], 'string', 'max' => 255],
@@ -79,6 +81,7 @@ class Absensi extends \yii\db\ActiveRecord
             'is_24jam' => 'Is 24jam',
             'id_shift' => 'id_shift',
             'tanggal_pulang' => 'Tanggal Pulang',
+            'id_shift_kerja' => 'id shift kerja',
             'kelebihan_jam_pulang' => 'kelebihan jam pulang',
         ];
     }

@@ -1,7 +1,9 @@
 <?php
 
 use backend\models\helpers\KaryawanHelper;
+use backend\models\JamKerjaKaryawan;
 use backend\models\MasterKode;
+use backend\models\ShiftKerja;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -30,12 +32,20 @@ $pathInfo = Yii::$app->request->getPathInfo();
 
 
         <div class="col-md-6">
-            <?= $form->field($model, 'jam_masuk')->textInput(['type' => 'time', 'value' => '08:00']) ?>
+            <?= $form->field($model, 'jam_masuk')->textInput([
+                'type' => 'time',
+                'value' => $model->isNewRecord ? '08:00' : $model->jam_masuk,
+            ]) ?>
         </div>
 
         <div class="col-md-6">
-            <?= $form->field($model, 'jam_pulang')->textInput(['type' => 'time', 'value' => '17:00']) ?>
+            <?= $form->field($model, 'jam_pulang')->textInput([
+                'type' => 'time',
+                'value' => $model->isNewRecord ? '17:00' : $model->jam_pulang,
+            ]) ?>
         </div>
+
+
 
 
 
@@ -90,7 +100,7 @@ $pathInfo = Yii::$app->request->getPathInfo();
 
         <div class="col-md-6 col-12">
             <?= $form->field($model, 'lampiran')->textInput(["placeholder" => "Lampiran", "class" => "form-control", 'type' => 'file'])->label('Lampiran (Optional)') ?>
-            <p style="margin-top: -15px; font-size: 14.5px;" class="text-capitalize  text-muted"> lampiran Jika berhalangan hadir</p>
+            <p style="margin-top: -15px; font-size: 14.5px;" class="text-capitalize text-muted"> lampiran Jika berhalangan hadir</p>
         </div>
         <div class="col-12">
             <?= $form->field($model, 'keterangan')->textarea(['rows' => 1, 'maxlength' => true, "class" => "form-control", "placeholder" => "Keterangan "]) ?>
@@ -179,6 +189,54 @@ $pathInfo = Yii::$app->request->getPathInfo();
                 </div>
             </div>
         </div>
+
+
+        <?php
+
+        $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $model->id_karyawan])->one();
+        ?>
+
+        <?php if (isset($jamKerjaKaryawan) && $jamKerjaKaryawan->is_shift == 1) : ?>
+
+            <?php
+            $shiftList = ShiftKerja::find()->asArray()->all();
+
+            // Siapkan array id => nama
+            $shiftOptions = [];
+            foreach ($shiftList as $shift) {
+                $shiftOptions[$shift['id_shift_kerja']] = $shift['nama_shift'];
+            }
+            ?>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <?= Html::activeLabel($model, 'id_shift', [
+                        'class' => 'control-label',
+                        'label' => 'Pilih Shift Kerja'
+                    ]) ?>
+
+                    <div>
+                        <?= $form->field($model, 'id_shift')->radioList(
+                            $shiftOptions,
+                            [
+                                'class' => 'btn-group',
+                                'data-toggle' => 'buttons',
+                                'item' => function ($index, $label, $name, $checked, $value) {
+                                    return '<label class="btn btn-default' . ($checked ? ' active' : '') . '">' .
+                                        Html::radio($name, $checked, [
+                                            'value' => $value,
+                                            'autocomplete' => 'off',
+                                        ]) . $label .
+                                        '</label>';
+                                }
+                            ]
+                        )->label(false) ?>
+                    </div>
+                </div>
+            </div>
+
+        <?php endif; ?>
+
 
 
 

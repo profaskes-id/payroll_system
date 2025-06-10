@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\ShiftKerja;
 use yii\widgets\ActiveForm;
 ?>
 
@@ -29,27 +30,49 @@ use yii\widgets\ActiveForm;
                 </svg>
                 <span class="sr-only">Close modal</span>
             </button>
+
             <div class="py-2" style="padding:10px 4px;">
+                <p class="text-lg font-semibold">Refresh Jika Anda Telah DI lokasi yang benar</p>
                 <?php
                 $formAbsen = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',  'action' => ['home/absen-terlalujauh']]); ?>
                 <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'lati'])->label(false) ?>
                 <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'longi'])->label(false) ?>
                 <?= $formAbsen->field($model, 'alasan_terlalu_jauh')->textarea(['class' => 'py-1 w-full border border-gray-200 rounded-md', 'required' => true, 'rows' => 7, 'placeholder' => 'Alasan Anda Terlalu Jauh Dari Lokasi Penempatan Kerja'])->label(false) ?>
 
+
+                <p>Tentukan Shift Masuk Anda</p>
                 <?php if ($dataJam['karyawan']['is_shift'] && $manual_shift == 0): ?>
-                    <?= $formAbsen->field($model, 'id_shift')->radioList([
-                        5 => 'Shift 1 (06:00 - 14:00)',
-                        6 => 'Shift 2 (14:00 - 22:00)',
-                        7 => 'Shift 3 (22:00 - 06:00)'
-                    ], [
-                        'item' => function ($index, $label, $name, $checked, $value) {
-                            return "<div class='flex items-center mb-4'>
-            <input id='shift-terlalujauh-{$value}' type='radio' name='{$name}' value='{$value}' class='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 shift-radio focus:ring-blue-500'>
-            <label for='shift-terlalujauh-{$value}' class='text-sm font-medium text-gray-900 ms-2'>{$label}</label>
-        </div>";
-                        }
-                    ])->label(false) ?>
+
+                    <?php
+                    // Ambil data shift dari database (pastikan ini sudah dijalankan sebelumnya)
+                    $dataShift = ShiftKerja::find()->asArray()->all();
+
+                    // Format pilihan radioList
+                    $shiftOptions = [];
+                    foreach ($dataShift as $shift) {
+                        $jamMasuk = substr($shift['jam_masuk'], 0, 5);
+                        $jamKeluar = substr($shift['jam_keluar'], 0, 5);
+                        $shiftOptions[$shift['id_shift_kerja']] = $shift['nama_shift'] . " ($jamMasuk - $jamKeluar)";
+                    }
+                    ?>
+
+                    <div class="max-w-md mx-auto space-y-3">
+                        <?= $formAbsen->field($model, 'id_shift')->radioList($shiftOptions, [
+                            'item' => function ($index, $label, $name, $checked, $value) {
+                                return "
+                <div>
+                    <input type='radio' name='{$name}' id='shift-terlalujauh-{$value}' value='{$value}' class='hidden peer' " . ($checked ? 'checked' : '') . ">
+                    <label for='shift-terlalujauh-{$value}' class='block p-3 text-sm font-medium text-gray-600 transition bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-400 hover:bg-blue-100'>
+                        {$label}
+                    </label>
+                </div>";
+                            }
+                        ])->label(false) ?>
+                    </div>
+
                 <?php endif; ?>
+
+
 
 
                 <div class="flex items-center justify-end space-x-4">

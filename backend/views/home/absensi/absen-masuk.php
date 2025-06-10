@@ -172,20 +172,38 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                             <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'longitude'])->label(false) ?>
 
                             <?php if ($dataJam['karyawan']['is_shift'] && $manual_shift == 0): ?>
-                                <?= $formAbsen->field($model, 'id_shift')->radioList([
-                                    5 => 'Shift 1 (07:00 - 15:00)',
-                                    6 => 'Shift 2 (15:00 - 22:00)',
-                                    7 => 'Shift 3 (22:00 - 06:00)'
-                                ], [
-                                    'item' => function ($index, $label, $name, $checked, $value) {
-                                        return "<div class='flex items-center mb-4'>
-                            <input id='shift-main-{$value}' type='radio' name='{$name}' value='{$value}' class='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 shift-radio focus:ring-blue-500'>
-                            <label for='shift-main-{$value}' class='text-sm font-medium text-gray-900 ms-2'>{$label}</label>
-                        </div>";
-                                    }
-                                ])->label(false) ?>
+
+                                <?php
+                                // Ambil data shift dari database (pastikan ini sudah dijalankan sebelumnya)
+                                $dataShift = ShiftKerja::find()->asArray()->all();
+
+                                // Format pilihan radioList
+                                $shiftOptions = [];
+                                foreach ($dataShift as $shift) {
+                                    $jamMasuk = substr($shift['jam_masuk'], 0, 5);
+                                    $jamKeluar = substr($shift['jam_keluar'], 0, 5);
+                                    $shiftOptions[$shift['id_shift_kerja']] = $shift['nama_shift'] . " ($jamMasuk - $jamKeluar)";
+                                }
+                                ?>
+
+                                <div class="max-w-md mx-auto space-y-3">
+                                    <?= $formAbsen->field($model, 'id_shift')->radioList($shiftOptions, [
+                                        'item' => function ($index, $label, $name, $checked, $value) {
+                                            return "
+                <div>
+                    <input type='radio' name='{$name}' id='shift-{$value}' value='{$value}' class='hidden peer' " . ($checked ? 'checked' : '') . ">
+                    <label for='shift-{$value}' class='block p-3 text-sm font-medium text-gray-600 transition bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-400 hover:bg-blue-100'>
+                        {$label}
+                    </label>
+                </div>";
+                                        }
+                                    ])->label(false) ?>
+                                </div>
 
                             <?php endif; ?>
+
+
+
 
                             <!-- Tombol Absen Masuk -->
                             <div class="flex flex-col items-center justify-center space-y-3 lg:flex-row lg:space-y-0">
