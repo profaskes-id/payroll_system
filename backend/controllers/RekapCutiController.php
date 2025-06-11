@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\PengajuanCuti;
 use backend\models\RekapCuti;
 use backend\models\RekapCutiSearch;
 use Yii;
@@ -47,15 +48,46 @@ class RekapCutiController extends Controller
         );
     }
 
+    public function beforeAction($action)
+    {
+
+        if ($action->id == 'view-pengajuan-cuti') {
+            // Menonaktifkan CSRF verification untuk aksi 'view'
+            $this->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
+    }
+
+
     /**
      * Lists all RekapCuti models.
      *
      * @return string
      */
+
+    public function actionViewPengajuanCuti($id_karyawan, $id_master_cuti)
+    {
+
+
+        $pengajuanCuti = PengajuanCuti::find()
+            ->where([
+                'id_karyawan' => $id_karyawan,
+                'jenis_cuti' => $id_master_cuti,
+            ])->all();
+
+
+        return $this->renderAjax('_view_pengajuan_cuti', [
+            'pengajuanCuti' => $pengajuanCuti,
+        ]);
+    }
+
+
+
     public function actionIndex()
     {
         $searchModel = new RekapCutiSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+
 
         return $this->render('index', [
             'searchModel' => $searchModel,

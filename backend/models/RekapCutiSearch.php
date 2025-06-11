@@ -2,9 +2,12 @@
 
 namespace backend\models;
 
-use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\Expression;
+use yii\db\Query;
+use yii\base\Model;
 use backend\models\RekapCuti;
+use Yii;
 
 /**
  * RekapCutiSearch represents the model behind the search form of `backend\models\RekapCuti`.
@@ -37,33 +40,116 @@ class RekapCutiSearch extends RekapCuti
      *
      * @return ActiveDataProvider
      */
+
+    // public function search($params)
+    // {
+
+    //     $jenis_cuti = 1;
+    //     $tahun = date('Y');
+
+    //     $query = (new Query())
+    //         ->select([
+    //             'karyawan.id_karyawan',
+    //             'karyawan.nama',
+    //             'karyawan.kode_jenis_kelamin',
+    //             'rekap_cuti.id_rekap_cuti',
+    //             'rekap_cuti.id_master_cuti',
+    //             'rekap_cuti.total_hari_terpakai',
+    //             'rekap_cuti.tahun',
+    //             'master_cuti.jenis_cuti',
+    //             'master_cuti.total_hari_pertahun',
+    //         ])
+    //         ->from('karyawan')
+    //         ->leftJoin(
+    //             'rekap_cuti',
+    //             "rekap_cuti.id_karyawan = karyawan.id_karyawan 
+    //             AND rekap_cuti.id_master_cuti = $jenis_cuti AND rekap_cuti.tahun = $tahun"
+    //         )
+    //         ->leftJoin('master_cuti', 'master_cuti.id_master_cuti = rekap_cuti.id_master_cuti ')
+    //         ->where('karyawan.is_aktif = 1')
+    //         ->orderBy(['karyawan.nama' => SORT_ASC]);
+
+
+    //     $dataProvider = new ActiveDataProvider([
+    //         'query' => $query,
+    //     ]);
+
+    //     $this->load($params);
+
+    //     if (!$this->validate()) {
+    //         return $dataProvider;
+    //     }
+
+
+    //     return $dataProvider;
+    // }
+
+
     public function search($params)
     {
-        $query = RekapCuti::find();
-
-        // add conditions that should always apply here
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-            'sort' => ['defaultOrder' => ['id_rekap_cuti' => SORT_DESC]],
-        ]);
-
         $this->load($params);
 
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
+        // Ambil nilai dari params jika ada, kalau tidak set default 1
+        $jenis_cuti = $this->id_master_cuti ?: 1;
+        $tahun = $this->tahun ?: date('Y');
+
+        // $rekapId18Karyawan = RekapCuti::find()
+        //     ->where(['id_karyawan' => 18, 'tahun' => $tahun, 'id_master_cuti' => $jenis_cuti])
+        //     ->all();
+
+        // dd($rekapId18Karyawan);
+
+
+        $query = (new \yii\db\Query())
+            ->select([
+                'karyawan.id_karyawan',
+                'karyawan.nama',
+                'karyawan.kode_jenis_kelamin',
+                // Kalau kamu perlu id_rekap_cuti, biasanya harus dihapus karena GROUP BY
+                'COALESCE(SUM(rekap_cuti.total_hari_terpakai), 0) AS total_hari_terpakai',
+                'COALESCE(rekap_cuti.tahun, :tahun) AS tahun',
+                'master_cuti.jenis_cuti',
+                'master_cuti.total_hari_pertahun',
+                'COALESCE(rekap_cuti.id_master_cuti, 0) AS id_master_cuti',
+            ])
+            ->from('karyawan')
+            ->leftJoin(
+                'rekap_cuti',
+                "rekap_cuti.id_karyawan = karyawan.id_karyawan
+         AND rekap_cuti.tahun = :tahun
+         AND (:id_master_cuti = 0 OR rekap_cuti.id_master_cuti = :id_master_cuti)",
+                [
+                    ':tahun' => $tahun,
+                    ':id_master_cuti' => $jenis_cuti
+                ]
+            )
+            ->leftJoin('master_cuti', 'master_cuti.id_master_cuti = rekap_cuti.id_master_cuti')
+            ->where(['karyawan.is_aktif' => 1,])
+            ->groupBy([
+                'karyawan.id_karyawan',
+                'karyawan.nama',
+                'karyawan.kode_jenis_kelamin',
+                'rekap_cuti.tahun',
+                'master_cuti.jenis_cuti',
+                'master_cuti.total_hari_pertahun',
+                'rekap_cuti.id_master_cuti',
+            ])
+            ->orderBy(['karyawan.nama' => SORT_ASC]);
+        if (!empty($this->id_karyawan)) {
+            $query->andWhere(['karyawan.id_karyawan' => $this->id_karyawan]);
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id_rekap_cuti' => $this->id_rekap_cuti,
-            'id_master_cuti' => $this->id_master_cuti,
-            'id_karyawan' => $this->id_karyawan,
-            'total_hari_terpakai' => $this->total_hari_terpakai,
-        ]);
+        if ($jenis_cuti == 2) {
+            $query->andWhere(['karyawan.kode_jenis_kelamin' => 'P']);
+        }
 
-        return $dataProvider;
+        // Simpan untuk ke form dan view
+        $this->id_master_cuti = $jenis_cuti;
+        $this->tahun = $tahun;
+
+        return new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => ['pageSize' => 20],
+        ]);
     }
 }

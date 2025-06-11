@@ -1,10 +1,13 @@
 <?php
 
+use backend\models\DataPekerjaan;
 use backend\models\RekapCuti;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\bootstrap4\Modal;
+
 
 /** @var yii\web\View $this */
 /** @var backend\models\RekapCutiSearch $searchModel */
@@ -42,40 +45,121 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                [
-                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                    'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, RekapCuti $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id_rekap_cuti' => $model->id_rekap_cuti]);
-                    }
-                ],
+                // [
+                //     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                //     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                //     'class' => ActionColumn::className(),
+                //     'urlCreator' => function ($action, RekapCuti $model, $key, $index, $column) {
+                //         return Url::toRoute([$action, 'id_rekap_cuti' => $model->id_rekap_cuti]);
+                //     }
+                // ],
 
                 [
                     'attribute' => 'Karyawan',
+
                     'value' => function ($model) {
-                        return $model->karyawan->nama;
+                        // dd($model);
+                        return $model['nama'];
+                    }
+                ],
+                [
+                    'attribute' => 'Masa Kerja',
+
+                    'value' => function ($model) {
+                        $statusdataPekerjaan = DataPekerjaan::findAll(['id_karyawan' => $model['id_karyawan'], 'is_aktif' => 1]);
+                        if ($statusdataPekerjaan == null) {
+                            return "";
+                        }
+                        $dataPekerjaan = DataPekerjaan::findAll(['status' => $statusdataPekerjaan, 'id_karyawan' => $model['id_karyawan']]);
+
+
+                        $dates = array_map(function ($dataPekerjaan) {
+                            return $dataPekerjaan->dari;
+                        }, $dataPekerjaan);
+
+
+
+
+
+                        $earliestDate = min($dates);
+
+
+                        $startDate = new DateTime($earliestDate);
+                        $endDate = new DateTime(); // Tanggal hari ini
+
+                        $interval = $startDate->diff($endDate);
+
+                        $years = $interval->y;
+                        $months = $interval->m;
+                        $days = $interval->d;
+
+                        // Format durasi masa kerja
+                        $duration = '';
+                        if ($years > 0) {
+                            $duration .= $years . ' tahun ';
+                        }
+                        if ($months > 0) {
+                            $duration .= $months . ' bulan ';
+                        }
+                        if ($days > 0) {
+                            $duration .= $days . ' hari';
+                        }
+
+                        return $duration ?: 'Kurang dari 1 hari';
+                    }
+                ],
+                [
+                    'attribute' => 'Tahun',
+
+
+                    'value' => function ($model) {
+                        // dd($model);
+                        return $model['tahun'] ?? "-";
+                    }
+                ],
+                [
+                    'label' => "Hak Cuti ",
+                    'value' => function ($model) {
+                        if ($model['total_hari_pertahun'] == null) {
+                            return "";
+                        }
+                        return $model['total_hari_pertahun'] . ' Hari';
                     }
                 ],
 
+
+
+
                 [
-                    'contentOptions' => ['style' => 'text-transform: capitalize;'],
-                    'label' => 'Jenis Cuti',
+                    'label' => 'Total Cuti Digunakan',
+                    'format' => 'raw',
                     'value' => function ($model) {
-                        return $model->masterCuti->jenis_cuti;
+
+
+                        return Html::a(
+                            ($model['total_hari_terpakai'] ?? 0) . ' Hari',
+                            '#',
+                            [
+                                'class' => 'show-cuti-modal',
+                                'data-toggle' => 'modal',
+                                'data-target' => '#cutiModal',
+                                'data-id-karyawan' => $model['id_karyawan'],
+                                'data-id-master-cuti' => $model['id_master_cuti'] ?? 1,
+                                'style' => 'cursor:pointer;',
+                            ]
+                        );
                     }
                 ],
 
-                [
-                    'label' => "Total Cuti Digunakan",
-                    'value' => function ($model) {
-                        return $model->total_hari_terpakai . ' Hari';
-                    }
-                ],
+
                 [
                     'label' => "Jatah Cuti Tersisa",
                     'value' => function ($model) {
-                        return ($model->masterCuti->total_hari_pertahun - $model->total_hari_terpakai) . ' Hari';
+                        if ($model['total_hari_pertahun'] == null) {
+                            return "";
+                        }
+
+                        return ($model['total_hari_pertahun'] - $model['total_hari_terpakai']) . ' Hari';
                     }
                 ]
             ],
@@ -84,3 +168,52 @@ $this->params['breadcrumbs'][] = $this->title;
 
     </div>
 </div>
+
+
+<?php
+
+Modal::begin([
+    'id' => 'cutiModal',
+    'title' => 'Detail Pengajuan Cuti',
+    'size' => Modal::SIZE_LARGE,
+]);
+
+echo '<div id="modalContent">Silahkan klik "Total Cuti Digunakan".</div>';
+
+Modal::end();
+?>
+
+
+<?php
+$viewUrl = \yii\helpers\Url::to(['rekap-cuti/view-pengajuan-cuti']);
+
+$js = <<<JS
+$('#cutiModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget); // Tombol yang memicu modal
+    var idKaryawan = button.data('id-karyawan');
+    var idMasterCuti = button.data('id-master-cuti');
+
+    var modal = $(this);
+    modal.find('#modalContent').html('Loading...');
+
+    $.ajax({
+        url: '$viewUrl',
+        type: 'GET',
+        data: {
+            id_karyawan: idKaryawan,
+            id_master_cuti: idMasterCuti
+        },
+        success: function(data) {
+            modal.find('#modalContent').html(data);
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX error:", status, error);
+            modal.find('#modalContent').html('<p>Terjadi kesalahan saat memuat data.</p>');
+        }
+    });
+});
+JS;
+
+$this->registerJs($js);
+
+?>

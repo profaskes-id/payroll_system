@@ -21,8 +21,8 @@ use yii\widgets\ActiveForm;
     ]); ?>
 
     <div class="row">
-        <div class="col-md-9 col-12">
-            <?php $nama_group = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
+        <div class="col-md-3 col-12">
+            <?php $nama_group = \yii\helpers\ArrayHelper::map(Karyawan::find()->where(['is_aktif' => '1'])->orderBy(['nama' => SORT_ASC])->all(), 'id_karyawan', 'nama');
             echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
                 'data' => $nama_group,
                 'language' => 'id',
@@ -35,9 +35,47 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
 
+        <div class="col-md-3 col-12">
+            <?php
+            echo $form->field($model, 'tahun')->textInput([
+                'type' => 'number',
+                'min' => 2000,
+                'max' => 2100,
+                'placeholder' => 'Tahun',
+            ])->label(false);
+            ?>
+        </div>
+
+
+        <div class="col-md-3 col-12">
+
+            <?php
+            $nama_group = \yii\helpers\ArrayHelper::map(MasterCuti::find()->all(), 'id_master_cuti', 'jenis_cuti');
+
+            if (empty($model->id_master_cuti)) {
+                $model->id_master_cuti = 1;  // default value
+            }
+
+            echo $form->field($model, 'id_master_cuti')->widget(kartik\select2\Select2::classname(), [
+                'data' => $nama_group,
+                'language' => 'id',
+                'options' => [
+                    'placeholder' => 'Cari Jenis Cuti ...',
+                    'value' => $model->id_master_cuti,  // pastikan value default ini dipakai
+                ],
+                'pluginOptions' => [
+                    'tags' => true,
+                    'allowClear' => true,
+                ],
+            ])->label(false);
+            ?>
+
+
+        </div>
+
 
         <div class="col-3">
-            <div class="form-group d-flex items-center w-100  justify-content-around">
+            <div class="items-center form-group d-flex w-100 justify-content-around">
                 <button class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
                     <i class="fas fa-search"></i>
                     <span>
