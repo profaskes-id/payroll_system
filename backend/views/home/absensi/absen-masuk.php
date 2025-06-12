@@ -101,7 +101,19 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                             'jamKerjaToday' => $jamKerjaToday
                         ]) ?>
                     <?php elseif ($isShift == 1 && $manualShift == 0): ?>
-                        <p class="mt-10 text-center text-gray-500">
+                        <div class="w-full ">
+                            <p class="mt-2 -mb-3 text-xs text-center capitalize ">Lokasi Anda</p>
+                            <div class="bg-sky-500/10 rounded-full p-1 overflow-hidden max-w-[80dvw]  mt-3 mx-auto">
+                                <a href="/panel/home/your-location">
+                                    <div class="">
+                                        <div class="moving-text capitalize flex justify-around items-center text-[12px] ">
+                                            <p id="alamat" style="text-wrap: nowrap !important;"></p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <p class="mt-10 text-sm text-center text-gray-500">
                             Shift anda akan direkap otomatis sesuai jam absensi anda
                         </p>
                     <?php endif; ?>
@@ -388,11 +400,15 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT);
         let longitudeBig = document.querySelector('.longitude');
         let Latismall = document.querySelector('.lati');
         let Longismall = document.querySelector('.longi');
+
         navigator.geolocation.watchPosition(function(position) {
-            latitudeBig.value = position.coords.latitude.toFixed(10);
-            longitudeBig.value = position.coords.longitude.toFixed(10);
-            Latismall.value = position.coords.latitude.toFixed(10);
-            Longismall.value = position.coords.longitude.toFixed(10);
+            const lat = position.coords.latitude.toFixed(10);
+            const lon = position.coords.longitude.toFixed(10);
+
+            if (latitudeBig) latitudeBig.value = lat;
+            if (longitudeBig) longitudeBig.value = lon;
+            if (Latismall) Latismall.value = lat;
+            if (Longismall) Longismall.value = lon;
 
             globatLat = position.coords.latitude.toFixed(10);
             globatLong = position.coords.longitude.toFixed(10);
@@ -543,11 +559,16 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT);
 
         // Ambil jam, menit, dan detik dari jam_pulang (format "HH:mm:ss")
 
-        const [jam, menit, detik] = jam_pulang.split(':').map(Number);
+        let jam, menit, detik;
+
+        if (manual_shift == 1) {
+            [jam, menit, detik] = jam_pulang.split(':').map(Number);
+        } else {
+            [jam, menit, detik] = "00:00:00".split(':').map(Number);
+        }
 
         // Buat objek waktu pulang pada hari yang sama
         const waktuPulang = new Date(sekarang);
-        console.log("🚀 ~ cekWaktu ~ waktuPulang:", waktuPulang)
         waktuPulang.setHours(jam, menit, detik, 0);
 
         // Bandingkan waktu sekarang dengan waktu pulang
@@ -559,6 +580,7 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT);
             }
         }
     }
+    setInterval(cekWaktu, 1000);
 </script>
 
 <script>
