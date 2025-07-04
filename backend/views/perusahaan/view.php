@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 
@@ -83,7 +83,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                             'headerOptions' => ['style' => 'width: 200px; '],
-                            'label' => 'Kabupaten / Kota',
+                            'label' => 'Didirikan Pada',
                             'value' => function ($model) {
                                 $tanggal = new Tanggal();
                                 return $tanggal->getIndonesiaFormatTanggal($model->didirikan_pada);
@@ -118,7 +118,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <br />
 
 
-                <div class=" w-full d-flex justify-content-between items-center mt-5">
+                <div class="items-center w-full mt-5  d-flex justify-content-between">
                     <h4>Bagian</h1>
                         <p class="d-flex justify-content-end " style="gap: 10px;">
                             <?= Html::a('Add new', ['/bagian/create', 'id_perusahaan' => $model->id_perusahaan], ['class' => 'tambah-button']) ?>

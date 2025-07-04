@@ -49,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="d-flex justify-content-start">
             <!-- Button trigger modal -->
             <button type="button" class="tambah-button" data-toggle="modal" data-target="#exampleModal">
-                <i class="fa fa-plus"></i> Tunjangan Baru
+                <i class="fa fa-plus"></i> Jenis Tunjangan Baru
             </button>
 
             <!-- Modal -->
@@ -63,7 +63,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Tambah Tunjangan Baru</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Tambah Jenis Tunjangan Baru</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -71,7 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <div class="modal-body">
 
 
-                            <?= $form->field($tunjangan, 'nama_tunjangan')->textInput(['maxlength' => true, 'class' => 'form-control', 'autofocus' => true, 'placeholder' => 'Nama Tunjangan Baru']) ?>
+                            <?= $form->field($tunjangan, 'nama_tunjangan')->textInput(['maxlength' => true, 'class' => 'form-control', 'autofocus' => true, 'placeholder' => 'Nama Jenis Tunjangan Baru']) ?>
 
                         </div>
                         <div class="modal-footer">
@@ -87,11 +87,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
             &nbsp;
             &nbsp;
-            <a href="/panel/tunjangan/index" target="_blank" class="cetak-button"><i class="fa fa-list"></i>list Tunjangan </a>
+            <a href="/panel/tunjangan/index" target="_blank" class="cetak-button"><i class="fa fa-list"></i>list Jenis Tunjangan </a>
         </div>
     </div>
 
-    <div class="table-container     table-responsive">
+    <div class="table-container table-responsive">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'columns' => [

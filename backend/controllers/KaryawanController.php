@@ -89,6 +89,25 @@ class KaryawanController extends Controller
             'statusKontrak' => $statusKontrak
         ]);
     }
+    public function actionExel()
+    {
+
+        $statusKontrak  = MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pekerjaan']])->where(['nama_kode' => 'Kontrak',])->one();
+        if ($statusKontrak == null) {
+            $statusKontrak = "2";
+        } else {
+            $statusKontrak = $statusKontrak->kode;
+        }
+
+
+        $searchModel = new KaryawanSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+        return $this->renderPartial('_exel', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'statusKontrak' => $statusKontrak
+        ]);
+    }
 
     /**
      * Displays a single Karyawan model.

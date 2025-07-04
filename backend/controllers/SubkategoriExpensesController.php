@@ -87,7 +87,7 @@ class SubkategoriExpensesController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_subkategori_expenses' => $model->id_subkategori_expenses]);
+                return $this->redirect(['/kategori-expenses/index']);
             }
         } else {
             $model->loadDefaultValues();
@@ -110,7 +110,7 @@ class SubkategoriExpensesController extends Controller
         $model = $this->findModel($id_subkategori_expenses);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_subkategori_expenses' => $model->id_subkategori_expenses]);
+            return $this->redirect(['/kategori-expenses/index']);
         }
 
         return $this->render('update', [
@@ -129,7 +129,7 @@ class SubkategoriExpensesController extends Controller
     {
         $this->findModel($id_subkategori_expenses)->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['/kategori-expenses/index']);
     }
 
     /**

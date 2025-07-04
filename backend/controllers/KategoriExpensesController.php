@@ -4,9 +4,11 @@ namespace backend\controllers;
 
 use backend\models\KategoriExpenses;
 use backend\models\KategoriExpensesSearch;
+use backend\models\SubkategoriExpensesSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use Yii;
 
 /**
  * KategoriExpensesController implements the CRUD actions for KategoriExpenses model.
@@ -27,6 +29,21 @@ class KategoriExpensesController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => \yii\filters\AccessControl::class,
+                    'rules' => [
+
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // Allow authenticated users
+                            'matchCallback' => function ($rule, $action) {
+                                $user = Yii::$app->user;
+                                // Check if the user does  have the 'admin' or 'super admin' role
+                                return $user->can('admin') || $user->can('super_admin');
+                            },
+                        ],
+                    ],
+                ],
             ]
         );
     }
@@ -41,9 +58,13 @@ class KategoriExpensesController extends Controller
         $searchModel = new KategoriExpensesSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
+        $searchSubModel = new SubkategoriExpensesSearch();
+        $dataSubProvider = $searchSubModel->search($this->request->queryParams);
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'searchSubModel' => $searchSubModel,
+            'dataSubProvider' => $dataSubProvider
         ]);
     }
 

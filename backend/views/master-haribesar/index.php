@@ -11,7 +11,7 @@ use yii\grid\GridView;
 /** @var backend\models\MasterHaribesarSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Master Hari Besar');
+$this->title = Yii::t('app', 'Master Hari Libur');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="master-haribesar-index">

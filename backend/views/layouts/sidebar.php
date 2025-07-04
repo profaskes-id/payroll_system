@@ -28,12 +28,6 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
         <div class="px-5 mx-auto d-flex justify-content-center align-items-center w-100">
             <?= Html::a('<i class="fa fa-solid fa-user"></i>', ['/user/profile'], ['class' => 'nav-link']) ?>
             <?= Html::a('<i class="fa fa-solid fa-cog"></i>', ['/user/account'], ['class' => 'nav-link']) ?>
-            <?php // if (Yii::$app->user->can('super_admin')) : 
-            ?>
-            <?php // Html::a('<i class="fa fa-solid fa-users"></i>', ['/user/admin'], ['class' => 'nav-link']) 
-            ?>
-            <?php // endif; 
-            ?>
             <?= Html::a('<i class="fas fa-sign-out-alt"></i>', ['/user/logout'], ['data-method' => 'post', 'class' => 'nav-link']) ?>
         </div>
         <hr style="background-color: white; margin: 0; padding: 0;" />
@@ -56,108 +50,98 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                 <nav class="">
                     <?php
                     echo \hail812\adminlte\widgets\Menu::widget([
+
                         'items' => [
                             ['label' => 'Dashboard',  'icon' => 'home', 'url' => ['/']],
 
                             [
-                                'label' => 'Pengaturan System',
+                                'label' => 'Pengaturan Umum',
                                 'icon' => 'th',
                                 'items' => [
-                                    ['label' => 'Master Kode',  'icon' => 'file-code', 'url' => ['/master-kode/index'],],
-                                    ['label' => 'Settingan Umum ',  'icon' => 'fa fa-cog', 'url' => ['/settingan-umum/index'],],
-                                    ['label' => 'Master Cuti',  'icon' => 'fa  fa-calendar-alt', 'url' => ['/master-cuti/index'],],
-                                    ['label' => 'Master Hari Besar',  'icon' => 'fa fa-calendar-day', 'url' => ['/master-haribesar/index'],],
-                                    ['label' => 'Master Lokasi',  'icon' => 'fa fa-map-marker', 'url' => ['/master-lokasi/index'],],
-                                    ['label' => 'Master Gaji',  'icon' => 'fa fa-money-bill-alt', 'url' => ['/master-gaji/index'],],
-                                    ['label' => 'Periode Gaji',  'icon' => 'fa fa-calendar-check', 'url' => ['/periode-gaji/index'],],
-                                    ['label' => 'Total Hari Kerja',  'icon' => 'fas fa-briefcase', 'url' => ['/total-hari-kerja/index'],],
-                                    ['label' => 'faq',  'icon' => 'fas fa-question-circle', 'url' => ['/faq/index'],],
+                                    ['label' => 'Master Kode',  'icon' => 'file-code', 'url' => ['/master-kode/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Profile Perusahaan', 'icon' => 'fa fa-building', 'url' => ['/perusahaan/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Master Lokasi',  'icon' => 'fa fa-map-marker', 'url' => ['/master-lokasi/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Master Hari Libur',  'icon' => 'fa fa-calendar-day', 'url' => ['/master-haribesar/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Master Cuti',  'icon' => 'fa  fa-calendar-alt', 'url' => ['/master-cuti/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Setting Lainnya ',  'icon' => 'fa fa-cog', 'url' => ['/settingan-umum/index'], 'options' => ['class' => 'ml-3'],],
                                 ],
                             ],
                             [
-                                'label' => 'Pengaturan Data',
+                                'label' => 'Pengaturan HR',
                                 'icon' => 'th',
                                 'items' => [
-                                    [ // Submenu: Pengaturan Karyawan
-                                        'label' => 'Data Karyawan',
-                                        'icon' => 'fa fa-people-arrows',
-                                        'items' => [
-                                            [
-                                                'label' => 'User',
-                                                'icon' => 'fa fa-users',
-                                                'url' => ['/user/admin/index'],
-                                                'visible' => Yii::$app->user->can('super_admin'), // 👈 Kondisi ditambahkan di sini
-                                            ],
-                                            ['label' => 'Profile Perusahaan', 'icon' => 'fa fa-building', 'url' => ['/perusahaan/index']],
-                                            ['label' => 'Jabatan', 'icon' => 'fa fa-user-tie', 'url' => ['/jabatan/index']],
-                                            ['label' => 'Karyawan', 'icon' => 'fa fa-users', 'url' => ['/karyawan/index']],
-                                            ['label' => 'Atasan dan Penempatan', 'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index']],
-                                        ],
-                                    ],
-                                    [ // Submenu: Pengaturan Jam
-                                        'label' => 'Pengaturan Jam',
-                                        'icon' => 'fa fa-hourglass-start',
-                                        'items' => [
-                                            ['label' => 'Jam Kerja', 'icon' => 'fa fa-clock', 'url' => ['/jam-kerja/index']],
-                                            ['label' => 'Shift Kerja', 'icon' => 'fa fa-cogs', 'url' => ['/shift-kerja/index']],
-                                            ['label' => 'Jam Kerja Karyawan', 'icon' => 'fa fa-user-clock', 'url' => ['/jam-kerja-karyawan/index']],
-                                            ['label' => 'Jadwal Shift Karyawan', 'icon' => 'fa fa-calendar-check', 'url' => ['/jadwal-shift/index'], 'visible' => SettinganUmum::find()->where(['kode_setting' => 'manual_shift'])->one()['nilai_setting'] == 1],
-                                        ],
-                                    ],
+                                    ['label' => 'Setting User ',  'icon' => 'fa fa-cog', 'url' => ['/user/admin/index'], 'options' => ['class' => 'ml-3'],],
+
+                                    ['label' => 'Master Jabatan', 'icon' => 'fa fa-user-tie', 'url' => ['/jabatan/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Data Karyawan', 'icon' => 'fa fa-users', 'url' => ['/karyawan/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Setting Atasan dan Penempatan', 'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index'], 'options' => ['class' => 'ml-3'],],
+                                ],
+                            ],
+                            [
+                                'label' => 'Pengaturan Jam Kerja',
+                                'icon' => 'fa fa-hourglass-start',
+                                'items' => [
+
+                                    ['label' => 'Master Hari Kerja', 'icon' => 'fa fa-clock', 'url' => ['/jam-kerja/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Setting Jam Kerja ', 'icon' => 'fa fa-user-clock', 'url' => ['/jam-kerja-karyawan/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Setting Jadwal Shift ', 'icon' => 'fa fa-calendar-check', 'url' => ['/jadwal-shift/index'], 'options' => ['class' => 'ml-3'], 'visible' => SettinganUmum::find()->where(['kode_setting' => 'manual_shift'])->one()['nilai_setting'] == 1],
+                                ],
+                            ],
+                            ['label' => 'Data Absensi',  'icon' => 'fa fa-user-check', 'url' => ['/absensi/index'],],
+
+
+                            [
+                                'label' => 'Penggajian',
+                                'icon' => 'th',
+                                'items' => [
+                                    ['label' => 'Setting Periode Gaji',  'icon' => 'fa fa-calendar-check', 'url' => ['/periode-gaji/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Setting Tunjangan ',  'icon' => 'fa fa-user-tie', 'url' => ['/tunjangan-detail/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Setting Potongan',  'icon' => 'fa fa-user-slash', 'url' => ['/potongan-detail/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Transaksi Gaji',  'icon' => 'fa fa-exchange-alt', 'url' => ['/transaksi-gaji/index'], 'options' => ['class' => 'ml-3'],],
 
                                 ],
                             ],
-
                             [
-                                'label' => 'Transaksi',
+                                'label' => 'Expenses',
                                 'icon' => 'th',
                                 'items' => [
-                                    ['label' => 'Transaksi Gaji',  'icon' => 'fa fa-exchange-alt', 'url' => ['/transaksi-gaji/index'],],
-                                    // ['label' => 'Tunjangan',  'icon' => 'fa fa-hand-holding-usd', 'url' => ['/tunjangan/index'],],
-                                    ['label' => 'Tunjangan Karyawan',  'icon' => 'fa fa-user-tie', 'url' => ['/tunjangan-detail/index'],],
-                                    // ['label' => 'Potongan',  'icon' => 'fa fa-minus-circle', 'url' => ['/potongan/index'],],
-                                    ['label' => 'Potongan Karyawan',  'icon' => 'fa fa-user-slash', 'url' => ['/potongan-detail/index'],],
-                                    [
-                                        'label' => 'Pengeluaran',
-                                        'icon' => 'th',
-                                        'items' => [
-                                            ['label' => 'Kategori',  'icon' => 'fa fa-building', 'url' => ['/kategori-expenses/index'],],
-                                            ['label' => 'Sub Kategori',  'icon' => 'fa fa-user-tie', 'url' => ['/subkategori-expenses/index'],],
-                                            ['label' => 'Biaya & Beban',  'icon' => 'fa fa-users', 'url' => ['/expenses-detail/index'],],
-                                        ],
-                                    ],
+                                    ['label' => 'Kategori & Sub Kategori',  'icon' => 'fa fa-building', 'url' => ['/kategori-expenses/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Biaya & Beban',  'icon' => 'fa fa-users', 'url' => ['/expenses-detail/index'], 'options' => ['class' => 'ml-3'],],
                                 ],
                             ],
-
-                            ['label' => 'Absensi',  'icon' => 'fa fa-user-check', 'url' => ['/absensi/index'],],
                             [
-                                'label' => 'Pengajuan',
+                                'label' => 'Data Pengajuan',
                                 'icon' => 'th',
                                 'items' => [
-                                    ['label' => 'Pengajuan WFH',  'icon' => 'fa fa-laptop-house', 'url' => ['/pengajuan-wfh/index'],],
-                                    ['label' => 'Pengajuan Cuti',  'icon' => 'fa fa-paper-plane', 'url' => ['/pengajuan-cuti/index'],],
-                                    ['label' => 'Pengajuan lembur',  'icon' => 'fa fa-hourglass', 'url' => ['/pengajuan-lembur/index'],],
-                                    ['label' => 'Pengajuan Dinas',  'icon' => 'fa fa-map-marker-alt', 'url' => ['/pengajuan-dinas/index'],],
-                                    ['label' => 'Penggantian Shift',  'icon' => 'fa fa fa-briefcase', 'url' => ['/pengajuan-shift/index'],],
-                                    [
-                                        'label' => 'Pulang Cepat <span class="right badge badge-warning">' . $jumlahPulangCepatToday . '</span>',
-                                        'icon' => 'fas fa-clock',
-                                        'url' => ['/izin-pulang-cepat/index'],
-                                        'options' => ['class' => 'nav-item'], // Opsional, untuk styling
-                                    ],
+                                    ['label' => 'Pengajuan WFH',  'icon' => 'fa fa-laptop-house', 'url' => ['/pengajuan-wfh/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Pengajuan Cuti',  'icon' => 'fa fa-paper-plane', 'url' => ['/pengajuan-cuti/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Pengajuan lembur',  'icon' => 'fa fa-hourglass', 'url' => ['/pengajuan-lembur/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Pengajuan Dinas',  'icon' => 'fa fa-map-marker-alt', 'url' => ['/pengajuan-dinas/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Pengajuan Shift',  'icon' => 'fa fa fa-briefcase', 'url' => ['/pengajuan-shift/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Pengajuan Pulang Cepat',  'icon' => 'fa fa fa-briefcase', 'url' => ['/izin-pulang-cepat/index'], 'options' => ['class' => 'ml-3'],],
                                 ],
                             ],
                             [
                                 'label' => 'Rekapitulasi Data',
                                 'icon' => 'th',
                                 'items' => [
-                                    ['label' => 'Rekap Absensi',  'icon' => 'fa fa-table', 'url' => ['/rekap-absensi/index'],],
-                                    ['label' => 'Rekap Cuti',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-cuti/index'],],
+                                    ['label' => 'Rekap Absensi',  'icon' => 'fa fa-table', 'url' => ['/rekap-absensi/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Rekap Cuti',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-cuti/index'], 'options' => ['class' => 'ml-3'],],
                                 ],
                             ],
-                            ['label' => 'Pengumuman',  'icon' => 'fa fa-bullhorn', 'url' => ['/pengumuman/index'],],
+                            [
+                                'label' => 'Lainnya',
+                                'icon' => 'th',
+                                'items' => [
+                                    ['label' => 'faq',  'icon' => 'fas fa-question-circle', 'url' => ['/faq/index'], 'options' => ['class' => 'ml-3'],],
 
-                            ['label' => 'Download Mobile App',  'icon' => 'fa fa-mobile ', 'url' => ['/download/index'],],
+                                    ['label' => 'Pengumuman',  'icon' => 'fa fa-bullhorn', 'url' => ['/pengumuman/index'], 'options' => ['class' => 'ml-3'],],
+
+                                    ['label' => 'Download Mobile App',  'icon' => 'fa fa-mobile ', 'url' => ['/download/index'], 'options' => ['class' => 'ml-3'],],
+
+                                ],
+                            ],
+
 
                         ],
                         'encodeLabels' => false, // Pastikan ini diatur ke false agar HTML di-render
@@ -168,65 +152,97 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
                 <nav class="">
                     <?php
                     echo \hail812\adminlte\widgets\Menu::widget([
+
                         'items' => [
                             ['label' => 'Dashboard',  'icon' => 'home', 'url' => ['/']],
 
                             [
-                                'label' => 'Pengaturan Data',
+                                'label' => 'Pengaturan Umum',
                                 'icon' => 'th',
                                 'items' => [
-                                    [ // Submenu: Pengaturan Karyawan
-                                        'label' => 'Data Karyawan',
-                                        'icon' => 'fa fa-people-arrows',
-                                        'items' => [
-                                            ['label' => 'Profile Perusahaan', 'icon' => 'fa fa-building', 'url' => ['/perusahaan/index']],
-                                            ['label' => 'Jabatan', 'icon' => 'fa fa-user-tie', 'url' => ['/jabatan/index']],
-                                            ['label' => 'Karyawan', 'icon' => 'fa fa-users', 'url' => ['/karyawan/index']],
-                                            ['label' => 'Atasan dan Penempatan', 'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index']],
-                                        ],
-                                    ],
-                                    [ // Submenu: Pengaturan Jam
-                                        'label' => 'Pengaturan Jam',
-                                        'icon' => 'fa fa-hourglass-start',
-                                        'items' => [
-                                            ['label' => 'Jam Kerja', 'icon' => 'fa fa-clock', 'url' => ['/jam-kerja/index']],
-                                            ['label' => 'Shift Kerja', 'icon' => 'fa fa-cogs', 'url' => ['/shift-kerja/index']],
-                                            ['label' => 'Jam Kerja Karyawan', 'icon' => 'fa fa-user-clock', 'url' => ['/jam-kerja-karyawan/index']],
-                                            ['label' => 'Jadwal Shift Karyawan', 'icon' => 'fa fa-calendar-check', 'url' => ['/jadwal-shift/index'], 'visible' => SettinganUmum::find()->where(['kode_setting' => 'manual_shift'])->one()['nilai_setting'] == 1],
-                                        ],
-                                    ],
+                                    ['label' => 'Profile Perusahaan', 'icon' => 'fa fa-building', 'url' => ['/perusahaan/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Master Lokasi',  'icon' => 'fa fa-map-marker', 'url' => ['/master-lokasi/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Master Hari Libur',  'icon' => 'fa fa-calendar-day', 'url' => ['/master-haribesar/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Master Cuti',  'icon' => 'fa  fa-calendar-alt', 'url' => ['/master-cuti/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Setting Lainnya ',  'icon' => 'fa fa-cog', 'url' => ['/settingan-umum/index'], 'options' => ['class' => 'ml-3'],],
+                                ],
+                            ],
+                            [
+                                'label' => 'Pengaturan HR',
+                                'icon' => 'th',
+                                'items' => [
+                                    ['label' => 'Setting User ',  'icon' => 'fa fa-cog', 'url' => ['/user/admin/index'], 'options' => ['class' => 'ml-3'],],
+
+                                    ['label' => 'Master Jabatan', 'icon' => 'fa fa-user-tie', 'url' => ['/jabatan/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Data Karyawan', 'icon' => 'fa fa-users', 'url' => ['/karyawan/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Setting Atasan dan Penempatan', 'icon' => 'fa fa-handshake', 'url' => ['/atasan-karyawan/index'], 'options' => ['class' => 'ml-3'],],
+                                ],
+                            ],
+                            [
+                                'label' => 'Pengaturan Jam Kerja',
+                                'icon' => 'fa fa-hourglass-start',
+                                'items' => [
+
+                                    ['label' => 'Master Hari Kerja', 'icon' => 'fa fa-clock', 'url' => ['/jam-kerja/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Setting Jam Kerja ', 'icon' => 'fa fa-user-clock', 'url' => ['/jam-kerja-karyawan/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Setting Jadwal Shift ', 'icon' => 'fa fa-calendar-check', 'url' => ['/jadwal-shift/index'], 'options' => ['class' => 'ml-3'], 'visible' => SettinganUmum::find()->where(['kode_setting' => 'manual_shift'])->one()['nilai_setting'] == 1],
+                                ],
+                            ],
+                            ['label' => 'Data Absensi',  'icon' => 'fa fa-user-check', 'url' => ['/absensi/index'],],
+
+
+                            [
+                                'label' => 'Penggajian',
+                                'icon' => 'th',
+                                'items' => [
+                                    ['label' => 'Setting Periode Gaji',  'icon' => 'fa fa-calendar-check', 'url' => ['/periode-gaji/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Setting Tunjangan ',  'icon' => 'fa fa-user-tie', 'url' => ['/tunjangan-detail/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Setting Potongan',  'icon' => 'fa fa-user-slash', 'url' => ['/potongan-detail/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Transaksi Gaji',  'icon' => 'fa fa-exchange-alt', 'url' => ['/transaksi-gaji/index'], 'options' => ['class' => 'ml-3'],],
 
                                 ],
                             ],
-                            ['label' => 'Absensi',  'icon' => 'fa fa-user-check', 'url' => ['/absensi/index'],],
                             [
-                                'label' => 'Pengajuan',
+                                'label' => 'Expenses',
                                 'icon' => 'th',
                                 'items' => [
-                                    ['label' => 'Pengajuan WFH',  'icon' => 'fa fa-laptop-house', 'url' => ['/pengajuan-wfh/index'],],
-                                    ['label' => 'Pengajuan Cuti',  'icon' => 'fa fa-paper-plane', 'url' => ['/pengajuan-cuti/index'],],
-                                    ['label' => 'Pengajuan lembur',  'icon' => 'fa fa-hourglass', 'url' => ['/pengajuan-lembur/index'],],
-                                    ['label' => 'Pengajuan Dinas',  'icon' => 'fa fa-map-marker-alt', 'url' => ['/pengajuan-dinas/index'],],
-                                    ['label' => 'Penggantian Shift',  'icon' => 'fa fa fa-briefcase', 'url' => ['/pengajuan-shift/index'],],
-                                    [
-                                        'label' => 'Pulang Cepat <span class="right badge badge-warning">' . $jumlahPulangCepatToday . '</span>',
-                                        'icon' => 'fas fa-clock',
-                                        'url' => ['/izin-pulang-cepat/index'],
-                                        'options' => ['class' => 'nav-item'], // Opsional, untuk styling
-                                    ],
+                                    ['label' => 'Kategori & Sub Kategori',  'icon' => 'fa fa-building', 'url' => ['/kategori-expenses/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Biaya & Beban',  'icon' => 'fa fa-users', 'url' => ['/expenses-detail/index'], 'options' => ['class' => 'ml-3'],],
+                                ],
+                            ],
+                            [
+                                'label' => 'Data Pengajuan',
+                                'icon' => 'th',
+                                'items' => [
+                                    ['label' => 'Pengajuan WFH',  'icon' => 'fa fa-laptop-house', 'url' => ['/pengajuan-wfh/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Pengajuan Cuti',  'icon' => 'fa fa-paper-plane', 'url' => ['/pengajuan-cuti/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Pengajuan lembur',  'icon' => 'fa fa-hourglass', 'url' => ['/pengajuan-lembur/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Pengajuan Dinas',  'icon' => 'fa fa-map-marker-alt', 'url' => ['/pengajuan-dinas/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Pengajuan Shift',  'icon' => 'fa fa fa-briefcase', 'url' => ['/pengajuan-shift/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Pengajuan Pulang Cepat',  'icon' => 'fa fa fa-briefcase', 'url' => ['/izin-pulang-cepat/index'], 'options' => ['class' => 'ml-3'],],
                                 ],
                             ],
                             [
                                 'label' => 'Rekapitulasi Data',
                                 'icon' => 'th',
                                 'items' => [
-                                    ['label' => 'Rekap Absensi',  'icon' => 'fa fa-table', 'url' => ['/rekap-absensi/index'],],
-                                    ['label' => 'Rekap Cuti',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-cuti/index'],],
+                                    ['label' => 'Rekap Absensi',  'icon' => 'fa fa-table', 'url' => ['/rekap-absensi/index'], 'options' => ['class' => 'ml-3'],],
+                                    ['label' => 'Rekap Cuti',  'icon' => 'fas fa-clipboard-list', 'url' => ['/rekap-cuti/index'], 'options' => ['class' => 'ml-3'],],
                                 ],
                             ],
-                            ['label' => 'Pengumuman',  'icon' => 'fa fa-bullhorn', 'url' => ['/pengumuman/index'],],
+                            [
+                                'label' => 'Lainnya',
+                                'icon' => 'th',
+                                'items' => [
+                                    ['label' => 'faq',  'icon' => 'fas fa-question-circle', 'url' => ['/faq/index'], 'options' => ['class' => 'ml-3'],],
 
-                            ['label' => 'Download Mobile App',  'icon' => 'fa fa-mobile ', 'url' => ['/download/index'],],
+                                    ['label' => 'Pengumuman',  'icon' => 'fa fa-bullhorn', 'url' => ['/pengumuman/index'], 'options' => ['class' => 'ml-3'],],
+
+                                    ['label' => 'Download Mobile App',  'icon' => 'fa fa-mobile ', 'url' => ['/download/index'], 'options' => ['class' => 'ml-3'],],
+
+                                ],
+                            ],
+
 
                         ],
                         'encodeLabels' => false, // Pastikan ini diatur ke false agar HTML di-render

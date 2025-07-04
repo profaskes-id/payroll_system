@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <div class="row">
+    <div class="row table-container">
         <div class="col-md-12">
             <?= $form->field($model, 'kode_setting')->textInput(['maxlength' => true]) ?>
         </div>

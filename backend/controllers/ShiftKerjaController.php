@@ -129,7 +129,7 @@ class ShiftKerjaController extends Controller
     {
         $this->findModel($id_shift_kerja)->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['/jam-kerja/index']);
     }
 
     /**

@@ -41,6 +41,17 @@ $tanggalFormater = new Tanggal();
 
 
     <div class="table-container table-responsive">
+
+
+        <div class="justify-end d-flex ">
+            <p class="d-block">
+                <?= Html::a(
+                    'Export to exel <i class="fa fa-table"></i>',
+                    array_merge(['exel']),
+                    ['target' => '_blank', 'class' => 'tambah-button']
+                ) ?>
+            </p>
+        </div>
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'options' => ['class' => 'table table-striped table-responsive table-hover'],
@@ -118,7 +129,6 @@ $tanggalFormater = new Tanggal();
 
                         // Ambil status dari pekerjaan aktif
                         $statusAktif = $pekerjaanAktif->status;
-
                         // Hitung berapa kali status ini muncul
                         $jumlah = 0;
                         foreach ($filteredDataPekerjaans as $pekerjaan) {
@@ -128,7 +138,8 @@ $tanggalFormater = new Tanggal();
                             }
                         }
 
-                        $statusAktif = $pekerjaan->statusPekerjaan->nama_kode;
+
+                        $statusAktif = $pekerjaanAktif->statusPekerjaan->nama_kode;
 
                         // Kembalikan dalam format yang diminta
                         return  $jumlah > 1 ? "$statusAktif ($jumlah)" : "$statusAktif";

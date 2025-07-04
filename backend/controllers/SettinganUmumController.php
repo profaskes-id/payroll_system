@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\MasterKode;
 use backend\models\SettinganUmum;
 use backend\models\SettinganUmumSearch;
 use yii\web\Controller;
@@ -56,12 +57,45 @@ class SettinganUmumController extends Controller
     {
         $searchModel = new SettinganUmumSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+        $model = new MasterKode();
 
+        $tanggal_cut_of = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one();
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'tanggal_cut_of' => $tanggal_cut_of,
+            'model' => $model
         ]);
     }
+
+    public function actionEditCutoff()
+    {
+
+        $model = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one();
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            if ($model->save()) {
+                return ['success' => true];
+            } else {
+                return [
+                    'success' => false,
+                    'form' => $this->renderAjax('_form', ['model' => $model]) // Buat partial view _form.php jika belum ada
+                ];
+            }
+        }
+
+        // Untuk non-AJAX request
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['index']);
+        }
+
+        return $this->render('edit', [
+            'model' => $model,
+        ]);
+    }
+
 
     /**
      * Displays a single SettinganUmum model.

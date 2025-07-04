@@ -7,6 +7,7 @@ use backend\models\JadwalKerja;
 use backend\models\JadwalKerjaSearch;
 use backend\models\JamKerja;
 use backend\models\JamKerjaSearch;
+use backend\models\ShiftKerjaSearch;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -59,9 +60,17 @@ class JamKerjaController extends Controller
         $searchModel = new JamKerjaSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
+        $searchShiftModel = new ShiftKerjaSearch();
+        $dataShiftProvider = $searchShiftModel->search($this->request->queryParams);
+
+
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'searchShiftModel' => $searchShiftModel,
+            'dataShiftProvider' => $dataShiftProvider
+
         ]);
     }
 

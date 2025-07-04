@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /** @var backend\models\SubkategoriExpenses $model */
 
 $this->title = $model->nama_subkategori;
-$this->params['breadcrumbs'][] = ['label' => 'Subkategori Expenses', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Subkategori Expenses', 'url' => ['/kategori-expenses/index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['/kategori-expenses/index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 

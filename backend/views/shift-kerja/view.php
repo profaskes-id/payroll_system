@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /** @var backend\models\ShiftKerja $model */
 
 $this->title = strtoupper($model->nama_shift);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Shift Kerja'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Shift Kerja'), 'url' => ['/jam-kerja/index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['/jam-kerja/index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
     <div class="table-container table-responsive">

@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="d-flex justify-content-start">
                 <!-- Button trigger modal -->
                 <button type="button" class="tambah-button" data-toggle="modal" data-target="#exampleModal">
-                    <i class="fa fa-plus"></i> Potongan Baru
+                    <i class="fa fa-plus"></i> Jenis Potongan Baru
                 </button>
 
                 <!-- Modal -->
@@ -64,7 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Tambah Potongan Baru</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">Tambah Jenis Potongan Baru</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <div class="modal-body">
 
 
-                                <?= $form->field($potongan, 'nama_potongan')->textInput(['maxlength' => true, 'class' => 'form-control', 'autofocus' => true, 'placeholder' => 'Nama Potongan Baru']) ?>
+                                <?= $form->field($potongan, 'nama_potongan')->textInput(['maxlength' => true, 'class' => 'form-control', 'autofocus' => true, 'placeholder' => 'Nama Jenis Potongan Baru']) ?>
 
                             </div>
                             <div class="modal-footer">
@@ -88,7 +88,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 &nbsp;
                 &nbsp;
-                <a href="/panel/potongan/index" target="_blank" class="cetak-button"><i class="fa fa-list"></i> List Potongan </a>
+                <a href="/panel/potongan/index" target="_blank" class="cetak-button"><i class="fa fa-list"></i> List Jenis Potongan </a>
             </div>
         </div>
 

@@ -1,16 +1,19 @@
 <?php
 
+use backend\models\MasterKode;
 use backend\models\SettinganUmum;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var backend\models\SettinganUmumSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Settingan Umum');
+$this->title = Yii::t('app', 'Settingan Lainnya');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="settingan-umum-index">
@@ -67,4 +70,132 @@ $this->params['breadcrumbs'][] = $this->title;
         ]); ?>
 
     </div>
+
+    <div class="settingan-umum-index">
+        <div class="table-container table-responsive" style="margin-top: 30px;">
+            <h3>Pengaturan Tanggal Cut Off</h3>
+            <p class="text-muted">Tanggal cut off menentukan periode dimulainya perhitungan penggajian</p>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width: 5%; text-align: center;">Aksi</th>
+                        <th>Nama Group</th>
+                        <th>Setiap Tanggal</th>
+                        <th>Deskripsi</th>
+                        <th>Status</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+
+                            <?= Html::a(
+                                '<i class="fas fa-edit"></i>',
+                                ['/your-controller/edit', 'id' => $tanggal_cut_of['kode']], // Update with your actual route
+                                [
+                                    'class' => 'btn btn-sm btn-primary btn-edit', // Added btn-edit class
+                                    'title' => 'Edit',
+                                    'data-toggle' => 'tooltip'
+                                ]
+                            ) ?>
+                        </td>
+                        <td><?= Html::encode($tanggal_cut_of['nama_group']) ?></td>
+                        <td><?= Html::encode($tanggal_cut_of['nama_kode']) ?></td>
+                        <td>Tanggal dimulai perhitungan penggajian</td>
+                        <td>
+                            <span class="badge <?= $tanggal_cut_of['status'] == 1 ? 'badge-success' : 'badge-danger' ?>">
+                                <?= $tanggal_cut_of['status'] == 1 ? 'Aktif' : 'Tidak Aktif' ?>
+                            </span>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+
+<!-- Modal for Edit -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Tanggal Cut Off</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="editModalBody">
+                <div class="master-kode-form">
+                    <?php $form = ActiveForm::begin(['action' => Url::to(['/settingan-umum/edit-cutoff']), 'enableClientScript' => true, 'method' => 'post']); ?>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <?= $form->field($tanggal_cut_of, 'nama_kode')->textInput(['maxlength' => true, 'placeholder' => 'Masukan Tanggal Cut Off'])->label('Tanggal Dimulai Cut Off') ?>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <?= Html::submitButton('Save', ['class' => 'add-button']) ?>
+                    </div>
+
+                    <?php ActiveForm::end(); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<?php
+// Inisialisasi tooltip
+$this->registerJs("$('[data-toggle=\"tooltip\"]').tooltip();");
+
+// JavaScript to handle modal loading
+$this->registerJs(
+    <<<JS
+    $(document).on('click', '.btn-edit', function(e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        
+        // Load the form via AJAX
+        $('#editModalBody').load(url, function() {
+            $('#editModal').modal('show');
+            
+            // Initialize Select2 in the modal if needed
+            if ($('#masterkode-nama_group').length) {
+                $('#masterkode-nama_group').select2({
+                    language: 'id',
+                    placeholder: 'Masukan Nama Group ...',
+                    allowClear: true
+                });
+            }
+        });
+    });
+    
+    // Handle modal form submission
+    $(document).on('beforeSubmit', '#editModalBody form', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        $.ajax({
+            url: form.attr('action'),
+            type: 'post',
+            data: form.serialize(),
+            success: function(response) {
+                if (response.success) {
+                    $('#editModal').modal('hide');
+                    // Reload the page or update specific elements
+                    location.reload();
+                } else {
+                    // Update the form with validation errors
+                    $('#editModalBody').html(response.form);
+                }
+            }
+        });
+        return false;
+    });
+JS
+);

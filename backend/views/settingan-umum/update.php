@@ -5,8 +5,8 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\SettinganUmum $model */
 
-$this->title = Yii::t('app', 'Update Settingan Umum');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Settingan Umums'), 'url' => ['index']];
+$this->title = Yii::t('app', 'Update Settingan Lainnya');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Settingan Lainnya'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id_settingan_umum, 'url' => ['view', 'id_settingan_umum' => $model->id_settingan_umum]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
