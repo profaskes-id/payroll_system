@@ -9,9 +9,9 @@ $tanggal = new Tanggal;
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
 <?php
-ob_start(); // start output buffering
+ob_start();
 header("Content-Type: application/vnd.ms-excel");
-header("Content-Disposition: attachment; filename=Rekapan-absensi.xls");
+header("Content-Disposition: attachment; filename=Rekapan-absensi(" . $tanggal->getIndonesiaFormatTanggal($tanggal_awal) . " - " . $tanggal->getIndonesiaFormatTanggal($tanggal_akhir) . ").xls");
 ?>
 <!-- lalu HTML dan PHP lanjut -->
 
