@@ -68,16 +68,12 @@ class SiteController extends Controller
         ];
     }
 
-    /**
-     * Displays homepage.
-     *
-     * @return string
-     */
+
     public function actionIndex()
     {
         if (Yii::$app->user->isGuest) {
             return $this->redirect(['user/login']);
-        } elseif (Yii::$app->user->can('admin')) {
+        } else {
 
             $TotalKaryawan = Karyawan::find()->where(['is_aktif' => 1])->count();
             $TotalData = Absensi::find()->where(['tanggal' => date('Y-m-d'), 'kode_status_hadir' => 'H'])->count();
@@ -131,11 +127,6 @@ class SiteController extends Controller
 
 
             return $this->render('index', compact('is_ada_notif', 'datesAsJson', 'TotalKaryawan', 'TotalData', 'TotalDataBelum', 'TotalIzin', 'totalPengumuman', 'pengajuanLembur', 'pengajuanCuti', 'pengajuanDinas', 'pengajuanPulangCepat', 'pengajuanWFH'));
-        } elseif (!Yii::$app->user->can('admin')) {
-
-            return $this->redirect(['home/index']);
-        } else {
-            return $this->redirect(['user/login']);
         }
     }
 

@@ -1365,6 +1365,10 @@ input:checked + .toggle-bg {
   margin-left: 0.5rem;
 }
 
+.ml-3 {
+  margin-left: 0.75rem;
+}
+
 .ml-auto {
   margin-left: auto;
 }
