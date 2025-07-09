@@ -9,6 +9,7 @@ return [
     'timeZone' => 'Asia/Jakarta',
     'language' => 'id_ID',
     'components' => [
+
         'session' => [
             'class' => 'yii\web\Session',
             'cookieParams' => [
@@ -26,6 +27,9 @@ return [
         ],
         'cache' => [
             'class' => \yii\caching\FileCache::class,
+        ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
         ],
     ],
 ];

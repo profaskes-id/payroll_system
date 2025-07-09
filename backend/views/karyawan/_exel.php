@@ -11,6 +11,7 @@ header("Content-Disposition: attachment; filename=Rekapan-data-karyawan.xls");
     td,
     th {
         mso-number-format: "\@";
+        font-size: 9px;
     }
 </style>
 

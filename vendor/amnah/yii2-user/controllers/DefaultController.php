@@ -73,6 +73,8 @@ class DefaultController extends Controller
      */
     public function actionIndex()
     {
+
+
         if (defined('YII_DEBUG') && YII_DEBUG) {
             $actions = $this->module->getActions();
             return $this->render('index', ["actions" => $actions]);

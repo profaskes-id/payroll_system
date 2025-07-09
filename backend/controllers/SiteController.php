@@ -71,8 +71,14 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
+        $assignments = Yii::$app->authManager->getAssignments(Yii::$app->user->id);
+        $roleNames = array_column($assignments, 'roleName');
+
+
         if (Yii::$app->user->isGuest) {
             return $this->redirect(['user/login']);
+        } elseif ($roleNames[0] == 'Karyawan') {
+            return $this->redirect(['home/index']);
         } else {
 
             $TotalKaryawan = Karyawan::find()->where(['is_aktif' => 1])->count();

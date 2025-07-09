@@ -29,16 +29,18 @@ return [
                     /* 'userClassName' => 'app\models\User', */
                     'idField' => 'user_id',
                     'usernameField' => 'username',
-                    'fullnameField' => 'profile.full_name',
+                    // 'fullnameField' => 'profile.full_name',
                     'searchClass' => 'amnah\yii2\user\models\search\UserSearch'
                 ],
             ],
         ]
     ],
+
+    'params' => $params,
+
+
     'components' => [
-        'authManager' => [
-            'class' => 'yii\rbac\DbManager',
-        ],
+
         'session' => [
             'class' => 'yii\web\Session',
             'cookieParams' => [
@@ -109,5 +111,4 @@ return [
             'user/default/confirm', // add or remove allowed actions to this list
         ]
     ],
-    'params' => $params,
 ];

@@ -79,8 +79,10 @@ class HomeController extends Controller
         if (!$karyawan) {
             return "anda tidak terdaftar, silahkan hubungi administrator";
         }
+
+
         $is_ada_notif =  MessageReceiver::find()
-            ->where(['receiver_id' => $this->user->id, 'is_open' => 0])
+            ->where(['receiver_id' => Yii::$app->user->id, 'is_open' => 0])
             ->count();
 
 

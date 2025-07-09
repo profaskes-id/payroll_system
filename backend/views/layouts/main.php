@@ -51,6 +51,10 @@ if (
             }
 
 
+            .ui-autocomplete.ui-front.ui-menu.ui-widget.ui-widget-content {
+                z-index: 9999 !important;
+            }
+
 
             .add-button {
                 border: none;
@@ -556,38 +560,23 @@ if (
             <!-- Navbar -->
 
 
-            <?php
 
-            if (!Yii::$app->request->getPathInfo() ==  "user/account" && !Yii::$app->user->can('admin')) {
-                echo $this->render('navbar', ['assetDir' => $assetDir]);
-                echo $this->render('sidebar', ['assetDir' => $assetDir]);
-            }
-            ?>
+            <?= $this->render('navbar', ['assetDir' => $assetDir]);   ?>
+            <?= $this->render('sidebar', ['assetDir' => $assetDir]); ?>
 
-            <?php if (Yii::$app->user->can('admin')) : ?>
-                <?= $this->render('navbar', ['assetDir' => $assetDir]);   ?>
-                <?= $this->render('sidebar', ['assetDir' => $assetDir]); ?>
-                <!-- Content Wrapper. Contains page content -->
-                <main class="pt-3 " style=" background-color: #272727 ;">
-                    <?= $this->render('content', ['content' => $content, 'assetDir' => $assetDir]) ?>
-                </main>
-            <?php else : ?>
-                <main class="pt-3 respon" style=" background-color: #000000 ;">
-                    <?= $this->render('content', ['content' => $content, 'assetDir' => $assetDir]) ?>
-                </main>
-            <?php endif; ?>
+            <main class="pt-3 " style=" background-color: #272727 ;">
+                <?= $this->render('content', ['content' => $content, 'assetDir' => $assetDir]) ?>
+            </main>
 
 
             <?php
-            if (Yii::$app->request->getPathInfo() ==  "user/account" && !Yii::$app->user->can('admin')) {
-                echo $this->render('@backend/views/components/_footer');
-            }
+            // echo $this->render('@backend/views/components/_footer');
+
             ?>
 
             <?php
-            if (Yii::$app->user->can('admin')) {
-                $this->render('footer');
-            }
+            // echo $this->render('footer');
+
             ?>
 
 
