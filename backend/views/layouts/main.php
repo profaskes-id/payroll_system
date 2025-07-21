@@ -1,5 +1,6 @@
 <?php
 
+use mdm\admin\components\Helper;
 use yii\helpers\Html;
 
 if (
@@ -302,10 +303,6 @@ if (
 
 
 
-
-
-            /* The design is inspired from the mockapi.io */
-
             .popup {
                 --burger-line-width: 1.125em;
                 --burger-line-height: 0.125em;
@@ -561,21 +558,32 @@ if (
 
 
 
-            <?= $this->render('navbar', ['assetDir' => $assetDir]);   ?>
-            <?= $this->render('sidebar', ['assetDir' => $assetDir]); ?>
+            <?php
+            if (!Helper::checkRoute('/home/index')) : ?>
+                <?= $this->render('navbar', ['assetDir' => $assetDir]);   ?>
+
+                <?= $this->render('sidebar', ['assetDir' => $assetDir]); ?>
+            <?php endif; ?>
+
 
             <main class="pt-3 " style=" background-color: #272727 ;">
                 <?= $this->render('content', ['content' => $content, 'assetDir' => $assetDir]) ?>
             </main>
 
-
             <?php
-            // echo $this->render('@backend/views/components/_footer');
+
+            if (Helper::checkRoute('/home/index')) {
+
+                // echo $this->render('footer');
+                echo $this->render('@backend/views/components/_footer');
+            }
 
             ?>
 
             <?php
-            // echo $this->render('footer');
+
+
+
 
             ?>
 

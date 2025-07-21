@@ -103,7 +103,7 @@ return [
     'as access' => [
         'class' => 'mdm\admin\components\AccessControl',
         'allowActions' => [
-            //'site/*', // add or remove allowed actions to this list
+            'v1/*', // add or remove allowed actions to this list
             'admin/*', // add or remove allowed actions to this list
             'user/default/login', // add or remove allowed actions to this list
             'user/default/forgot', // add or remove allowed actions to this list

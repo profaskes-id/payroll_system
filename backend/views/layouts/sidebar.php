@@ -2,6 +2,7 @@
 
 use backend\models\IzinPulangCepat;
 use backend\models\SettinganUmum;
+use hail812\adminlte\widgets\Menu;
 use mdm\admin\components\MenuHelper;
 use yii\helpers\Html;
 ?>
@@ -49,10 +50,10 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
         <div class="items-end justify-center mt-2 d-flex flex-column ">
             <nav class="">
                 <?php
-                echo \hail812\adminlte\widgets\Menu::widget([
+                echo Menu::widget([
 
                     'items' => MenuHelper::getAssignedMenu(Yii::$app->user->id),
-                    'encodeLabels' => false, // Pastikan ini diatur ke false agar HTML di-render
+                    'encodeLabels' => false,
                 ]);
                 ?>
             </nav>

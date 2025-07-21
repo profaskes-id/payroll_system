@@ -20,7 +20,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 ?>
 
-<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
 <!-- Demo styles -->
 <style>
@@ -73,8 +72,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             </div>
                             <div class="mt-3">
 
-                                <p class="text-xl font-bold uppercase lg:text-3xl " data-aos="fade-down" data-aos-duration="1000"><?= $karyawan->nama ?></p>
-                                <p class="text-sm text-gray-500 uppercase" data-aos="fade-down" data-aos-duration="1000"><?= $karyawan->kode_karyawan ?></p>
+                                <p class="text-xl font-bold uppercase lg:text-3xl "><?= $karyawan->nama ?></p>
+                                <p class="text-sm text-gray-500 uppercase"><?= $karyawan->kode_karyawan ?></p>
                             </div>
                             <div class="relative flex items-center gap-3">
                                 <?= Html::a('
@@ -112,7 +111,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     </section>
 
 
-                    <section class="col-span-12 my-10" data-aos="fade-down" data-aos-duration="1000">
+                    <section class="col-span-12 my-10">
                         <div class="relative content-start justify-center gap-5 p-5 lg:p-0">
                             <div class="w-full h-full bg-white  overflow-hidden rounded-[20px]">
                                 <div>
@@ -184,14 +183,20 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php endif; ?>
 
 
+    <a href="/panel/absensi-tertinggal" class="relative z-100">
+        <div class="w-[90%] mx-auto h-10 my-5 bg-red-500">
+            <p class="text-center text-white">Absensi Tertinggal</p>
+        </div>
+    </a>
     <div class="relative grid w-full grid-cols-12 gap-2 px-5 mt-5 mb-20 min-w-screen">
 
         <div class="w-[120px]  aspect-square bg-[#fff] rounded-full absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2  overflow-hidden     ">
 
-            <div class=" flex justify-center items-center flex-col bg-sky-600 w-full h-full rounded-[50px] rotate-180" data-aos="zoom-in" data-aos-delay="1000" style="z-index: -99999; position: relative;" data-aos-duration="500">
+            <div class=" flex justify-center items-center flex-col bg-sky-600 w-full h-full rounded-[50px] rotate-180" style="z-index: -99999; position: relative;" data-aos-duration="500">
             </div>
 
         </div>
+
 
 
         <a href="/panel/pengajuan/wfh" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-right">

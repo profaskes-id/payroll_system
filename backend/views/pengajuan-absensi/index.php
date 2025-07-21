@@ -1,27 +1,25 @@
 <?php
 
-use backend\models\Perusahaan;
+use backend\models\PengajuanAbsensi;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var backend\models\PerusahaanSearch $searchModel */
+/** @var backend\models\PengajuanAbsensiSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Perusahaan';
+$this->title = Yii::t('app', 'Pengajuan Absensi');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="perusahaan-index">
+<div class="pengajuan-absensi-index">
 
-    <?php if (!count($dataProvider->models) > 0): ?>
-        <div class="costume-container">
-            <p class="">
-                <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) ?>
-            </p>
-        </div>
-    <?php endif ?>
+    <div class="costume-container">
+        <p class="">
+            <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) ?>
+        </p>
+    </div>
 
     <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
         <i class="fas fa-search"></i>
@@ -37,11 +35,11 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
-    <div class="table-container table-responsive">
+    <div class="table-container">
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
-
             'columns' => [
+
                 [
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
@@ -51,18 +49,34 @@ $this->params['breadcrumbs'][] = $this->title;
                     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => ActionColumn::className(),
-                    'urlCreator' => function ($action, Perusahaan $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id_perusahaan' => $model->id_perusahaan]);
+                    'urlCreator' => function ($action, PengajuanAbsensi $model, $key, $index, $column) {
+                        return Url::toRoute([$action, 'id' => $model->id]);
                     }
                 ],
-                'nama_perusahaan',
                 [
-                    'label' => 'Status Perusahaan',
+                    'label' => 'Nama',
                     'value' => function ($model) {
-                        return $model->statusPerusahaan->nama_kode;
+                        return $model->karyawan->nama;
                     }
                 ],
-
+                'tanggal_absen',
+                'jam_masuk',
+                'jam_keluar',
+                [
+                    'format' => 'raw',
+                    'attribute' => 'status',
+                    'value' => function ($model) {
+                        if ($model->status == 0) {
+                            return '<span class="text-warning">Pending</span>';
+                        } elseif ($model->status == 1) {
+                            return '<span class="text-success"> Disetujui</span>';
+                        } elseif ($model->status == 2) {
+                            return '<span class="text-danger">  Ditolak</span>';
+                        } else {
+                            return "<span class='text-danger'>master kode tidak aktif</span>";
+                        }
+                    },
+                ],
             ],
         ]); ?>
     </div>
