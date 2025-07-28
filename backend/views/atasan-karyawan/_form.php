@@ -82,7 +82,7 @@ use yii\widgets\ActiveForm;
         </div>
         <div class="col-12">
             <?php
-            $data = \yii\helpers\ArrayHelper::map(MasterLokasi::find()->all(), 'id_master_lokasi', 'label');
+            $data = \yii\helpers\ArrayHelper::map(MasterLokasi::find()->all(), 'id_master_lokasi', 'nama_lokasi');
             echo $form->field($model, 'id_master_lokasi')->widget(Select2::classname(), [
                 'data' => $data,
                 'language' => 'id',

@@ -34,21 +34,7 @@ class TanggapanController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
-                'access' => [
-                    'class' => \yii\filters\AccessControl::class,
-                    'rules' => [
 
-                        [
-                            'allow' => true,
-                            'roles' => ['@'],
-                            'matchCallback' => function ($rule, $action) {
-                                $user = Yii::$app->user;
-
-                                return !$user->can('admin') && !$user->can('super_admin');
-                            },
-                        ],
-                    ],
-                ],
             ]
         );
     }

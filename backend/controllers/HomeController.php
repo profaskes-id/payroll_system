@@ -51,21 +51,7 @@ class HomeController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
-                'access' => [
-                    'class' => \yii\filters\AccessControl::class,
-                    'rules' => [
 
-                        [
-                            'allow' => true,
-                            'roles' => ['@'], // Allow authenticated users
-                            'matchCallback' => function ($rule, $action) {
-                                $user = Yii::$app->user;
-                                // Check if the user does  have the 'admin' or 'super admin' role
-                                return !$user->can('admin') && !$user->can('super_admin');
-                            },
-                        ],
-                    ],
-                ],
             ]
         );
     }
@@ -93,8 +79,10 @@ class HomeController extends Controller
         if (!$karyawan) {
             return "anda tidak terdaftar, silahkan hubungi administrator";
         }
+
+
         $is_ada_notif =  MessageReceiver::find()
-            ->where(['receiver_id' => $this->user->id, 'is_open' => 0])
+            ->where(['receiver_id' => Yii::$app->user->id, 'is_open' => 0])
             ->count();
 
 

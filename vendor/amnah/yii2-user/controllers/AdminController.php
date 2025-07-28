@@ -21,7 +21,7 @@ class AdminController extends Controller
      * @inheritdoc
      */
     public $module;
-    
+
     /**
      * @inheritdoc
      */
@@ -29,9 +29,9 @@ class AdminController extends Controller
     {
         // check for admin permission (`tbl_role.can_admin`)
         // note: check for Yii::$app->user first because it doesn't exist in console commands (throws exception)
-        if (!empty(Yii::$app->user) && !Yii::$app->user->can("admin")) {
-            throw new ForbiddenHttpException('You are not allowed to perform this action.');
-        }
+        // if (!empty(Yii::$app->user) && !Yii::$app->user->can("admin")) {
+        // throw new ForbiddenHttpException('You are not allowed to perform this action.');
+        // }
 
         parent::init();
     }
@@ -57,6 +57,7 @@ class AdminController extends Controller
      */
     public function actionIndex()
     {
+
         /** @var \amnah\yii2\user\models\search\UserSearch $searchModel */
         $searchModel = $this->module->model("UserSearch");
         $dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());

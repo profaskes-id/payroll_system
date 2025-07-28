@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use amnah\yii2\user\models\User;
 use DateTime;
 use Exception;
 use PhpParser\Node\Expr\Cast\Array_;
@@ -46,7 +47,7 @@ class Absensi extends \yii\db\ActiveRecord
         return [
             [['id_karyawan', 'tanggal', 'kode_status_hadir'], 'required'],
             [['id_karyawan', 'is_lembur', 'is_wfh', 'is_terlambat', 'is_24jam', 'id_shift_kerja'], 'integer'],
-            [['tanggal', 'jam_masuk', 'jam_pulang', 'lama_terlambat', 'tanggal_pulang', 'id_shift', 'kelebihan_jam_pulang', 'id_shift_kerja'], 'safe'],
+            [['tanggal', 'jam_masuk', 'jam_pulang', 'lama_terlambat', 'tanggal_pulang', 'id_shift', 'kelebihan_jam_pulang', 'id_shift_kerja' , 'created_at', 'updated_at', 'created_by', 'updated_by'], 'safe'],
             [['keterangan', 'alasan_terlambat', 'alasan_terlalu_jauh'], 'string'],
             [['latitude', 'longitude'], 'number'],
             [['lampiran'], 'string', 'max' => 255],
@@ -83,6 +84,10 @@ class Absensi extends \yii\db\ActiveRecord
             'tanggal_pulang' => 'Tanggal Pulang',
             'id_shift_kerja' => 'id shift kerja',
             'kelebihan_jam_pulang' => 'kelebihan jam pulang',
+            'created_at' => 'Created At',
+            'created_by' => 'Created By',
+            'updated_at' => 'Updated At',
+            'updated_by' => 'Updated By',
         ];
     }
 
@@ -131,15 +136,7 @@ class Absensi extends \yii\db\ActiveRecord
     }
 
 
-    // static function getTanggalFromFirstAndLastMonth($bulan, $tahun)
-    // {
-    //     $tanggal_bulanan = array();
-    //     for ($i = 1; $i <= date('t', mktime(0, 0, 0, $bulan, 1, $tahun)); $i++) {
-    //         $tanggal_bulanan[] = date('d', mktime(0, 0, 0, $bulan, $i, $tahun));
-    //     }
 
-    //     return $tanggal_bulanan;
-    // }
     static function getTanggalFromFirstAndLastMonth($firstDayOfMonth, $lastDayOfMonth)
     {
         $tanggal_bulanan = array();
@@ -480,4 +477,17 @@ class Absensi extends \yii\db\ActiveRecord
         $diff = $start->diff($end);
         return $diff->days + 1;
     }
+
+
+      public function getCreateBy()
+    {
+        return $this->hasOne(User::class, ['id' => 'created_by']);
+    }
+
+      public function getUpdateBy()
+    {
+        return $this->hasOne(User::class, ['id' => 'updated_by']);
+    }
+
+
 }

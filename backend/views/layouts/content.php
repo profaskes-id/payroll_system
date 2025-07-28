@@ -7,7 +7,7 @@ use yii\bootstrap4\Breadcrumbs;
 
 
 
-<div class="content-wrapper  p-3" style="border-top-left-radius: 20px; border-top-right-radius: 20px; background-color: #f8f9fb !important; ">
+<div class="p-3 content-wrapper" style="border-top-left-radius: 20px; border-top-right-radius: 20px; background-color: #f8f9fb !important; ">
     <!-- Content Header (Page header) -->
     <?php
 
@@ -27,35 +27,43 @@ use yii\bootstrap4\Breadcrumbs;
     </style>
 
 
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row justify-content-center  align-items-center">
-                <div class="col-12">
-                    <h2 class="m-0 title-costume" style="font-weight: bold">
-                        <?php
-                        if (!is_null($this->title)) {
-                            echo \yii\helpers\Html::encode($this->title);
-                        } else {
-                            echo \yii\helpers\Inflector::camelize($this->context->id);
-                        }
-                        ?>
-                    </h2>
-                    <p class="breadcrumb-title">
-                        <?php
-                        echo Breadcrumbs::widget([
-                            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-                            'options' => [
-                                'class' => 'breadcrumb  '
-                            ]
-                        ]);
-                        ?>
+    <!-- get current route in url -->
+    <?php
 
-                    </p>
-                </div><!-- /.col -->
+    if (Yii::$app->controller->id . '/' . Yii::$app->controller->action->id != "site/index") :
+    ?>
 
-            </div><!-- /.row -->
-        </div><!-- /.container-fluid -->
-    </div>
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row justify-content-center align-items-center">
+                    <div class="col-12">
+                        <h2 class="m-0 title-costume" style="font-weight: bold">
+                            <?php
+                            if (!is_null($this->title)) {
+                                echo \yii\helpers\Html::encode($this->title);
+                            } else {
+                                echo \yii\helpers\Inflector::camelize($this->context->id);
+                            }
+                            ?>
+                        </h2>
+                        <p class="breadcrumb-title">
+                            <?php
+                            echo Breadcrumbs::widget([
+                                'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+                                'options' => [
+                                    'class' => 'breadcrumb  '
+                                ]
+                            ]);
+                            ?>
+
+                        </p>
+                    </div><!-- /.col -->
+
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+
+    <?php endif; ?>
     <!-- /.content-header -->
 
     <!-- Main content -->

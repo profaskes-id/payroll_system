@@ -19,8 +19,28 @@ return [
         'user' => [
             'class' => 'amnah\yii2\user\Module',
         ],
+        'admin' => [
+            'class' => 'mdm\admin\Module',
+            'layout' => 'left-menu',
+            'mainLayout' => '@app/views/layouts/main.php',
+            'controllerMap' => [
+                'assignment' => [
+                    'class' => 'mdm\admin\controllers\AssignmentController',
+                    /* 'userClassName' => 'app\models\User', */
+                    'idField' => 'user_id',
+                    'usernameField' => 'username',
+                    // 'fullnameField' => 'profile.full_name',
+                    'searchClass' => 'amnah\yii2\user\models\search\UserSearch'
+                ],
+            ],
+        ]
     ],
+
+    'params' => $params,
+
+
     'components' => [
+
         'session' => [
             'class' => 'yii\web\Session',
             'cookieParams' => [
@@ -73,12 +93,22 @@ return [
         ],
         'urlManagerFrontEnd' => [
             'class' => 'yii\web\urlManager',
-            'baseUrl' => 'https://payroll.profaskes.id',
-            // 'baseUrl' => 'https://localhost:8000',
+            // 'baseUrl' => 'https://payroll.profaskes.id',
+            'baseUrl' => 'https://localhost:8000',
             'enablePrettyUrl' => true,
             'showScriptName' => false,
         ],
 
     ],
-    'params' => $params,
+    'as access' => [
+        'class' => 'mdm\admin\components\AccessControl',
+        'allowActions' => [
+            'v1/*', // add or remove allowed actions to this list
+            'admin/*', // add or remove allowed actions to this list
+            'user/default/login', // add or remove allowed actions to this list
+            'user/default/forgot', // add or remove allowed actions to this list
+            'user/default/logout', // add or remove allowed actions to this list
+            'user/default/confirm', // add or remove allowed actions to this list
+        ]
+    ],
 ];

@@ -45,21 +45,7 @@ class RekapAbsensiController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
-                'access' => [
-                    'class' => \yii\filters\AccessControl::class,
-                    'rules' => [
 
-                        [
-                            'allow' => true,
-                            'roles' => ['@'], // Allow authenticated users
-                            'matchCallback' => function ($rule, $action) {
-                                $user = Yii::$app->user;
-                                // Check if the user does  have the 'admin' or 'super admin' role
-                                return $user->can('admin') || $user->can('super_admin');
-                            },
-                        ],
-                    ],
-                ],
             ]
         );
     }

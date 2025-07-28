@@ -1,9 +1,12 @@
 <?php
 
+use amnah\yii2\user\models\User;
 use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
+$tanggalFormat = new Tanggal();
+$user = User::find();
 /** @var yii\web\View $this */
 /** @var backend\models\Absensi $model */
 
@@ -48,8 +51,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'label' => 'Tanggal Absen',
                     // 'format' => 'datetime',
-                    'value' => function ($model) {
-                        $tanggalFormat = new Tanggal();
+                    'value' => function ($model) use ($tanggalFormat) {
+
                         return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal);
                     }
                 ],
@@ -113,7 +116,34 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($model) {
                         return '<span id="distance"></span>';
                     }
-                ]
+                ],
+
+                // Versi sederhana untuk Dibuat Oleh
+                [
+                    'label' => 'Dibuat Oleh',
+                    'value' => function ($model) {
+                        return $model->createBy->username ?? $model->createBy->profile->full_name ?? '-';
+                    }
+                ],
+
+                // Versi untuk Diupdate Oleh
+                
+                [
+                    'attribute' => 'created_at',
+                    'format' => ['date', 'php:d M Y  / H:i:s']
+                ],
+                [
+                    'attribute' => 'updated_at',
+                    'format' => ['date', 'php:d M Y / H:i:s']
+                ],
+                [
+                    'label' => 'Diupdate Oleh',
+                    'value' => function ($model) {
+                        return $model->updateBy->username ?? $model->updateBy->profile->full_name ?? '-';
+                    }
+                ],
+
+
 
             ],
         ]) ?>
