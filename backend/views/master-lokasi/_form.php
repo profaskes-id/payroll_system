@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\MasterLokasi;
 use backend\models\Perusahaan;
 use kartik\select2\Select2;
 use yii\helpers\Html;
@@ -19,7 +20,7 @@ $this->title = 'master lokasi Lokasi';
     <?php $form = ActiveForm::begin(); ?>
     <div class="row">
 
-        <div class="col-md-6">
+        <div class="col-md-3">
             <?php
             $data = \yii\helpers\ArrayHelper::map(Perusahaan::find()->all(), 'nama_perusahaan', 'nama_perusahaan');
             echo $form->field($model, 'label')->widget(Select2::classname(), [
@@ -31,6 +32,9 @@ $this->title = 'master lokasi Lokasi';
                 ],
             ])->label('Perusahaan');
             ?>
+        </div>     
+        <div class="col-12 col-md-6">
+        <?= $form->field($model, 'nama_lokasi')->textInput(['maxlength' => true, 'placeholder' => 'contoh : Kantor Pusat / Cabang ****'])->label('Nama Lokasi') ?>
         </div>
 
         <div class="col-12 col-md-6">
@@ -38,7 +42,7 @@ $this->title = 'master lokasi Lokasi';
         </div>
 
         <div class="col-12 ">
-            <?= $form->field($model, 'radius')->textInput(['type' => 'number'])->label('Radius Absensi Yang Diperbolehkan') ?>
+            <?= $form->field($model, 'radius')->textInput(['type' => 'number'])->label('Radius Absensi Yang Diperbolehkan (meter)') ?>
         </div>
         <div class="col-12 col-md-6">
             <?= $form->field($model, 'longtitude')->textInput(['readonly' => 'true', "id" => "lng"]) ?>

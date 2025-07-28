@@ -1,6 +1,7 @@
 <?php
 
 use amnah\yii2\user\models\User;
+use backend\models\AtasanKaryawan;
 use backend\models\Karyawan;
 use backend\models\Tanggal;
 use yii\helpers\Html;
@@ -42,6 +43,32 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => 'Karyawan',
                     'attribute' => 'karyawan.nama',
                 ],
+                 [
+
+                    'label' => 'Jabatan',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        if (!$model->karyawan) {
+                            return "";
+                        }
+
+                        $pekerjaanAktif = array_filter($model->karyawan->dataPekerjaans, function ($pekerjaan) {
+                            return $pekerjaan->is_aktif == 1;
+                        });
+
+                        if (empty($pekerjaanAktif)) {
+                            return "";
+                        }
+
+                        // Ambil pekerjaan aktif pertama (asumsi hanya ada satu yang aktif)
+                        $pekerjaan = reset($pekerjaanAktif);
+
+                        // Dapatkan relasi jabatan
+                        $jabatan = $pekerjaan->jabatanPekerja;
+
+                        return $jabatan ? $jabatan->nama_kode : "";
+                    }
+                ],
                 [
                     'format' => 'raw',
                     'label' => 'Atasan',
@@ -57,6 +84,21 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
 
+
+                [
+                    'label' => 'Penampatan',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        if (!$model) {
+                            return '<p class="text-danger">(Belum Di Set)</p>';
+                        }
+                        $atasan = AtasanKaryawan::find()->where(['id_master_lokasi' => $model['id_master_lokasi']])->one();
+                        if ($atasan) {
+                            return $atasan->masterLokasi->label . ' (' . $atasan->masterLokasi->nama_lokasi . ')';
+                        }
+                        return '<p class="text-danger">(Belum Di Set)</p>';
+                    }
+                ],
                 [
                     'label' => 'Di Set Oleh',
                     'value' => function ($model) {
@@ -72,10 +114,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         // return date('d-M-Y - H:i', strtotime($model->di_setting_pada));
                     },
                 ],
-                [
-                    'label' => 'Penampatan',
-                    'attribute' => 'masterLokasi.label',
-                ]
             ],
         ]) ?>
 

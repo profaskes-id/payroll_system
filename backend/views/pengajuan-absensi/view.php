@@ -73,6 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     "format" => 'raw',
                 ],
                 [
+                    'format' => 'raw',
                     'attribute' => 'Ditanggapi Pada',
                     'value' => function ($model) use ($tanggalFormat) {
                         if ($model->status == 0) {

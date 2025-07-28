@@ -31,7 +31,7 @@ class MasterLokasi extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['label', 'alamat', 'longtitude', 'latitude'], 'required'],
+            [['label', 'alamat', 'longtitude', 'latitude' , 'nama_lokasi'], 'required'],
             [['longtitude', 'latitude'], 'number'],
             [['radius'], 'integer'],
             [['label', 'alamat'], 'string', 'max' => 255],
@@ -45,6 +45,7 @@ class MasterLokasi extends \yii\db\ActiveRecord
     {
         return [
             'id_master_lokasi' => 'Id Master Lokasi',
+            'nama_lokasi'=> 'Nama Lokasi',
             'label' => 'Label',
             'alamat' => 'Alamat',
             'longtitude' => 'Longtitude',

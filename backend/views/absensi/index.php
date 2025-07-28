@@ -2,6 +2,7 @@
 
 use backend\models\Absensi;
 use backend\models\Bagian;
+use backend\models\DataPekerjaan;
 use backend\models\Karyawan;
 use backend\models\Tanggal;
 use kartik\select2\Select2;
@@ -125,33 +126,49 @@ $today = date('Y-m-d');
                     }
                 ],
                 [
+                    'label' => 'Jabatan',
+                    'value' => function ($model) {
+                        try {
+                            // Cek jika data_pekerjaan ada dan memiliki id_data_pekerjaan
+                            if (isset($model['data_pekerjaan']['id_data_pekerjaan'])) {
+                                $dataPekerjaan = DataPekerjaan::find()
+                                    ->where(['id_data_pekerjaan' => $model['data_pekerjaan']['id_data_pekerjaan']])
+                                    ->one();
 
-                    'label' => 'Hari',
-                    'contentOptions' => ['style' => 'width: 15%; text-align: center;'],
-                    'headerOptions' => ['style' => 'width: 15%; text-align: center;'],
-                    'value' => function ($model) use ($tanggalSet) {
+                                // Cek jika data pekerjaan ditemukan dan memiliki relasi jabatanPekerja
+                                if ($dataPekerjaan && $dataPekerjaan->jabatanPekerja) {
+                                    return $dataPekerjaan->jabatanPekerja->nama_kode ?? '-';
+                                }
+                            }
 
-                        $nama_hari = date('l', strtotime($tanggalSet ?? date('Y-m-d')));
-                        $tanggal = new Tanggal();
-                        return $tanggal->getIndonesiaHari($nama_hari);
+                            return "-";
+                        } catch (\Exception $e) {
+                            // Log error jika diperlukan
+                            // Yii::error($e->getMessage());
+                            return "-";
+                        }
                     }
                 ],
+
                 [
                     'contentOptions' => ['style' => 'width: 15%; text-align: center;'],
                     'headerOptions' => ['style' => 'width: 15%; text-align: center;'],
                     'label' => 'Jam Masuk',
                     'format' => 'raw',
                     'value' => function ($model) {
-
                         if ($model['absensi']) {
                             $jam_karyawan_masuk = $model['absensi']['jam_masuk'];
+
                             if ($model['absensi']['is_terlambat'] == 0) {
                                 return "<span style='color: black;'>$jam_karyawan_masuk</span>";
                             } else {
-                                return "<span style='color: red;'>$jam_karyawan_masuk</span>";
+                                return "<div style='color: red;'>
+                        <div>$jam_karyawan_masuk</div>
+                        <div style='font-size: smaller;'>(terlambat)</div>
+                    </div>";
                             }
                         } else {
-                            return "<span style='color: red;'>00:00:00</span>";
+                            return "<span style='color: black;'>00:00:00</span>";
                         }
                     },
                 ],
@@ -262,7 +279,5 @@ $today = date('Y-m-d');
             }
         }
 
-        // tanggalInput.addEventListener('input', autosubmit);
-        // bagian.addEventListener('input', autosubmit);
     });
 </script>

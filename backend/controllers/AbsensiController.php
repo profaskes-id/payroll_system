@@ -33,7 +33,6 @@ class AbsensiController extends Controller
         );
     }
 
-
     /**
      * Lists all Absensi models.
      *
@@ -88,44 +87,7 @@ class AbsensiController extends Controller
         ]);
     }
 
-    /*     public function actionIndex()
-    {
-        $tanggalSet = date('Y-m-d');
-        $searchModel = new KaryawanSearch();
-        $dataProvider = $searchModel->searchAbsensi(Yii::$app->request->queryParams, $tanggalSet);
-
-        $absensi = new Absensi();
-        $bagian = new Bagian();
-
-        if (\Yii::$app->request->isPost) {
-            // echo "kode jika request adalah POST";
-            $param_bagian = Yii::$app->request->post('Bagian')['id_bagian'];
-            $param_tanggal = Yii::$app->request->post('Absensi')['tanggal'];
-
-            if ($param_tanggal) {
-                $tanggalSet = $param_tanggal;
-                $dataProvider = $searchModel->searchAbsensi(Yii::$app->request->queryParams, $tanggalSet);
-            }
-            if ($param_bagian) {
-                $filteredModels = [];
-                foreach ($dataProvider->models as $model) {
-                    if (isset($model['data_pekerjaan']) && $model['data_pekerjaan']['id_bagian'] == intval($param_bagian)) {
-                        $filteredModels[] = $model;
-                    }
-                }
-                $dataProvider->setModels($filteredModels);
-            }
-        }
-
-        return $this->render('index', [
-            'absensi' => $absensi,
-            'bagian' => $bagian,
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-            'tanggalSet' => $tanggalSet
-        ]);
-    } */
-
+   
 
     /**
      * Displays a single Absensi model.
@@ -169,8 +131,16 @@ class AbsensiController extends Controller
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $model->keterangan  = $model->keterangan ?? '-';
-                $model->save();
-                return $this->redirect(['view', 'id_absensi' => $model->id_absensi]);
+
+                $model->created_at = date('Y-m-d H:i:s');
+                $model->created_by = Yii::$app->user->identity->id;
+                if($model->save()){
+                    Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data Absensi');
+                    return $this->redirect(['view', 'id_absensi' => $model->id_absensi]);
+                }else{
+                    //flash error
+                    Yii::$app->session->setFlash('error', 'Gagal Menambahkan Data Absensi');
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -192,7 +162,19 @@ class AbsensiController extends Controller
     {
         $model = $this->findModel($id_absensi);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+
+            $model->updated_at = date('Y-m-d H:i:s');
+            $model->updated_by = Yii::$app->user->identity->id;
+
+                if($model->save()){
+                    Yii::$app->session->setFlash('success', 'Berhasil Memperbaraui Data Absensi');
+                    return $this->redirect(['view', 'id_absensi' => $model->id_absensi]);
+                }else{
+                    //flash error
+                    Yii::$app->session->setFlash('error', 'Gagal Memperbaraui Data Absensi');
+                }
+
             return $this->redirect(['index']);
         }
 

@@ -30,7 +30,7 @@ class AbsensiTertinggalController extends Controller
         $id_karyawan = Yii::$app->user->identity->id_karyawan;
         $data = [];
         if ($id_karyawan) {
-            $data = PengajuanAbsensi::find()->where(['id_karyawan' => $id_karyawan])->all();
+            $data = PengajuanAbsensi::find()->where(['id_karyawan' => $id_karyawan])->orderBy(['tanggal_pengajuan' => SORT_DESC])->all();
         } else {
             return $this->redirect(['site/login']);
         }

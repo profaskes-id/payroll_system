@@ -59,9 +59,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->label;
                     }
                 ],
-                'alamat',
-                'longtitude',
-                'latitude',
+                'nama_lokasi',
+
                 [
                     'label' => "radius Absensi",
                     'value' => function ($model) {
