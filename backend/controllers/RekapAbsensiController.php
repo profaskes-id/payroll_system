@@ -150,6 +150,7 @@ class RekapAbsensiController extends Controller
 
 
 
+
         return $this->renderPartial('exel2', [
             'tanggal_awal' => $tanggal_awal,
             'tanggal_akhir' => $tanggal_akhir,
@@ -274,16 +275,17 @@ class RekapAbsensiController extends Controller
 
         // ! Get total karyawan
         $karyawanTotal = $karyawan::find()->where(['is_aktif' => 1])->count();
-        // dd($karyawanTotal);
+
         //! mendapatkan seluruh data absensi karyawan,jam-karyawan dari firstDayOfMonth - lastDayOfMonth
         $absensi = $model->getAllAbsensiFromFirstAndLastMonth($model, $firstDayOfMonth, $lastDayOfMonth);
-        // dd($absensi);
+
         //    ! get all data dari tanggal awal dan akhir bulan
         $tanggal_bulanan = $model->getTanggalFromFirstAndLastMonth($firstDayOfMonth, $lastDayOfMonth);
         $dataKaryawan = $model->getAllDetailDataKaryawan($karyawan);
 
         // memasukan absensi ke masing masing data karyawan
         $absensiAndTelat = $model->getIncludeKaryawanAndAbsenData($dataKaryawan, $absensi, $firstDayOfMonth, $lastDayOfMonth, $tanggal_bulanan);
+
         $keterlambatanPerTanggal = $absensiAndTelat['keterlambatanPerTanggal'];
 
         $rekapanAbsensi = [];
@@ -321,8 +323,8 @@ class RekapAbsensiController extends Controller
         ksort($rekapanAbsensi);
 
         // Hitung total hadir
-        $totalAbsensiHadir = count($dataAbsensiHadir);
-        $rekapanAbsensi[] = $totalAbsensiHadir;
+        // $totalAbsensiHadir = count($dataAbsensiHadir);
+        // $rekapanAbsensi[] = $totalAbsensiHadir;
 
 
 

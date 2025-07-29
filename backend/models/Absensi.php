@@ -150,7 +150,6 @@ class Absensi extends \yii\db\ActiveRecord
             $start = strtotime("+1 day", $start);
         }
 
-        // dd($tanggal_bulanan);
         return $tanggal_bulanan;
     }
 
@@ -267,6 +266,7 @@ class Absensi extends \yii\db\ActiveRecord
 
         foreach ($dataKaryawan as $karyawan) {
 
+
             $nama_jam_kerja = $karyawan["nama_jam_kerja"];
             if ($nama_jam_kerja == null) {
                 continue;
@@ -293,6 +293,7 @@ class Absensi extends \yii\db\ActiveRecord
                     });
 
 
+
                     $statusHadir = null;
                     $is_lembur = 0;
                     $is_wfh = 0;
@@ -311,6 +312,7 @@ class Absensi extends \yii\db\ActiveRecord
                         $is_wfh = $record['is_wfh'];
                         $jamMasukKaryawan = $record['jam_masuk'];
                         $jamMasukKantor = $record['jam_masuk_kerja'] ?? null;
+                        $jam_pulang = $record['jam_pulang'] ?? null;
 
 
                         if ($statusHadir == 'H') {
@@ -342,12 +344,13 @@ class Absensi extends \yii\db\ActiveRecord
                         'lama_terlambat' => $lama_terlambat,
                         'jam_masuk_karyawan' => $jamMasukKaryawan,
                         'jam_masuk_kantor' => $jamMasukKantor,
+                        'jam_pulang' => $jam_pulang,
 
                         'total_terlambat_hari_ini' => $keterlambatanPerTanggal[$i] ?? 0, // Tambahkan info keterlambatan per tanggal
                     ];
                 }
 
-                // dd($karyawanData);
+
 
 
                 $karyawanData[] = [
