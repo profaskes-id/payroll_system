@@ -57,40 +57,40 @@ $result = $tanggal->getIndonesiaFormatLong(date('l, d F Y'));
                         <div class="p-5 transition-shadow bg-white/90 backdrop-blur-sm rounded-xl hover:shadow-sm">
                             <div class="flex items-center justify-between">
                                 <span class="text-2xl font-bold text-blue-600"><?= $TotalKaryawan ?> Orang</span>
-                                <span class="px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-full">40%</span>
+                                <!-- <span class="px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-full">40%</span> -->
                             </div>
-                            <p class="mt-2 text-sm font-medium text-gray-700">By Vivement</p>
-                            <p class="text-xs text-gray-500">Total Karyawan</p>
+                            <p class="mt-2 text-sm font-medium text-gray-700">Total Karyawan</p>
+                            <p class="text-xs text-gray-500">Terdaftar</p>
                         </div>
 
                         <!-- Stat 2 -->
                         <div class="p-5 transition-shadow bg-white/90 backdrop-blur-sm rounded-xl hover:shadow-sm">
                             <div class="flex items-center justify-between">
                                 <span class="text-2xl font-bold text-green-600"><?= $TotalData ?> Orang</span>
-                                <span class="px-2 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full">23%</span>
+                                <!-- <span class="px-2 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full">23%</span> -->
                             </div>
-                            <p class="mt-2 text-sm font-medium text-gray-700">By Finland</p>
-                            <p class="text-xs text-gray-500">Hadir Hari Ini</p>
+                            <p class="mt-2 text-sm font-medium text-gray-700">Mengisi Absensi</p>
+                            <p class="text-xs text-gray-500">Pada Hari Ini</p>
                         </div>
 
                         <!-- Stat 3 -->
                         <div class="p-5 transition-shadow bg-white/90 backdrop-blur-sm rounded-xl hover:shadow-sm">
                             <div class="flex items-center justify-between">
                                 <span class="text-2xl font-bold text-yellow-600"><?= $TotalDataBelum ?> Orang</span>
-                                <span class="px-2 py-1 text-xs font-medium text-yellow-800 bg-yellow-100 rounded-full">20%</span>
+                                <!-- <span class="px-2 py-1 text-xs font-medium text-yellow-800 bg-yellow-100 rounded-full">20%</span> -->
                             </div>
-                            <p class="mt-2 text-sm font-medium text-gray-700">By Finland</p>
-                            <p class="text-xs text-gray-500">Tanpa Keterangan</p>
+                            <p class="mt-2 text-sm font-medium text-gray-700">Tanpa Keterangan</p>
+                            <p class="text-xs text-gray-500">Belum Absen</p>
                         </div>
 
                         <!-- Stat 4 -->
                         <div class="p-5 transition-shadow bg-white/90 backdrop-blur-sm rounded-xl hover:shadow-sm">
                             <div class="flex items-center justify-between">
                                 <span class="text-2xl font-bold text-red-600"><?= $TotalIzin ?> Orang</span>
-                                <span class="px-2 py-1 text-xs font-medium text-red-800 bg-red-100 rounded-full">15%</span>
+                                <!-- <span class="px-2 py-1 text-xs font-medium text-red-800 bg-red-100 rounded-full">15%</span> -->
                             </div>
-                            <p class="mt-2 text-sm font-medium text-gray-700">By Japan</p>
-                            <p class="text-xs text-gray-500">Izin Berhalangan Hadir</p>
+                            <p class="mt-2 text-sm font-medium text-gray-700">Izin Berhalangan Hadir</p>
+                            <p class="text-xs text-gray-500">Pada Hari Ini</p>
                         </div>
                     </div>
                 </div>

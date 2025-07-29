@@ -95,11 +95,11 @@ $tanggal = new Tanggal;
                             <?= $item ?>
                         </td>
                     <?php endforeach ?>
-                    <td>Total Hadir</td>
-                    <td>Jumlah Terlambat</td>
-                    <td>Total Telambat</td>
-                    <td>Total Lembur</td>
-                    <td>Lama Lembur</td>
+                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Total Hadir</td>
+                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Jumlah Terlambat</td>
+                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Total Telambat</td>
+                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Total Lembur</td>
+                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Lama Lembur</td>
                 </tr>
             </thead>
 
@@ -213,65 +213,57 @@ $tanggal = new Tanggal;
             </tbody>
 
 
-            <!-- 1 -->
+            <!-- Footer Section -->
+            <!-- 1. Total Hadir -->
             <tr>
-                <th style="font-size:13px; background-color: #facc15; color:#000">Hadir</th>
-                <th style="font-size:11px; background-color: #facc15; color:#000"></th>
+                <th style="font-size:13px; background-color: #facc15; color:#000; border:1px solid #000">Hadir</th>
+                <th style="font-size:11px; background-color: #facc15; color:#000; border:1px solid #000"></th>
 
-                <?php
-                $lastKey = array_key_last($rekapanAbsensi); // Mendapatkan kunci terakhir
-                foreach ($rekapanAbsensi as $key => $rekapan) :
-                    $isLast = ($key === $lastKey);
-                    $colspan = $isLast ? 'colspan="1"' : ''; // Tambahkan colspan jika terakhir
-                ?>
-                    <td style="font-weight:600; text-align:center; background-color: #facc15; color:#000" <?php echo $colspan; ?>>
-                        <?php echo $rekapan ? ($rekapan > 0 ? $rekapan : '') : '' ?>
+                <?php foreach ($rekapanAbsensi as $key => $rekapan) : ?>
+                    <td style="font-weight:600; text-align:center; background-color: #facc15; color:#000; border:1px solid #000">
+                        <?= $rekapan ? ($rekapan > 0 ? $rekapan : '0') : '0' ?>
                     </td>
                 <?php endforeach; ?>
-                <td colspan="5"></td>
 
+                <!-- Summary columns -->
+                <td colspan="5" style="font-weight:bold; text-align:center; background-color: #dee2e6; color:#000; border:1px solid #000">
+                </td>
+             
             </tr>
 
-
-
-            <!-- 2 -->
+            <!-- 2. Tidak Hadir -->
             <tr>
-                <th style="font-size:13px; background-color: #84cc16; color:#000">Tidak Hadir</th>
-                <th style="font-size:11px; background-color: #84cc16; color:#000"></th>
+                <th style="font-size:13px; background-color: #84cc16; color:#000; border:1px solid #000">Tidak Hadir</th>
+                <th style="font-size:11px; background-color: #84cc16; color:#000; border:1px solid #000"></th>
 
-                <?php
-                $lastKey = array_key_last($rekapanAbsensi); // Mendapatkan kunci terakhir
-                foreach ($rekapanAbsensi as $key => $rekapan) :
-                    if ($key !== $lastKey) :
-                ?>
-                        <td style="font-weight:600; text-align:center; background-color: #84cc16; color:#000">
-                            <?php echo ($rekapan && isset($hasil)) ? (count($hasil) - $rekapan) : ''; ?>
-                        </td>
-                <?php
-                    endif;
-                endforeach;
+                <?php foreach ($rekapanAbsensi as $key => $rekapan) : ?>
+                    <td style="font-weight:600; text-align:center; background-color: #84cc16; color:#000; border:1px solid #000">
+                        <?= (isset($hasil) && is_array($hasil)) ? max(0, (count($hasil) - $rekapan)) : '0' ?>
+                    </td>
+                <?php endforeach; ?>
 
-                ?>
-                <td colspan="6" style="font-weight:600; text-align:center; background-color: #fff; color:#000">
+                <!-- Summary columns -->
+               <td colspan="5" style="font-weight:bold; text-align:center; background-color: #dee2e6; color:#000; border:1px solid #000">
                 </td>
             </tr>
 
-
-
-            <!-- 3 -->
+            <!-- 3. Terlambat -->
             <tr>
-                <th style="font-size:13px; background-color: #f43f5e; color:#fff">Terlambat</th>
-                <th style="font-size:13px; background-color: #f43f5e; color:#fff"></th>
-                <?php foreach ($keterlambatanPerTanggal as $key => $terlambattgl) :  ?>
+                <th style="font-size:13px; background-color: #f43f5e; color:#fff; border:1px solid #000">Terlambat</th>
+                <th style="font-size:11px; background-color: #f43f5e; color:#fff; border:1px solid #000"></th>
+
+                <?php foreach ($keterlambatanPerTanggal as $key => $terlambattgl) : ?>
                     <?php
-                    $dataTerlambat = ($terlambattgl && $terlambattgl > 0) ?  $terlambattgl : '';
-                    $dataTerlambat = ($dataTerlambat <= 0) ? '' : $dataTerlambat;
+                    $dataTerlambat = ($terlambattgl && $terlambattgl > 0) ? $terlambattgl : '0';
                     ?>
-                    <td style="font-weight:600; text-align:center; background-color: #f43f5e; color:#fff"><?php echo $dataTerlambat ?></td>
-                <?php endforeach ?>
-                <td colspan="1" style="font-weight:600; text-align:center; background-color: #f43f5e; color:#fff"><?php echo count($keterlambatanPerTanggal) ?></td>
-                <td colspan="5" style="font-weight:600; text-align:center; background-color: #fff; color:#fff"></td>
-            </tr>
+                    <td style="font-weight:600; text-align:center; background-color: #f43f5e; color:#fff; border:1px solid #000">
+                        <?= $dataTerlambat ?>
+                    </td>
+                <?php endforeach; ?>
+
+                <!-- Summary columns -->
+               <td colspan="5" style="font-weight:bold; text-align:center; background-color: #dee2e6; color:#000; border:1px solid #000">
+                </td>
         </table>
     </div>
 </div>
