@@ -200,14 +200,15 @@ class KaryawanController extends Controller
                 'success',
                 'Email Telah Berhasil Terkirim kepada ' . $model->email
             );
-        }
-
-        if (!$model->save()) {
+             if (!$model->save()) {
             Yii::$app->session->setFlash(
                 'error',
                 'Gagal Update, is Invite , Namun Email Telah Berhasil Terkirim kepada ' . $model->email
             );
         }
+        }
+
+       
         return $this->redirect(['index']);
 
         //nik dan hashnik kirim ke email

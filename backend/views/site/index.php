@@ -1,17 +1,9 @@
 <?php
 
-use backend\models\IzinPulangCepat;
-use backend\models\PengajuanCuti;
-use backend\models\PengajuanDinas;
-use backend\models\PengajuanLembur;
 use backend\models\Tanggal;
-use yii\grid\ActionColumn;
-use yii\grid\GridView;
-use yii\helpers\Html;
-use yii\helpers\Url;
+
 
 $this->title = 'Dashboard';
-//   <?php
 $tanggal = new Tanggal();
 $result = $tanggal->getIndonesiaFormatLong(date('l, d F Y'));
 
@@ -36,9 +28,9 @@ $result = $tanggal->getIndonesiaFormatLong(date('l, d F Y'));
                     <!-- Header Section -->
                     <div class="flex items-start justify-between">
                         <div class="mb-6">
-                            <h2 class="text-2xl font-bold text-gray-800">Sales Distribution</h2>
-                            <p class="text-sm text-gray-600">Monthly revenue breakdown by category</p>
-                        </div>
+ <h2 class="text-2xl font-bold text-gray-800">Sellerku Payroll</h2>
+                       <p class="text-sm text-gray-600">Kelola absensi, pengajuan, dan pendataan dengan mudah dalam satu aplikasi</p>
+                    </div>
                         <div class="flex items-center px-2 py-1 ml-2 rounded-full">
                             <a href="/panel/admin-notification" class="relative">
                                 <i class="text-[22px]  fa  fa-regular fa-bell"></i> <!-- Ukuran ikon diubah menjadi lebih kecil -->
@@ -52,7 +44,7 @@ $result = $tanggal->getIndonesiaFormatLong(date('l, d F Y'));
 
 
                     <!-- Stats Grid -->
-                    <div class="grid grid-cols-4 gap-5 ">
+                    <div class="grid grid-cols-2 gap-5 lg:gap-2 lg:grid-cols-4 ">
                         <!-- Stat 1 -->
                         <div class="p-5 transition-shadow bg-white/90 backdrop-blur-sm rounded-xl hover:shadow-sm">
                             <div class="flex items-center justify-between">

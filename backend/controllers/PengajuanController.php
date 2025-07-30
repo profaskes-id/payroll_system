@@ -52,13 +52,28 @@ class PengajuanController extends \yii\web\Controller
     {
         return Yii::getAlias('@backend/views/');
     }
+    
+        public function actionIndex()
+        {
+            return $this->redirect(['/home']);
+        }
 
 
 
-    public function actionIndex()
-    {
-        return $this->redirect(['/home']);
-    }
+
+        public function actionTugasLuar()
+        {
+
+            $this->layout = 'mobile-main';
+            return $this->render('/home/pengajuan/tugasluar/index');
+        }
+
+
+
+    
+
+
+
     // ?=================================Pengajuan cuti
     public function actionCuti()
     {

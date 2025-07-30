@@ -328,7 +328,7 @@ class KaryawanSearch extends Karyawan
             ->leftJoin('jam_kerja', 'jam_kerja_karyawan.id_jam_kerja = jam_kerja.id_jam_kerja')
             ->leftJoin('data_pekerjaan', 'data_pekerjaan.id_karyawan = karyawan.id_karyawan')
             ->where(['karyawan.is_aktif' => 1]) // Hanya filter untuk karyawan
-            ->andWhere(['data_pekerjaan.is_aktif' => 1])
+            // ->andWhere(['data_pekerjaan.is_aktif' => 1])
             ->leftJoin('master_kode', 'master_kode.kode = jam_kerja.jenis_shift AND master_kode.nama_group = "jenis-shift"')
             ->orderBy(['karyawan.nama' => SORT_ASC])
             ->all();
