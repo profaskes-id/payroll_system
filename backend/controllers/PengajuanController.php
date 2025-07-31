@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use amnah\yii2\user\models\User;
 use backend\models\AtasanKaryawan;
+use backend\models\DetailTugasLuar;
 use backend\models\helpers\EmailHelper;
 use backend\models\helpers\NotificationHelper;
 use backend\models\Karyawan;
@@ -11,6 +12,7 @@ use backend\models\MasterCuti;
 use backend\models\PengajuanCuti;
 use backend\models\PengajuanDinas;
 use backend\models\PengajuanLembur;
+use backend\models\PengajuanTugasLuar;
 use backend\models\PengajuanWfh;
 use backend\models\RekapCuti;
 use backend\models\SettinganUmum;
@@ -25,7 +27,7 @@ class PengajuanController extends \yii\web\Controller
 
     public function beforeAction($action)
     {
-        if ($action->id == 'lembur-delete') {
+        if ($action->id == 'lembur-delete' || $action->id == "checkin-tugas-luar") {
             // Menonaktifkan CSRF verification untuk aksi 'view'
             $this->enableCsrfValidation = false;
         }
@@ -52,25 +54,118 @@ class PengajuanController extends \yii\web\Controller
     {
         return Yii::getAlias('@backend/views/');
     }
-    
-        public function actionIndex()
-        {
-            return $this->redirect(['/home']);
+
+    public function actionIndex()
+    {
+        return $this->redirect(['/home']);
+    }
+
+
+
+
+    public function actionTugasLuar()
+    {
+        $this->layout = 'mobile-main';
+
+        $id_karyawan = Yii::$app->user->identity->id_karyawan;
+
+        if (!$id_karyawan) {
+            Yii::$app->session->setFlash('success', 'Dibutuhkan Id Karyawan');
+            return $this->redirect(['/']);
+        }
+        $pengajuanTugasLuar = PengajuanTugasLuar::find()->where(['id_karyawan' => $id_karyawan])->orderBy(['status_pengajuan' => SORT_ASC,])->all();
+        return $this->render('/home/pengajuan/tugasluar/index', compact('pengajuanTugasLuar'));
+    }
+
+
+
+
+
+
+
+
+
+
+    public function actionTugasLuarDetail($id)
+    {
+        $this->layout = 'mobile-main';
+
+        $id_karyawan = Yii::$app->user->identity->id_karyawan;
+
+        if (!$id_karyawan) {
+            Yii::$app->session->setFlash('success', 'Dibutuhkan Id Karyawan');
+            return $this->redirect(['/']);
+        }
+        $pengajuanTugasLuar = PengajuanTugasLuar::find()->where(['id_karyawan' => $id_karyawan, 'id_tugas_luar' => $id])->orderBy(['status_pengajuan' => SORT_ASC,])->one();
+
+
+        $detail = $pengajuanTugasLuar->detailTugasLuars;
+
+        return $this->render('/home/pengajuan/tugasluar/detail', [
+            "model" => $pengajuanTugasLuar,
+            "detail" => $detail
+        ]);
+    }
+
+
+    // PHP (Server-side - Controller)
+    public function actionCheckinTugasLuar($id)
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $model = DetailTugasLuar::findOne($id);
+        if (!$model) {
+            return ['success' => false, 'message' => 'Data tidak ditemukan'];
         }
 
+        $request = Yii::$app->request;
+        $model->latitude = $request->post('latitude');
+        $model->longitude = $request->post('longitude');
+        $model->jam_check_in = date('Y-m-d H:i:s');
+        $model->status_check = 1;
+        $model->updated_at = date('Y-m-d H:i:s');
 
+        // Handle file upload
+        $uploadedFile = \yii\web\UploadedFile::getInstanceByName('bukti_foto');
+        if ($uploadedFile) {
+            $fileName = 'bukti_' . $model->id_detail . '_' . time() . '.' . $uploadedFile->extension;
+            $filePath = Yii::getAlias('@webroot/uploads/bukti_tugas_luar/') . $fileName;
 
+            // Create directory if not exists
+            $dir = Yii::getAlias('@webroot/uploads/bukti_tugas_luar/');
+            if (!file_exists($dir)) {
+                mkdir($dir, 0777, true);
+            }
 
-        public function actionTugasLuar()
-        {
-
-            $this->layout = 'mobile-main';
-            return $this->render('/home/pengajuan/tugasluar/index');
+            if ($uploadedFile->saveAs($filePath)) {
+                $model->bukti_foto = $fileName;
+            } else {
+                return ['success' => false, 'message' => 'Gagal menyimpan file'];
+            }
         }
 
+        if ($model->save()) {
+            return ['success' => true, 'message' => 'Check-in berhasil'];
+        } else {
+            Yii::error("Error saving model: " . print_r($model->errors, true));
+            return [
+                'success' => false,
+                'message' => 'Gagal menyimpan data',
+                'errors' => $model->errors
+            ];
+        }
+    }
 
 
-    
+
+
+
+
+
+
+
+
+
 
 
 

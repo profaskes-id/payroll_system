@@ -15,19 +15,19 @@ use kartik\select2\Select2;
     <form method="GET" action="">
         <div class="row" style="gap: 10px 0;">
 
-            <div class="col-12 col-md-5">
+            <div class="col-12 col-md-4">
                 <label for="tanggal_awal">Tanggal Awal:</label>
                 <input type="date" name="tanggal_awal" id="tanggal_awal" class="form-control w-100"
                     value="<?= $tanggal_awal ?>" required>
             </div>
 
-            <div class="col-12 col-md-5">
+            <div class="col-12 col-md-4">
                 <label for="tanggal_akhir">Tanggal Akhir:</label>
                 <input type="date" name="tanggal_akhir" id="tanggal_akhir" class="form-control w-100"
                     value="<?= $tanggal_akhir ?>" readonly>
             </div>
 
-            <div class="col-12 col-md-2">
+            <div class="col-12 col-md-4">
                 <div class="items-center form-group d-flex w-100 justify-content-around" style="padding-top: 25px;">
                     <button class="add-button" type="submit">
                         <i class="fas fa-search"></i>

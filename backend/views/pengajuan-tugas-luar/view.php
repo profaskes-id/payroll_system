@@ -66,7 +66,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
 
         <h4 class="mt-4">Detail Tugas Luar</h4>
-        
+
         <?= GridView::widget([
             'dataProvider' => new \yii\data\ArrayDataProvider([
                 'allModels' => $model->detailTugasLuars,
@@ -75,24 +75,24 @@ $this->params['breadcrumbs'][] = $this->title;
             'tableOptions' => ['class' => 'table table-striped table-bordered'],
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
-                
+
                 'keterangan',
                 [
                     'attribute' => 'jam_diajukan',
-                    'value' => function($model) {
+                    'value' => function ($model) {
                         return date('H:i', strtotime($model->jam_diajukan));
                     }
                 ],
                 [
                     'attribute' => 'jam_check_in',
-                    'value' => function($model) {
+                    'value' => function ($model) {
                         return $model->jam_check_in ? date('H:i', strtotime($model->jam_check_in)) : '-';
                     }
                 ],
                 [
                     'attribute' => 'status_check',
                     'format' => 'raw',
-                    'value' => function($model) {
+                    'value' => function ($model) {
                         if ($model->status_check === 1) {
                             return "<span class='text-success'>Checked In</span>";
                         } else {
@@ -101,18 +101,52 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
-                    'attribute' => 'latitude',
-                    'value' => function($model) {
-                        return $model->latitude ? $model->latitude : '-';
-                    }
+                    'attribute' => 'bukti_foto',
+                    'label' => 'Bukti Foto',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        if ($model->bukti_foto) {
+                            $imageUrl = Yii::getAlias('@web/uploads/bukti_tugas_luar/') . $model->bukti_foto;
+                            return Html::a(
+                                Html::img($imageUrl, [
+                                    'class' => 'img-thumbnail',
+                                    'style' => 'width: 80px; height: 60px; object-fit: cover;',
+                                    'alt' => 'Bukti Tugas Luar'
+                                ]),
+                                $imageUrl,
+                                [
+                                    'target' => '_blank',
+                                    'data-toggle' => 'tooltip',
+                                    'title' => 'Klik untuk melihat ukuran penuh'
+                                ]
+                            );
+                        }
+                        return '-';
+                    },
+                    'contentOptions' => ['style' => 'text-align: center; vertical-align: middle;'],
                 ],
                 [
-                    'attribute' => 'longitude',
-                    'value' => function($model) {
-                        return $model->longitude ? $model->longitude : '-';
-                    }
+                    'attribute' => 'lokasi',
+                    'label' => 'Lokasi',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        if ($model->latitude && $model->longitude) {
+                            $mapUrl = "https://www.google.com/maps?q={$model->latitude},{$model->longitude}";
+                            return Html::a(
+                                '<i class="fa fa-map-marker-alt"></i> Lihat Peta',
+                                $mapUrl,
+                                [
+                                    'class' => 'btn btn-sm btn-outline-primary',
+                                    'target' => '_blank',
+                                    'data-toggle' => 'tooltip',
+                                    'title' => 'Buka di Google Maps'
+                                ]
+                            );
+                        }
+                        return '-';
+                    },
+                    'contentOptions' => ['style' => 'text-align: center; vertical-align: middle;'],
                 ],
-                'urutan',
             ],
         ]); ?>
     </div>

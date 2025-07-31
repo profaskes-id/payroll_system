@@ -2,11 +2,13 @@
 
 namespace backend\controllers;
 
+use backend\models\Absensi;
 use backend\models\PengajuanAbsensi;
 use backend\models\PengajuanAbsensiSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use Yii;
 
 /**
  * PengajuanAbsensiController implements the CRUD actions for PengajuanAbsensi model.
@@ -103,21 +105,48 @@ class PengajuanAbsensiController extends Controller
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post())) {
-
             $model->tanggal_disetujui = date('Y-m-d');
             $model->id_approver = \Yii::$app->user->identity->id ?? null;
 
+            if ($model->status == 1) {
+                $absensi = new Absensi();
+                $absensi->id_karyawan = $model->id_karyawan;
+                $absensi->jam_masuk = $model->jam_masuk;
+                $absensi->jam_pulang = $model->jam_keluar;
+                $absensi->keterangan = $model->alasan_pengajuan;
+                $absensi->created_at = date('Y-m-d H:i:s');
+                $absensi->created_by = Yii::$app->user->identity->id;
+                $absensi->updated_at = date('Y-m-d H:i:s');
+                $absensi->updated_by = Yii::$app->user->identity->id;
+                $absensi->kode_status_hadir = 'H';
+                $absensi->tanggal = date('Y-m-d', strtotime($model->tanggal_absen));
 
-            if ($model->save()) {
-                //pesan flash
-                \Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
-                return $this->redirect(['view', 'id' => $model->id]);
+                if ($absensi->save()) {
+                    if ($model->save()) {
+                        \Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
+                        return $this->redirect(['view', 'id' => $model->id]);
+                    } else {
+                        \Yii::$app->session->setFlash('error', 'Gagal menyimpan data pengajuan');
+                        return $this->redirect(['view', 'id' => $model->id]);
+                    }
+                } else {
+                    \Yii::$app->session->setFlash('error', 'Gagal menyimpan data absensi');
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
+            } else {
+                if ($model->save()) {
+                    \Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
+                    return $this->redirect(['view', 'id' => $model->id]);
+                } else {
+                    \Yii::$app->session->setFlash('error', 'Gagal menyimpan data pengajuan');
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
+        } else {
+            return $this->render('update', [
+                'model' => $model,
+            ]);
         }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
     }
 
     /**

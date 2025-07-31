@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\PengajuanAbsensi;
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -9,6 +10,9 @@ use yii\grid\GridView;
 /** @var yii\web\View $this */
 /** @var backend\models\PengajuanAbsensiSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
+
+
+$tanggal = new Tanggal();
 
 $this->title = Yii::t('app', 'Pengajuan Absensi');
 $this->params['breadcrumbs'][] = $this->title;
@@ -59,7 +63,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->karyawan->nama;
                     }
                 ],
-                'tanggal_absen',
+                [
+                    'attribute' => 'tanggal_absen',
+                    'label' => 'Tanggal Absen',
+                    'value' => function ($model) use ($tanggal) {
+                        return $tanggal->getIndonesiaFormatTanggal($model->tanggal_absen);
+                    }
+                ],
                 'jam_masuk',
                 'jam_keluar',
                 [

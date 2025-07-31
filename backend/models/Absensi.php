@@ -47,7 +47,7 @@ class Absensi extends \yii\db\ActiveRecord
         return [
             [['id_karyawan', 'tanggal', 'kode_status_hadir'], 'required'],
             [['id_karyawan', 'is_lembur', 'is_wfh', 'is_terlambat', 'is_24jam', 'id_shift_kerja'], 'integer'],
-            [['tanggal', 'jam_masuk', 'jam_pulang', 'lama_terlambat', 'tanggal_pulang', 'id_shift', 'kelebihan_jam_pulang', 'id_shift_kerja' , 'created_at', 'updated_at', 'created_by', 'updated_by'], 'safe'],
+            [['tanggal', 'jam_masuk', 'jam_pulang', 'lama_terlambat', 'tanggal_pulang', 'id_shift', 'kelebihan_jam_pulang', 'id_shift_kerja', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'safe'],
             [['keterangan', 'alasan_terlambat', 'alasan_terlalu_jauh'], 'string'],
             [['latitude', 'longitude'], 'number'],
             [['lampiran'], 'string', 'max' => 255],
@@ -302,6 +302,7 @@ class Absensi extends \yii\db\ActiveRecord
                     $lama_terlambat = 0;
                     $jamMasukKaryawan = null;
                     $jamMasukKantor = null;
+                    $jam_pulang = null;
 
                     if (!empty($absensiRecord)) {
                         $record = array_values($absensiRecord)[0];
@@ -482,15 +483,13 @@ class Absensi extends \yii\db\ActiveRecord
     }
 
 
-      public function getCreateBy()
+    public function getCreateBy()
     {
         return $this->hasOne(User::class, ['id' => 'created_by']);
     }
 
-      public function getUpdateBy()
+    public function getUpdateBy()
     {
         return $this->hasOne(User::class, ['id' => 'updated_by']);
     }
-
-
 }

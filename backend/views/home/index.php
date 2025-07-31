@@ -185,48 +185,16 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 
-
+    <br>
 
 
     <div class="relative grid w-full grid-cols-12 gap-2 px-5 mt-5 mb-20 min-w-screen">
 
-        <div class="w-[120px]   aspect-square bg-slate-900 rounded-full absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2  overflow-hidden     "></div>
-        <div class="w-[120px]   aspect-square bg-slate-900 rounded-full absolute left-1/2 top-2/3 -translate-x-1/2 -translate-y-1/2  overflow-hidden     "></div>
+        <div class="w-[120px]   aspect-square bg-slate-900 rounded-full absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2  overflow-hidden    block md:hidden xl:block  "></div>
+        <div class="w-[120px]   aspect-square bg-slate-900 rounded-full absolute left-1/2 top-2/3 -translate-x-1/2 -translate-y-1/2  overflow-hidden    block md:hidden xl:block "></div>
 
-        <a href="/panel/absensi-tertinggal" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-left">
-            <div class=" flex justify-center items-center flex-col bg-blue-500 py-5 w-[44vw] h-[22vh] relative z-50 rounded-[50px] ">
-                <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
-                    <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/timelate.png" alt="calendar" width="40px" height="40px">
-                </div>
-                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white"><span>Pengajuan</span> <span>Absensi</span></p>
-            </div>
-        </a>
-        <a href="/panel/pengajuan/wfh" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-right">
-            <div class=" flex justify-center items-center flex-col bg-slate-900 py-5 w-[46vw] h-[23vh] relative z-50 rounded-[50px] ">
-                <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
-                    <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/todo.png" alt="calendar" width="38px" height="38px">
-                </div>
-                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white"><span>Pengajuan</span> <span>Tugas Luar</span></p>
-            </div>
-        </a>
-        <a href="/panel/pengajuan/wfh" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-right">
-            <div class=" flex justify-center items-center flex-col bg-slate-900 py-5 w-[45vw] h-[22vh] relative z-50 rounded-[50px] ">
-                <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
-                    <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/wfh.svg" alt="calendar" width="40px" height="40px">
-                </div>
-                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white"><span>Pengajuan</span> <span>WFH</span></p>
-            </div>
-        </a>
-        <a href="/panel/pengajuan/cuti" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-left">
-            <div class=" flex justify-center items-center flex-col bg-blue-500 py-5 w-[45vw] h-[22vh] relative z-50 rounded-[50px] ">
-                <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
-                    <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/calendar.png" alt="calendar" width="40px" height="40px">
-                </div>
-                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white"><span>Pengajuan</span> <span>Cuti</span></p>
-            </div>
-        </a>
         <a href="/panel/pengajuan/lembur" class="col-span-6 " data-aos-duration="1000" data-aos="fade-up-right">
-            <div class=" flex-col col-span-6 bg-blue-500 py-5 w-[45vw] h-[22vh] relative z-50 rounded-[50px] flex justify-center items-center">
+            <div class=" flex-col col-span-6 bg-blue-500 py-5 w-[45vw] md:w-[38dvw] h-[22vh] relative z-50 rounded-[50px] flex justify-center items-center">
                 <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                     <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/alarm.png" alt="calendar" width="30px" height="30px">
                 </div>
@@ -234,11 +202,46 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </a>
         <a href="/panel/pengajuan/dinas" class="col-span-6 " data-aos-duration="1000" data-aos="fade-up-left">
-            <div class=" flex-col col-span-6 bg-slate-900 py-5 w-[45vw] h-[22vh] relative z-50 rounded-[50px] flex justify-center items-center">
+            <div class=" flex-col col-span-6 bg-slate-900 py-5 w-[45vw] md:w-[38dvw] h-[22vh] relative z-50 rounded-[50px] flex justify-center items-center">
                 <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                     <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/building.png" alt="building" width="30px" height="30px">
                 </div>
                 <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white" style="font-size: 15px !important;"><span>Pengajuan</span> <span>Dinas Luar</span></p>
+            </div>
+        </a>
+
+
+        <a href="/panel/pengajuan/wfh" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-right">
+            <div class=" flex justify-center items-center flex-col bg-slate-900 py-5 w-[45vw] md:w-[38dvw] h-[22vh] relative z-50 rounded-[50px] ">
+                <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
+                    <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/wfh.svg" alt="calendar" width="40px" height="40px">
+                </div>
+                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white"><span>Pengajuan</span> <span>WFH</span></p>
+            </div>
+        </a>
+        <a href="/panel/pengajuan/cuti" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-left">
+            <div class=" flex justify-center items-center flex-col bg-blue-500 py-5 w-[45vw] md:w-[38dvw] h-[22vh] relative z-50 rounded-[50px] ">
+                <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
+                    <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/calendar.png" alt="calendar" width="40px" height="40px">
+                </div>
+                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white"><span>Pengajuan</span> <span>Cuti</span></p>
+            </div>
+        </a>
+
+        <a href="/panel/absensi-tertinggal" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-left">
+            <div class=" flex justify-center items-center flex-col bg-blue-500 py-5 w-[40vw] md:w-[38dvw]  h-[22vh] relative z-50 rounded-[50px] ">
+                <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
+                    <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/timelate.png" alt="calendar" width="40px" height="40px">
+                </div>
+                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white"><span>Pengajuan</span> <span>Absensi</span></p>
+            </div>
+        </a>
+        <a href="/panel/pengajuan/tugas-luar" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-right">
+            <div class=" flex justify-center items-center flex-col bg-slate-900 py-5 w-[40vw] md:w-[38dvw] h-[23vh] relative z-50 rounded-[50px] ">
+                <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
+                    <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/todo.png" alt="calendar" width="38px" height="38px">
+                </div>
+                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white"><span>Pengajuan</span> <span>Tugas Luar</span></p>
             </div>
         </a>
     </div>
@@ -262,7 +265,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
             <a href="/panel/tanggapan/wfh" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-right">
-                <div class=" flex justify-center items-center flex-col bg-[#ede8fe] py-5 w-[45vw] h-[22vh] relative z-50 rounded-[50px] ">
+                <div class=" flex justify-center items-center flex-col bg-[#ede8fe] py-5 w-[45vw] md:w-[38dvw] h-[22vh] relative z-50 rounded-[50px] ">
                     <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                         <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/wfh.svg" alt="calendar" width="40px" height="40px">
                     </div>
@@ -270,7 +273,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </a>
             <a href="/panel/tanggapan/cuti" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-left">
-                <div class=" flex justify-center items-center flex-col bg-[#f2fee8] py-5 w-[45vw] h-[22vh] relative z-50 rounded-[50px] ">
+                <div class=" flex justify-center items-center flex-col bg-[#f2fee8] py-5 w-[45vw] md:w-[38dvw] h-[22vh] relative z-50 rounded-[50px] ">
                     <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                         <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/calendar.png" alt="calendar" width="40px" height="40px">
                     </div>
@@ -278,7 +281,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </a>
             <a href="/panel/tanggapan/lembur" class="col-span-6 " data-aos-duration="1000" data-aos="fade-up-right">
-                <div class=" flex-col col-span-6 bg-[#ffe3e3] py-5 w-[45vw] h-[22vh] relative z-50 rounded-[50px] flex justify-center items-center">
+                <div class=" flex-col col-span-6 bg-[#ffe3e3] py-5 w-[45vw] md:w-[38dvw] h-[22vh] relative z-50 rounded-[50px] flex justify-center items-center">
                     <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                         <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/alarm.png" alt="calendar" width="30px" height="30px">
                     </div>
@@ -286,7 +289,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </a>
             <a href="/panel/tanggapan/dinas" class="col-span-6 " data-aos-duration="1000" data-aos="fade-up-left">
-                <div class=" flex-col col-span-6 bg-[#ebeefd] py-5 w-[45vw] h-[22vh] relative z-50 rounded-[50px] flex justify-center items-center">
+                <div class=" flex-col col-span-6 bg-[#ebeefd] py-5 w-[45vw] md:w-[38dvw] h-[22vh] relative z-50 rounded-[50px] flex justify-center items-center">
                     <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
                         <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/building.png" alt="building" width="30px" height="30px">
                     </div>

@@ -70,24 +70,18 @@ class RekapAbsensiController extends Controller
             $today = new \DateTime();
 
             // Buat objek tanggal_awal dari tanggal 27 bulan lalu
-            $tanggal_awal_dt = (new \DateTime('first day of last month'))->setDate(
-                (int)$today->format('Y'),
-                (int)$today->format('m') - 1,
-                (int) $tanggal_cut_of
-            );
+            $tanggal_awal_dt = (new \DateTime('first day of last month'))
+                ->modify('+' . ($tanggal_cut_of - 1) . ' days');
             $tanggal_awal = $tanggal_awal_dt->format('Y-m-d');
 
             // Tanggal akhir: 26 bulan ini
-            $tanggal_akhir_dt = (clone $today)->setDate(
-                (int)$today->format('Y'),
-                (int)$today->format('m'),
-                (int)($tanggal_cut_of - $tanggal_cut_of - 1)
-            );
+            $tanggal_akhir_dt = (new \DateTime('first day of this month'))
+                ->modify('+' . ($tanggal_cut_of - 1 - 1) . ' days');
             $tanggal_akhir = $tanggal_akhir_dt->format('Y-m-d');
         }
 
         // Debug untuk verifikasi
-        // dd($tanggal_awal, $tanggal_akhir); // Uncomment jika ingin cek
+        // dd($tanggal_awal, $tanggal_akhir); // Uncomment jika ingin cek   
 
         // Ambil data rekapan berdasarkan tanggal
         $data = $this->RekapData([

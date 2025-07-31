@@ -47,6 +47,20 @@ if (
                 font-size: 0.91rem;
             }
 
+
+            .nav-sidebar .nav-treeview {
+                padding-left: 1rem;
+                /* Sesuaikan jarak indentasi */
+                margin-left: 0.5rem;
+                border-left: 1px solid #dee2e6;
+                /* Garis vertikal opsional */
+            }
+
+            /* Atau jika ingin lebih spesifik */
+            .nav-sidebar>.nav-item>.nav-treeview {
+                padding-left: 15px;
+            }
+
             a {
                 text-decoration: none !important;
             }

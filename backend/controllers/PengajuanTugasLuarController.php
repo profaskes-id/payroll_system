@@ -70,8 +70,16 @@ class PengajuanTugasLuarController extends Controller
         $model = new PengajuanTugasLuar();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_tugas_luar' => $model->id_tugas_luar]);
+            if ($model->load($this->request->post())) {
+                $model->created_at = date('Y-m-d H:i:s');
+                if ($model->save()) {
+                    //pesan berhasil;
+                    \Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
+                    return $this->redirect(['view', 'id_tugas_luar' => $model->id_tugas_luar]);
+                } else {
+                    //pesan gagal;
+                    \Yii::$app->session->setFlash('danger', 'Data gagal disimpan');
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -93,7 +101,18 @@ class PengajuanTugasLuarController extends Controller
     {
         $model = $this->findModel($id_tugas_luar);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            if ($model->load($this->request->post())) {
+                $model->updated_at = date('Y-m-d H:i:s');
+                if ($model->save()) {
+                    //pesan berhasil;
+                    \Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
+                    return $this->redirect(['view', 'id_tugas_luar' => $model->id_tugas_luar]);
+                } else {
+                    //pesan gagal;
+                    \Yii::$app->session->setFlash('danger', 'Data gagal disimpan');
+                }
+            }
             return $this->redirect(['view', 'id_tugas_luar' => $model->id_tugas_luar]);
         }
 
