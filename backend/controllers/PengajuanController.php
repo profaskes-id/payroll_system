@@ -17,6 +17,7 @@ use backend\models\PengajuanWfh;
 use backend\models\RekapCuti;
 use backend\models\SettinganUmum;
 use DateTime;
+use ReflectionFunctionAbstract;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
@@ -63,6 +64,10 @@ class PengajuanController extends \yii\web\Controller
 
 
 
+
+
+
+
     public function actionTugasLuar()
     {
         $this->layout = 'mobile-main';
@@ -79,7 +84,74 @@ class PengajuanController extends \yii\web\Controller
 
 
 
+    public function actionTugasLuarCreate()
+    {
+        $this->layout = 'mobile-main';
+        $model = new PengajuanTugasLuar();
+        $details = [new DetailTugasLuar()]; // Array untuk menyimpan detail tugas
 
+        // Set default values
+        $model->id_karyawan = Yii::$app->user->identity->id_karyawan;
+        $model->status_pengajuan = 0; // Set default status pending
+
+        if ($model->load(Yii::$app->request->post())) {
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                // Simpan model utama terlebih dahulu
+                if (!$model->save(false)) {
+                    throw new \Exception('Gagal menyimpan pengajuan tugas luar.');
+                }
+
+                // Proses detail tugas luar
+                $details = [];
+                if (isset($_POST['DetailTugasLuar']) && is_array($_POST['DetailTugasLuar'])) {
+                    foreach ($_POST['DetailTugasLuar'] as $i => $detailData) {
+                        $detail = new DetailTugasLuar();
+                        $detail->attributes = $detailData;
+                        $detail->id_tugas_luar = $model->id_tugas_luar;
+                        $detail->urutan = $i + 1;
+                        $detail->status_check = 0; // Default belum check in
+
+                        if (!$detail->save(false)) {
+                            throw new \Exception('Gagal menyimpan detail tugas luar.');
+                        }
+                        $details[] = $detail;
+                    }
+                }
+
+                // Validasi minimal 1 detail
+                if (empty($details)) {
+                    throw new \Exception('Setidaknya harus ada satu lokasi tugas.');
+                }
+
+                $transaction->commit();
+                Yii::$app->session->setFlash('success', 'Pengajuan tugas luar berhasil disimpan.');
+                return $this->redirect(['index']); // Ganti dengan route yang sesuai
+
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::$app->session->setFlash('error', 'Gagal menyimpan pengajuan: ' . $e->getMessage());
+
+                // Kembalikan detail yang sudah diinput untuk ditampilkan kembali di form
+                $details = [];
+                if (isset($_POST['DetailTugasLuar']) && is_array($_POST['DetailTugasLuar'])) {
+                    foreach ($_POST['DetailTugasLuar'] as $detailData) {
+                        $detail = new DetailTugasLuar();
+                        $detail->attributes = $detailData;
+                        $details[] = $detail;
+                    }
+                }
+                if (empty($details)) {
+                    $details = [new DetailTugasLuar()];
+                }
+            }
+        }
+
+        return $this->render('/home/pengajuan/tugasluar/create', [
+            'model' => $model,
+            'details' => $details,
+        ]);
+    }
 
 
 

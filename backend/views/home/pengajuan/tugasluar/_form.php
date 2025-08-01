@@ -6,133 +6,129 @@ use yii\helpers\Html;
 $form = ActiveForm::begin(); ?>
 
 <div class="relative min-h-[85dvh]">
-
-    <div class="mb-5">
-        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">Tanggal</label>
-        <?= $form->field($model, 'tanggal')->textInput(['type' => 'date', 'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '])->label(false) ?>
+    <div class="mb-4">
+        <h2 class="text-lg font-bold text-gray-800">Pengajuan Tugas Luar</h2>
     </div>
 
-    <div class="mb-5">
-        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">jam mulai</label>
-        <?= $form->field($model, 'jam_mulai')->textInput(['type' => 'time', 'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '])->label(false) ?>
-    </div>
-    <div class="mb-5">
-        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">jam selesai</label>
-        <?= $form->field($model, 'jam_selesai')->textInput(['type' => 'time', 'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '])->label(false) ?>
-    </div>
+    <!-- Form utama (pengajuan) -->
+    <?= $form->field($model, 'id_karyawan')->hiddenInput()->label(false) ?>
 
+    <!-- Detail tugas luar -->
+    <div class="mb-4">
+        <label class="block mb-2 text-sm font-medium text-gray-900 capitalize">Lokasi Tugas</label>
+        <div id="lokasi-container">
+            <?php foreach ($details as $i => $detail): ?>
+                <div class="p-4 mb-4 border border-gray-200 rounded-lg lokasi-item">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-700">Lokasi #<?= $i + 1 ?></span>
+                        <?php if ($i > 0): ?>
+                            <button type="button" class="text-red-500 remove-lokasi hover:text-red-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z" />
+                                </svg>
+                            </button>
+                        <?php endif; ?>
+                    </div>
 
+                    <?= $form->field($detail, "[$i]keterangan", [
+                        'options' => ['class' => 'mb-3'],
+                        'inputOptions' => ['class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5']
+                    ])->textInput()->label('Keterangan (Contoh: Ke Jakarta untuk meeting)') ?>
 
-    <p class="mb-2 text-sm font-medium text-gray-900 capitalize">List Pekerjaan Lembur</p>
-    <div id="items-container">
-        <?php if (empty($poinArray)) : ?>
-            <!-- Jika array kosong, tampilkan satu input kosong -->
-            <div class="flex mt-2 space-x-2 item">
-                <textarea name="pekerjaan[]" rows="1" class="w-[90%] border-gray rounded-md" placeholder="Pekerjaan"></textarea>
-                <button type="button" class="p-2 text-white bg-red-500 rounded-md remove-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
-                        <path fill="white" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z" />
-                    </svg>
-                </button>
-            </div>
-        <?php else : ?>
-            <!-- Jika ada data di poinArray, tampilkan item-item tersebut -->
-            <?php foreach ($poinArray as $index => $poin) : ?>
-                <div class="flex mt-2 space-x-2 item">
-                    <textarea name="pekerjaan[]" rows="1" class="w-[90%] border-gray rounded-md" placeholder="Pekerjaan"><?= Html::encode($poin) ?></textarea>
-                    <button type="button" class="p-2 text-white bg-red-500 rounded-md remove-item">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
-                            <path fill="white" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z" />
-                        </svg>
-                    </button>
+                    <?= $form->field($detail, "[$i]jam_diajukan", [
+                        'options' => ['class' => 'mb-3'],
+                        'inputOptions' => ['class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5']
+                    ])->input('time')->label('Jam Diajukan') ?>
                 </div>
             <?php endforeach; ?>
-        <?php endif; ?>
+        </div>
+
+        <button type="button" id="add-lokasi" class="flex items-center mt-2 text-sm font-medium text-blue-600 hover:text-blue-800">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="mr-1">
+                <path fill="currentColor" d="M11 13H5v-2h6V5h2v6h6v2h-6v6h-2z" />
+            </svg>
+            Tambah Lokasi
+        </button>
     </div>
-    <button class="relative z-40 block w-full py-3 mt-5 mb-3 text-white bg-green-500 rounded-md" type="button" id="add-item">Tambah Item</button>
-
-
 
     <div class="h-[80px] w-full"></div>
-    <div class="absolute bottom-0 left-0 right-0 ">
-        <div class="">
-            <?= $this->render('@backend/views/components/element/_submit-button', ['text' => 'Submit']); ?>
+    <div class="absolute bottom-0 left-0 right-0">
+        <div class="p-4 bg-white border-t border-gray-200">
+            <?= Html::submitButton('Submit Pengajuan', [
+                'class' => 'w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg'
+            ]) ?>
         </div>
     </div>
 </div>
 
-
-
 <?php ActiveForm::end(); ?>
-
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const addItemButton = document.getElementById("add-item");
-        const itemsContainer = document.getElementById("items-container");
+        const container = document.getElementById('lokasi-container');
+        const addButton = document.getElementById('add-lokasi');
+        let lokasiCount = <?= count($details) ?>;
 
-        // Ensure $poinArray is an array, otherwise set itemCount to 0
-        let itemCount = <?= is_array($poinArray) ? count($poinArray) : 0 ?>;
+        // Template untuk lokasi baru
+        const lokasiTemplate = `
+        <div class="p-4 mb-4 border border-gray-200 rounded-lg lokasi-item">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-gray-700">Lokasi #${lokasiCount + 1}</span>
+                <button type="button" class="text-red-500 remove-lokasi hover:text-red-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="mb-3">
+                <label class="block mb-1 text-sm font-medium text-gray-900">Keterangan (Contoh: Ke Jakarta untuk meeting)</label>
+                <input type="text" name="DetailTugasLuar[${lokasiCount}][keterangan]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="block mb-1 text-sm font-medium text-gray-900">Jam Diajukan</label>
+                <input type="time" name="DetailTugasLuar[${lokasiCount}][jam_diajukan]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+            </div>
+        </div>
+    `;
 
-        addItemButton.addEventListener("click", function() {
-            itemCount++; // Increment item count
+        // Tambah lokasi baru
+        addButton.addEventListener('click', function() {
+            const newLokasi = document.createElement('div');
+            newLokasi.innerHTML = lokasiTemplate.replace(/\[\d+\]/g, `[${lokasiCount}]`);
+            container.appendChild(newLokasi);
+            lokasiCount++;
 
-            const newItem = document.createElement("div");
-            newItem.classList.add("item", "flex", "space-x-2", "mt-2");
-
-            const input = document.createElement("textarea");
-            input.rows = "1";
-            input.name = "pekerjaan[]";
-            input.classList.add("w-[90%]", "border-gray", "rounded-md");
-            input.placeholder = "Pekerjaan";
-
-            const removeButton = document.createElement("button");
-            removeButton.type = "button";
-            removeButton.classList.add("remove-item", "p-2", "bg-red-500", "text-white", "rounded-md");
-            removeButton.innerHTML = "<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24'><path fill='white' d='M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z'/></svg>";
-
-            removeButton.addEventListener("click", function() {
-                newItem.remove(); // Remove the item when the "Remove" button is clicked
-                itemCount--; // Decrease item count when an item is removed
+            // Tambahkan event listener untuk tombol hapus
+            newLokasi.querySelector('.remove-lokasi').addEventListener('click', function() {
+                newLokasi.remove();
+                updateLokasiNumbers();
             });
-
-            newItem.appendChild(input);
-            newItem.appendChild(removeButton);
-            itemsContainer.appendChild(newItem);
         });
 
-        // Handle item removal for already existing items
-        itemsContainer.addEventListener("click", function(event) {
-            if (event.target.classList.contains("remove-item")) {
-                event.target.parentNode.remove(); // Remove the item from the container
-                itemCount--; // Decrease item count when an item is removed
+        // Hapus lokasi
+        container.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-lokasi') || e.target.closest('.remove-lokasi')) {
+                const lokasiItem = e.target.closest('.lokasi-item');
+                if (lokasiItem && document.querySelectorAll('.lokasi-item').length > 1) {
+                    lokasiItem.remove();
+                    updateLokasiNumbers();
+                }
             }
         });
 
-        // If there are no items initially, add one empty item (ensures there's at least one input field)
-        if (itemCount === 0) {
-            const initialItem = document.createElement("div");
-            initialItem.classList.add("item", "flex", "space-x-2", "mt-2");
-
-            const input = document.createElement("textarea");
-            input.rows = "1";
-            input.name = "pekerjaan[]";
-            input.classList.add("w-[90%]", "border-gray", "rounded-md");
-            input.placeholder = "Pekerjaan";
-
-            const removeButton = document.createElement("button");
-            removeButton.type = "button";
-            removeButton.classList.add("remove-item", "p-2", "bg-red-500", "text-white", "rounded-md");
-            removeButton.innerHTML = "<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24'><path fill='white' d='M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z'/></svg>";
-
-            removeButton.addEventListener("click", function() {
-                initialItem.remove(); // Remove the item when the "Remove" button is clicked
-                itemCount--; // Decrease item count
+        // Update nomor urutan lokasi
+        function updateLokasiNumbers() {
+            document.querySelectorAll('.lokasi-item').forEach((item, index) => {
+                item.querySelector('span').textContent = `Lokasi #${index + 1}`;
+                // Update juga nama input fields
+                const inputs = item.querySelectorAll('input, textarea');
+                inputs.forEach(input => {
+                    input.name = input.name.replace(/\[\d+\]/, `[${index}]`);
+                });
             });
-
-            initialItem.appendChild(input);
-            initialItem.appendChild(removeButton);
-            itemsContainer.appendChild(initialItem);
+            lokasiCount = document.querySelectorAll('.lokasi-item').length;
         }
     });
 </script>
