@@ -109,17 +109,26 @@ class IzinPulangCepatController extends Controller
         if ($this->request->isPost && $model->load($this->request->post())) {
             $model->disetujui_pada = date('Y-m-d H:i:s');
             $model->disetujui_oleh = Yii::$app->user->identity->id;
+
             if ($model->save()) {
-                if ($model->status == Yii::$app->params['disetujui']) {
+                if ($model->status == 1) {
                     $absensi = Absensi::find()->where(['id_karyawan' => $model->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
-                    $absensi->jam_pulang = date('H:i:s');
-                    if ($absensi->save()) {
-                        Yii::$app->session->setFlash('success', 'Berhasil Melakuan Update Data Izin Pulang cepat');
+                    if ($absensi) {
+                        $absensi->jam_pulang = date('H:i:s');
+                        if ($absensi->save()) {
+                            Yii::$app->session->setFlash('success', 'Berhasil Melakuan Update Data Izin Pulang cepat');
+                            return $this->redirect(['view', 'id_izin_pulang_cepat' => $model->id_izin_pulang_cepat]);
+                        }
+                    } else {
+
+                        Yii::$app->session->setFlash('success', 'Berhasil Melakuan Update Data Izin Pulang cepat,  ');
                         return $this->redirect(['view', 'id_izin_pulang_cepat' => $model->id_izin_pulang_cepat]);
                     }
+                } else {
+                    Yii::$app->session->setFlash('success', 'Berhasil Melakuan Update Data Izin Pulang cepat');
+                    return $this->redirect(['view', 'id_izin_pulang_cepat' => $model->id_izin_pulang_cepat]);
                 }
             } else {
-
                 Yii::$app->session->setFlash('error', 'Gagal Melakukan Upadte  Data Izin Pulang cepat');
                 return $this->redirect(['view', 'id_izin_pulang_cepat' => $model->id_izin_pulang_cepat]);
             }

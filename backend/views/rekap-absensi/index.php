@@ -231,7 +231,9 @@ function formatJamDesimal($decimalHours)
 
                                             <?php elseif ($data['is_terlambat'] == 1) : ?>
                                                 <span style='color: red;'><?= $data['status_hadir'] ?></span><br />
-                                                <span style='color: red;'><?= $data['lama_terlambat'] ?></span><br />
+                                                <span style='color: red;'>
+                                                    <?= isset($data['lama_terlambat']) && $data['lama_terlambat'] ? date('H:i', strtotime($data['lama_terlambat'])) : '00:00' ?>
+                                                </span><br />
 
                                             <?php else : ?>
                                                 <span style='color: black;'><?= $data['status_hadir'] ?></span>

@@ -2,11 +2,13 @@
 
 namespace backend\controllers;
 
+use backend\models\DetailTugasLuar;
 use backend\models\PengajuanTugasLuar;
 use backend\models\PengajuanTugasLuarSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use Yii;
 
 /**
  * PengajuanTugasLuarController implements the CRUD actions for PengajuanTugasLuar model.
@@ -130,9 +132,57 @@ class PengajuanTugasLuarController extends Controller
      */
     public function actionDelete($id_tugas_luar)
     {
-        $this->findModel($id_tugas_luar)->delete();
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            $model = $this->findModel($id_tugas_luar);
+
+            foreach ($model->detailTugasLuars as $detail) {
+                if (!empty($detail->bukti_foto)) {
+                    $filePath = Yii::getAlias('@webroot/uploads/bukti_tugas_luar/') . $detail->bukti_foto;
+                    if (file_exists($filePath) && is_file($filePath) && !unlink($filePath)) {
+                        throw new \Exception("Gagal menghapus file: " . $detail->bukti_foto);
+                    }
+                }
+            }
+
+            if (!$model->delete()) {
+                throw new \Exception("Gagal menghapus record tugas luar");
+            }
+
+            $transaction->commit();
+            Yii::$app->session->setFlash('success', 'Data berhasil dihapus');
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
 
         return $this->redirect(['index']);
+    }
+
+    public function actionDeleteDetail($id)
+    {
+        $model = DetailTugasLuar::findOne($id);
+
+        if (!$model) {
+            throw new NotFoundHttpException('Detail tugas luar tidak ditemukan.');
+        }
+
+        // Simpan id_tugas_luar untuk redirect
+        $id_tugas_luar = $model->id_tugas_luar;
+
+        // Hapus file foto jika ada
+        if (!empty($model->bukti_foto)) {
+            $filePath = Yii::getAlias('@webroot/uploads/bukti_tugas_luar/') . $model->bukti_foto;
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+        }
+
+        // Hapus record dari database
+        $model->delete();
+
+        Yii::$app->session->setFlash('success', 'Detail tugas luar berhasil dihapus.');
+        return $this->redirect(['view', 'id_tugas_luar' => $id_tugas_luar]);
     }
 
     /**

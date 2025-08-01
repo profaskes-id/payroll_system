@@ -147,6 +147,27 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'contentOptions' => ['style' => 'text-align: center; vertical-align: middle;'],
                 ],
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'template' => '{delete}',
+                    'buttons' => [
+                        'delete' => function ($url, $model, $key) {
+                            return Html::a(
+                                '<i class="fas fa-trash"></i>',
+                                ['delete-detail', 'id' => $model->id_detail],
+                                [
+                                    'class' => 'btn btn-sm btn-danger',
+                                    'data' => [
+                                        'confirm' => 'Apakah Anda yakin ingin menghapus detail ini?',
+                                        'method' => 'post',
+                                    ],
+                                    'title' => 'Hapus'
+                                ]
+                            );
+                        }
+                    ],
+                    'contentOptions' => ['style' => 'width: 50px; text-align: center;'],
+                ],
             ],
         ]); ?>
     </div>
