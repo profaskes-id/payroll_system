@@ -32,9 +32,9 @@ class PengajuanTugasLuar extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_karyawan'], 'required'],
+            [['id_karyawan',  'tanggal'], 'required'],
             [['id_karyawan', 'status_pengajuan'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'catatan_approver'], 'safe'],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
         ];
     }
@@ -48,8 +48,10 @@ class PengajuanTugasLuar extends \yii\db\ActiveRecord
             'id_tugas_luar' => 'Id Tugas Luar',
             'id_karyawan' => 'Id Karyawan',
             'status_pengajuan' => 'Status Pengajuan',
+            'tanggal' => 'tanggal',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'catatan_approver' => 'Catatan Approver',
         ];
     }
 

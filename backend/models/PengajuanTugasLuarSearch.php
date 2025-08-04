@@ -18,7 +18,7 @@ class PengajuanTugasLuarSearch extends PengajuanTugasLuar
     {
         return [
             [['id_tugas_luar', 'id_karyawan', 'status_pengajuan'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'tanggal'], 'safe'],
         ];
     }
 

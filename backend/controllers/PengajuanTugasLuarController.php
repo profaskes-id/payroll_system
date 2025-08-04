@@ -70,7 +70,7 @@ class PengajuanTugasLuarController extends Controller
     public function actionCreate()
     {
         $model = new PengajuanTugasLuar();
-
+        $detailModel = new DetailTugasLuar();
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $model->created_at = date('Y-m-d H:i:s');
@@ -102,24 +102,56 @@ class PengajuanTugasLuarController extends Controller
     public function actionUpdate($id_tugas_luar)
     {
         $model = $this->findModel($id_tugas_luar);
+        $detailModels = $model->detailTugasLuars; // Assuming you have this relation
 
-        if ($this->request->isPost && $model->load($this->request->post())) {
+        if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $model->updated_at = date('Y-m-d H:i:s');
-                if ($model->save()) {
-                    //pesan berhasil;
-                    \Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
-                    return $this->redirect(['view', 'id_tugas_luar' => $model->id_tugas_luar]);
-                } else {
-                    //pesan gagal;
-                    \Yii::$app->session->setFlash('danger', 'Data gagal disimpan');
+
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    if ($model->save()) {
+                        // Handle detail data
+                        $details = $this->request->post('DetailTugasLuar', []);
+                        $currentDetails = $model->detailTugasLuars;
+
+                        // Delete removed details
+                        $currentIds = array_column($currentDetails, 'id_detail');
+                        $postedIds = array_column($details, 'id_detail');
+                        $toDelete = array_diff($currentIds, $postedIds);
+                        if ($toDelete) {
+                            DetailTugasLuar::deleteAll(['id_detail' => $toDelete]);
+                        }
+
+                        // Save/update details
+                        foreach ($details as $detailData) {
+                            if (!empty($detailData['id_detail'])) {
+                                $detail = DetailTugasLuar::findOne($detailData['id_detail']);
+                            } else {
+                                $detail = new DetailTugasLuar();
+                                $detail->id_tugas_luar = $model->id_tugas_luar;
+                            }
+
+                            $detail->load($detailData, '');
+                            if (!$detail->save()) {
+                                throw new \Exception('Failed to save detail');
+                            }
+                        }
+
+                        $transaction->commit();
+                        Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
+                        return $this->redirect(['view', 'id_tugas_luar' => $model->id_tugas_luar]);
+                    }
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    Yii::$app->session->setFlash('danger', 'Data gagal disimpan: ' . $e->getMessage());
                 }
             }
-            return $this->redirect(['view', 'id_tugas_luar' => $model->id_tugas_luar]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'detailModels' => $detailModels,
         ]);
     }
 

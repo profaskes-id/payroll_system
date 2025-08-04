@@ -5,11 +5,9 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\PengajuanTugasLuar $model */
 
-$this->title = Yii::t('app', 'Update Pengajuan Tugas Luar: {name}', [
-    'name' => $model->karyawan->nama,
-]);
+$this->title = Yii::t('app', 'Update Pengajuan Tugas Luar');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Pengajuan Tugas Luars'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id_tugas_luar, 'url' => ['view', 'id_tugas_luar' => $model->id_tugas_luar]];
+$this->params['breadcrumbs'][] = ['label' => $model->karyawan->nama, 'url' => ['view', 'id_tugas_luar' => $model->id_tugas_luar]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 <div class="pengajuan-tugas-luar-update">
@@ -22,6 +20,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 
     <?= $this->render('_form', [
         'model' => $model,
+        'detailModels' => $detailModels,
     ]) ?>
 
 </div>

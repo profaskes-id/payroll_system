@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\PengajuanTugasLuar;
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -60,6 +61,16 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($model) {
                         return $model->karyawan->nama;
                     }
+                ],
+                [
+                    'label' => 'Tanggal',
+                    'value' => function ($model) {
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal);
+                        // return date('d-M-Y', strtotime($model->tanggal));
+                    },
+                    'headerOptions' => ['style' => 'text-align: center;'],
+                    'contentOptions' => ['style' => 'text-align: center;'],
                 ],
                 [
                     'headerOptions' => ['style' => 'text-align: center;'],

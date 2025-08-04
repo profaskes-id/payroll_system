@@ -39,7 +39,7 @@ class DetailTugasLuar extends \yii\db\ActiveRecord
     {
         return [
             [['id_tugas_luar', 'keterangan', 'jam_diajukan', 'urutan'], 'required'],
-            [['id_tugas_luar', 'status_check', 'urutan'], 'integer'],
+            [['id_tugas_luar', 'status_check', 'urutan', 'status_pengajuan_detail'], 'integer'],
             [['jam_diajukan', 'jam_check_in', 'created_at', 'updated_at'], 'safe'],
             [['keterangan', 'bukti_foto'], 'string', 'max' => 100],
             [['longitude', 'latitude'], 'string', 'max' => 50],
@@ -65,6 +65,7 @@ class DetailTugasLuar extends \yii\db\ActiveRecord
             'bukti_foto' => 'Bukti Foto',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'status_pengajuan_detail' => 'Status Pengajuan',
         ];
     }
 

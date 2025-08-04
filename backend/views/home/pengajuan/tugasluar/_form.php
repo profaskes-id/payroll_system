@@ -6,12 +6,13 @@ use yii\helpers\Html;
 $form = ActiveForm::begin(); ?>
 
 <div class="relative min-h-[85dvh]">
-    <div class="mb-4">
-        <h2 class="text-lg font-bold text-gray-800">Pengajuan Tugas Luar</h2>
-    </div>
+
 
     <!-- Form utama (pengajuan) -->
     <?= $form->field($model, 'id_karyawan')->hiddenInput()->label(false) ?>
+
+
+    <?= $form->field($model, 'tanggal')->textInput(['required' => true, 'type' => 'date', 'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '])->label(false) ?>
 
     <!-- Detail tugas luar -->
     <div class="mb-4">

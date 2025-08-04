@@ -15,6 +15,8 @@ class m250729_023544_create_pengajuan_tugas_luar_table extends Migration
         $this->createTable('{{%pengajuan_tugas_luar}}', [
             'id_tugas_luar' => $this->primaryKey(),
             'id_karyawan' => $this->integer()->notNull(),
+            'tanggal' => $this->date()->notNull(),
+            'catatan_approver' => $this->text()->null(),
             'status_pengajuan' => $this->smallInteger()->notNull()->defaultValue(0)->comment('0=pending, 1=disetujui, 2=ditolak'),
             'created_at' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'updated_at' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),

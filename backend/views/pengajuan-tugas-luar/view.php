@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
@@ -22,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="table-container table-responsive">
         <p class="d-flex justify-content-start " style="gap: 10px;">
-            <?= Html::a('update', ['update', 'id_tugas_luar' => $model->id_tugas_luar], ['class' => 'add-button']) ?>
+            <?= Html::a('Tanggapi', ['update', 'id_tugas_luar' => $model->id_tugas_luar], ['class' => 'add-button']) ?>
             <?= Html::a('Delete', ['delete', 'id_tugas_luar' => $model->id_tugas_luar], [
                 'class' => 'reset-button',
                 'data' => [
@@ -41,6 +42,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => function ($model) {
                         return $model->karyawan->nama;
                     }
+                ],
+                [
+                    'label' => 'Tanggal',
+                    'value' => function ($model) {
+                        $tanggalFormat = new Tanggal();
+                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal);
+                    },
                 ],
                 [
                     'format' => 'raw',
