@@ -1,3 +1,7 @@
+<?php
+
+use yii\helpers\Html; ?>
+
 <section class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-4 relative z-50">
     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/pengajuan/tugas-luar', 'title' => 'Pengajuan Tugas Luar']); ?>
 
@@ -9,7 +13,7 @@
                     <h2 class="text-xl font-bold text-gray-800 sm:text-2xl">Detail Tugas Luar</h2>
                     <div class="flex flex-col mt-2 space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4 sm:mt-3">
                         <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full w-fit
-                            <?= $model->status_pengajuan == 0 ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800' ?>">
+                <?= $model->status_pengajuan == 0 ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800' ?>">
                             <?= $model->status_pengajuan == 0 ? 'Menunggu Persetujuan' : 'Disetujui' ?>
                         </span>
                         <span class="text-xs text-gray-500 sm:text-sm">
@@ -20,86 +24,102 @@
                         </span>
                     </div>
                 </div>
-                <div class="mt-4 sm:mt-0">
-                    <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 rounded-full w-fit bg-blue-50 sm:px-3">
+
+                <div class="flex flex-wrap items-center gap-2 mt-4">
+                    <!-- Jumlah Tugas -->
+                    <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 rounded-full bg-blue-50 sm:px-3">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-1 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <?= count($model->detailTugasLuars) ?> Tugas
                     </span>
+
+
+                    <div class="relative group">
+                        <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-700 rounded-full bg-gray-50 sm:px-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-1 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                            </svg>
+                            <div class="text-gray-700"><?= Html::encode($model->catatan_approver) ?></div>
+                        </span>
+                    </div>
+
                 </div>
             </div>
         </div>
 
         <!-- Task List -->
         <div class="space-y-2 sm:space-y-3">
+            <?php $counter = 0 ?>
             <?php foreach ($model->detailTugasLuars as $index => $detail): ?>
-                <div class="flex items-center justify-between p-3 transition-all bg-white border border-gray-200 rounded-lg sm:p-5 hover:border-blue-300 hover:shadow-sm group">
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-start">
-                            <div class="flex items-center justify-center flex-shrink-0 w-6 h-6 mt-0.5 mr-2 text-sm font-bold text-blue-600 rounded-full sm:w-8 sm:h-8 sm:text-lg sm:mt-1 sm:mr-3 bg-blue-50">
-                                <?= $index + 1 ?>
-                            </div>
-                            <div class="min-w-0">
-                                <h3 class="text-sm font-semibold text-gray-800 truncate sm:text-lg"><?= $detail->keterangan ?></h3>
-                                <div class="flex flex-wrap items-center mt-0.5 space-x-2 text-xs sm:space-x-4 sm:mt-1 sm:text-sm text-gray-500">
-                                    <span class="flex items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-0.5 sm:w-4 sm:h-4 sm:mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                        <?= date('H:i', strtotime($detail->jam_diajukan)) ?>
-                                    </span>
-                                    <?php if ($detail->status_check == 1): ?>
-                                        <?php
-                                        $jamDiajukan = new DateTime($detail->jam_diajukan);
-                                        $jamCheckIn = new DateTime($detail->jam_check_in);
-                                        $selisih = $jamDiajukan->diff($jamCheckIn);
-
-                                        $menitSelisih = ($selisih->h * 60) + $selisih->i;
-                                        $isLate = $jamCheckIn > $jamDiajukan;
-                                        $selisihText = '';
-
-                                        if ($selisih->h > 0) {
-                                            $selisihText .= $selisih->h . ' jam ';
-                                        }
-                                        if ($selisih->i > 0) {
-                                            $selisihText .= $selisih->i . ' menit';
-                                        }
-                                        $selisihText = trim($selisihText);
-                                        ?>
-
-                                        <span class="flex items-center <?= $isLate ? 'text-red-600' : 'text-green-600' ?>">
+                <?php if ($detail->status_pengajuan_detail == 1): ?>
+                    <div class="flex items-center justify-between p-3 transition-all bg-white border border-gray-200 rounded-lg sm:p-5 hover:border-blue-300 hover:shadow-sm group">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start">
+                                <div class="flex items-center justify-center flex-shrink-0 w-6 h-6 mt-0.5 mr-2 text-sm font-bold text-blue-600 rounded-full sm:w-8 sm:h-8 sm:text-lg sm:mt-1 sm:mr-3 bg-blue-50">
+                                    <?= $counter + 1 ?>
+                                </div>
+                                <div class="min-w-0">
+                                    <h3 class="text-sm font-semibold text-gray-800 truncate sm:text-lg"><?= $detail->keterangan ?></h3>
+                                    <div class="flex flex-wrap items-center mt-0.5 space-x-2 text-xs sm:space-x-4 sm:mt-1 sm:text-sm text-gray-500">
+                                        <span class="flex items-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-0.5 sm:w-4 sm:h-4 sm:mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
-                                            <?= date('H:i', strtotime($detail->jam_check_in)) ?>
-                                            <span class="ml-1 text-xs <?= $isLate ? 'text-red-500' : 'text-green-500' ?>">
-                                                (<?= $isLate ? '+' : '-' ?><?= $selisihText ?>)
-                                            </span>
+                                            <?= date('H:i', strtotime($detail->jam_diajukan)) ?>
                                         </span>
-                                    <?php endif; ?>
+                                        <?php if ($detail->status_check == 1): ?>
+                                            <?php
+                                            $jamDiajukan = new DateTime($detail->jam_diajukan);
+                                            $jamCheckIn = new DateTime($detail->jam_check_in);
+                                            $selisih = $jamDiajukan->diff($jamCheckIn);
+
+                                            $menitSelisih = ($selisih->h * 60) + $selisih->i;
+                                            $isLate = $jamCheckIn > $jamDiajukan;
+                                            $selisihText = '';
+
+                                            if ($selisih->h > 0) {
+                                                $selisihText .= $selisih->h . ' jam ';
+                                            }
+                                            if ($selisih->i > 0) {
+                                                $selisihText .= $selisih->i . ' menit';
+                                            }
+                                            $selisihText = trim($selisihText);
+                                            ?>
+
+                                            <span class="flex items-center <?= $isLate ? 'text-red-600' : 'text-green-600' ?>">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 mr-0.5 sm:w-4 sm:h-4 sm:mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                <?= date('H:i', strtotime($detail->jam_check_in)) ?>
+                                                <span class="ml-1 text-xs <?= $isLate ? 'text-red-500' : 'text-green-500' ?>">
+                                                    (<?= $isLate ? '+' : '-' ?><?= $selisihText ?>)
+                                                </span>
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="ml-2 sm:ml-4">
-                        <?php if ($detail->status_check == 1): ?>
-                            <div class="flex items-center justify-center w-8 h-8 rounded-full shadow-sm sm:w-12 sm:h-12 bg-gradient-to-br from-green-400 to-green-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white sm:w-6 sm:h-6" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        <?php else: ?>
-                            <button class="flex items-center justify-center w-8 h-8 transition-all rounded-full shadow-sm sm:w-12 sm:h-12 check-in-btn bg-gradient-to-br from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 hover:shadow-md"
-                                data-id="<?= $detail->id_detail ?>">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white sm:w-6 sm:h-6" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        <?php endif; ?>
+                        <div class="ml-2 sm:ml-4">
+                            <?php if ($detail->status_check == 1): ?>
+                                <div class="flex items-center justify-center w-8 h-8 rounded-full shadow-sm sm:w-12 sm:h-12 bg-gradient-to-br from-green-400 to-green-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white sm:w-6 sm:h-6" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                            <?php else: ?>
+                                <button class="flex items-center justify-center w-8 h-8 transition-all rounded-full shadow-sm sm:w-12 sm:h-12 check-in-btn bg-gradient-to-br from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 hover:shadow-md"
+                                    data-id="<?= $detail->id_detail ?>">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white sm:w-6 sm:h-6" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                </div>
+                <?php endif; ?>
             <?php endforeach; ?>
         </div>
     </div>
@@ -137,7 +157,7 @@
                 </div>
 
                 <!-- Add this new section for photo upload -->
-                <div class="p-3 rounded-lg sm:p-4 bg-gray-50">
+                <!-- <div class="p-3 rounded-lg sm:p-4 bg-gray-50">
                     <div class="flex items-center">
                         <div class="flex-shrink-0 p-1 text-blue-600 bg-blue-100 rounded-full sm:p-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -152,7 +172,19 @@
                             <p class="mt-1 text-xs text-gray-500">Foto akan digunakan sebagai bukti check-in</p>
                         </div>
                     </div>
+                </div> -->
+
+
+                <div class="space-y-2">
+                    <input type="file"
+                        id="buktiFoto"
+                        name="bukti_foto"
+                        accept="image/*"
+                        class="block w-full text-xs text-gray-700 border border-gray-300 rounded-lg cursor-pointer file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 sm:text-sm">
+
+
                 </div>
+
 
                 <input type="hidden" id="detailId">
             </div>

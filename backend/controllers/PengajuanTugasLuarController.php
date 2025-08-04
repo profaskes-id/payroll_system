@@ -70,17 +70,99 @@ class PengajuanTugasLuarController extends Controller
     public function actionCreate()
     {
         $model = new PengajuanTugasLuar();
-        $detailModel = new DetailTugasLuar();
+        $detailModels = [new DetailTugasLuar()]; // Default satu detail kosong
+
         if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model->created_at = date('Y-m-d H:i:s');
-                if ($model->save()) {
-                    //pesan berhasil;
-                    \Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
+            $postData = $this->request->post();
+            $transaction = Yii::$app->db->beginTransaction();
+
+            try {
+                // Load dan simpan model utama
+                if ($model->load($postData)) {
+                    $model->status_pengajuan = $model->isNewRecord ? 0 : $model->status_pengajuan;
+                    $model->created_at = date('Y-m-d H:i:s');
+                    $model->updated_at = date('Y-m-d H:i:s');
+
+                    if (!$model->save()) {
+                        throw new \Exception('Gagal menyimpan pengajuan tugas luar: ' . json_encode($model->errors));
+                    }
+
+                    // Proses detail jika ada
+                    if (isset($postData['DetailTugasLuar']) && is_array($postData['DetailTugasLuar'])) {
+                        // Delete existing details if editing
+                        if (!$model->isNewRecord) {
+                            DetailTugasLuar::deleteAll(['id_tugas_luar' => $model->id_tugas_luar]);
+                        }
+
+                        $detailDataToInsert = [];
+                        $urutan = 1;
+
+                        foreach ($postData['DetailTugasLuar'] as $detailData) {
+                            // Validasi data detail
+                            if (empty($detailData['keterangan'])) {
+                                throw new \Exception('Keterangan detail tidak boleh kosong');
+                            }
+
+                            $detailDataToInsert[] = [
+                                'id_tugas_luar' => $model->id_tugas_luar,
+                                'keterangan' => $detailData['keterangan'],
+                                'jam_diajukan' => $detailData['jam_diajukan'] ?? null,
+                                'status_pengajuan_detail' => $detailData['status_pengajuan_detail'] ?? 1,
+                                'status_check' => 0,
+                                'urutan' => $urutan++,
+                                'created_at' => date('Y-m-d H:i:s'),
+                                'updated_at' => date('Y-m-d H:i:s'),
+                            ];
+                        }
+
+                        // Gunakan batch insert untuk efisiensi
+                        $batchInsertCount = Yii::$app->db->createCommand()
+                            ->batchInsert(
+                                DetailTugasLuar::tableName(),
+                                [
+                                    'id_tugas_luar',
+                                    'keterangan',
+                                    'jam_diajukan',
+                                    'status_pengajuan_detail',
+                                    'status_check',
+                                    'urutan',
+                                    'created_at',
+                                    'updated_at'
+                                ],
+                                $detailDataToInsert
+                            )
+                            ->execute();
+
+                        if ($batchInsertCount !== count($detailDataToInsert)) {
+                            throw new \Exception('Gagal menyimpan semua detail tugas');
+                        }
+
+                        // Validasi minimal ada 1 detail
+                        if (empty($detailDataToInsert)) {
+                            throw new \Exception('Setidaknya harus ada satu lokasi tugas');
+                        }
+                    } else {
+                        throw new \Exception('Data detail tugas tidak ditemukan');
+                    }
+
+                    $transaction->commit();
+                    Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
                     return $this->redirect(['view', 'id_tugas_luar' => $model->id_tugas_luar]);
                 } else {
-                    //pesan gagal;
-                    \Yii::$app->session->setFlash('danger', 'Data gagal disimpan');
+                    throw new \Exception('Gagal memproses data pengajuan');
+                }
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::$app->session->setFlash('danger', $e->getMessage());
+
+                // Kembalikan data yang sudah diinput untuk ditampilkan kembali
+                if (isset($postData['DetailTugasLuar'])) {
+                    $detailModels = [];
+                    foreach ($postData['DetailTugasLuar'] as $detailData) {
+                        $detailModel = new DetailTugasLuar();
+                        $detailModel->attributes = $detailData;
+                        $detailModels[] = $detailModel;
+                    }
                 }
             }
         } else {
@@ -89,8 +171,11 @@ class PengajuanTugasLuarController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'detailModels' => $detailModels,
         ]);
     }
+
+
 
     /**
      * Updates an existing PengajuanTugasLuar model.
@@ -102,49 +187,92 @@ class PengajuanTugasLuarController extends Controller
     public function actionUpdate($id_tugas_luar)
     {
         $model = $this->findModel($id_tugas_luar);
-        $detailModels = $model->detailTugasLuars; // Assuming you have this relation
+        $detailModels = $model->detailTugasLuars;
+
+        if (empty($detailModels)) {
+            $detailModels = [new DetailTugasLuar()];
+        }
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                $model->updated_at = date('Y-m-d H:i:s');
+            $postData = $this->request->post();
+            $transaction = Yii::$app->db->beginTransaction();
 
-                $transaction = Yii::$app->db->beginTransaction();
-                try {
-                    if ($model->save()) {
-                        // Handle detail data
-                        $details = $this->request->post('DetailTugasLuar', []);
-                        $currentDetails = $model->detailTugasLuars;
+            try {
+                // Load and save main model
+                if ($model->load($postData)) {
+                    $model->updated_at = date('Y-m-d H:i:s');
 
-                        // Delete removed details
-                        $currentIds = array_column($currentDetails, 'id_detail');
-                        $postedIds = array_column($details, 'id_detail');
-                        $toDelete = array_diff($currentIds, $postedIds);
-                        if ($toDelete) {
-                            DetailTugasLuar::deleteAll(['id_detail' => $toDelete]);
-                        }
-
-                        // Save/update details
-                        foreach ($details as $detailData) {
-                            if (!empty($detailData['id_detail'])) {
-                                $detail = DetailTugasLuar::findOne($detailData['id_detail']);
-                            } else {
-                                $detail = new DetailTugasLuar();
-                                $detail->id_tugas_luar = $model->id_tugas_luar;
-                            }
-
-                            $detail->load($detailData, '');
-                            if (!$detail->save()) {
-                                throw new \Exception('Failed to save detail');
-                            }
-                        }
-
-                        $transaction->commit();
-                        Yii::$app->session->setFlash('success', 'Data berhasil disimpan');
-                        return $this->redirect(['view', 'id_tugas_luar' => $model->id_tugas_luar]);
+                    if (!$model->save()) {
+                        throw new \Exception('Gagal menyimpan pengajuan: ' . json_encode($model->errors));
                     }
-                } catch (\Exception $e) {
-                    $transaction->rollBack();
-                    Yii::$app->session->setFlash('danger', 'Data gagal disimpan: ' . $e->getMessage());
+
+                    // Process detail data
+                    $details = $postData['DetailTugasLuar'] ?? [];
+
+                    // Get existing detail IDs
+                    $existingDetails = DetailTugasLuar::find()
+                        ->where(['id_tugas_luar' => $model->id_tugas_luar])
+                        ->indexBy('id_detail')
+                        ->all();
+
+                    $savedDetails = [];
+                    $urutan = 1;
+
+                    foreach ($details as $detailData) {
+                        if (!empty($detailData['id_detail']) && isset($existingDetails[$detailData['id_detail']])) {
+                            // Update existing detail
+                            $detail = $existingDetails[$detailData['id_detail']];
+                            unset($existingDetails[$detailData['id_detail']]); // Remove from delete list
+                        } else {
+                            // Create new detail
+                            $detail = new DetailTugasLuar();
+                            $detail->id_tugas_luar = $model->id_tugas_luar;
+                            $detail->created_at = date('Y-m-d H:i:s');
+                        }
+
+                        // Set default values if not provided
+                        $detailData['status_check'] = $detailData['status_check'] ?? 0;
+                        $detailData['status_pengajuan_detail'] = $detailData['status_pengajuan_detail'] ?? 1;
+                        $detailData['urutan'] = $urutan++;
+
+                        $detail->updated_at = date('Y-m-d H:i:s');
+
+                        if (!$detail->load($detailData, '') || !$detail->save()) {
+                            throw new \Exception(
+                                'Gagal menyimpan detail: ' . json_encode($detail->errors) .
+                                    ' Data: ' . json_encode($detailData)
+                            );
+                        }
+
+                        $savedDetails[] = $detail;
+                    }
+
+                    // Delete details that were removed
+                    if (!empty($existingDetails)) {
+                        DetailTugasLuar::deleteAll(['id_detail' => array_keys($existingDetails)]);
+                    }
+
+                    // Validate at least one detail exists
+                    if (empty($savedDetails)) {
+                        throw new \Exception('Setidaknya harus ada satu detail tugas');
+                    }
+
+                    $transaction->commit();
+                    Yii::$app->session->setFlash('success', 'Data berhasil diperbarui');
+                    return $this->redirect(['view', 'id_tugas_luar' => $model->id_tugas_luar]);
+                } else {
+                    throw new \Exception('Gagal memproses data pengajuan');
+                }
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::$app->session->setFlash('danger', 'Gagal menyimpan: ' . $e->getMessage());
+
+                // Reload detail models for form
+                $detailModels = [];
+                foreach ($postData['DetailTugasLuar'] as $detailData) {
+                    $detail = new DetailTugasLuar();
+                    $detail->attributes = $detailData;
+                    $detailModels[] = $detail;
                 }
             }
         }
@@ -154,7 +282,6 @@ class PengajuanTugasLuarController extends Controller
             'detailModels' => $detailModels,
         ]);
     }
-
     /**
      * Deletes an existing PengajuanTugasLuar model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

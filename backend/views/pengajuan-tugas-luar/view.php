@@ -155,6 +155,27 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'contentOptions' => ['style' => 'text-align: center; vertical-align: middle;'],
                 ],
+
+
+                [
+                    'format' => 'raw',
+                    'attribute' => 'status_pengajuan_detail',
+                    'label' => 'Status',
+                    'value' => function ($model) {
+                        if ($model->status_pengajuan_detail !== null) {
+                            if (strtolower($model->status_pengajuan_detail) == 0) {
+                                return "<span class='text-capitalize text-warning '>Pending</span>";
+                            } elseif (strtolower($model->status_pengajuan_detail) == 1) {
+                                return "<span class='text-capitalize text-success '>disetujui</span>";
+                            } elseif (strtolower($model->status_pengajuan_detail) == 2) {
+                                return "<span class='text-capitalize text-danger '>ditolak</span>";
+                            }
+                        } else {
+                            return "<span class='text-danger'>master kode tidak aktif</span>";
+                        }
+                    },
+                ],
+
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'template' => '{delete}',

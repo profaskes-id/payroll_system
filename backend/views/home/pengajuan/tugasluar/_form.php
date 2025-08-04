@@ -6,13 +6,14 @@ use yii\helpers\Html;
 $form = ActiveForm::begin(); ?>
 
 <div class="relative min-h-[85dvh]">
-
-
     <!-- Form utama (pengajuan) -->
     <?= $form->field($model, 'id_karyawan')->hiddenInput()->label(false) ?>
 
-
-    <?= $form->field($model, 'tanggal')->textInput(['required' => true, 'type' => 'date', 'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '])->label(false) ?>
+    <?= $form->field($model, 'tanggal')->textInput([
+        'required' => true,
+        'type' => 'date',
+        'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
+    ])->label(false) ?>
 
     <!-- Detail tugas luar -->
     <div class="mb-4">
@@ -33,12 +34,18 @@ $form = ActiveForm::begin(); ?>
 
                     <?= $form->field($detail, "[$i]keterangan", [
                         'options' => ['class' => 'mb-3'],
-                        'inputOptions' => ['class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5']
+                        'inputOptions' => [
+                            'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5',
+                            'required' => true
+                        ]
                     ])->textInput()->label('Keterangan (Contoh: Ke Jakarta untuk meeting)') ?>
 
                     <?= $form->field($detail, "[$i]jam_diajukan", [
                         'options' => ['class' => 'mb-3'],
-                        'inputOptions' => ['class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5']
+                        'inputOptions' => [
+                            'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5',
+                            'required' => true
+                        ]
                     ])->input('time')->label('Jam Diajukan') ?>
                 </div>
             <?php endforeach; ?>
@@ -92,7 +99,7 @@ $form = ActiveForm::begin(); ?>
                 <input type="time" name="DetailTugasLuar[${lokasiCount}][jam_diajukan]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
             </div>
         </div>
-    `;
+        `;
 
         // Tambah lokasi baru
         addButton.addEventListener('click', function() {

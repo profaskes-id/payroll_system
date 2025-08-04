@@ -13,7 +13,6 @@ use yii\widgets\ActiveForm;
 
 <div class="pengajuan-tugas-luar-form table-container">
     <div class="card">
-
         <div class="card-body">
             <?php $form = ActiveForm::begin(); ?>
 
@@ -91,26 +90,17 @@ use yii\widgets\ActiveForm;
                                                 'class' => 'form-control form-control-sm'
                                             ])->label(false) ?>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-6">
                                             <?= $form->field($detailModel, "[$index]jam_diajukan", [
                                                 'options' => ['class' => 'mb-1']
                                             ])->input('time', [
                                                 'class' => 'form-control form-control-sm'
                                             ])->label(false) ?>
                                         </div>
-                                        <div class="col-md-3">
-                                            <?= $form->field($detailModel, "[$index]urutan", [
-                                                'options' => ['class' => 'mb-1']
-                                            ])->input('number', [
-                                                'min' => 1,
-                                                'placeholder' => 'Urutan',
-                                                'class' => 'form-control form-control-sm'
-                                            ])->label(false) ?>
-                                        </div>
                                     </div>
 
                                     <div class="mt-1 row g-1">
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="mb-1 form-group">
                                                 <small class="text-muted">Status Detail</small>
                                                 <div>
@@ -139,40 +129,6 @@ use yii\widgets\ActiveForm;
                                             </div>
                                         </div>
 
-                                        <?php if ($model->status_pengajuan == 1): ?>
-                                            <div class="col-md-4">
-                                                <?= $form->field($detailModel, "[$index]jam_check_in", [
-                                                    'options' => ['class' => 'mb-1']
-                                                ])->input('time', [
-                                                    'class' => 'form-control form-control-sm'
-                                                ])->label('Check In', ['class' => 'small text-muted']) ?>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="mb-1 form-group">
-                                                    <small class="text-muted">Status Check</small>
-                                                    <div>
-                                                        <?= Html::radioList(
-                                                            "DetailTugasLuar[$index][status_check]",
-                                                            $detailModel->status_check ?? 0,
-                                                            [0 => 'Belum', 1 => 'Sudah'],
-                                                            [
-                                                                'item' => function ($index, $label, $name, $checked, $value) {
-                                                                    $id = 'status_check_' . $index;
-                                                                    $checked = $checked ? 'checked' : '';
-                                                                    return "
-                                                        <div class='form-check form-check-inline'>
-                                                            <input class='form-check-input' type='radio' name='{$name}' id='{$id}' value='{$value}' {$checked}>
-                                                            <label class='form-check-label' for='{$id}'>
-                                                                {$label}
-                                                            </label>
-                                                        </div>";
-                                                                }
-                                                            ]
-                                                        ) ?>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <?php endif; ?>
                                     </div>
 
                                     <div class="mt-1 d-flex justify-content-end">
@@ -208,53 +164,47 @@ $js = <<<JS
 // Add new detail item
 $('#add-detail').click(function() {
     var index = $('.detail-item').length;
+    var uniqueId = Date.now() + index; // Membuat ID unik
+    
     var html = `
         <div class="mb-2 detail-item card" data-index="\${index}">
             <div class="p-2 card-body">
                 <div class="row g-1">
                     <div class="col-md-6">
                         <div class="mb-1 form-group">
-                            <input type="text" id="detailtugasluar-\${index}-keterangan" 
+                            <input type="text" id="detailtugasluar-\${uniqueId}-keterangan" 
                                 class="form-control form-control-sm" 
                                 name="DetailTugasLuar[\${index}][keterangan]" 
                                 placeholder="Contoh: Ke Jakarta untuk meeting">
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <div class="mb-1 form-group">
-                            <input type="time" id="detailtugasluar-\${index}-jam_diajukan" 
+                            <input type="time" id="detailtugasluar-\${uniqueId}-jam_diajukan" 
                                 class="form-control form-control-sm" 
                                 name="DetailTugasLuar[\${index}][jam_diajukan]">
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="mb-1 form-group">
-                            <input type="number" id="detailtugasluar-\${index}-urutan" 
-                                class="form-control form-control-sm" 
-                                name="DetailTugasLuar[\${index}][urutan]" 
-                                min="1" placeholder="Urutan">
                         </div>
                     </div>
                 </div>
 
                 <div class="mt-1 row g-1">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="mb-1 form-group">
                             <small class="text-muted">Status Detail</small>
                             <div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" 
                                         name="DetailTugasLuar[\${index}][status_pengajuan_detail]" 
-                                        id="detailtugasluar-\${index}-status_pengajuan_detail1" 
+                                        id="detailtugasluar-\${uniqueId}-status_pengajuan_detail1" 
                                         value="1" checked>
-                                    <label class="form-check-label" for="detailtugasluar-\${index}-status_pengajuan_detail1">Disetujui</label>
+                                    <label class="form-check-label" for="detailtugasluar-\${uniqueId}-status_pengajuan_detail1">Disetujui</label>
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" 
                                         name="DetailTugasLuar[\${index}][status_pengajuan_detail]" 
-                                        id="detailtugasluar-\${index}-status_pengajuan_detail2" 
+                                        id="detailtugasluar-\${uniqueId}-status_pengajuan_detail2" 
                                         value="2">
-                                    <label class="form-check-label" for="detailtugasluar-\${index}-status_pengajuan_detail2">Ditolak</label>
+                                    <label class="form-check-label" for="detailtugasluar-\${uniqueId}-status_pengajuan_detail2">Ditolak</label>
                                 </div>
                             </div>
                         </div>
@@ -284,8 +234,6 @@ $(document).on('click', '.remove-detail', function() {
             $(this).find('[name*="DetailTugasLuar"]').each(function() {
                 var name = $(this).attr('name').replace(/\[\d+\]/, '[' + newIndex + ']');
                 $(this).attr('name', name);
-                var id = $(this).attr('id').replace(/\d+/, newIndex);
-                $(this).attr('id', id);
             });
         });
     }
