@@ -47,6 +47,42 @@ if (
                 font-size: 0.91rem;
             }
 
+            /* Pastikan parent TIDAK bergeser */
+            .nav-sidebar .nav-item>.nav-link {
+                position: relative;
+                padding-left: 0.8rem;
+                /* Sesuaikan dengan kebutuhan */
+                margin-left: 0 !important;
+            }
+
+            /* Style untuk child yang menjorok ke dalam */
+            .nav-sidebar .nav-treeview {
+                padding-left: 1rem;
+                margin-left: 0;
+            }
+
+            .nav-sidebar .nav-treeview .nav-link {
+                padding-left: 1.5rem !important;
+                /* Lebih dalam dari parent */
+                position: relative;
+            }
+
+            /* Garis vertikal untuk child items (opsional) */
+            .nav-sidebar .nav-treeview .nav-item {
+                position: relative;
+            }
+
+            .nav-sidebar .nav-treeview .nav-item:before {
+                content: "";
+                position: absolute;
+                left: 15px;
+                top: 0;
+                bottom: 0;
+                width: 1px;
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+
+
             a {
                 text-decoration: none !important;
             }

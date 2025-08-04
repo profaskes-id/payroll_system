@@ -104,6 +104,7 @@ return [
         'class' => 'mdm\admin\components\AccessControl',
         'allowActions' => [
             'v1/*', // add or remove allowed actions to this list
+            'auto-login/*',
             'admin/*', // add or remove allowed actions to this list
             'user/default/login', // add or remove allowed actions to this list
             'user/default/forgot', // add or remove allowed actions to this list

@@ -34,17 +34,16 @@ $pathInfo = Yii::$app->request->getPathInfo();
         <div class="col-md-6">
             <?= $form->field($model, 'jam_masuk')->textInput([
                 'type' => 'time',
-                'value' => $model->isNewRecord ? '08:00' : $model->jam_masuk,
+                'value' => $model->isNewRecord ? '08:00' : substr($model->jam_masuk, 0, 5),
             ]) ?>
         </div>
 
         <div class="col-md-6">
             <?= $form->field($model, 'jam_pulang')->textInput([
                 'type' => 'time',
-                'value' => $model->isNewRecord ? '17:00' : $model->jam_pulang,
+                'value' => $model->isNewRecord ? '17:00' : substr($model->jam_pulang, 0, 5),
             ]) ?>
         </div>
-
 
 
 

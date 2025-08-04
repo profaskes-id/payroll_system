@@ -113,16 +113,23 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                                 </a>
                             </div>
                         </div>
-                        <p class="mt-10 text-sm text-center text-gray-500">
-                            Shift anda akan direkap otomatis sesuai jam absensi anda
-                        </p>
+
+
+                        <!-- Warning Box -->
+                        <div id="warningBox" class="flex items-center justify-between p-2 mx-4 mt-4 text-sm text-black bg-yellow-200 rounded-lg">
+Pastikan alamat Anda sudah muncul di bagian berwarna biru di atas sebagai tanda bahwa lokasi Anda telah terdeteksi.
+Setelah itu, pilih shift yang sesuai, lalu klik Absen Masuk.
+Jika  absensi tidak terkirim, silakan scroll ke bawah untuk melihat apakah terlambat atau terlalu jauh                        <button id="closeWarning" class="px-2 font-bold text-black hover:text-gray-700">×</button>
+                        </div>
+
+
                     <?php endif; ?>
 
 
 
 
 
-                    <br><br>
+                    <br>
 
 
                     <?php if ($dataJam['today'] || $manualShift == 0) : ?>
@@ -175,6 +182,7 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                                 </div>
                             <?php endif ?>
                         <?php else: ?>
+
                             <?php $formAbsen = ActiveForm::begin([
                                 'method' => 'post',
                                 'id' => 'my-form',
@@ -182,9 +190,7 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                             ]) ?>
                             <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'latitude'])->label(false) ?>
                             <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'longitude'])->label(false) ?>
-
                             <?php if ($dataJam['karyawan']['is_shift'] && $manual_shift == 0): ?>
-
                                 <?php
                                 // Ambil data shift dari database (pastikan ini sudah dijalankan sebelumnya)
                                 $dataShift = ShiftKerja::find()->asArray()->all();
@@ -198,20 +204,20 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                                 }
                                 ?>
 
-                                <div class="max-w-md mx-auto space-y-3">
+                                <div class="max-w-md mx-auto">
                                     <?= $formAbsen->field($model, 'id_shift')->radioList($shiftOptions, [
                                         'item' => function ($index, $label, $name, $checked, $value) {
                                             return "
-                <div>
+                <div class='inline-block w-1/2 px-1 mb-2'>
                     <input type='radio' name='{$name}' id='shift-{$value}' value='{$value}' class='hidden peer' " . ($checked ? 'checked' : '') . ">
-                    <label for='shift-{$value}' class='block p-3 text-sm font-medium text-gray-600 transition bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-400 hover:bg-blue-100'>
+                    <label for='shift-{$value}' class='block p-3 text-sm font-medium text-center text-gray-600 transition bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-400 hover:bg-blue-100'>
                         {$label}
                     </label>
                 </div>";
-                                        }
+                                        },
+                                        'class' => 'flex flex-wrap -mx-1' // Container untuk radio items
                                     ])->label(false) ?>
                                 </div>
-
                             <?php endif; ?>
 
 
@@ -322,6 +328,21 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#closeWarning").click(function() {
+            $("#warningBox").hide();
+        });
+    });
+
+setTimeout(() => {
+    
+    $("#warningBox").hide();
+}, 7000);
+</script>
+
 <?php
 $redirectUrl = Yii::getAlias('@web');
 ?>
@@ -357,6 +378,8 @@ $redirectUrl = Yii::getAlias('@web');
         box-shadow: none !important;
     }
 </style>
+
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

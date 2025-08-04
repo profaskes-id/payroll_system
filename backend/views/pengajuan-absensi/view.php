@@ -10,7 +10,7 @@ $tanggalFormat = new Tanggal();
 /** @var yii\web\View $this */
 /** @var backend\models\PengajuanAbsensi $model */
 
-$this->title = "Pengajuan Absensi dari : " .  $model->karyawan->nama;
+$this->title = "Pengajuan Absensi " . $model->karyawan->nama;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Pengajuan Absensis'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);

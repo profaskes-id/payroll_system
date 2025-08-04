@@ -9,6 +9,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
 use amnah\yii2\user\models\User;
+use backend\models\Absensi;
 use yii\widgets\ActiveForm;
 
 class AbsensiTertinggalController extends Controller
@@ -77,11 +78,7 @@ class AbsensiTertinggalController extends Controller
             throw new \yii\web\ForbiddenHttpException('Anda tidak memiliki akses untuk mengubah data ini.');
         }
 
-        // Only allow update if status is pending (0)
-        if ($model->status != 0) {
-            Yii::$app->session->setFlash('error', 'Data hanya bisa diubah saat status Pending.');
-            return $this->redirect(['index']);
-        }
+
 
         if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
             Yii::$app->response->format = Response::FORMAT_JSON;
@@ -89,6 +86,9 @@ class AbsensiTertinggalController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post())) {
+
+
+
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'Pengajuan absensi berhasil diperbarui.');
                 return $this->redirect(['index']);

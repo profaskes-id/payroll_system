@@ -14,6 +14,41 @@ use yii\grid\GridView;
 $this->title = 'Rekap Absensi';
 $this->params['breadcrumbs'][] = $this->title;
 $tanggal = new Tanggal;
+
+function formatJamDesimal($decimalHours)
+{
+    // Handle null
+    if ($decimalHours === null) {
+        return '00:00';
+    }
+
+    // Handle empty string or non-numeric values
+    if (!is_numeric($decimalHours)) {
+        return '00:00';
+    }
+
+    // Handle 0
+    if ((float)$decimalHours == 0) {
+        return '00:00';
+    }
+
+    $decimalHours = (float)$decimalHours;
+    $hours = floor(abs($decimalHours));
+    $minutes = round((abs($decimalHours) - $hours) * 60);
+
+    // Handle overflow minutes (jika menit >= 60)
+    if ($minutes >= 60) {
+        $hours += 1;
+        $minutes -= 60;
+    }
+
+    // Handle negative values
+    $sign = ($decimalHours < 0) ? '-' : '';
+
+    return $sign . sprintf("%02d:%02d", $hours, $minutes);
+}
+
+
 ?>
 <div class="absensi-index position-relative">
     <div class="row">
@@ -32,7 +67,7 @@ $tanggal = new Tanggal;
         $params['tanggal_akhir'] = isset($tanggal_akhir) ? $tanggal_akhir : '';
         ?>
 
-        <div class="col-3 col-md-2">
+        <div class="mt-2 mt-md-0 col-md-2">
             <p class="d-block">
                 <?= Html::a(
                     'Print to PDF <i class="fa fa-print"></i>',
@@ -41,7 +76,7 @@ $tanggal = new Tanggal;
                 ) ?>
             </p>
         </div>
-        <div class="col-3 col-md-2">
+        <div class="mt-2 mt-md-0 col-md-2">
             <p class="d-block">
                 <?= Html::a(
                     'Export to exel <i class="fa fa-table"></i>',
@@ -95,11 +130,11 @@ $tanggal = new Tanggal;
                             <?= $item ?>
                         </td>
                     <?php endforeach ?>
-                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Total Hadir</td>
-                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Jumlah Terlambat</td>
-                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Total Telambat</td>
-                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Total Lembur</td>
-                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Lama Lembur</td>
+                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Total Hadir <span class="text-sm">(Hari)</span></td>
+                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Jumlah Terlambat <span class="text-sm">(X)</span></td>
+                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Total Telambat <span class="text-sm">(Jam)</span></td>
+                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Total Lembur (X)</td>
+                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Lama Lembur (jam)</td>
                 </tr>
             </thead>
 
@@ -166,7 +201,7 @@ $tanggal = new Tanggal;
                                                 echo $data['total_lembur'];
                                                 break;
                                             case $lastIndex - 1:
-                                                echo $data['jumlah_jam_lembur'];
+                                                echo formatJamDesimal($data['jumlah_jam_lembur']);
                                                 break;
                                         }
                                         ?>
@@ -196,7 +231,9 @@ $tanggal = new Tanggal;
 
                                             <?php elseif ($data['is_terlambat'] == 1) : ?>
                                                 <span style='color: red;'><?= $data['status_hadir'] ?></span><br />
-                                                <span style='color: red;'><?= $data['lama_terlambat'] ?></span><br />
+                                                <span style='color: red;'>
+                                                    <?= isset($data['lama_terlambat']) && $data['lama_terlambat'] ? date('H:i', strtotime($data['lama_terlambat'])) : '00:00' ?>
+                                                </span><br />
 
                                             <?php else : ?>
                                                 <span style='color: black;'><?= $data['status_hadir'] ?></span>
@@ -228,7 +265,7 @@ $tanggal = new Tanggal;
                 <!-- Summary columns -->
                 <td colspan="5" style="font-weight:bold; text-align:center; background-color: #dee2e6; color:#000; border:1px solid #000">
                 </td>
-             
+
             </tr>
 
             <!-- 2. Tidak Hadir -->
@@ -243,7 +280,7 @@ $tanggal = new Tanggal;
                 <?php endforeach; ?>
 
                 <!-- Summary columns -->
-               <td colspan="5" style="font-weight:bold; text-align:center; background-color: #dee2e6; color:#000; border:1px solid #000">
+                <td colspan="5" style="font-weight:bold; text-align:center; background-color: #dee2e6; color:#000; border:1px solid #000">
                 </td>
             </tr>
 
@@ -262,7 +299,7 @@ $tanggal = new Tanggal;
                 <?php endforeach; ?>
 
                 <!-- Summary columns -->
-               <td colspan="5" style="font-weight:bold; text-align:center; background-color: #dee2e6; color:#000; border:1px solid #000">
+                <td colspan="5" style="font-weight:bold; text-align:center; background-color: #dee2e6; color:#000; border:1px solid #000">
                 </td>
         </table>
     </div>

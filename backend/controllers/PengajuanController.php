@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use amnah\yii2\user\models\User;
 use backend\models\AtasanKaryawan;
+use backend\models\DetailTugasLuar;
 use backend\models\helpers\EmailHelper;
 use backend\models\helpers\NotificationHelper;
 use backend\models\Karyawan;
@@ -11,10 +12,12 @@ use backend\models\MasterCuti;
 use backend\models\PengajuanCuti;
 use backend\models\PengajuanDinas;
 use backend\models\PengajuanLembur;
+use backend\models\PengajuanTugasLuar;
 use backend\models\PengajuanWfh;
 use backend\models\RekapCuti;
 use backend\models\SettinganUmum;
 use DateTime;
+use ReflectionFunctionAbstract;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
@@ -25,7 +28,7 @@ class PengajuanController extends \yii\web\Controller
 
     public function beforeAction($action)
     {
-        if ($action->id == 'lembur-delete') {
+        if ($action->id == 'lembur-delete' || $action->id == "checkin-tugas-luar") {
             // Menonaktifkan CSRF verification untuk aksi 'view'
             $this->enableCsrfValidation = false;
         }
@@ -53,12 +56,191 @@ class PengajuanController extends \yii\web\Controller
         return Yii::getAlias('@backend/views/');
     }
 
-
-
     public function actionIndex()
     {
         return $this->redirect(['/home']);
     }
+
+
+
+
+
+
+
+
+    public function actionTugasLuar()
+    {
+        $this->layout = 'mobile-main';
+
+        $id_karyawan = Yii::$app->user->identity->id_karyawan;
+
+        if (!$id_karyawan) {
+            Yii::$app->session->setFlash('success', 'Dibutuhkan Id Karyawan');
+            return $this->redirect(['/']);
+        }
+        $pengajuanTugasLuar = PengajuanTugasLuar::find()->where(['id_karyawan' => $id_karyawan])->orderBy(['status_pengajuan' => SORT_ASC,])->all();
+        return $this->render('/home/pengajuan/tugasluar/index', compact('pengajuanTugasLuar'));
+    }
+
+
+
+    public function actionTugasLuarCreate()
+    {
+        $this->layout = 'mobile-main';
+        $model = new PengajuanTugasLuar();
+        $details = [new DetailTugasLuar()]; // Array untuk menyimpan detail tugas
+
+        // Set default values
+        $model->id_karyawan = Yii::$app->user->identity->id_karyawan;
+        $model->status_pengajuan = 0; // Set default status pending
+
+        if ($model->load(Yii::$app->request->post())) {
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                // Simpan model utama terlebih dahulu
+                if (!$model->save(false)) {
+                    throw new \Exception('Gagal menyimpan pengajuan tugas luar.');
+                }
+
+                // Proses detail tugas luar
+                $details = [];
+                if (isset($_POST['DetailTugasLuar']) && is_array($_POST['DetailTugasLuar'])) {
+                    foreach ($_POST['DetailTugasLuar'] as $i => $detailData) {
+                        $detail = new DetailTugasLuar();
+                        $detail->attributes = $detailData;
+                        $detail->id_tugas_luar = $model->id_tugas_luar;
+                        $detail->urutan = $i + 1;
+                        $detail->status_check = 0; // Default belum check in
+
+                        if (!$detail->save(false)) {
+                            throw new \Exception('Gagal menyimpan detail tugas luar.');
+                        }
+                        $details[] = $detail;
+                    }
+                }
+
+                // Validasi minimal 1 detail
+                if (empty($details)) {
+                    throw new \Exception('Setidaknya harus ada satu lokasi tugas.');
+                }
+
+                $transaction->commit();
+                Yii::$app->session->setFlash('success', 'Pengajuan tugas luar berhasil disimpan.');
+                return $this->redirect(['index']); // Ganti dengan route yang sesuai
+
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::$app->session->setFlash('error', 'Gagal menyimpan pengajuan: ' . $e->getMessage());
+
+                // Kembalikan detail yang sudah diinput untuk ditampilkan kembali di form
+                $details = [];
+                if (isset($_POST['DetailTugasLuar']) && is_array($_POST['DetailTugasLuar'])) {
+                    foreach ($_POST['DetailTugasLuar'] as $detailData) {
+                        $detail = new DetailTugasLuar();
+                        $detail->attributes = $detailData;
+                        $details[] = $detail;
+                    }
+                }
+                if (empty($details)) {
+                    $details = [new DetailTugasLuar()];
+                }
+            }
+        }
+
+        return $this->render('/home/pengajuan/tugasluar/create', [
+            'model' => $model,
+            'details' => $details,
+        ]);
+    }
+
+
+
+
+
+
+    public function actionTugasLuarDetail($id)
+    {
+        $this->layout = 'mobile-main';
+
+        $id_karyawan = Yii::$app->user->identity->id_karyawan;
+
+        if (!$id_karyawan) {
+            Yii::$app->session->setFlash('success', 'Dibutuhkan Id Karyawan');
+            return $this->redirect(['/']);
+        }
+        $pengajuanTugasLuar = PengajuanTugasLuar::find()->where(['id_karyawan' => $id_karyawan, 'id_tugas_luar' => $id])->orderBy(['status_pengajuan' => SORT_ASC,])->one();
+
+
+        $detail = $pengajuanTugasLuar->detailTugasLuars;
+
+        return $this->render('/home/pengajuan/tugasluar/detail', [
+            "model" => $pengajuanTugasLuar,
+            "detail" => $detail
+        ]);
+    }
+
+
+    // PHP (Server-side - Controller)
+    public function actionCheckinTugasLuar($id)
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $model = DetailTugasLuar::findOne($id);
+        if (!$model) {
+            return ['success' => false, 'message' => 'Data tidak ditemukan'];
+        }
+
+        $request = Yii::$app->request;
+        $model->latitude = $request->post('latitude');
+        $model->longitude = $request->post('longitude');
+        $model->jam_check_in = date('Y-m-d H:i:s');
+        $model->status_check = 1;
+        $model->updated_at = date('Y-m-d H:i:s');
+
+        // Handle file upload
+        $uploadedFile = \yii\web\UploadedFile::getInstanceByName('bukti_foto');
+        if ($uploadedFile) {
+            $fileName = 'bukti_' . $model->id_detail . '_' . time() . '.' . $uploadedFile->extension;
+            $filePath = Yii::getAlias('@webroot/uploads/bukti_tugas_luar/') . $fileName;
+
+            // Create directory if not exists
+            $dir = Yii::getAlias('@webroot/uploads/bukti_tugas_luar/');
+            if (!file_exists($dir)) {
+                mkdir($dir, 0777, true);
+            }
+
+            if ($uploadedFile->saveAs($filePath)) {
+                $model->bukti_foto = $fileName;
+            } else {
+                return ['success' => false, 'message' => 'Gagal menyimpan file'];
+            }
+        }
+
+        if ($model->save()) {
+            return ['success' => true, 'message' => 'Check-in berhasil'];
+        } else {
+            Yii::error("Error saving model: " . print_r($model->errors, true));
+            return [
+                'success' => false,
+                'message' => 'Gagal menyimpan data',
+                'errors' => $model->errors
+            ];
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // ?=================================Pengajuan cuti
     public function actionCuti()
     {
