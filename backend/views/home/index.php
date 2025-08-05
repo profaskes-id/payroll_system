@@ -1,317 +1,367 @@
 <?php
 
-use backend\assets\AppAsset;
-use backend\models\Absensi;
-use backend\models\Karyawan;
-use backend\models\SettinganUmum;
 use yii\helpers\Html;
 
-/** @var yii\web\View $this */
-/** @var yii\data\ActiveDataProvider $dataProvider */
-
-
-$this->title = 'Absensis';
-
+$this->title = 'Dashboard';
 $this->params['breadcrumbs'][] = $this->title;
-
 ?>
 
-
-<!-- Demo styles -->
-<style>
-    html,
-    body {
-        position: relative;
-        height: 100%;
-    }
-
-    .swiper {
-        width: 100%;
-        height: 200px;
-    }
-
-    .swiper-slide {
-        background: #fff;
-    }
-
-    .swiper-slide img {
-        display: block;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-</style>
-
-<?php // $this->render('@backend/views/components/_header'); 
-?>
-
-
-<section class="overflow-x-hidden ">
-    <div class="">
-        <div class="h-[400px]  md:h-[200px] lg:h-[300px]">
-            <div class="bg-[#faf9f9] lg:bg-white h-[200px] lg:px-5">
-
-                <div class="grid grid-cols-12 pt-5">
-
-                    <section class="col-span-12 ">
-                        <div class="flex justify-between px-5 lg:items-start lg:flex-col ">
-                            <div class="hidden w-full lg:block">
-                                <div class="flex items-center justify-between space-x-16 ">
-                                    <div class="flex justify-between w-full align-center">
-                                        <h1 id="clock" class="flex items-end justify-end text-6xl font-bold md:text-8xl">
-                                            <span id="hours">00</span>:<span id="minutes">00</span><span class="text-[22px] lg:text-[50px]">:</span><span class="text-[22px] lg:text-[50px]" id="seconds">00</span>
-                                        </h1>
-                                    </div>
-                                    <p id="date" class="mt-2 font-medium text-gray-500 text-md"></p>
-                                </div>
-
-                            </div>
-                            <div class="mt-3">
-
-                                <p class="text-xl font-bold uppercase lg:text-3xl ">
-                                    <?= htmlspecialchars($karyawan->nama, ENT_QUOTES, 'UTF-8') ?>
-                                </p>
-                                <p class="text-sm text-gray-500 uppercase">
-                                    <?= htmlspecialchars($karyawan->kode_karyawan, ENT_QUOTES, 'UTF-8') ?>
-                                </p>
-
-                            </div>
-                            <div class="relative flex items-center gap-3">
-                                <?= Html::a('
-                                <div class="relative z-50 grid border border-gray-300 rounded-full lg:hidden w-11 h-11 place-items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
-                                <path fill="#9e9e9e" d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89l.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7s-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.95 8.95 0 0 0 13 21a9 9 0 0 0 0-18m-1 5v5l4.25 2.52l.77-1.28l-3.52-2.09V8z" />
-                                </svg>
-                                </div>
-              
-                                 ', ['/home/view', 'id_user' => Yii::$app->user->identity->id]) ?>
-
-
-                                <?php if ($is_ada_notif > 0): ?>
-                                    <div class="absolute right-0 z-10 w-4 h-4 bg-red-500 rounded-full md:hidden bottom-3 ">
-
-                                    </div>
-                                    <?= Html::a('
-                                <div class="relative z-50 grid border border-gray-300 rounded-full lg:hidden w-11 h-11 place-items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="#9e9e9e" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.268 21a2 2 0 0 0 3.464 0m-10.47-5.674A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg>
-                                </div>
-                                
-                                ', ['/home/inbox', 'id_user' => Yii::$app->user->identity->id]) ?>
-                                <?php else: ?>
-                                    <?= Html::a('
-                                <div class="relative z-50 grid border border-gray-300 rounded-full lg:hidden w-11 h-11 place-items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="#9e9e9e" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.268 21a2 2 0 0 0 3.464 0m-10.47-5.674A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg>
-                                </div>
-                                
-                                ', ['/home/inbox', 'id_user' => Yii::$app->user->identity->id]) ?>
-                                <?php endif ?>
-
+<div class="min-h-screen bg-gray-50 ">
+    <!-- Header Section -->
+    <header class="relative z-50 text-white shadow-lg bg-gradient-to-r from-blue-600 to-blue-800">
+        <div class="container px-4 py-4 mx-auto md:px-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <!-- User Profile Section -->
+                <div class="flex items-center justify-between md:justify-start">
+                    <div class="flex items-center">
+                        <!-- User Avatar -->
+                        <div class="relative w-12 h-12 overflow-hidden bg-white rounded-full shadow-md">
+                            <div class="absolute inset-0 flex items-center justify-center bg-blue-100">
+                                <span class="text-xl font-bold text-blue-600 uppercase">
+                                    <?= substr($karyawan->nama, 0, 1) ?>
+                                </span>
                             </div>
                         </div>
 
-                    </section>
-
-
-                    <section class="col-span-12 my-10">
-                        <div class="relative content-start justify-center gap-5 p-5 lg:p-0">
-                            <div class="w-full h-full bg-white  overflow-hidden rounded-[20px]">
-                                <div>
-                                    <div class="">
-                                        <a href="/panel/home/pengumuman">
-                                            <div class="grid w-full h-full md:h-[150px] grid-cols-12">
-                                                <div class="h-full col-span-4 ">
-                                                    <img src="<?= Yii::getAlias('@root') . "/images/icons/toa.jpg" ?>" class="object-cover md:h-[150px]" alt="toa">
-
-                                                </div>
-                                                <div class="relative flex flex-col items-start justify-start w-full h-full col-span-8 p-3">
-                                                    <h1 class="text-xl font-bold text-black"> Informasi Pengumuman</h1>
-                                                    <div class="w-full mt-4">
-                                                        <p class="pb-2 text-sm text-gray-500">Lihat informasi pengumuman terbaru dari admin</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-
+                        <!-- User Info -->
+                        <div class="ml-4">
+                            <h1 class="text-xl font-bold md:text-2xl"><?= Html::encode($karyawan->nama) ?></h1>
+                            <p class="text-sm text-blue-100"><?= Html::encode($karyawan->kode_karyawan) ?></p>
                         </div>
-                    </section>
+                    </div>
+
+                    <!-- Mobile Menu Button (hidden on desktop) -->
+                    <!-- <button class="p-2 rounded-full md:hidden hover:bg-blue-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button> -->
                 </div>
 
+                <!-- Right Side Controls -->
+                <div class="flex items-center justify-between mt-4 md:mt-0">
+                    <!-- Time Display -->
+                    <div class="flex items-center px-4 py-2 bg-blue-700 rounded-lg shadow-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div class="text-center">
+                            <div class="flex items-baseline">
+                                <span id="hours" class="text-xl font-bold md:text-2xl">00</span>
+                                <span class="text-xl font-bold md:text-2xl">:</span>
+                                <span id="minutes" class="text-xl font-bold md:text-2xl">00</span>
+                            </div>
+                            <p id="date" class="text-xs text-blue-100"></p>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex items-center ml-4 space-x-2">
+                        <!-- Notification Button -->
+                        <div class="relative">
+                            <?= Html::a(
+                                '<div class="p-2 transition-colors duration-200 rounded-full hover:bg-blue-700">' .
+                                    '<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">' .
+                                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />' .
+                                    '</svg>' .
+                                    ($is_ada_notif > 0 ? '<span class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full"></span>' : '') .
+                                    '</div>',
+                                ['/home/inbox', 'id_user' => Yii::$app->user->identity->id]
+                            ) ?>
+                        </div>
+
+                        <!-- Refresh Button -->
+                        <?= Html::a(
+                            '<div class="p-2 transition-colors duration-200 rounded-full hover:bg-blue-700">' .
+                                '<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">' .
+                                '<path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.95 8.95 0 0 0 13 21a9 9 0 0 0 0-18m-1 5v5l4.25 2.52.77-1.28-3.52-2.09V8z" />' .
+                                '</svg>' .
+                                '</div>',
+                            ['/home/view', 'id_user' => Yii::$app->user->identity->id]
+                        ) ?>
+
+                        <!-- User Menu (Dropdown) -->
+                        <!-- <div class="relative ml-2">
+                            <button class="p-1 rounded-full hover:bg-blue-700 focus:outline-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                                </svg>
+                            </button>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative Bottom Border -->
+        <div class="absolute bottom-0 left-0 right-0 h-1 opacity-50 bg-gradient-to-r from-blue-400 to-blue-600"></div>
+    </header>
+
+    <!-- Enhanced Announcement Banner -->
+    <div class="container relative z-50 px-4 mx-auto mt-6 md:px-6 ">
+        <div class="relative overflow-hidden transition-all duration-300 bg-white shadow-lg rounded-xl hover:shadow-xl group">
+            <!-- Decorative gradient background -->
+            <div class="absolute inset-0 z-0 opacity-10 bg-gradient-to-r from-blue-500 via-purple-500 to-red-500"></div>
+
+            <!-- Animated wave pattern -->
+            <div class="absolute bottom-0 left-0 w-full h-8 overflow-hidden transform translate-y-1">
+                <svg class="absolute bottom-0 left-0 w-full text-white" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                    <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"
+                        class="fill-current opacity-20"
+                        style="color: #3b82f6;"></path>
+                    <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z"
+                        class="opacity-50 fill-current"
+                        style="color: #3b82f6;"></path>
+                    <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z"
+                        class="fill-current"
+                        style="color: #3b82f6;"></path>
+                </svg>
+            </div>
+
+            <a href="/panel/home/pengumuman" class="relative z-50 flex flex-col md:flex-row ">
+                <!-- Image with gradient overlay -->
+                <div class="relative md:w-2/5">
+                    <!-- Gradient overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-l-xl"></div>
+
+                    <!-- SVG Speaker/Announcement Icon -->
+                    <div class="flex items-center justify-center w-full h-48 md:h-full bg-blue-50 rounded-l-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8a3 3 0 0 1 0 6M18 8a3 3 0 0 0 0-6H5.75A1.75 1.75 0 0 0 4 3.75v8.5c0 .966.784 1.75 1.75 1.75H18z" />
+                            <path d="M8 15v2a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-2" />
+                            <path d="M12 15V9" />
+                            <path d="M9 12h6" />
+                        </svg>
+                    </div>
+
+                    <!-- Decorative badge -->
+                    <span class="absolute z-50 px-3 py-1 text-xs font-bold text-white uppercase transform rounded-full shadow-lg bg-gradient-to-r from-red-500 to-pink-500 -rotate-6 -top-0 -right-3">
+                        New!
+                    </span>
+
+                    <!-- Decorative pulse animation -->
+                    <div class="absolute top-0 left-0 flex items-center justify-center w-full h-full">
+                        <div class="absolute w-16 h-16 bg-blue-400 rounded-full opacity-0 animate-ping-slow"></div>
+                    </div>
+                </div>
+                <!-- Content with improved typography -->
+                <div class="p-6 md:w-3/5">
+                    <div class="flex items-center mb-2">
+                        <h2 class="text-2xl font-bold text-gray-800">Informasi Pengumuman</h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 ml-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+
+                    <p class="mb-4 text-gray-600">Update terbaru dari manajemen untuk seluruh karyawan</p>
+
+                    <!-- Improved CTA button -->
+                    <div class="inline-flex items-center px-4 py-2 mt-2 space-x-2 text-sm font-medium text-white transition-all duration-200 transform bg-blue-600 rounded-lg group-hover:bg-blue-700 group-hover:scale-105">
+                        <span>Lihat selengkapnya</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+
+                    <!-- Decorative dots -->
+                    <div class="absolute bottom-0 right-0 hidden mb-6 mr-6 space-x-1 md:flex">
+                        <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+                        <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
+                        <div class="w-2 h-2 bg-red-400 rounded-full"></div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Animated corner accent -->
+            <div class="absolute top-0 right-0 w-16 h-16 overflow-hidden">
+                <div class="absolute w-32 h-8 transform rotate-45 bg-blue-500 -right-8 top-4"></div>
             </div>
         </div>
     </div>
 
-    <div data-aos="fade-up" data-aos-duration="800" class="w-[70px] h-[5px] bg-slate-900 rounded-xl   -mt-24 md:mt-10 mx-auto"></div>
-
-
-
-    <?php if ($jamKerjaToday && $jamKerjaToday['is_shift'] != 0): ?>
-
-        <?php
-        $setting = SettinganUmum::find()
-            ->where(['kode_setting' => Yii::$app->params['change_shift']])
-            ->select('nilai_setting')
-            ->scalar(); // ambil langsung nilai_setting-nya
-        ?>
-
-        <?php if ($dataShift === null): ?>
-            <div class="mt-10 font-semibold text-center text-red-600">
-                Data shift Anda belum ada untuk hari ini.
-            </div>
-        <?php else: ?>
-            <?php if ($manual_shift == 1): ?>
-                <div class="flex justify-end w-[90%] mx-auto rounded-full overflow-hidden mt-10 relative">
-                    <a class="block w-full p-3 overflow-hidden text-center text-white bg-slate-900"
-                        href="/panel/home/<?= $setting == 1 ? 'change-shift' : 'pengajuan-shift' ?>?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>">
-                        <div class="flex flex-row items-center justify-around overflow-hidden">
-                            <p class="font-semibold"><?= $dataShift['nama_shift'] ?? '-' ?></p>
-                            <p class="font-semibold"><?= $dataShift['jam_masuk'] ?? '-' ?></p>
-                            <p class="font-semibold"><?= $dataShift['jam_keluar'] ?? '-' ?></p>
+    <!-- Shift Information -->
+    <?php if ($jamKerjaToday && $jamKerjaToday['is_shift'] != 0 && $dataShift !== null): ?>
+        <div class="container relative z-50 px-4 mx-auto mt-8 md:px-6">
+            <div class="p-4 bg-blue-600 rounded-lg shadow-md">
+                <div class="flex flex-col items-center justify-between md:flex-row">
+                    <div class="text-center text-white md:text-left">
+                        <h3 class="text-lg font-semibold">Jadwal Shift Hari Ini</h3>
+                        <p class="text-blue-100"><?= $dataShift['nama_shift'] ?? '-' ?></p>
+                    </div>
+                    <div class="flex items-center mt-4 space-x-4 md:mt-0">
+                        <div class="text-center text-white">
+                            <p class="text-sm text-blue-100">Jam Masuk</p>
+                            <p class="font-bold"><?= $dataShift['jam_masuk'] ?? '-' ?></p>
                         </div>
-                    </a>
+                        <div class="text-center text-white">
+                            <p class="text-sm text-blue-100">Jam Keluar</p>
+                            <p class="font-bold"><?= $dataShift['jam_keluar'] ?? '-' ?></p>
+                        </div>
+                    </div>
+                    <?php if ($manual_shift == 1): ?>
+                        <a href="/panel/home/<?= $setting == 1 ? 'change-shift' : 'pengajuan-shift' ?>?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>"
+                            class="px-4 py-2 mt-4 text-sm font-medium text-blue-600 bg-white rounded-md hover:bg-blue-50 md:mt-0">
+                            Ubah Shift
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php if ($manual_shift == 1): ?>
+                <div class="mt-2 text-center">
+                    <a href="/panel/home/lihat-shift?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>"
+                        class="text-sm text-blue-600 hover:underline">Lihat Detail Shift</a>
                 </div>
             <?php endif; ?>
-        <?php endif; ?>
-
-        <?php if ($manual_shift == 1): ?>
-            <p class="relative pt-2 text-center">
-                <a href="/panel/home/lihat-shift?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>" class="mt-4 underline capitalize text-primary underline-offset-2">Show More</a>
-            </p>
-        <?php endif; ?>
+        </div>
     <?php endif; ?>
 
-
-
-    <br>
-
-
-    <div class="relative grid w-full grid-cols-12 gap-2 px-5 mt-5 mb-20 min-w-screen">
-
-        <div class="w-[120px]   aspect-square bg-slate-900 rounded-full absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2  overflow-hidden    block md:hidden xl:block  "></div>
-        <div class="w-[120px]   aspect-square bg-slate-900 rounded-full absolute left-1/2 top-2/3 -translate-x-1/2 -translate-y-1/2  overflow-hidden    block md:hidden xl:block "></div>
-
-        <a href="/panel/pengajuan/lembur" class="col-span-6 " data-aos-duration="1000" data-aos="fade-up-right">
-            <div class=" flex-col col-span-6 bg-blue-500 py-5 w-[45vw] md:w-[38dvw] h-[22vh] relative z-50 rounded-[50px] flex justify-center items-center">
-                <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
-                    <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/alarm.png" alt="calendar" width="30px" height="30px">
-                </div>
-                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white"><span>Pengajuan</span> <span>Lembur</span></p>
-            </div>
-        </a>
-        <a href="/panel/pengajuan/dinas" class="col-span-6 " data-aos-duration="1000" data-aos="fade-up-left">
-            <div class=" flex-col col-span-6 bg-slate-900 py-5 w-[45vw] md:w-[38dvw] h-[22vh] relative z-50 rounded-[50px] flex justify-center items-center">
-                <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
-                    <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/building.png" alt="building" width="30px" height="30px">
-                </div>
-                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white" style="font-size: 15px !important;"><span>Pengajuan</span> <span>Dinas Luar</span></p>
-            </div>
-        </a>
-
-
-        <a href="/panel/pengajuan/wfh" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-right">
-            <div class=" flex justify-center items-center flex-col bg-slate-900 py-5 w-[45vw] md:w-[38dvw] h-[22vh] relative z-50 rounded-[50px] ">
-                <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
-                    <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/wfh.svg" alt="calendar" width="40px" height="40px">
-                </div>
-                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white"><span>Pengajuan</span> <span>WFH</span></p>
-            </div>
-        </a>
-        <a href="/panel/pengajuan/cuti" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-left">
-            <div class=" flex justify-center items-center flex-col bg-blue-500 py-5 w-[45vw] md:w-[38dvw] h-[22vh] relative z-50 rounded-[50px] ">
-                <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
-                    <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/calendar.png" alt="calendar" width="40px" height="40px">
-                </div>
-                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white"><span>Pengajuan</span> <span>Cuti</span></p>
-            </div>
-        </a>
-
-        <a href="/panel/absensi-tertinggal" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-left">
-            <div class=" flex justify-center items-center flex-col bg-blue-500 py-5 w-[40vw] md:w-[38dvw]  h-[22vh] relative z-50 rounded-[50px] ">
-                <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
-                    <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/timelate.png" alt="calendar" width="40px" height="40px">
-                </div>
-                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white"><span>Pengajuan</span> <span>Absensi</span></p>
-            </div>
-        </a>
-        <a href="/panel/pengajuan/tugas-luar" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-right">
-            <div class=" flex justify-center items-center flex-col bg-slate-900 py-5 w-[40vw] md:w-[38dvw] h-[23vh] relative z-50 rounded-[50px] ">
-                <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
-                    <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/todo.png" alt="calendar" width="38px" height="38px">
-                </div>
-                <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-white"><span>Pengajuan</span> <span>Tugas Luar</span></p>
-            </div>
-        </a>
-    </div>
-
-    <?php
-    $karyawan =  Karyawan::find()->select('is_atasan')->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan])->asArray()->one();
-
-    if ($karyawan['is_atasan'] == 1) : ?>
-
-
-
-        <h1 class="font-bold ms-5">Pengajuan Karyawan</h1>
-        <div class="relative grid w-full grid-cols-12 gap-2 px-5 mt-5 mb-20 min-w-screen">
-
-            <div class="w-[120px]  aspect-square bg-[#fff] rounded-full absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2  overflow-hidden     ">
-
-                <div class=" flex justify-center items-center flex-col bg-[#ffc27c] w-full h-full rounded-[50px] rotate-180" data-aos="zoom-in" data-aos-delay="1000" style="z-index: -99999; position: relative;" data-aos-duration="500">
-                </div>
-
-            </div>
-
-
-            <a href="/panel/tanggapan/wfh" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-right">
-                <div class=" flex justify-center items-center flex-col bg-[#ede8fe] py-5 w-[45vw] md:w-[38dvw] h-[22vh] relative z-50 rounded-[50px] ">
-                    <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
-                        <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/wfh.svg" alt="calendar" width="40px" height="40px">
+    <!-- Quick Actions Grid -->
+    <div class="container relative z-40 px-4 py-8 mx-auto md:px-6">
+        <h2 class="mb-6 text-xl font-bold text-gray-800">Pengajuan Cepat</h2>
+        <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            <!-- Lembur -->
+            <a href="/panel/pengajuan/lembur" class="transition transform hover:scale-105">
+                <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
+                    <div class="p-3 mb-4 bg-blue-100 rounded-full">
+                        <!-- Icon Lembur -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                     </div>
-                    <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-black/80"><span>Tanggapan</span> <span>WFH</span></p>
+                    <h3 class="font-medium text-center text-gray-700">Lembur</h3>
                 </div>
             </a>
-            <a href="/panel/tanggapan/cuti" class="col-span-6 " data-aos-duration="1000" data-aos="fade-down-left">
-                <div class=" flex justify-center items-center flex-col bg-[#f2fee8] py-5 w-[45vw] md:w-[38dvw] h-[22vh] relative z-50 rounded-[50px] ">
-                    <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
-                        <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/calendar.png" alt="calendar" width="40px" height="40px">
+
+            <!-- Dinas Luar -->
+            <a href="/panel/pengajuan/dinas" class="transition transform hover:scale-105">
+                <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
+                    <div class="p-3 mb-4 bg-blue-100 rounded-full">
+                        <!-- Icon Dinas -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7l4-4m0 0l4 4m-4-4v18m-7-4h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
                     </div>
-                    <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-black/80"><span>Tanggapan</span> <span>Cuti</span></p>
+                    <h3 class="font-medium text-center text-gray-700">Dinas Luar</h3>
                 </div>
             </a>
-            <a href="/panel/tanggapan/lembur" class="col-span-6 " data-aos-duration="1000" data-aos="fade-up-right">
-                <div class=" flex-col col-span-6 bg-[#ffe3e3] py-5 w-[45vw] md:w-[38dvw] h-[22vh] relative z-50 rounded-[50px] flex justify-center items-center">
-                    <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
-                        <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/alarm.png" alt="calendar" width="30px" height="30px">
+
+            <!-- WFH -->
+            <a href="/panel/pengajuan/wfh" class="transition transform hover:scale-105">
+                <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
+                    <div class="p-3 mb-4 bg-blue-100 rounded-full">
+                        <!-- Icon WFH -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                        </svg>
                     </div>
-                    <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-black/80"><span>Tanggapan</span> <span>Lembur</span></p>
+                    <h3 class="font-medium text-center text-gray-700">WFH</h3>
                 </div>
             </a>
-            <a href="/panel/tanggapan/dinas" class="col-span-6 " data-aos-duration="1000" data-aos="fade-up-left">
-                <div class=" flex-col col-span-6 bg-[#ebeefd] py-5 w-[45vw] md:w-[38dvw] h-[22vh] relative z-50 rounded-[50px] flex justify-center items-center">
-                    <div class="w-[50px] h-[50px] bg-white rounded-full p-1.5 grid place-items-center">
-                        <img src="<?php echo Yii::getAlias('@root') ?>/images/icons/building.png" alt="building" width="30px" height="30px">
+
+            <!-- Cuti -->
+            <a href="/panel/pengajuan/cuti" class="transition transform hover:scale-105">
+                <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
+                    <div class="p-3 mb-4 bg-blue-100 rounded-full">
+                        <!-- Icon Cuti -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
                     </div>
-                    <p class="flex flex-col items-center justify-center mt-5 mb-1 font-semibold text-black/80" style="font-size: 15px !important;"><span>Tanggapan</span> <span>Dinas </span></p>
+                    <h3 class="font-medium text-center text-gray-700">Cuti</h3>
+                </div>
+            </a>
+
+            <!-- Absensi Tertinggal -->
+            <a href="/panel/absensi-tertinggal" class="transition transform hover:scale-105">
+                <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
+                    <div class="p-3 mb-4 bg-blue-100 rounded-full">
+                        <!-- Icon Absensi -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                    </div>
+                    <h3 class="font-medium text-center text-gray-700">Deviasi Absensi</h3>
+                </div>
+            </a>
+
+            <!-- Tugas Luar -->
+            <a href="/panel/pengajuan/tugas-luar" class="transition transform hover:scale-105">
+                <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
+                    <div class="p-3 mb-4 bg-blue-100 rounded-full">
+                        <!-- Icon Tugas -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-medium text-center text-gray-700">Tugas Luar</h3>
                 </div>
             </a>
         </div>
-    <?php endif ?>
+    </div>
 
-</section>
+    <!-- For Supervisors -->
+    <?php if ($karyawan['is_atasan'] == 1): ?>
+        <div class="container px-4 py-8 mx-auto bg-blue-50 md:px-6">
+            <h2 class="mb-6 text-xl font-bold text-gray-800">Persetujuan Pengajuan</h2>
+            <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+                <!-- WFH Approval -->
+                <a href="/panel/tanggapan/wfh" class="transition transform hover:scale-105">
+                    <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
+                        <div class="p-3 mb-4 bg-purple-100 rounded-full">
+                            <!-- Icon WFH -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-medium text-center text-gray-700">WFH</h3>
+                    </div>
+                </a>
 
+                <!-- Cuti Approval -->
+                <a href="/panel/tanggapan/cuti" class="transition transform hover:scale-105">
+                    <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
+                        <div class="p-3 mb-4 bg-green-100 rounded-full">
+                            <!-- Icon Cuti -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-medium text-center text-gray-700">Cuti</h3>
+                    </div>
+                </a>
 
+                <!-- Lembur Approval -->
+                <a href="/panel/tanggapan/lembur" class="transition transform hover:scale-105">
+                    <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
+                        <div class="p-3 mb-4 bg-red-100 rounded-full">
+                            <!-- Icon Lembur -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-medium text-center text-gray-700">Lembur</h3>
+                    </div>
+                </a>
 
+                <!-- Dinas Approval -->
+                <a href="/panel/tanggapan/dinas" class="transition transform hover:scale-105">
+                    <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
+                        <div class="p-3 mb-4 bg-blue-100 rounded-full">
+                            <!-- Icon Dinas -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7l4-4m0 0l4 4m-4-4v18m-7-4h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-medium text-center text-gray-700">Dinas</h3>
+                    </div>
+                </a>
+            </div>
+        </div>
+    <?php endif; ?>
+</div>
 
-
-
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-    AOS.init();
-</script>
-
-<script>
+    // Update clock
     function updateClock() {
         const now = new Date();
         const hours = String(now.getHours()).padStart(2, '0');
@@ -324,9 +374,9 @@ $this->params['breadcrumbs'][] = $this->title;
     }
 
     setInterval(updateClock, 1000);
-    updateClock(); // Call it once to avoid delay
+    updateClock();
 
-
+    // Update date
     function updateDate() {
         const now = new Date();
         const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -340,5 +390,3 @@ $this->params['breadcrumbs'][] = $this->title;
     }
     updateDate();
 </script>
-
-<!-- Initialize Swiper -->

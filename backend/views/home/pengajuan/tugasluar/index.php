@@ -18,7 +18,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 ?>
 
 <div class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5 relative z-50">
-    <?php // $this->render('@backend/views/components/_header', ['link' => '/panel/home', 'title' => 'Pengajuan Tugas Luar']); 
+    <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home', 'title' => 'Pengajuan Tugas Luar']);
     ?>
 
 

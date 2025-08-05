@@ -6,7 +6,7 @@ use amnah\yii2\user\models\User;
 <section class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5 relative z-50">
     <?= $this->render('@backend/views/components/_header', [
         'link' => '/panel/absensi-tertinggal',
-        'title' => 'Detail Pengajuan Absensi'
+        'title' => 'Detail Deviasi  Absensi'
     ]); ?>
 
     <div class="bg-gray-100/50 w-full h-[80dvh] rounded-md p-2">

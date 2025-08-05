@@ -7,7 +7,7 @@ use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Update Pengajuan WFH Karyawan');
 ?>
-<div class="mx-3 mt-5 md:mx-10">
+<div class="relative z-50 mx-3 mt-5 md:mx-10">
     <div class="flex items-center justify-between">
         <h1 class="mb-6 text-base font-bold md:text-2xl "><?= Html::encode($this->title) ?></h1>
         <p class="">

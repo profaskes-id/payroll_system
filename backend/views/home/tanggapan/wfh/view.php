@@ -9,7 +9,7 @@ use yii\helpers\Html;
 $tanggalFormater = new Tanggal();
 ?>
 
-<div class="container p-6 mx-auto">
+<div class="container p-6 mx-auto relative z-[50]">
 
 
     <div class="flex items-center justify-between">
@@ -24,7 +24,7 @@ $tanggalFormater = new Tanggal();
     <div class="flex items-center justify-between my-5">
         <div class="flex justify-start space-x-4">
 
-            <?= Html::a('Tanggapi', ['wfh-update', 'id' => $model['id_pengajuan_wfh']], ['class' => 'tw-add px-6 relative']) ?>
+            <?= Html::a('Tanggapi', ['wfh-update', 'id' => $model['id_pengajuan_wfh']], ['class' => 'tw-add bg-blue-500 px-6 relative']) ?>
             <?= Html::a('Delete', ['wfh-delete', 'id_pengajuan_wfh' => $model['id_pengajuan_wfh']], [
                 'class' => 'tw-add bg-rose-500 px-5 relative'
             ]) ?>
@@ -63,12 +63,26 @@ $tanggalFormater = new Tanggal();
                     <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['alamat']) ?></td>
                 </tr>
                 <tr>
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Longitude</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['longitude']) ?></td>
-                </tr>
-                <tr>
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Latitude</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['latitude']) ?></td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Lokasi</td>
+                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
+                        <?php if (!empty($model['latitude']) && !empty($model['longitude'])): ?>
+                            <a href="https://www.google.com/maps?q=<?= Html::encode($model['latitude']) ?>,<?= Html::encode($model['longitude']) ?>"
+                                target="_blank"
+                                class="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-600 rounded-md bg-blue-50 hover:bg-blue-100 hover:text-blue-700"
+                                title="Buka di Google Maps">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                Lihat Peta
+                            </a>
+                            <div class="mt-1 text-xs text-gray-500">
+                                Lat: <?= Html::encode($model['latitude']) ?>, Long: <?= Html::encode($model['longitude']) ?>
+                            </div>
+                        <?php else: ?>
+                            <span class="text-gray-400">-</span>
+                        <?php endif; ?>
+                    </td>
                 </tr>
                 <tr>
                     <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Tanggal</td>

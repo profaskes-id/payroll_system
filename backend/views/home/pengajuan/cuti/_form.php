@@ -6,9 +6,10 @@ use yii\helpers\ArrayHelper;
 
 $form = ActiveForm::begin(); ?>
 
-<div class="relative min-h-[85dvh] ">
+<div class="relative ">
 
 
+    <p class="-mb-3 text-base capitalize">click untuk memilih jenis cuti</p>
     <div class="grid grid-cols-2 gap-5 my-4">
         <?php foreach ($jenisCuti as $key => $value) : ?>
             <div>

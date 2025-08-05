@@ -10,9 +10,9 @@
 <body class="pb-[250px]">
 
 
-    <div class="w-full mx-auto sm:px-6 lg:px-8 h-[120dvh]  px-5">
+    <div class="w-full mx-auto sm:px-6 lg:px-8 h-[120dvh]  px-5 relative z-500">
         <?= $this->render('@backend/views/components/_header', ['title' => 'Pengumuman', 'link' => '/panel/home/pengumuman']); ?>
-        <div class="bg-gray-50 rounded-md p-5">
+        <div class="p-5 rounded-md bg-gray-50">
 
             <h1 class="text-[#272727] text-2xl font-bold my-5"><?= $pengumuman->judul ?></h1>
             <h1 class="text-[#272727]//80 my-5"><?= $pengumuman->deskripsi ?></h1>

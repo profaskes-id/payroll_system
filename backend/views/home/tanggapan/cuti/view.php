@@ -11,7 +11,7 @@ $tanggalFormater = new Tanggal();
 
 ?>
 
-<div class="container p-6 mx-auto">
+<div class="container relative z-50 p-6 mx-auto">
 
 
     <div class="flex items-center justify-between">
@@ -26,7 +26,7 @@ $tanggalFormater = new Tanggal();
     <div class="flex items-center justify-between my-5">
         <div class="flex justify-start space-x-4">
 
-            <?php echo Html::a('Tanggapi', ['cuti-update', 'id_pengajuan_cuti' => $model['id_pengajuan_cuti']], ['class' => 'tw-add px-6 relative']) ?>
+            <?php echo Html::a('Tanggapi', ['cuti-update', 'id_pengajuan_cuti' => $model['id_pengajuan_cuti']], ['class' => 'tw-add bg-blue-500 px-6 relative']) ?>
             <?php echo Html::a('Delete', ['cuti-delete', 'id_pengajuan_cuti' => $model['id_pengajuan_cuti']], [
                 'class' => 'tw-add bg-rose-500 px-5 relative'
             ]) ?>
