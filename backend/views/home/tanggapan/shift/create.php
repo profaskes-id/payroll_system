@@ -7,7 +7,7 @@ use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Tambah Pengajuan WFH Karyawan');
 ?>
-<div class="mx-10 mt-5">
+<div class="relative z-50 mx-10 mt-5">
 
 
     <div class="flex items-center justify-between">

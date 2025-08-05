@@ -14,12 +14,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 
-<div class="w-full mx-auto px-5 lg:px-8">
+<div class="w-full px-5 mx-auto lg:px-8 ">
 
 
 
     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home/absen-masuk', 'title' => 'Izin Tidak Absen']); ?>
-    <section class="grid grid-cols-12 justify-center mt-2 gap-y-10">
+    <section class="grid justify-center grid-cols-12 mt-2 gap-y-10">
 
 
 
@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php if (!$model->kode_status_hadir == 'H'): ?>
 
-                <div class="p-2 rounded-md  overflow-hidden col-span-12  w-full">
+                <div class="w-full col-span-12 p-2 overflow-hidden rounded-md">
                     <?= Html::img('@root' . '/panel/' . $model->lampiran, ["alt" => 'users', 'class' => 'w-[100%] ']) ?>
                 </div>
             <?php endif; ?>

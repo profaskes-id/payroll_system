@@ -8,14 +8,14 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\PengajuanAbsensi $data */
 
-$this->title = 'Pengajuan Absensi';
-$this->params['breadcrumbs'][] = ['label' => 'Pengajuan Absensi', 'url' => ['index']];
+$this->title = 'Deviasi  Absensi';
+$this->params['breadcrumbs'][] = ['label' => 'Deviasi  Absensi', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
 
 <div class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5 relative z-50">
-    <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home', 'title' => 'Pengajuan Absensi']); ?>
+    <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home', 'title' => 'Deviasi  Absensi']); ?>
 
     <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
         <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="default-tab" data-tabs-toggle="#default-tab-content" role="tablist">

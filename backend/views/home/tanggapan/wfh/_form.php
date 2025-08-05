@@ -19,7 +19,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 ">
 
         <div class="">
             <p class="block mb-2 text-sm font-medium text-gray-900 capitalize ">Karyawan</p>
@@ -48,7 +48,7 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'alamat')->textarea(['rows' => 3, 'class' => 'w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'])->label('Alamat') ?>
         </div>
 
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div class="grid grid-cols-1 col-span-2 gap-6 md:grid-cols-2">
             <div>
                 <?= $form->field($model, 'tanggal_mulai')->textInput([
                     'type' => 'date',
@@ -68,15 +68,72 @@ use yii\widgets\ActiveForm;
 
 
 
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div>
-                <?= $form->field($model, 'longitude')->textInput(['disabled' => 'true', "id" => "lng", 'class' => 'w-full disabled:bg-slate-200 rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'])->label('Longitude') ?>
+        <div class="col-span-2 space-y-4">
+            <!-- Judul Section -->
+            <div class="pb-2 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Koordinat Lokasi</h3>
+                <p class="mt-1 text-sm text-gray-500">Koordinat GPS yang terdeteksi otomatis</p>
             </div>
 
-            <div>
-                <?= $form->field($model, 'latitude')->textInput(['disabled' => 'true', 'id' => "lat", 'class' => 'w-full disabled:bg-slate-200 rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'])->label('Latitude') ?>
+            <!-- Input Fields dengan Map Preview -->
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                    <?= $form->field($model, 'latitude', [
+                        'options' => ['class' => 'space-y-1'],
+                        'labelOptions' => ['class' => 'block text-sm font-medium text-gray-700']
+                    ])->textInput([
+                        'disabled' => true,
+                        'id' => "lat",
+                        'class' => 'block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:bg-gray-100 disabled:text-gray-500',
+                        'placeholder' => 'Loading...'
+                    ]) ?>
+                </div>
+
+                <div>
+                    <?= $form->field($model, 'longitude', [
+                        'options' => ['class' => 'space-y-1'],
+                        'labelOptions' => ['class' => 'block text-sm font-medium text-gray-700']
+                    ])->textInput([
+                        'disabled' => true,
+                        'id' => "lng",
+                        'class' => 'block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:bg-gray-100 disabled:text-gray-500',
+                        'placeholder' => 'Loading...'
+                    ]) ?>
+                </div>
+            </div>
+
+            <!-- Map Preview -->
+            <div class="mt-4">
+                <div id="map-preview" class="w-full h-48 overflow-hidden border border-gray-300 rounded-lg bg-gray-50">
+                    <div class="flex items-center justify-center h-full text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span>Pratinjau peta akan muncul di sini</span>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-2">
+                    <button type="button" id="refresh-location" class="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-600 rounded-md bg-blue-50 hover:bg-blue-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        <span class="text-xs "> click jika anda ingin memperbarui lokasi</span> <span></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Open in Maps Button (akan muncul setelah koordinat terisi) -->
+            <div id="open-maps-container" class="hidden">
+                <a id="open-maps-link" href="#" target="_blank" class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                    </svg>
+                    Buka di Google Maps
+                </a>
             </div>
         </div>
+
 
 
         <div class="col-12">
@@ -179,4 +236,34 @@ use yii\widgets\ActiveForm;
     });
 </script>
 
+
+<script>
+    // Contoh JavaScript untuk menangani pembaruan lokasi
+    document.getElementById('refresh-location').addEventListener('click', function() {
+        // Implementasi geolocation API di sini
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                document.getElementById('lat').value = position.coords.latitude;
+                document.getElementById('lng').value = position.coords.longitude;
+
+                // Update map preview
+                updateMapPreview(position.coords.latitude, position.coords.longitude);
+
+                // Show open maps button
+                document.getElementById('open-maps-container').classList.remove('hidden');
+                document.getElementById('open-maps-link').href = `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`;
+            });
+        } else {
+            alert("Geolocation tidak didukung oleh browser Anda");
+        }
+    });
+
+    function updateMapPreview(lat, lng) {
+        // Implementasi untuk menampilkan peta kecil
+        // Bisa menggunakan Google Maps Embed API atau library lain
+        const mapPreview = document.getElementById('map-preview');
+        mapPreview.innerHTML = `<iframe class="w-full h-full" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
+        src="https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed"></iframe>`;
+    }
+</script>
 </div>
