@@ -20,6 +20,7 @@ use DateTime;
 use ReflectionFunctionAbstract;
 use Yii;
 use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 
 
@@ -148,6 +149,87 @@ class PengajuanController extends \yii\web\Controller
         }
 
         return $this->render('/home/pengajuan/tugasluar/create', [
+            'model' => $model,
+            'details' => $details,
+        ]);
+    }
+
+
+    public function actionTugasLuarUpdate($id)
+    {
+        $this->layout = 'mobile-main';
+        $model = PengajuanTugasLuar::findOne($id);
+        $details = $model->detailTugasLuars; // Ambil detail yang sudah ada
+
+        // Validasi kepemilikan pengajuan (hanya pemilik yang bisa edit)
+        if ($model->id_karyawan != Yii::$app->user->identity->id_karyawan) {
+            throw new \yii\web\ForbiddenHttpException('Anda tidak memiliki akses untuk mengedit pengajuan ini.');
+        }
+
+        // Validasi status (hanya yang pending bisa diedit)
+        if ($model->status_pengajuan != 0) {
+            Yii::$app->session->setFlash('error', 'Pengajuan yang sudah disetujui/ditolak tidak dapat diubah.');
+            return $this->redirect(['index']);
+        }
+
+        if ($model->load(Yii::$app->request->post())) {
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                // Simpan model utama
+                if (!$model->save(false)) {
+                    throw new \Exception('Gagal memperbarui pengajuan tugas luar.');
+                }
+
+                // Proses detail tugas luar
+                $newDetails = [];
+                $existingDetails = [];
+
+                if (isset($_POST['DetailTugasLuar']) && is_array($_POST['DetailTugasLuar'])) {
+                    // Hapus semua detail yang ada (kita akan buat ulang)
+                    DetailTugasLuar::deleteAll(['id_tugas_luar' => $model->id_tugas_luar]);
+
+                    foreach ($_POST['DetailTugasLuar'] as $i => $detailData) {
+                        $detail = new DetailTugasLuar();
+                        $detail->attributes = $detailData;
+                        $detail->id_tugas_luar = $model->id_tugas_luar;
+                        $detail->urutan = $i + 1;
+                        $detail->status_check = 0; // Reset status check karena ini update
+
+                        if (!$detail->save(false)) {
+                            throw new \Exception('Gagal menyimpan detail tugas luar.');
+                        }
+                        $newDetails[] = $detail;
+                    }
+                }
+
+                // Validasi minimal 1 detail
+                if (empty($newDetails)) {
+                    throw new \Exception('Setidaknya harus ada satu lokasi tugas.');
+                }
+
+                $transaction->commit();
+                Yii::$app->session->setFlash('success', 'Pengajuan tugas luar berhasil diperbarui.');
+                return $this->redirect(['/pengajuan/tugas-luar-detail', 'id' => $model->id_tugas_luar]);
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::$app->session->setFlash('error', 'Gagal memperbarui pengajuan: ' . $e->getMessage());
+
+                // Kembalikan detail yang sudah diinput untuk ditampilkan kembali di form
+                $details = [];
+                if (isset($_POST['DetailTugasLuar']) && is_array($_POST['DetailTugasLuar'])) {
+                    foreach ($_POST['DetailTugasLuar'] as $detailData) {
+                        $detail = new DetailTugasLuar();
+                        $detail->attributes = $detailData;
+                        $details[] = $detail;
+                    }
+                }
+                if (empty($details)) {
+                    $details = [new DetailTugasLuar()];
+                }
+            }
+        }
+
+        return $this->render('/home/pengajuan/tugasluar/update', [
             'model' => $model,
             'details' => $details,
         ]);

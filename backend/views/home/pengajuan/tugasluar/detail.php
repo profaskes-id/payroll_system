@@ -10,7 +10,10 @@ use yii\helpers\Html; ?>
         <div class="pb-4 mb-4 border-b border-gray-200 sm:pb-6 sm:mb-6">
             <div class="flex flex-col">
                 <div>
-                    <h2 class="text-xl font-bold text-gray-800 sm:text-2xl">Detail Tugas Luar</h2>
+                    <div class="flex items-start justify-between">
+                        <h2 class="text-xl font-bold text-gray-800 sm:text-2xl">Detail Tugas Luar</h2>
+                        <a href="<?= \yii\helpers\Url::to(['/pengajuan/tugas-luar-update', 'id' => $model->id_tugas_luar]) ?>" class="text-sm text-gray-600 hover:underline">Edit</a>
+                    </div>
                     <div class="flex flex-col mt-2 space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4 sm:mt-3">
                         <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full w-fit
                 <?= $model->status_pengajuan == 0 ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800' ?>">
