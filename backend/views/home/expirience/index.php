@@ -9,7 +9,8 @@ $this->title = 'Expirience';
 
 ?>
 
-<div class="container relative mx-auto px-3 lg:px-5 min-h-[90dvh]">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
+<div class="container relative mx-auto px-3 lg:px-5 min-h-[90dvh] z-50">
     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home', 'title' => 'Data & Riwayat']); ?>
     <section>
         <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
@@ -48,53 +49,53 @@ $this->title = 'Expirience';
         <div id="default-styled-tab-content">
             <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-karyawan" role="tabpanel" aria-labelledby="karyawan-tab">
 
-                <h2 class=" font-semibold text-gray-900 ">Data Personal </h2>
-                <div class="mt-2 grid grid-cols-1 gap-y-3">
+                <h2 class="font-semibold text-gray-900 ">Data Personal </h2>
+                <div class="grid grid-cols-1 mt-2 gap-y-3">
                     <?php if (!empty($karyawan)) : ?>
 
-                        <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                        <div class="flex flex-col w-full p-2 space-y-1 bg-white rounded ">
                             <div class="grid grid-cols-12 gap-2">
-                                <div class="w-full border border-gray-300 p-2 col-span-12 lg:col-span-6">
+                                <div class="w-full col-span-12 p-2 border border-gray-300 lg:col-span-6">
                                     <p>Data Pribadi</p>
                                     <div>
-                                        <table class="w-full table-fixed text-left ">
-                                            <tr class=" border-b border-gray-300">
+                                        <table class="w-full text-left table-fixed ">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Kode Karyawan</th>
                                                 <td><?= $karyawan->kode_karyawan ?></td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Nama Karyawan</th>
                                                 <td><?= $karyawan->nama ?></td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Email</th>
                                                 <td><?= $karyawan->email ?></td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Nomer Telfon</th>
                                                 <td><?= $karyawan->nomer_telepon ?></td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Nomer Identitas</th>
                                                 <td><?= $karyawan->nomer_identitas ?></td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Jenis Identitas</th>
                                                 <td><?= $karyawan->jenisidentitas->nama_kode ?></td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Jenis Kelamin</th>
                                                 <td><?= $karyawan->kode_jenis_kelamin == 'L' ? 'Laki-Laki' : 'Perempuan' ?></td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Tempat Lahir</th>
                                                 <td><?= $karyawan->tempat_lahir ?></td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Tanggal Lahir</th>
                                                 <td><?= date('d M Y', strtotime($karyawan->tanggal_lahir)) ?></td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Status Nikah</th>
                                                 <td><?= $karyawan->statusNikah->nama_kode ?></td>
                                             </tr>
@@ -102,44 +103,95 @@ $this->title = 'Expirience';
                                                 <th>Suku</th>
                                                 <td><?= $karyawan->suku ?></td>
                                             </tr>
-                                            <tr class=" ">
+                                            <tr class="">
                                                 <th>Agama</th>
                                                 <td><?= $karyawan->masterAgama->nama_kode ?></td>
                                             </tr>
-
                                         </table>
                                     </div>
+
+                                    <div class="w-full col-span-12 p-2 border border-gray-300 lg:col-span-6">
+                                        <!-- Your existing table code... -->
+
+                                        <!-- Add this button at the bottom -->
+                                        <div class="mt-4">
+                                            <button type="button" onclick="openFaceModal()" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
+                                                Register Wajah
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Modal for face registration -->
+                                    <div id="faceModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+                                        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                                            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                                                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                                            </div>
+                                            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                                            <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                                                <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
+                                                    <h3 class="mb-4 text-lg font-medium leading-6 text-gray-900">Register Wajah</h3>
+                                                    <div class="mb-4">
+                                                        <div id="camera" class="w-full h-64 mb-4 bg-gray-200"></div>
+                                                        <div class="flex justify-center space-x-4">
+                                                            <button onclick="takeSnapshot()" class="px-4 py-2 text-white bg-blue-500 rounded">Ambil Foto</button>
+                                                            <button onclick="stopCamera()" class="px-4 py-2 text-white bg-red-500 rounded">Tutup Kamera</button>
+                                                        </div>
+                                                    </div>
+                                                    <div id="results" class="hidden">
+                                                        <p class="mb-2">Hasil Foto:</p>
+                                                        <div id="snapshotResult" class="w-full h-64 mb-4 bg-gray-200"></div>
+                                                        <?php $form = yii\widgets\ActiveForm::begin([
+                                                            'id' => 'face-form',
+                                                            'action' => ['karyawan/upload-face'],
+                                                            'options' => ['enctype' => 'multipart/form-data']
+                                                        ]); ?>
+
+                                                        <?= $form->field($model, 'kode_karyawan')->hiddenInput(['value' => $karyawan->kode_karyawan])->label(false) ?>
+                                                        <?= $form->field($model, 'wajah')->hiddenInput(['id' => 'faceData'])->label(false) ?>
+
+                                                        <div class="flex justify-end">
+                                                            <button type="button" onclick="closeModal()" class="px-4 py-2 mr-2 bg-gray-300 rounded">Batal</button>
+                                                            <button type="submit" class="px-4 py-2 text-white bg-green-500 rounded">Simpan</button>
+                                                        </div>
+                                                        <?php yii\widgets\ActiveForm::end(); ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
-                                <div class="w-full border border-gray-300 p-2 col-span-12 lg:col-span-6">
+                                <div class="w-full col-span-12 p-2 border border-gray-300 lg:col-span-6">
                                     <p>Alamat Sesuai Identitas</p>
                                     <div>
-                                        <table class="w-full table-fixed text-left ">
-                                            <tr class=" border-b border-gray-300">
+                                        <table class="w-full text-left table-fixed ">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Negara</th>
                                                 <td><?= $karyawan->kode_negara ?></td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Provinsi</th>
                                                 <td><?= $karyawan->provinsiidentitas->nama_prop ?></td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Kabupaten</th>
                                                 <td><?= $karyawan->kabupatenidentitas->nama_kab ?></td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Kecamatan</th>
                                                 <td><?= $karyawan->kecamatanidentitas->nama_kec ?></td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Alamat Identitas</th>
                                                 <td><?= $karyawan->alamat_identitas ?></td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Desa Atau Lurah</th>
                                                 <td><?= $karyawan->desa_lurah_identitas ?></td>
                                             </tr>
 
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>RT</th>
                                                 <td><?= $karyawan->rt_identitas ?></td>
                                             </tr>
@@ -147,7 +199,7 @@ $this->title = 'Expirience';
                                                 <th>RW</th>
                                                 <td><?= $karyawan->rw_identitas ?></td>
                                             </tr>
-                                            <tr class=" ">
+                                            <tr class="">
                                                 <th>Informasi Lain</th>
                                                 <td><?= $karyawan->informasi_lain ?></td>
                                             </tr>
@@ -155,15 +207,15 @@ $this->title = 'Expirience';
                                         </table>
                                     </div>
                                 </div>
-                                <div class="justify-self-end w-full border border-gray-300 p-2 col-span-12">
+                                <div class="w-full col-span-12 p-2 border border-gray-300 justify-self-end">
                                     <p>Alamat Domisili</p>
                                     <div>
-                                        <table class="w-full table-fixed text-left ">
-                                            <tr class=" border-b border-gray-300">
+                                        <table class="w-full text-left table-fixed ">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Negara</th>
                                                 <td><?= $karyawan->kode_negara ?></td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Provinsi</th>
                                                 <td><?php
                                                     if ($karyawan->is_current_domisili == 0) {
@@ -174,7 +226,7 @@ $this->title = 'Expirience';
                                                     ?>
                                                 </td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Kabupaten</th>
                                                 <td><?php
                                                     if ($karyawan->is_current_domisili == 0) {
@@ -185,7 +237,7 @@ $this->title = 'Expirience';
                                                     ?>
                                                 </td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Kecamatan</th>
                                                 <td><?php
                                                     if ($karyawan->is_current_domisili == 0) {
@@ -196,7 +248,7 @@ $this->title = 'Expirience';
                                                     ?>
                                                 </td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Alamat Identitas</th>
                                                 <td><?php
                                                     if ($karyawan->is_current_domisili == 0) {
@@ -207,7 +259,7 @@ $this->title = 'Expirience';
                                                     ?>
                                                 </td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Desa Atau Lurah</th>
                                                 <td><?php
                                                     if ($karyawan->is_current_domisili == 0) {
@@ -219,7 +271,7 @@ $this->title = 'Expirience';
                                                 </td>
                                             </tr>
 
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>RT</th>
                                                 <td><?php
                                                     if ($karyawan->is_current_domisili == 0) {
@@ -230,7 +282,7 @@ $this->title = 'Expirience';
                                                     ?>
                                                 </td>
                                             </tr>
-                                            <tr class=" border-gray-300">
+                                            <tr class="border-gray-300 ">
                                                 <th>RW</th>
                                                 <td><?php
                                                     if ($karyawan->is_current_domisili == 0) {
@@ -246,11 +298,11 @@ $this->title = 'Expirience';
                                         </table>
                                     </div>
                                 </div>
-                                <div class="justify-self-end w-full border border-gray-300 p-2 col-span-12">
+                                <div class="w-full col-span-12 p-2 border border-gray-300 justify-self-end">
                                     <p>Alamat Domisili</p>
                                     <div>
-                                        <table class="w-full table-fixed text-left ">
-                                            <tr class=" border-b border-gray-300">
+                                        <table class="w-full text-left table-fixed ">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Foto</th>
                                                 <td>
                                                     <div>
@@ -262,7 +314,7 @@ $this->title = 'Expirience';
                                                     </div>
                                                 </td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>KTP</th>
                                                 <td>
                                                     <div>
@@ -274,7 +326,7 @@ $this->title = 'Expirience';
                                                     </div>
                                                 </td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>CV</th>
                                                 <td>
                                                     <div>
@@ -286,7 +338,7 @@ $this->title = 'Expirience';
                                                     </div>
                                                 </td>
                                             </tr>
-                                            <tr class=" border-b border-gray-300">
+                                            <tr class="border-b border-gray-300 ">
                                                 <th>Ijazah Terakhir</th>
                                                 <td>
                                                     <div>
@@ -309,7 +361,7 @@ $this->title = 'Expirience';
                 </div>
 
             <?php else: ?>
-                <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                <div class="flex flex-col w-full p-2 space-y-1 bg-white rounded ">
                     <div>
                         <p class="py-2 text-[#272727]">Belum Ada Data</p>
                     </div>
@@ -321,17 +373,17 @@ $this->title = 'Expirience';
 
             </div>
         </div>
-        <div class="hidden p-4 rounded-lg bg-gray-100 dark:bg-gray-800" id="styled-profile" role="tabpanel" aria-labelledby="profile-tab">
+        <div class="hidden p-4 bg-gray-100 rounded-lg dark:bg-gray-800" id="styled-profile" role="tabpanel" aria-labelledby="profile-tab">
 
-            <h2 class=" font-semibold text-gray-900 ">Pengalaman Kerja <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($pengalamanKerja) ?></span>
+            <h2 class="font-semibold text-gray-900 ">Pengalaman Kerja <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($pengalamanKerja) ?></span>
             </h2>
-            <a href="/panel/home/expirience-pekerjaan-create" class=" my-3 w-full flex items-center justify-center py-1 px-4  gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-400 text-white hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
-            <div class="mt-2 grid grid-cols-1 gap-y-3">
+            <a href="/panel/home/expirience-pekerjaan-create" class="flex items-center justify-center w-full px-4 py-1 my-3 text-sm font-medium text-white bg-blue-400 border border-transparent rounded-lg gap-x-2 hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
+            <div class="grid grid-cols-1 mt-2 gap-y-3">
 
                 <?php if (!empty($pengalamanKerja)) : ?>
                     <?php foreach ($pengalamanKerja as $key => $value) : ?>
 
-                        <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                        <div class="flex flex-col w-full p-2 space-y-1 bg-white rounded ">
                             <div>
                                 <p class="font-semibold text-[#272727]"><?= $value['posisi'] ?></p>
                                 <p class="text-[13px] text-black/80"><?= $value['perusahaan'] ?></p>
@@ -352,7 +404,7 @@ $this->title = 'Expirience';
 
                                     <form action="/panel/home/expirience-pekerjaan-delete" method="POST">
                                         <input type="text" name="id" value="<?= $value['id_pengalaman_kerja'] ?>" hidden>
-                                        <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class=" grid place-items-center" onclick="deleteClick(this)">
+                                        <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="grid place-items-center" onclick="deleteClick(this)">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                                                 <path fill="red" d="M10 5h4a2 2 0 1 0-4 0M8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.111A3.75 3.75 0 0 1 15.026 22H8.974a3.75 3.75 0 0 1-3.733-3.389L4.07 6.5H2.75a.75.75 0 0 1 0-1.5zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0zM14.25 9a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 .75-.75m-7.516 9.467a2.25 2.25 0 0 0 2.24 2.033h6.052a2.25 2.25 0 0 0 2.24-2.033L18.424 6.5H5.576z" />
                                             </svg>
@@ -363,7 +415,7 @@ $this->title = 'Expirience';
                         </div>
                     <?php endforeach ?>
                 <?php else : ?>
-                    <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                    <div class="flex flex-col w-full p-2 space-y-1 bg-white rounded ">
                         <div>
                             <p class="py-2 text-[#272727]">Belum Ada Data</p>
                         </div>
@@ -374,14 +426,14 @@ $this->title = 'Expirience';
             </div>
         </div>
         <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-            <h2 class=" font-semibold text-gray-900 ">Riwayat Pendidikan <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($riwayatPendidikan) ?></span> </h2>
-            <a href="/panel/home/expirience-pendidikan-create" class=" my-3 w-full flex items-center justify-center py-1 px-4  gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-400 text-white hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
-            <div class="mt-2 grid grid-cols-1 gap-y-3">
+            <h2 class="font-semibold text-gray-900 ">Riwayat Pendidikan <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($riwayatPendidikan) ?></span> </h2>
+            <a href="/panel/home/expirience-pendidikan-create" class="flex items-center justify-center w-full px-4 py-1 my-3 text-sm font-medium text-white bg-blue-400 border border-transparent rounded-lg gap-x-2 hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
+            <div class="grid grid-cols-1 mt-2 gap-y-3">
 
                 <?php if (!empty($riwayatPendidikan)) : ?>
                     <?php foreach ($riwayatPendidikan as $key => $value) : ?>
                         <?php $jenajngPendidikan = MasterKode::find()->select('nama_kode')->where(['nama_group' => 'jenjang-pendidikan', 'kode' => $value['jenjang_pendidikan']])->one(); ?>
-                        <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                        <div class="flex flex-col w-full p-2 space-y-1 bg-white rounded ">
                             <div>
                                 <p class="font-semibold text-[#272727]"><?= $jenajngPendidikan['nama_kode'] ?></p>
                                 <p class="text-[13px] text-black/80"><?= $value['institusi'] ?></p>
@@ -402,7 +454,7 @@ $this->title = 'Expirience';
 
                                     <form action="/panel/home/expirience-pendidikan-delete" method="POST">
                                         <input type="text" name="id" value="<?= $value['id_riwayat_pendidikan'] ?>" hidden>
-                                        <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class=" grid place-items-center" onclick="deleteClick(this)">
+                                        <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="grid place-items-center" onclick="deleteClick(this)">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                                                 <path fill="red" d="M10 5h4a2 2 0 1 0-4 0M8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.111A3.75 3.75 0 0 1 15.026 22H8.974a3.75 3.75 0 0 1-3.733-3.389L4.07 6.5H2.75a.75.75 0 0 1 0-1.5zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0zM14.25 9a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 .75-.75m-7.516 9.467a2.25 2.25 0 0 0 2.24 2.033h6.052a2.25 2.25 0 0 0 2.24-2.033L18.424 6.5H5.576z" />
                                             </svg>
@@ -415,7 +467,7 @@ $this->title = 'Expirience';
 
 
                 <?php else : ?>
-                    <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                    <div class="flex flex-col w-full p-2 space-y-1 bg-white rounded ">
                         <div>
                             <p class="py-2 text-[#272727]">Belum Ada Data</p>
                         </div>
@@ -427,13 +479,13 @@ $this->title = 'Expirience';
         </div>
         <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-settings" role="tabpanel" aria-labelledby="settings-tab">
 
-            <h2 class=" font-semibold text-gray-900 ">Data Keluarga <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($keluarga) ?></span> </h2>
-            <a href="/panel/home/data-keluarga-create" class=" my-3 w-full flex items-center justify-center py-1 px-4  gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-400 text-white hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
-            <div class="mt-2 grid grid-cols-1 gap-y-3">
+            <h2 class="font-semibold text-gray-900 ">Data Keluarga <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($keluarga) ?></span> </h2>
+            <a href="/panel/home/data-keluarga-create" class="flex items-center justify-center w-full px-4 py-1 my-3 text-sm font-medium text-white bg-blue-400 border border-transparent rounded-lg gap-x-2 hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
+            <div class="grid grid-cols-1 mt-2 gap-y-3">
 
                 <?php if (!empty($keluarga)) : ?>
                     <?php foreach ($keluarga as $key => $value) : ?>
-                        <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                        <div class="flex flex-col w-full p-2 space-y-1 bg-white rounded ">
                             <div>
                                 <p class="font-semibold text-[#272727]">Nama : <?= $value['nama_anggota_keluarga'] ?></p>
                                 <p class="text-[13px] text-black/80">Hubungan : <?= $value->jenisHubungan->nama_kode ?></p>
@@ -455,7 +507,7 @@ $this->title = 'Expirience';
 
                                     <form action="/panel/home/data-keluarga-delete" method="POST">
                                         <input type="text" name="id" value="<?= $value['id_data_keluarga'] ?>" hidden>
-                                        <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class=" grid place-items-center" onclick="deleteClick(this)">
+                                        <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="grid place-items-center" onclick="deleteClick(this)">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                                                 <path fill="red" d="M10 5h4a2 2 0 1 0-4 0M8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.111A3.75 3.75 0 0 1 15.026 22H8.974a3.75 3.75 0 0 1-3.733-3.389L4.07 6.5H2.75a.75.75 0 0 1 0-1.5zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0zM14.25 9a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 .75-.75m-7.516 9.467a2.25 2.25 0 0 0 2.24 2.033h6.052a2.25 2.25 0 0 0 2.24-2.033L18.424 6.5H5.576z" />
                                             </svg>
@@ -467,7 +519,7 @@ $this->title = 'Expirience';
                     <?php endforeach ?>
 
                 <?php else: ?>
-                    <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                    <div class="flex flex-col w-full p-2 space-y-1 bg-white rounded ">
                         <div>
                             <p class="py-2 text-[#272727]">Belum Ada Data</p>
                         </div>
@@ -481,13 +533,13 @@ $this->title = 'Expirience';
         </div>
         <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-pelatihan" role="tabpanel" aria-labelledby="pelatihan-tab">
 
-            <h2 class=" font-semibold text-gray-900 ">Riwayat Pelatihan <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($RiwayatPelatihan) ?></span> </h2>
-            <a href="/panel/home/riwayat-pelatihan-create" class=" my-3 w-full flex items-center justify-center py-1 px-4  gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-400 text-white hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
-            <div class="mt-2 grid grid-cols-1 gap-y-3">
+            <h2 class="font-semibold text-gray-900 ">Riwayat Pelatihan <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($RiwayatPelatihan) ?></span> </h2>
+            <a href="/panel/home/riwayat-pelatihan-create" class="flex items-center justify-center w-full px-4 py-1 my-3 text-sm font-medium text-white bg-blue-400 border border-transparent rounded-lg gap-x-2 hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
+            <div class="grid grid-cols-1 mt-2 gap-y-3">
 
                 <?php if (!empty($RiwayatPelatihan)) : ?>
                     <?php foreach ($RiwayatPelatihan as $key => $value) : ?>
-                        <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                        <div class="flex flex-col w-full p-2 space-y-1 bg-white rounded ">
                             <div>
                                 <p class="font-semibold text-[#272727]"><?= $value['judul_pelatihan'] ?></p>
                                 <p class="text-[13px] text-black/80"><?= $value['penyelenggara'] ?></p>
@@ -508,7 +560,7 @@ $this->title = 'Expirience';
 
                                     <form action="/panel/home/riwayat-pelatihan-delete" method="POST">
                                         <input type="text" name="id" value="<?= $value['id_riwayat_pelatihan'] ?>" hidden>
-                                        <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class=" grid place-items-center" onclick="deleteClick(this)">
+                                        <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="grid place-items-center" onclick="deleteClick(this)">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                                                 <path fill="red" d="M10 5h4a2 2 0 1 0-4 0M8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.111A3.75 3.75 0 0 1 15.026 22H8.974a3.75 3.75 0 0 1-3.733-3.389L4.07 6.5H2.75a.75.75 0 0 1 0-1.5zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0zM14.25 9a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 .75-.75m-7.516 9.467a2.25 2.25 0 0 0 2.24 2.033h6.052a2.25 2.25 0 0 0 2.24-2.033L18.424 6.5H5.576z" />
                                             </svg>
@@ -520,7 +572,7 @@ $this->title = 'Expirience';
                     <?php endforeach ?>
 
                 <?php else: ?>
-                    <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                    <div class="flex flex-col w-full p-2 space-y-1 bg-white rounded ">
                         <div>
                             <p class="py-2 text-[#272727]">Belum Ada Data</p>
                         </div>
@@ -534,13 +586,13 @@ $this->title = 'Expirience';
         </div>
         <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-kesehatan" role="tabpanel" aria-labelledby="kesehatan-tab">
 
-            <h2 class=" font-semibold text-gray-900 ">Riwayat Kesehatan <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($RiwayatKesehatan) ?></span> </h2>
-            <a href="/panel/home/riwayat-kesehatan-create" class=" my-3 w-full flex items-center justify-center py-1 px-4  gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-400 text-white hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
-            <div class="mt-2 grid grid-cols-1 gap-y-3">
+            <h2 class="font-semibold text-gray-900 ">Riwayat Kesehatan <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($RiwayatKesehatan) ?></span> </h2>
+            <a href="/panel/home/riwayat-kesehatan-create" class="flex items-center justify-center w-full px-4 py-1 my-3 text-sm font-medium text-white bg-blue-400 border border-transparent rounded-lg gap-x-2 hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
+            <div class="grid grid-cols-1 mt-2 gap-y-3">
 
                 <?php if (!empty($RiwayatKesehatan)) : ?>
                     <?php foreach ($RiwayatKesehatan as $key => $value) : ?>
-                        <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                        <div class="flex flex-col w-full p-2 space-y-1 bg-white rounded ">
                             <div>
                                 <p class="font-semibold text-[#272727]"><?= $value['nama_pengecekan'] ?></p>
                                 <p class="text-[13px] text-black/80"><?= $value['keterangan'] ?></p>
@@ -561,7 +613,7 @@ $this->title = 'Expirience';
 
                                     <form action="/panel/home/riwayat-kesehatan-delete" method="POST">
                                         <input type="text" name="id" value="<?= $value['id_riwayat_kesehatan'] ?>" hidden>
-                                        <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class=" grid place-items-center" onclick="deleteClick(this)">
+                                        <button type="button" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="grid place-items-center" onclick="deleteClick(this)">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                                                 <path fill="red" d="M10 5h4a2 2 0 1 0-4 0M8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.111A3.75 3.75 0 0 1 15.026 22H8.974a3.75 3.75 0 0 1-3.733-3.389L4.07 6.5H2.75a.75.75 0 0 1 0-1.5zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0zM14.25 9a.75.75 0 0 1 .75.75v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 .75-.75m-7.516 9.467a2.25 2.25 0 0 0 2.24 2.033h6.052a2.25 2.25 0 0 0 2.24-2.033L18.424 6.5H5.576z" />
                                             </svg>
@@ -573,7 +625,7 @@ $this->title = 'Expirience';
                     <?php endforeach ?>
 
                 <?php else: ?>
-                    <div class=" bg-white rounded p-2 w-full flex flex-col space-y-1">
+                    <div class="flex flex-col w-full p-2 space-y-1 bg-white rounded ">
                         <div>
                             <p class="py-2 text-[#272727]">Belum Ada Data</p>
                         </div>
@@ -600,7 +652,7 @@ $this->title = 'Expirience';
 
 
 <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative p-4 w-full max-w-md max-h-full">
+    <div class="relative w-full max-w-md max-h-full p-4">
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal">
                 <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -608,8 +660,8 @@ $this->title = 'Expirience';
                 </svg>
                 <span class="sr-only">Close modal</span>
             </button>
-            <div class="p-4 md:p-5 text-center">
-                <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+            <div class="p-4 text-center md:p-5">
+                <svg class="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
                 <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Yakin Melakukan Hapus Data?</h3>
@@ -622,6 +674,52 @@ $this->title = 'Expirience';
     </div>
 </div>
 
+
+<script>
+    function openFaceModal() {
+        document.getElementById('faceModal').classList.remove('hidden');
+        startCamera();
+    }
+
+    function closeModal() {
+        document.getElementById('faceModal').classList.add('hidden');
+        stopCamera();
+        document.getElementById('results').classList.add('hidden');
+    }
+
+    function startCamera() {
+        Webcam.set({
+            width: 400,
+            height: 300,
+            image_format: 'jpeg',
+            jpeg_quality: 90,
+            flip_horiz: true
+        });
+        Webcam.attach('#camera');
+    }
+
+    function stopCamera() {
+        Webcam.reset();
+    }
+
+    function takeSnapshot() {
+        Webcam.snap(function(data_uri) {
+            document.getElementById('camera').style.display = 'none';
+            document.getElementById('snapshotResult').innerHTML =
+                '<img src="' + data_uri + '" class="object-cover w-full h-64"/>';
+            document.getElementById('faceData').value = data_uri;
+            document.getElementById('results').classList.remove('hidden');
+        });
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('faceModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+</script>
 
 <script>
     function deleteClick(e) {
