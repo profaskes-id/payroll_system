@@ -168,15 +168,17 @@ class PengajuanController extends \yii\web\Controller
             Yii::$app->session->setFlash('success', 'Dibutuhkan Id Karyawan');
             return $this->redirect(['/']);
         }
-        $pengajuanTugasLuar = PengajuanTugasLuar::find()->where(['id_karyawan' => $id_karyawan, 'id_tugas_luar' => $id])->orderBy(['status_pengajuan' => SORT_ASC,])->one();
-
-
-        $detail = $pengajuanTugasLuar->detailTugasLuars;
-
-        return $this->render('/home/pengajuan/tugasluar/detail', [
-            "model" => $pengajuanTugasLuar,
-            "detail" => $detail
-        ]);
+        $model = PengajuanTugasLuar::find()->where(['id_karyawan' => $id_karyawan, 'id_tugas_luar' => $id])->orderBy(['status_pengajuan' => SORT_ASC,])->one();
+        if ($model) {
+            $detail = $model->detailTugasLuars ? $model->detailTugasLuars : [];
+            return $this->render('/home/pengajuan/tugasluar/detail', [
+                "model" => $model,
+                "detail" => $detail
+            ]);
+        } else {
+            Yii::$app->session->setFlash('error', 'Pengajuan Tidak Ditemukan');
+            $this->redirect(['/home/index']);
+        }
     }
 
 
@@ -344,7 +346,12 @@ class PengajuanController extends \yii\web\Controller
     {
         $this->layout = 'mobile-main';
         $model = PengajuanCuti::find()->where(['id_pengajuan_cuti' => $id])->one();
-        return $this->render('home/pengajuan/cuti/detail', compact('model'));
+        if ($model) {
+            return $this->render('home/pengajuan/wfh/detail', compact('model'));
+        } else {
+            Yii::$app->session->setFlash('error', 'Pengajuan Tidak Ditemukan');
+            $this->redirect(['/home/index']);
+        }
     }
 
     // ?=================================Pengajuan Lembur
@@ -477,13 +484,17 @@ class PengajuanController extends \yii\web\Controller
             'poinArray' => $poinArray
         ]);
     }
-
     public function actionLemburDetail($id)
     {
         $this->layout = 'mobile-main';
         $model = PengajuanLembur::find()->where(['id_pengajuan_lembur' => $id])->one();
-        $poinArray = json_decode($model->pekerjaan);
-        return $this->render('home/pengajuan/lembur/detail', compact('model', 'poinArray'));
+        if ($model) {
+            $poinArray = json_decode($model->pekerjaan);
+            return $this->render('home/pengajuan/lembur/detail', compact('model', 'poinArray'));
+        } else {
+            Yii::$app->session->setFlash('error', 'Pengajuan Tidak Ditemukan, data telah dihapus');
+            $this->redirect(['/home/index']);
+        }
     }
 
     public function actionLemburDelete()
@@ -556,7 +567,12 @@ class PengajuanController extends \yii\web\Controller
     {
         $this->layout = 'mobile-main';
         $model = PengajuanDinas::find()->where(['id_pengajuan_dinas' => $id])->one();
-        return $this->render('home/pengajuan/dinas/detail', compact('model'));
+        if ($model) {
+            return $this->render('home/pengajuan/dinas/detail', compact('model'));
+        } else {
+            Yii::$app->session->setFlash('error', 'Pengajuan Tidak Ditemukan');
+            $this->redirect(['/home/index']);
+        }
     }
     public function actionUploadDokumentasi()
     {
@@ -717,8 +733,12 @@ class PengajuanController extends \yii\web\Controller
     {
         $this->layout = 'mobile-main';
         $model = PengajuanWfh::find()->where(['id_pengajuan_wfh' => $id])->one();
-        // $poinArray = json_decode($model->pekerjaan);
-        return $this->render('home/pengajuan/wfh/detail', compact('model',));
+        if ($model) {
+            return $this->render('home/pengajuan/wfh/detail', compact('model'));
+        } else {
+            Yii::$app->session->setFlash('error', 'Pengajuan Tidak Ditemukan');
+            $this->redirect(['/home/index']);
+        }
     }
 
     public function actionWfhDelete()
