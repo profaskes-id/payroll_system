@@ -2,11 +2,15 @@
 return [
     'base_parent_url' => 'https://payroll.profaskes.id',
     'base_url' => 'https://payroll.profaskes.id',
-
-
+    'api_url_fr' => "https://face.athenateknologi.com",
+    'minimal_kemiripan_fr' => 60,
+    // "cluster_fr" => "absensi_fr",
+    "cluster_fr" => "test",
+    
+    
     'bsDependencyEnabled' => false,
     'bsVersion' => '5.x',
-
+    
     'adminEmail' => 'admin@example.com',
     'supportEmail' => 'support@example.com',
     'senderEmail' => 'noreply@example.com',
@@ -14,7 +18,7 @@ return [
     'user.passwordResetTokenExpire' => 3600,
     'user.passwordMinLength' => 8,
     'disetujui'  => 1,
-
+    
     'jenis-kelamin' => 'jenis-kelamin',
     'status-hadir' => 'status-hadir',
     'status-pekerjaan' => 'status-pekerjaan',
@@ -36,5 +40,7 @@ return [
     "kalkulasi_jam_lembur" => "kalkulasi_jam_lembur",
     "manual_shift" => "manual_shift",
     "ajukan_lembur" => "ajukan_lembur",
-    "pengajuan-absensi-tertinggal" => "pengajuan absensi tertinggal"
+    "pengajuan-absensi-tertinggal" => "pengajuan absensi tertinggal",
+    "change_fr" => "change_fr",
+    "verifikasi_fr" => "verifikasi_fr"
 ];

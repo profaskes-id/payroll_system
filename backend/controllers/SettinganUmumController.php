@@ -106,7 +106,13 @@ class SettinganUmumController extends Controller
         $model = new SettinganUmum();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            if ($model->load($this->request->post()) ) {
+                 if($model->save()){
+                Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
+
+            }else{
+                Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
+            }
                 return $this->redirect(['view', 'id_settingan_umum' => $model->id_settingan_umum]);
             }
         } else {
@@ -129,7 +135,13 @@ class SettinganUmumController extends Controller
     {
         $model = $this->findModel($id_settingan_umum);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post()) ) {
+            if($model->save()){
+                Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
+
+            }else{
+                Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
+            }
             return $this->redirect(['view', 'id_settingan_umum' => $model->id_settingan_umum]);
         }
 

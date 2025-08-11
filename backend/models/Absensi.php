@@ -42,13 +42,14 @@ class Absensi extends \yii\db\ActiveRecord
      */
 
     public $id_shift_kerja;
+    public $foto_pulang;
     public function rules()
     {
         return [
             [['id_karyawan', 'tanggal', 'kode_status_hadir'], 'required'],
-            [['id_karyawan', 'is_lembur', 'is_wfh', 'is_terlambat', 'is_24jam', 'id_shift_kerja'], 'integer'],
-            [['tanggal', 'jam_masuk', 'jam_pulang', 'lama_terlambat', 'tanggal_pulang', 'id_shift', 'kelebihan_jam_pulang', 'id_shift_kerja', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'safe'],
-            [['keterangan', 'alasan_terlambat', 'alasan_terlalu_jauh'], 'string'],
+            [['id_karyawan', 'is_lembur', 'is_wfh', 'is_terlambat', 'is_24jam', 'id_shift_kerja' , 'similarity'], 'integer'],
+            [['tanggal', 'jam_masuk', 'jam_pulang', 'lama_terlambat', 'tanggal_pulang', 'id_shift', 'kelebihan_jam_pulang', 'id_shift_kerja', 'created_at', 'updated_at', 'created_by', 'updated_by', 'similarity'], 'safe'],
+            [['keterangan', 'alasan_terlambat', 'alasan_terlalu_jauh', 'foto_masuk', 'foto_pulang'], 'string'],
             [['latitude', 'longitude'], 'number'],
             [['lampiran'], 'string', 'max' => 255],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
@@ -88,6 +89,9 @@ class Absensi extends \yii\db\ActiveRecord
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',
             'updated_by' => 'Updated By',
+            'foto_masuk' => 'foto input',
+            'foto_pulang' => 'foto input',
+            'similarity' => 'Similarity',
         ];
     }
 

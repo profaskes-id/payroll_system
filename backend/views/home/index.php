@@ -30,12 +30,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </div>
 
-                    <!-- Mobile Menu Button (hidden on desktop) -->
-                    <!-- <button class="p-2 rounded-full md:hidden hover:bg-blue-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                    </button> -->
                 </div>
 
                 <!-- Right Side Controls -->
@@ -199,7 +193,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </div>
                     <?php if ($manual_shift == 1): ?>
-                        <a href="/panel/home/<?= $setting == 1 ? 'change-shift' : 'pengajuan-shift' ?>?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>"
+                        <a href="/panel/home/<?= $manual_shift == 1 ? 'change-shift' : 'pengajuan-shift' ?>?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>"
                             class="px-4 py-2 mt-4 text-sm font-medium text-blue-600 bg-white rounded-md hover:bg-blue-50 md:mt-0">
                             Ubah Shift
                         </a>

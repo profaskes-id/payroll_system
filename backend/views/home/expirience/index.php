@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\helpers\FaceRecognationHelper;
 use backend\models\MasterKode;
 use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
@@ -110,16 +111,20 @@ $this->title = 'Expirience';
                                         </table>
                                     </div>
 
-                                    <div class="w-full col-span-12 p-2 border border-gray-300 lg:col-span-6">
-                                        <!-- Your existing table code... -->
 
-                                        <!-- Add this button at the bottom -->
+                                    <?php 
+                                         $setting_fr = FaceRecognationHelper::cekFaceRecognation();
+                                        if($setting_fr == 1):
+                                    ?>
+
+                                    <div class="w-full col-span-12 p-2 border border-gray-300 lg:col-span-6">
                                         <div class="mt-4">
                                             <button type="button" onclick="openFaceModal()" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
                                                 Register Wajah
                                             </button>
                                         </div>
                                     </div>
+                                    <?php endif; ?>
 
                                     <!-- Modal for face registration -->
                                     <div id="faceModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
@@ -140,7 +145,7 @@ $this->title = 'Expirience';
                                                     </div>
                                                     <div id="results" class="hidden">
                                                         <p class="mb-2">Hasil Foto:</p>
-                                                        <div id="snapshotResult" class="w-full h-64 mb-4 bg-gray-200"></div>
+                                                        <div id="snapshotResult" class="object-cover w-[100%] mb-4 bg-gray-200 aspect-[4/3]"></div>
                                                         <?php $form = yii\widgets\ActiveForm::begin([
                                                             'id' => 'face-form',
                                                             'action' => ['karyawan/upload-face'],
@@ -688,25 +693,25 @@ $this->title = 'Expirience';
     }
 
     function startCamera() {
-        Webcam.set({
-            width: 400,
-            height: 300,
-            image_format: 'jpeg',
-            jpeg_quality: 90,
-            flip_horiz: true
-        });
+       Webcam.set({
+    image_format: 'jpeg',
+    jpeg_quality: 90,
+    flip_horiz: true
+});
+
         Webcam.attach('#camera');
     }
 
     function stopCamera() {
         Webcam.reset();
+        closeModal();
     }
 
     function takeSnapshot() {
         Webcam.snap(function(data_uri) {
             document.getElementById('camera').style.display = 'none';
             document.getElementById('snapshotResult').innerHTML =
-                '<img src="' + data_uri + '" class="object-cover w-full h-64"/>';
+                '<img src="' + data_uri + '" class=" aspect-[4/3] "/>';
             document.getElementById('faceData').value = data_uri;
             document.getElementById('results').classList.remove('hidden');
         });

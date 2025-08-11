@@ -26,11 +26,11 @@ use yii\widgets\ActiveForm;
                     0 => 'Tidak Aktif',
                     1 => 'Aktif',
                 ], ['prompt' => 'Pilih Status']) ?>
-
+    
         </div>
 
         <div class="col-md-12">
-            <?= $form->field($model, 'ket')->textarea(['rows' => 3, 'maxlength' => true]) ?>
+            <?= $form->field($model, 'ket')->textarea(['rows' => 3 ]) ?>
         </div>
 
 

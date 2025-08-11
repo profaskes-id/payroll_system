@@ -35,8 +35,10 @@ use yii\widgets\ActiveForm;
                 <p class="text-lg font-semibold">Refresh Jika Anda Telah DI lokasi yang benar</p>
                 <?php
                 $formAbsen = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',  'action' => ['home/absen-terlalujauh']]); ?>
-                <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'lati'])->label(false) ?>
-                <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'longi'])->label(false) ?>
+                <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'coordinate lat'])->label(false) ?>
+                <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'coordinate lon'])->label(false) ?>
+                <?= $formAbsen->field($model, 'foto_masuk')->hiddenInput(['id' => 'foto_masuk', 'class' => 'foto_fr'])->label(false) ?>
+
                 <?= $formAbsen->field($model, 'alasan_terlalu_jauh')->textarea(['class' => 'py-1 w-full border border-gray-200 rounded-md', 'required' => true, 'rows' => 7, 'placeholder' => 'Alasan Anda Terlalu Jauh Dari Lokasi Penempatan Kerja'])->label(false) ?>
 
 
@@ -91,15 +93,29 @@ use yii\widgets\ActiveForm;
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Ketika modal terlalu jauh akan ditampilkan
-        document.querySelector('[data-modal-toggle="popup-modal-terlalujauh"]').addEventListener('click', function() {
-            // Cari radio button yang dipilih di form utama
-            const selectedShift = document.querySelector('#my-form .shift-radio:checked');
+        // Pastikan variabel global dapat diakses
+        if (typeof currentLat === 'undefined' || typeof currentLon === 'undefined') {
+            currentLat = 0;
+            currentLon = 0;
+            wajah_fr = 0;
+        }
 
+        document.querySelector('[data-modal-toggle="popup-modal-terlalujauh"]')?.addEventListener('click', function() {
+            // Update koordinat saat modal dibuka
+            document.querySelectorAll('.coordinate.lat').forEach(el => el.value = currentLat);
+            document.querySelectorAll('.coordinate.lon').forEach(el => el.value = currentLon);
+            document.querySelectorAll('.foto_fr').forEach(el => el.value = wajah_fr);
+            
+
+            // Copy shift yang dipilih
+            const selectedShift = document.querySelector('#my-form input[name="id_shift"]:checked');
             if (selectedShift) {
                 const shiftValue = selectedShift.value;
-                // Set nilai yang sama di form terlalu jauh
-                document.querySelector(`#my-form-terlalujauh input.shift-radio[value="${shiftValue}"]`).checked = true;
+                document.querySelectorAll('#my-form-terlalujauh input[name="id_shift"]').forEach(radio => {
+                    if (radio.value === shiftValue) {
+                        radio.checked = true;
+                    }
+                });
             }
         });
     });

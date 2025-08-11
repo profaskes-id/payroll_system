@@ -17,7 +17,7 @@ class m250415_034539_create_settingan_umum_table extends Migration
             'kode_setting' => $this->string()->notNull(),
             'nama_setting' => $this->string()->notNull(),
             'nilai_setting' => $this->integer(),
-            'ket' => $this->string(),
+            'ket' => $this->text()->null(),
         ]);
     }
 

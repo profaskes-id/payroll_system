@@ -39,7 +39,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => "Status",
                     'value' => $model->nilai_setting == 1 ? "Aktif" : "Tidak Aktif",
                 ],
-                'ket',
+                [
+                    'label' => "Nilai Setting",
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        return $model->ket ?? "";
+                    },
+                ]
             ],
         ]) ?>
 

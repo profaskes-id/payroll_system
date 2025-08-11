@@ -31,7 +31,8 @@ class SettinganUmum extends \yii\db\ActiveRecord
         return [
             [['kode_setting', 'nama_setting'], 'required'],
             [['nilai_setting'], 'integer'],
-            [['kode_setting', 'nama_setting', 'ket'], 'string', 'max' => 255],
+            [['kode_setting', 'nama_setting'], 'string', 'max' => 255],
+            [['ket'] , 'string'],
         ];
     }
 

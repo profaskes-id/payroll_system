@@ -2,12 +2,12 @@
 
 namespace backend\controllers;
 
-use amnah\yii2\user\models\Profile;
-use amnah\yii2\user\models\User;
-use backend\models\Bagian;
+
+
 use backend\models\DataKeluargaSearch;
-use backend\models\DataPekerjaan;
+
 use backend\models\DataPekerjaanSearch;
+use backend\models\helpers\CompressImagesHelper;
 use backend\models\Karyawan;
 use backend\models\KaryawanSearch;
 use backend\models\MasterKab;
@@ -22,7 +22,7 @@ use backend\models\RiwayatPendidikanSearch;
 use kartik\mpdf\Pdf;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
 use Yii;
-use yii\base\Security;
+use Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -200,15 +200,15 @@ class KaryawanController extends Controller
                 'success',
                 'Email Telah Berhasil Terkirim kepada ' . $model->email
             );
-             if (!$model->save()) {
-            Yii::$app->session->setFlash(
-                'error',
-                'Gagal Update, is Invite , Namun Email Telah Berhasil Terkirim kepada ' . $model->email
-            );
-        }
+            if (!$model->save()) {
+                Yii::$app->session->setFlash(
+                    'error',
+                    'Gagal Update, is Invite , Namun Email Telah Berhasil Terkirim kepada ' . $model->email
+                );
+            }
         }
 
-       
+
         return $this->redirect(['index']);
 
         //nik dan hashnik kirim ke email
@@ -586,5 +586,99 @@ class KaryawanController extends Controller
 
         // return the pdf output as per the destination setting
         return $pdf->render();
+    }
+
+    public function actionUploadFace()
+    {
+        $model = new Karyawan();
+        $comporess = new CompressImagesHelper();
+        if ($model->load(Yii::$app->request->post())) {
+            $karyawan = Karyawan::findOne(['kode_karyawan' => $model->kode_karyawan]);
+
+            if ($karyawan) {
+                // Get the base64 image data
+                $base64Image = $model->wajah;
+
+                // Compress the image before saving
+                $compressedImage = $comporess->compressBase64Image($base64Image);
+                if ($compressedImage === false) {
+                    Yii::$app->session->setFlash('error', 'Gagal memproses gambar.');
+                    return $this->redirect(['/home/expirience']);
+                }
+
+                // Save compressed image to database
+                $karyawan->wajah = $compressedImage;
+
+                if ($karyawan->save()) {
+                $url = Yii::$app->params['api_url_fr'] . '/core/register';
+                $data = [
+                    "cluster" => Yii::$app->params['cluster_fr'],
+                    "user" => $karyawan->nama,
+                    "userID" => "{$karyawan->id_karyawan}",
+                    "data" => $compressedImage,
+                ];
+
+
+
+                $jsonData = json_encode($data);
+
+                $ch = curl_init();
+
+                // Set cURL options
+                curl_setopt_array($ch, [
+                    CURLOPT_URL => $url,
+                    CURLOPT_POST => true,
+                    CURLOPT_POSTFIELDS => $jsonData,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_HTTPHEADER => [
+                        'Content-Type: application/json',
+                        'Content-Length: ' . strlen($jsonData)
+                    ],
+                    CURLOPT_TIMEOUT => 30, // Timeout in seconds
+                ]);
+
+                // Execute the request
+                $response = curl_exec($ch);
+                $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+                // Check for errors
+                if (curl_errno($ch)) {
+                    $error_msg = curl_error($ch);
+                    // Handle error (log or throw exception)
+                    throw new \Exception("cURL Error: " . $error_msg);
+                }
+
+                // Close cURL session
+                curl_close($ch);
+
+                if (empty($response)) {
+                    throw new \Exception("API mengembalikan response kosong");
+                }
+                
+
+                $responseArray = json_decode($response, true);
+
+                if (isset($responseArray['message'])  ) {
+                    Yii::$app->session->setFlash('success', 'Wajah berhasil diregistrasi. Data: ' . 
+                        'Cluster: ' . $responseArray['data']['cluster'] . ', ' .
+                        'Nama: ' . $responseArray['data']['user'] 
+                    );
+                    return $this->redirect(['/home/expirience']);
+                } else {
+                    $errorMessage = $responseArray['message'] ?? 'Tidak ada pesan error dari API';
+                    Yii::$app->session->setFlash('error', 'Gagal menyimpan wajah. Error: ' . $errorMessage);
+                    return $this->redirect(['/home/expirience']);
+                }
+
+
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal menyimpan wajah.');
+                }
+            } else {
+                Yii::$app->session->setFlash('error', 'Karyawan tidak ditemukan.');
+            }
+        }
+
+        return $this->redirect(['/home/expirience']);
     }
 }
