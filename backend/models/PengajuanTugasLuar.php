@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use amnah\yii2\user\models\User;
 use Yii;
 
 /**
@@ -73,5 +74,14 @@ class PengajuanTugasLuar extends \yii\db\ActiveRecord
     public function getKaryawan()
     {
         return $this->hasOne(Karyawan::class, ['id_karyawan' => 'id_karyawan']);
+    }
+
+    public function getCreated()
+    {
+        return $this->hasOne(User::class, ['id' => 'created_by']);
+    }
+    public function getUpdated()
+    {
+        return $this->hasOne(User::class, ['id' => 'updated_by']);
     }
 }

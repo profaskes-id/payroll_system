@@ -58,10 +58,7 @@ $tanggalFormater = new Tanggal();
                     <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Lokasi</td>
                     <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['lokasi']) ?></td>
                 </tr>
-                <tr>
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Alamat</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['alamat']) ?></td>
-                </tr>
+               
                 <tr>
                     <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Lokasi</td>
                     <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
@@ -114,11 +111,14 @@ $tanggalFormater = new Tanggal();
                 </tr>
                 <tr>
                     <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Disetujui Pada</td>
+
                     <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['disetujui_pada'] ?? 'Belum disetujui') ?></td>
                 </tr>
                 <tr>
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Disetujui Oleh</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['disetujui_oleh'] ?? 'Belum disetujui') ?></td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Disetujui Oleh</td>   
+<td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
+    <?= Html::encode($model['disetujuiOleh']['profile']['full_name'] ?? $model['disetujuiOleh']['username'] ?? 'Belum disetujui') ?>
+</td>
                 </tr>
                 <tr>
                     <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Catatan Admin</td>

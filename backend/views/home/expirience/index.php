@@ -10,6 +10,49 @@ $this->title = 'Expirience';
 
 ?>
 
+
+<style>
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: none;
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #modal-toggle:checked~.modal-overlay {
+        display: flex;
+    }
+
+    .modal-content {
+        position: relative;
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: -15px;
+        right: -15px;
+        background: #333;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 20px;
+    }
+</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
 <div class="container relative mx-auto px-3 lg:px-5 min-h-[90dvh] z-50">
     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home', 'title' => 'Data & Riwayat']); ?>
@@ -108,22 +151,49 @@ $this->title = 'Expirience';
                                                 <th>Agama</th>
                                                 <td><?= $karyawan->masterAgama->nama_kode ?></td>
                                             </tr>
+
+                                            <tr class="">
+                                                <th>wajah</th>
+                                                <td>
+                                                    <!-- Trigger -->
+                                                    <label for="modal-toggle" style="cursor:pointer;">
+                                                        <?= Html::img(
+                                                            'data:image/jpeg;base64,' . $karyawan->wajah,
+                                                            [
+                                                                'style' => 'width:120px; height:90px; object-fit:cover; border-radius:20%;',
+                                                                'onclick' => 'document.getElementById("modal-image").src="data:image/jpeg;base64,' . $karyawan->wajah . '"'
+                                                            ]
+                                                        ) ?>
+                                                    </label>
+
+                                                    <!-- Modal -->
+                                                    <input type="checkbox" id="modal-toggle" style="display:none;">
+                                                    <div class="modal-overlay">
+                                                        <label for="modal-toggle" class="modal-background"></label>
+                                                        <div class="modal-content">
+                                                            <img id="modal-image" src="" style="max-height:90vh; max-width:90vw;">
+                                                            <label for="modal-toggle" class="modal-close">&times;</label>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
                                         </table>
                                     </div>
 
 
-                                    <?php 
-                                         $setting_fr = FaceRecognationHelper::cekFaceRecognation();
-                                        if($setting_fr == 1):
+                                    <?php
+                                    $setting_fr = FaceRecognationHelper::cekFaceRecognation();
+                                    if ($setting_fr == 1):
                                     ?>
 
-                                    <div class="w-full col-span-12 p-2 border border-gray-300 lg:col-span-6">
-                                        <div class="mt-4">
-                                            <button type="button" onclick="openFaceModal()" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
-                                                Register Wajah
-                                            </button>
+                                        <div class="w-full col-span-12 p-2 border border-gray-300 lg:col-span-6">
+                                            <div class="mt-4">
+                                                <button type="button" onclick="openFaceModal()" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
+                                                    Register Wajah
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
                                     <?php endif; ?>
 
                                     <!-- Modal for face registration -->
@@ -138,14 +208,14 @@ $this->title = 'Expirience';
                                                     <h3 class="mb-4 text-lg font-medium leading-6 text-gray-900">Register Wajah</h3>
                                                     <div class="mb-4">
                                                         <div id="camera" class="w-full h-64 mb-4 bg-gray-200"></div>
-                                                        <div class="flex justify-center space-x-4">
+                                                        <div id="controls" class="flex justify-center space-x-4">
                                                             <button onclick="takeSnapshot()" class="px-4 py-2 text-white bg-blue-500 rounded">Ambil Foto</button>
                                                             <button onclick="stopCamera()" class="px-4 py-2 text-white bg-red-500 rounded">Tutup Kamera</button>
                                                         </div>
                                                     </div>
                                                     <div id="results" class="hidden">
                                                         <p class="mb-2">Hasil Foto:</p>
-                                                        <div id="snapshotResult" class="object-cover w-[100%] mb-4 bg-gray-200 aspect-[4/3]"></div>
+                                                        <div id="snapshotResult" class="mb-4 bg-red-500 aspect-[9/16] md:aspect-video "></div>
                                                         <?php $form = yii\widgets\ActiveForm::begin([
                                                             'id' => 'face-form',
                                                             'action' => ['karyawan/upload-face'],
@@ -155,9 +225,18 @@ $this->title = 'Expirience';
                                                         <?= $form->field($model, 'kode_karyawan')->hiddenInput(['value' => $karyawan->kode_karyawan])->label(false) ?>
                                                         <?= $form->field($model, 'wajah')->hiddenInput(['id' => 'faceData'])->label(false) ?>
 
-                                                        <div class="flex justify-end">
+                                                        <div class="flex justify-end" id="faceControls">
+                                                            <button type="button" onclick="resetCameraView(); startCamera();" class="px-4 py-2 bg-gray-300 rounded">Ambil Ulang</button>
+                                                            <button type="submit" class="px-4 py-2 mx-2 add-button" id="submitButton" onclick="handleSubmit()">
+                                                                <span id="buttonText">Simpan</span>
+                                                                <span id="loadingSpinner" class="hidden ml-2">
+                                                                    <svg class="w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                                    </svg>
+                                                                </span>
+                                                            </button>
                                                             <button type="button" onclick="closeModal()" class="px-4 py-2 mr-2 bg-gray-300 rounded">Batal</button>
-                                                            <button type="submit" class="px-4 py-2 text-white bg-green-500 rounded">Simpan</button>
                                                         </div>
                                                         <?php yii\widgets\ActiveForm::end(); ?>
                                                     </div>
@@ -165,6 +244,7 @@ $this->title = 'Expirience';
                                             </div>
                                         </div>
                                     </div>
+
 
                                 </div>
                                 <div class="w-full col-span-12 p-2 border border-gray-300 lg:col-span-6">
@@ -642,11 +722,9 @@ $this->title = 'Expirience';
 
             </div>
         </div>
-
 </div>
-
 </section>
-</div>
+
 
 
 
@@ -681,8 +759,12 @@ $this->title = 'Expirience';
 
 
 <script>
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
     function openFaceModal() {
         document.getElementById('faceModal').classList.remove('hidden');
+        resetCameraView(); // Reset view saat modal dibuka
         startCamera();
     }
 
@@ -690,14 +772,29 @@ $this->title = 'Expirience';
         document.getElementById('faceModal').classList.add('hidden');
         stopCamera();
         document.getElementById('results').classList.add('hidden');
+        document.getElementById('faceControls').style.display = 'none';
+    }
+
+    function resetCameraView() {
+        // Reset tampilan ke mode kamera
+        document.getElementById('camera').style.display = 'block';
+        document.getElementById('snapshotResult').style.display = 'none';
+        document.getElementById('controls').style.display = 'flex';
+        document.getElementById('snapshotResult').innerHTML = '';
+        document.getElementById('faceData').value = '';
+        document.getElementById('results').classList.add('hidden');
     }
 
     function startCamera() {
-       Webcam.set({
-    image_format: 'jpeg',
-    jpeg_quality: 90,
-    flip_horiz: true
-});
+        Webcam.set({
+            image_format: 'jpeg',
+            jpeg_quality: 90,
+            flip_horiz: true,
+            constraints: {
+                facingMode: 'user',
+                aspectRatio: window.innerWidth <= 768 ? 9 / 16 : 16 / 9
+            }
+        });
 
         Webcam.attach('#camera');
     }
@@ -705,15 +802,23 @@ $this->title = 'Expirience';
     function stopCamera() {
         Webcam.reset();
         closeModal();
+        document.getElementById('snapshotResult').style.display = 'none';
     }
 
     function takeSnapshot() {
         Webcam.snap(function(data_uri) {
             document.getElementById('camera').style.display = 'none';
+            document.getElementById('snapshotResult').style.display = 'block';
+            document.getElementById('controls').style.display = 'none';
             document.getElementById('snapshotResult').innerHTML =
-                '<img src="' + data_uri + '" class=" aspect-[4/3] "/>';
+                '<img src="' + data_uri + '" class="w-full h-full object-cover aspect-[9/16] md:aspect-video"/>';
             document.getElementById('faceData').value = data_uri;
-            document.getElementById('results').classList.remove('hidden');
+            // Only show results if there's a photo value
+            if (data_uri) {
+                document.getElementById('results').classList.remove('hidden');
+            } else {
+                document.getElementById('results').classList.add('hidden');
+            }
         });
     }
 
@@ -734,4 +839,33 @@ $this->title = 'Expirience';
             parentForm.submit();
         });
     }
+</script>
+
+
+<script>
+function handleSubmit() {
+    const submitButton = document.getElementById('submitButton');
+    const buttonText = document.getElementById('buttonText');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    
+    // Disable the button to prevent multiple clicks
+    submitButton.disabled = true;
+    submitButton.classList.add('opacity-75', 'cursor-not-allowed');
+    
+    // Show loading spinner
+    loadingSpinner.classList.remove('hidden');
+    buttonText.textContent = 'Menyimpan...';
+    
+    // Submit the form programmatically
+    document.getElementById('face-form').submit();
+    
+    // Optional: Re-enable after timeout if submission fails
+    setTimeout(() => {
+        if (!submitButton.disabled) return;
+        submitButton.disabled = false;
+        submitButton.classList.remove('opacity-75', 'cursor-not-allowed');
+        loadingSpinner.classList.add('hidden');
+        buttonText.textContent = 'Simpan';
+    }, 10000); // 10 seconds timeout
+}
 </script>

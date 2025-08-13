@@ -122,8 +122,8 @@ class HomeController extends Controller
 
 
         $manual_shift =   ManualSHiftHelper::isManual();
-
-        return $this->render('index', compact('is_ada_notif', 'karyawan', 'pengumuman', 'absensi', 'lama_kerja', 'jamKerjaToday', 'dataShift', 'manual_shift'));
+        $deviasiAbsensi = SettinganUmum::find()->where(['kode_setting' => Yii::$app->params['absensi-tertinggal']])->one();
+        return $this->render('index', compact('is_ada_notif', 'karyawan', 'pengumuman', 'absensi', 'lama_kerja', 'jamKerjaToday', 'dataShift', 'manual_shift' , 'deviasiAbsensi'));
     }
 
     public function actionView($id_user)
@@ -1036,7 +1036,7 @@ class HomeController extends Controller
                             Yii::$app->session->setFlash(
                                 'error',
                                 'Absen masuk tidak berhasil. Tingkat kemiripan wajah Anda hanya ' . $similarPercentage . '%. '
-                                    . 'Silakan ulangi pemindaian wajah hingga mencapai minimal ' . $similarPercentage . '%.'
+                                    . 'Silakan ulangi pemindaian wajah hingga mencapai nilai minimal '
                             );
                         }else{
                              $similarPercentage = round($similar * 100);

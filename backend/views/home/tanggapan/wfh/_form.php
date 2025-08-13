@@ -40,14 +40,6 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'alasan')->textarea(['rows' => 3, 'class' => 'w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'])->label('Alasan') ?>
         </div>
 
-        <div>
-            <?= $form->field($model, 'lokasi')->textInput(['maxlength' => true, 'placeholder' => 'Tentukan Lokasi', 'autocomplete' => 'off', 'value' => 'Rumah', 'class' => 'w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'])->label('Lokasi') ?>
-        </div>
-
-        <div>
-            <?= $form->field($model, 'alamat')->textarea(['rows' => 3, 'class' => 'w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'])->label('Alamat') ?>
-        </div>
-
         <div class="grid grid-cols-1 col-span-2 gap-6 md:grid-cols-2">
             <div>
                 <?= $form->field($model, 'tanggal_mulai')->textInput([
@@ -65,6 +57,11 @@ use yii\widgets\ActiveForm;
                 ])->label('Tanggal Selesai') ?>
             </div>
         </div>
+        <div >
+            <?= $form->field($model, 'lokasi')->textInput(['maxlength' => true, 'placeholder' => 'Tentukan Lokasi', 'autocomplete' => 'off', 'value' => 'Rumah', 'class' => 'w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'])->label('Lokasi') ?>
+        </div>
+
+
 
 
 

@@ -3,15 +3,19 @@
 namespace backend\controllers;
 
 use amnah\yii2\user\models\User;
+use backend\models\Absensi;
 use backend\models\AtasanKaryawan;
+use backend\models\DetailTugasLuar;
 use backend\models\helpers\EmailHelper;
 use backend\models\helpers\NotificationHelper;
 use backend\models\JamKerjaKaryawan;
 use backend\models\MasterKode;
+use backend\models\PengajuanAbsensi;
 use backend\models\PengajuanCuti;
 use backend\models\PengajuanDinas;
 use backend\models\PengajuanLembur;
 use backend\models\PengajuanShift;
+use backend\models\PengajuanTugasLuar;
 use backend\models\PengajuanWfh;
 use backend\models\PengajuanWfhSearch;
 use backend\models\RekapCuti;
@@ -153,6 +157,8 @@ class TanggapanController extends Controller
         }
         if ($this->request->isPost) {
             if ($pengajuanWfh->load($this->request->post())) {
+                $pengajuanWfh->disetujui_pada = date('Y-m-d H:i:s');
+                $pengajuanWfh->disetujui_oleh = Yii::$app->user->identity->id;
                 if ($pengajuanWfh->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Mengubah Pengajuan');
 
@@ -201,6 +207,12 @@ class TanggapanController extends Controller
         Yii::$app->session->setFlash('error', 'Gagal Menghapus Pengajuan');
         return $this->redirect(['/tanggapan/wfh']);
     }
+
+
+
+    // tugas luar
+
+
 
 
     // Lembur
@@ -455,7 +467,8 @@ class TanggapanController extends Controller
 
 
                 $model->sisa_hari = 0;
-
+                $model->ditanggapi_pada = date('Y-m-d H:i:s');
+                $model->ditanggapi_oleh = Yii::$app->user->identity->id;
 
                 if ($model->save()) {
 
@@ -465,15 +478,11 @@ class TanggapanController extends Controller
 
 
 
-                    // $timestamp_mulai = strtotime($model->tanggal_mulai);
-                    // $timestamp_selesai = strtotime($model->tanggal_selesai);
                     $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $model->id_karyawan])->one();
                     $containsNumber = strpos($jamKerjaKaryawan->jamKerja->nama_jam_kerja, preg_match('/\d+/', "5", $matches) ? $matches[0] : '') !== false;
 
                     $hari_kerja = $this->hitungHariKerja($model->tanggal_mulai, $model->tanggal_selesai, $containsNumber);
                     // Menghitung selisih hari
-                    // $selisih_detik = $timestamp_selesai - $timestamp_mulai;
-                    // $selisih_hari = $selisih_detik / (60 * 60 * 24);
 
 
 
@@ -570,8 +579,8 @@ class TanggapanController extends Controller
         $tahun = date('Y');
         $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, intval($tanggalAwal->nama_kode) + 1, $tahun));
         $lastdate = date('Y-m-d', mktime(0, 0, 0, $bulan + 1, intval($tanggalAwal->nama_kode), $tahun));
-        $tgl_mulai =  Yii::$app->request->get() == [] ? $firstDayOfMonth :  Yii::$app->request->get()['PengajuanWfhSearch']['tanggal_mulai'];
-        $tgl_selesai =  Yii::$app->request->get() == [] ? $lastdate :  Yii::$app->request->get()['PengajuanWfhSearch']['tanggal_selesai'];
+        $tgl_mulai =  Yii::$app->request->get() == [] ? $firstDayOfMonth :  Yii::$app->request->get()['PengajuanDinasSearch']['tanggal_mulai'];
+        $tgl_selesai =  Yii::$app->request->get() == [] ? $lastdate :  Yii::$app->request->get()['PengajuanDinasSearch']['tanggal_selesai'];
 
         if ($this->request->isPost && $model->load($this->request->post())) {
             $model->disetujui_oleh = Yii::$app->user->identity->id;
@@ -669,7 +678,6 @@ class TanggapanController extends Controller
             $model->disetujui_pada = date('Y-m-d H:i:s');
 
             if ($model->save()) {
-                # code...
 
                 $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
                 $sender = Yii::$app->user->identity->id;
@@ -707,6 +715,334 @@ class TanggapanController extends Controller
 
         Yii::$app->session->setFlash('error', 'Gagal Menghapus Pengajuan');
         return $this->redirect(['/tanggapan/dinas']);
+    }
+
+
+
+
+
+    // deviasi absensi
+
+    public function actionAbsensi()
+    {
+        $id_admin = Yii::$app->user->identity->id_karyawan;
+        $karyawanBawahanAdmin = AtasanKaryawan::find()
+            ->where(['id_atasan' => $id_admin])
+            ->asArray()
+            ->all();
+        $idKaryawanList = array_column($karyawanBawahanAdmin, 'id_karyawan');
+        $pengajuanAbsensiList = PengajuanAbsensi::find()
+            ->where(['id_karyawan' => $idKaryawanList])
+            ->all();
+
+        $this->layout = 'mobile-main';
+
+
+        $model = new PengajuanAbsensi();
+        $tanggalAwal = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one();
+        $bulan = date('m');
+        $tahun = date('Y');
+        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, intval($tanggalAwal->nama_kode) + 1, $tahun));
+        $lastdate = date('Y-m-d', mktime(0, 0, 0, $bulan + 1, intval($tanggalAwal->nama_kode), $tahun));
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->disetujui_oleh = Yii::$app->user->identity->id;
+            $model->disetujui_pada = date('Y-m-d H:i:s');
+            $model->save();
+            $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+            $sender = Yii::$app->user->identity->id;
+
+            $params = [
+                'judul' => 'Pengajuan absensi',
+                'deskripsi' => 'Pengajuan Absensi luar Anda Telah Ditanggapi Oleh Atasan.',
+                'nama_transaksi' => "absensi",
+                'id_transaksi' => $model['id_pengajuan_absensi'],
+            ];
+            $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan absensi Baru Dari " . $model->karyawan->nama);
+
+
+            return $this->redirect(['view', 'id_pengajuan_absensi' => $model->id_pengajuan_absensi]);
+        }
+
+
+        return $this->render('/home/tanggapan/absensi/index', compact('pengajuanAbsensiList', 'model',));
+    }
+
+    public function actionAbsensiView($id)
+    {
+        $this->layout = 'mobile-main';
+        $model = PengajuanAbsensi::find()->where(['id' => $id])->one();
+        return $this->render('/home/tanggapan/absensi/view', compact('model'));
+    }
+    public function actionAbsensiUpdate($id)
+    {
+        $id_admin = Yii::$app->user->identity->id_karyawan;
+
+
+        $karyawanBawahanAdmin = AtasanKaryawan::find()
+            ->where(['id_atasan' => $id_admin])
+            ->asArray()
+            ->all();
+
+        $pengajuanAbsensi = PengajuanAbsensi::find()->where(['id' => $id])->one();
+
+
+        $model = PengajuanAbsensi::findOne($id);
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->id_approver     = Yii::$app->user->identity->id;
+            $model->tanggal_disetujui = date('Y-m-d H:i:s');
+
+            if ($model->save()) {
+
+                if ($model->status == 1) {
+                    $absensi = new Absensi();
+                    $absensi->id_karyawan = $model->id_karyawan;
+                    $absensi->jam_masuk = $model->jam_masuk;
+                    $absensi->jam_pulang = $model->jam_keluar;
+                    $absensi->keterangan = $model->alasan_pengajuan;
+                    $absensi->created_at = date('Y-m-d H:i:s');
+                    $absensi->created_by = Yii::$app->user->identity->id;
+                    $absensi->updated_at = date('Y-m-d H:i:s');
+                    $absensi->updated_by = Yii::$app->user->identity->id;
+                    $absensi->kode_status_hadir = 'H';
+                    $absensi->tanggal = date('Y-m-d', strtotime($model->tanggal_absen));
+
+                    if ($absensi->save()) {
+                        $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+                        $sender = Yii::$app->user->identity->id;
+
+                        $params = [
+                            'judul' => 'Pengajuan Absensi',
+                            'deskripsi' => 'Pengajuan Absensi luar Anda Telah Ditanggapi Oleh Atasan.',
+                            'nama_transaksi' => "absensi",
+                            'id_transaksi' => $model['id'],
+                        ];
+                        $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan Absensi  Dari " . $model->karyawan->nama);
+                        return $this->redirect(['/tanggapan/absensi-view', 'id' => $model->id]);
+                    } else {
+                        Yii::$app->session->setFlash('error', 'gagal menambahkan absensi karyawan pada tanggal ' . $model->tanggal_absen);
+                    }
+                } else {
+
+                    Yii::$app->session->setFlash('succes', 'berhasil mengupdate pengajuan');
+                }
+            } else {
+                Yii::$app->session->setFlash('error', 'gagal mengupdate pengajuan');
+            }
+        }
+
+
+        $this->layout = 'mobile-main';
+        return $this->render('/home/tanggapan/absensi/update', [
+            'model' => $pengajuanAbsensi,
+            'karyawanBawahanAdmin' => $karyawanBawahanAdmin,
+        ]);
+    }
+
+
+    public function actionAbsensiDelete($id)
+    {
+        $model = PengajuanAbsensi::find()->where(['id' => $id])->one();
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Berhasil Menghapus Pengajuan');
+            return $this->redirect(['/tanggapan/absensi']);
+        }
+
+        Yii::$app->session->setFlash('error', 'Gagal Menghapus Pengajuan');
+        return $this->redirect(['/tanggapan/absensi']);
+    }
+
+
+
+
+    public function actionTugasLuar()
+    {
+        $id_admin = Yii::$app->user->identity->id_karyawan;
+        $karyawanBawahanAdmin = AtasanKaryawan::find()
+            ->where(['id_atasan' => $id_admin])
+            ->asArray()
+            ->all();
+        $idKaryawanList = array_column($karyawanBawahanAdmin, 'id_karyawan');
+        $pengajuanTugasLuarList = PengajuanTugasLuar::find()
+            ->where(['id_karyawan' => $idKaryawanList])
+            ->all();
+
+        $this->layout = 'mobile-main';
+
+
+        $model = new PengajuanTugasLuar();
+        $tanggalAwal = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one();
+        $bulan = date('m');
+        $tahun = date('Y');
+        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, intval($tanggalAwal->nama_kode) + 1, $tahun));
+        $lastdate = date('Y-m-d', mktime(0, 0, 0, $bulan + 1, intval($tanggalAwal->nama_kode), $tahun));
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->disetujui_oleh = Yii::$app->user->identity->id;
+            $model->disetujui_pada = date('Y-m-d H:i:s');
+            $model->save();
+            $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+            $sender = Yii::$app->user->identity->id;
+
+            $params = [
+                'judul' => 'Pengajuan tugas luar',
+                'deskripsi' => 'Pengajuan TugasLuar luar Anda Telah Ditanggapi Oleh Atasan.',
+                'nama_transaksi' => "tugas-luar",
+                'id_transaksi' => $model['id_tugas_luar'],
+            ];
+            $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan tugas-luar Baru Dari " . $model->karyawan->nama);
+
+
+            return $this->redirect(['view', 'id_tugas_luar' => $model->id_tugas_luar]);
+        }
+
+
+        return $this->render('/home/tanggapan/tugas-luar/index', compact('pengajuanTugasLuarList', 'model',));
+    }
+
+    public function actionTugasLuarView($id)
+    {
+        $this->layout = 'mobile-main';
+        $model = PengajuanTugasLuar::find()->where(['id_tugas_luar' => $id])->one();
+        $detail = DetailTugasLuar::find()->where(['id_tugas_luar' => $id])->all();
+        
+        return $this->render('/home/tanggapan/tugas-luar/view', compact('model' , "detail"));
+    }
+   public function actionTugasLuarUpdate($id_tugas_luar)
+{
+    $model = PengajuanTugasLuar::find()->where(['id_tugas_luar' => $id_tugas_luar])->one();
+    $detailModels = $model->detailTugasLuars;
+
+    if (empty($detailModels)) {
+        $detailModels = [new DetailTugasLuar()];
+    }
+
+    if ($this->request->isPost) {
+        $postData = $this->request->post();
+        $transaction = Yii::$app->db->beginTransaction();
+
+        try {
+            // Load and save main model
+            if ($model->load($postData)) {
+                $model->updated_at = date('Y-m-d H:i:s');
+                $model->updated_by = Yii::$app->user->identity->id;
+                
+                if (!$model->save()) {
+                    throw new \Exception('Gagal menyimpan pengajuan: ' . json_encode($model->errors));
+                }
+
+                // Process detail data
+                $details = $postData['DetailTugasLuar'] ?? [];
+
+                // Get existing detail IDs
+                $existingDetails = DetailTugasLuar::find()
+                    ->where(['id_tugas_luar' => $model->id_tugas_luar])
+                    ->indexBy('id_detail')
+                    ->all();
+
+                $savedDetails = [];
+                $urutan = 1;
+
+                foreach ($details as $detailData) {
+                    if (!empty($detailData['id_detail']) && isset($existingDetails[$detailData['id_detail']])) {
+                        // Update existing detail
+                        $detail = $existingDetails[$detailData['id_detail']];
+                        unset($existingDetails[$detailData['id_detail']]); // Remove from delete list
+                    } else {
+                        // Create new detail
+                        $detail = new DetailTugasLuar();
+                        $detail->id_tugas_luar = $model->id_tugas_luar;
+                        $detail->created_at = date('Y-m-d H:i:s');
+                    }
+
+                    // Set default values if not provided
+                    $detailData['status_check'] = $detailData['status_check'] ?? 0;
+                    $detailData['status_pengajuan_detail'] = $detailData['status_pengajuan_detail'] ?? 1;
+                    $detailData['urutan'] = $urutan++;
+
+                    $detail->updated_at = date('Y-m-d H:i:s');
+
+                    if (!$detail->load($detailData, '') || !$detail->save()) {
+                        throw new \Exception(
+                            'Gagal menyimpan detail: ' . json_encode($detail->errors) .
+                                ' Data: ' . json_encode($detailData)
+                        );
+                    }
+
+                    $savedDetails[] = $detail;
+                }
+
+                // Delete details that were removed
+                if (!empty($existingDetails)) {
+                    DetailTugasLuar::deleteAll(['id_detail' => array_keys($existingDetails)]);
+                }
+
+                // Validate at least one detail exists
+                if (empty($savedDetails)) {
+                    throw new \Exception('Setidaknya harus ada satu detail tugas');
+                }
+
+                $transaction->commit();
+                
+                // Send notification
+                // $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+                // $sender = Yii::$app->user->identity->id;
+
+                // $params = [
+                //     'judul' => 'Pengajuan Tugas Luar',
+                //     'deskripsi' => 'Pengajuan Tugas Luar Anda Telah Ditanggapi Oleh Atasan.',
+                //     'nama_transaksi' => "tugas-luar",
+                //     'id_transaksi' => $model->id_tugas_luar,
+                // ];
+                // $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan Tugas Luar Dari " . $model->karyawan->nama);
+                
+                Yii::$app->session->setFlash('success', 'Data berhasil diperbarui');
+                return $this->redirect(['tugas-luar-view', 'id' => $model->id_tugas_luar]);
+            } else {
+                throw new \Exception('Gagal memproses data pengajuan');
+            }
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            Yii::$app->session->setFlash('danger', 'Gagal menyimpan: ' . $e->getMessage());
+
+            // Reload detail models for form
+            $detailModels = [];
+            foreach ($postData['DetailTugasLuar'] as $detailData) {
+                $detail = new DetailTugasLuar();
+                $detail->attributes = $detailData;
+                $detailModels[] = $detail;
+            }
+        }
+    }
+
+    $this->layout = 'mobile-main';
+    return $this->render('/home/tanggapan/tugas-luar/update', [
+        'model' => $model,
+        'detailModels' => $detailModels,
+    ]);
+}
+
+
+    public function actionTugasLuarDelete($id_tugas_luar)
+    {
+        $model = PengajuanTugasLuar::find()->where(['id_tugas_luar' => $id_tugas_luar])->one();
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Berhasil Menghapus Pengajuan');
+            return $this->redirect(['/tanggapan/tugas-luar']);
+        }
+
+        Yii::$app->session->setFlash('error', 'Gagal Menghapus Pengajuan');
+        return $this->redirect(['/tanggapan/tugas-luar']);
+    }
+
+
+    public function actionTugasLuarDeleteDetail($id){
+        $model = DetailTugasLuar::find()->where(['id_detail' => $id])->one();
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Berhasil Menghapus Detail Pengajuan');
+            return $this->redirect(['/tanggapan/tugas-luar']);
+        }
     }
 
 

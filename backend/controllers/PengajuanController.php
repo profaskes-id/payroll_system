@@ -428,8 +428,9 @@ class PengajuanController extends \yii\web\Controller
     {
         $this->layout = 'mobile-main';
         $model = PengajuanCuti::find()->where(['id_pengajuan_cuti' => $id])->one();
+
         if ($model) {
-            return $this->render('home/pengajuan/wfh/detail', compact('model'));
+            return $this->render('home/pengajuan/cuti/detail', compact('model' ));
         } else {
             Yii::$app->session->setFlash('error', 'Pengajuan Tidak Ditemukan');
             $this->redirect(['/home/index']);

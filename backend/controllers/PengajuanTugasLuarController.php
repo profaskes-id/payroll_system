@@ -201,7 +201,7 @@ class PengajuanTugasLuarController extends Controller
                 // Load and save main model
                 if ($model->load($postData)) {
                     $model->updated_at = date('Y-m-d H:i:s');
-
+                    $model->updated_by = Yii::$app->user->identity->id;
                     if (!$model->save()) {
                         throw new \Exception('Gagal menyimpan pengajuan: ' . json_encode($model->errors));
                     }

@@ -77,7 +77,7 @@ class SiteController extends Controller
 
         if (Yii::$app->user->isGuest) {
             return $this->redirect(['user/login']);
-        } elseif ($roleNames[0] == 'Karyawan') {
+        } elseif ($roleNames[0] == 'Karyawan' || $roleNames[0] == 'Magang') {
             return $this->redirect(['home/index']);
         } else {
 
@@ -101,6 +101,7 @@ class SiteController extends Controller
                 $date = date('d-m-Y', strtotime("-$i days"));
                 $dates[$date] = null;
             }
+
 
             $absensi = Absensi::find()
                 ->asArray()

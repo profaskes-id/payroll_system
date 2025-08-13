@@ -266,6 +266,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </a>
 
             <!-- Absensi Tertinggal -->
+            <?php if($deviasiAbsensi && $deviasiAbsensi['nilai_setting'] == 1) : ?>
             <a href="/panel/absensi-tertinggal" class="transition transform hover:scale-105">
                 <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
                     <div class="p-3 mb-4 bg-blue-100 rounded-full">
@@ -277,6 +278,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <h3 class="font-medium text-center text-gray-700">Deviasi Absensi</h3>
                 </div>
             </a>
+            <?php endif; ?>
 
             <!-- Tugas Luar -->
             <a href="/panel/pengajuan/tugas-luar" class="transition transform hover:scale-105">

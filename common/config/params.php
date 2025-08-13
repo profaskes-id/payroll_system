@@ -40,7 +40,7 @@ return [
     "kalkulasi_jam_lembur" => "kalkulasi_jam_lembur",
     "manual_shift" => "manual_shift",
     "ajukan_lembur" => "ajukan_lembur",
-    "pengajuan-absensi-tertinggal" => "pengajuan absensi tertinggal",
+    "absensi-tertinggal" => "absensi-tertinggal",
     "change_fr" => "change_fr",
     "verifikasi_fr" => "verifikasi_fr"
 ];

@@ -45,11 +45,13 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
 ?>
 
 
+
+
 <section class="min-h-[90dvh] relative overflow-x-hidden z-50">
     <!-- Confirmation Modals -->
     <?php foreach ($modals as $modal): ?>
         <div id="<?= $modal['id'] ?>" tabindex="-1"
-            class="fixed inset-0 z-50 flex items-center justify-center hidden w-full h-full bg-black bg-opacity-50">
+            class="fixed inset-0 z-50 flex items-center justify-center hidden w-full h-full bg-gray-200 bg-opacity-50">
             <div class="relative w-full max-w-md p-4">
                 <div class="<?= $modalStyles['content'] ?>">
                     <!-- Close Button -->
@@ -60,13 +62,12 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                         </svg>
                     </button>
 
-                    <div class="p-4 text-center md:p-5">
-                        <h3 class="mb-5 text-lg font-normal text-gray-500"><?= $modal['title'] ?></h3>
+                    <div class="p-3 text-center">
 
                         <!-- Webcam Container -->
                         <!-- Webcam Container -->
                         <div id="camera-container-<?= $modal['id'] ?>">
-                            <div id="camera-<?= $modal['id'] ?>" class="w-full h-64 mx-auto mb-4 bg-gray-200"></div>
+                            <div id="camera-<?= $modal['id'] ?>" class="mx-auto mb-4 bg-black"></div>
                             <div class="flex justify-center space-x-4">
                                 <button onclick="takeSnapshot('<?= $modal['id'] ?>')"
                                     class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
@@ -82,7 +83,7 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                         <!-- Results Container -->
                         <div id="results-<?= $modal['id'] ?>" class="hidden">
                             <p class="mb-2">Hasil Foto:</p>
-                            <div id="snapshotResult-<?= $modal['id'] ?>" class="object-cover w-[100%] mb-4 bg-gray-200 aspect-[4/3]"></div>
+                            <div id="snapshotResult-<?= $modal['id'] ?>" class="object-cover w-[100%] mb-4 bg-gray-200 aspect-[3/4] "></div>
 
                             <input type="hidden" id="faceData-<?= $modal['id'] ?>" name="<?= $modal['face_input'] ?>">
 
@@ -372,6 +373,9 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
     const closeWarning = document.getElementById('closeWarning');
     const modalPulang = document.getElementById('modal-pulang');
     const closeModalPulang = document.getElementById('close-modal-pulang');
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    // alert(JSON.stringify({viewportHeight , viewportWidth}, null,2));
 
     // Functions
     
@@ -611,16 +615,16 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
             return;
         }
 
+
 Webcam.set({
     image_format: 'jpeg',
     jpeg_quality: 80,
     flip_horiz: true,
-    width: 640 / 2,   // lebar
-    height: 480 /2,  // tinggi (640/480 = 4/3)
+    width:  300,
+    height: 400,
     constraints: {
         facingMode: 'user',
-        width: { ideal: 640 /2 },  // ideal width
-        height: { ideal: 480/2 }  // ideal height (sesuai aspect ratio 4:3)
+        aspectRatio: 3/4,
     }
 });
 
@@ -650,7 +654,7 @@ Webcam.set({
 
             if (cameraContainer) cameraContainer.classList.add('hidden');
             if (snapshotResult) {
-                snapshotResult.innerHTML = '<img src="' + data_uri + '" class="aspect-[4/3]"/>';
+                snapshotResult.innerHTML = '<img src="' + data_uri + '" class="aspect-[3/4] "/>';
             }
             if (faceDataInput) faceDataInput.value = data_uri;
             if (resultsContainer) resultsContainer.classList.remove('hidden');

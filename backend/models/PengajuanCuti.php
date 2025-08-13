@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use amnah\yii2\user\models\User;
 use Yii;
 
 /**
@@ -79,5 +80,9 @@ class PengajuanCuti extends \yii\db\ActiveRecord
     public function getJenisCuti()
     {
         return $this->hasOne(MasterCuti::class, ['id_master_cuti' => 'jenis_cuti'])->onCondition(['status' => '1']);
+    }
+        public function getDisetujuiOleh()
+    {
+        return $this->hasOne(User::class, ['id' => 'ditanggapi_oleh']);
     }
 }

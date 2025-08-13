@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use amnah\yii2\user\models\User;
 use Yii;
 
 /**
@@ -90,5 +91,9 @@ class PengajuanWfh extends \yii\db\ActiveRecord
     public static function getKaryawanData()
     {
         return Karyawan::find()->select(['id_karyawan', 'nama',])->where(['is_aktif' => 1])->asArray()->all();
+    }
+        public function getDisetujuiOleh()
+    {
+        return $this->hasOne(User::class, ['id' => 'disetujui_oleh']);
     }
 }

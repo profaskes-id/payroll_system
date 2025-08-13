@@ -90,11 +90,15 @@ $tanggalFormater = new Tanggal();
                 </tr>
                 <tr>
                     <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Disetujui Pada</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['ditanggapi_pada'] ?? 'Belum ditanggapi') ?></td>
+                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['disetujui_pada'] ?? 'Belum ditanggapi') ?></td>
                 </tr>
+
+
                 <tr>
                     <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Disetujui Oleh</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['ditanggapi_oleh'] ?? 'Belum ditanggapi') ?></td>
+                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
+    <?= Html::encode($model['user']['profile']['full_name'] ?? $model['user']['username'] ?? 'Belum disetujui') ?>
+</td>
                 </tr>
                 <tr>
                     <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['catatan_admin'] ?? 'Tidak ada catatan') ?></td>

@@ -108,8 +108,13 @@ $tanggalFormater = new Tanggal();
                 </tr>
                 <tr>
                     <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Disetujui Oleh</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['disetujui_oleh'] ?? 'Belum disetujui') ?></td>
-                </tr>
+<td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
+    <?= Html::encode(
+        $model['disetujuiOleh']['profile']['full_name'] ?? 
+        $model['disetujuiOleh']['username'] ?? 
+        'Belum disetujui'
+    ) ?>
+</td>                </tr>
                 <tr>
                     <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Catatan Admin</td>
                     <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['catatan_admin'] ?? 'Tidak ada catatan') ?></td>
