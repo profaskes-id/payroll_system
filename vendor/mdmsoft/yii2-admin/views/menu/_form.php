@@ -18,7 +18,7 @@ $this->registerJs("var _opts = $opts;");
 $this->registerJs($this->render('_script.js'));
 ?>
 
-<div class="menu-form">
+<div class="menu-form table-container">
     <?php $form = ActiveForm::begin(); ?>
     <?= Html::activeHiddenInput($model, 'parent', ['id' => 'parent_id']); ?>
     <div class="row">
@@ -39,7 +39,7 @@ $this->registerJs($this->render('_script.js'));
     <div class="form-group">
         <?=
         Html::submitButton($model->isNewRecord ? Yii::t('rbac-admin', 'Create') : Yii::t('rbac-admin', 'Update'), ['class' => $model->isNewRecord
-                    ? 'btn btn-success' : 'btn btn-primary'])
+                    ? 'add-button' : 'add-button'])
         ?>
     </div>
     <?php ActiveForm::end(); ?>

@@ -22,9 +22,11 @@ $columns[] = [
     'template' => '{view}'
 ];
 ?>
-<div class="assignment-index">
+<div class="assignment-index ">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+
+        <div class="table-container table-responsive">
+
 
     <?php Pjax::begin(); ?>
     <?=
@@ -47,12 +49,14 @@ $columns[] = [
             [
                 'attribute' => $usernameField,
                 'value' => function ($model) {
-                    return  $model->profile->full_name ?? $model->username;
+                    return  $model->username ?? $model->profile->full_name  ;
                 }
             ]
         ],
     ]);
     ?>
     <?php Pjax::end(); ?>
+
+        </div>
 
 </div>

@@ -12,9 +12,8 @@ use yii\grid\ActionColumn;
 $this->title = Yii::t('rbac-admin', 'Users');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="user-index">
+<div class="user-index table-container table-responsive">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <?=
     GridView::widget([

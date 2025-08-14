@@ -15,7 +15,18 @@ $this->params['nav-items'] = $menus;
 ?>
 <?php $this->beginContent($controller->module->mainLayout) ?>
 <div class="row">
-    <div class="col-sm-3">
+<?php
+    $assignments = Yii::$app->authManager->getAssignments(Yii::$app->user->id);
+    ?>
+
+    <?php if (!empty($assignments)) : ?>
+        <?php 
+        $roleNames = array_column($assignments, 'roleName');
+        $isSuperAdmin = in_array('super_admin', $roleNames, true);
+        ?>
+        
+        <?php if ($isSuperAdmin) : ?>
+            <div class="col-sm-3">
         <div id="manager-menu" class="list-group">
             <?php
             foreach ($menus as $menu) {
@@ -26,16 +37,24 @@ $this->params['nav-items'] = $menus;
                     'class' => 'list-group-item' . $active,
                 ]);
             }
-            ?>
+         ?>
         </div>
-    </div>
+    </div> 
     <div class="col-sm-9">
         <?= $content ?>
     </div>
 </div>
-<?php
-list(, $url) = Yii::$app->assetManager->publish('@mdm/admin/assets');
-$this->registerCssFile($url . '/list-item.css');
-?>
+        <?php else : ?>
+    <div class="col-12">
+        <?= $content ?>
+    </div>
+</div>
+        <?php endif; ?>
+    <?php endif; ?>
 
-<?php $this->endContent(); ?>
+    <?php
+    list(, $url) = Yii::$app->assetManager->publish('@mdm/admin/assets');
+    $this->registerCssFile($url . '/list-item.css');
+    ?>
+
+    <?php $this->endContent(); ?>

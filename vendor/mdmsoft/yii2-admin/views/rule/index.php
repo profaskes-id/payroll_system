@@ -15,34 +15,39 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="role-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a(Yii::t('rbac-admin', 'Create Rule'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
 
-    <?=
-    GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            [
-                'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
-                'class' => 'yii\grid\SerialColumn'
+    <div class="costume-container">
+        <p class="">
+            <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) ?>
+        </p>
+    </div>
+
+    <div class="table-container table-responsive">
+
+        <?=
+        GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
+            'columns' => [
+                [
+                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'class' => 'yii\grid\SerialColumn'
+                ],
+                [
+                    'class' => ActionColumn::className(),
+                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                ],
+                [
+                    'attribute' => 'name',
+                    'label' => Yii::t('rbac-admin', 'Name'),
+                ],
+
             ],
-            [
-                'class' => ActionColumn::className(),
-                'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-            ],
-            [
-                'attribute' => 'name',
-                'label' => Yii::t('rbac-admin', 'Name'),
-            ],
+        ]);
+        ?>
 
-        ],
-    ]);
-    ?>
-
+    </div>
 </div>

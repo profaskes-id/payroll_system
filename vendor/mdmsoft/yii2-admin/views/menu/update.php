@@ -12,7 +12,11 @@ $this->params['breadcrumbs'][] = Yii::t('rbac-admin', 'Update');
 ?>
 <div class="menu-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+ <div class="costume-container">
+        <p class="">
+            <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+        </p>
+</div>
 
     <?=
     $this->render('_form', [

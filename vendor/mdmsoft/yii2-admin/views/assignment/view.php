@@ -30,8 +30,13 @@ $this->registerJs("var _opts = {$opts};");
 $this->registerJs($this->render('_script.js'));
 $animateIcon = ' <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i>';
 ?>
+
+ <div class="costume-container">
+        <p class="">
+            <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+        </p>
+</div>
 <div class="assignment-index">
-    <h1><?=$this->title;?></h1>
 
     <div class="row">
         <div class="col-sm-5">

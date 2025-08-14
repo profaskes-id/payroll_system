@@ -27,7 +27,7 @@ AutocompleteAsset::register($this);
 $this->registerJs($js);
 ?>
 
-<div class="auth-item-form">
+<div class="auth-item-form table-container">
     <?php $form = ActiveForm::begin(['id' => 'item-form']); ?>
     <div class="row">
         <div class="col-sm-6">
@@ -44,7 +44,7 @@ $this->registerJs($js);
     <div class="form-group">
         <?php
         echo Html::submitButton($model->isNewRecord ? Yii::t('rbac-admin', 'Create') : Yii::t('rbac-admin', 'Update'), [
-            'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary',
+            'class' => $model->isNewRecord ? 'add-button' : 'add-button',
             'name' => 'submit-button'])
         ?>
     </div>

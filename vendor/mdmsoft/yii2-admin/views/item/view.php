@@ -31,18 +31,18 @@ $this->registerJs("var _opts = {$opts};");
 $this->registerJs($this->render('_script.js'));
 $animateIcon = ' <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></i>';
 ?>
-<div class="auth-item-view">
-    <h1><?= Html::encode($this->title); ?></h1>
-    <p>
-        <?= Html::a(Yii::t('rbac-admin', 'Update'), ['update', 'id' => $model->name], ['class' => 'btn btn-primary']); ?>
+<div class="auth-item-view table-container">
+
+    <p class="d-flex">
+        <?= Html::a(Yii::t('rbac-admin', 'Update'), ['update', 'id' => $model->name], ['class' => 'add-button inline']); ?>
         <?=
         Html::a(Yii::t('rbac-admin', 'Delete'), ['delete', 'id' => $model->name], [
-            'class' => 'btn btn-danger',
+            'class' => 'reset-button mx-3',
             'data-confirm' => Yii::t('rbac-admin', 'Are you sure to delete this item?'),
             'data-method' => 'post',
         ]);
         ?>
-        <?= Html::a(Yii::t('rbac-admin', 'Create'), ['create'], ['class' => 'btn btn-success']); ?>
+        <?= Html::a(Yii::t('rbac-admin', 'Create'), ['create'], ['class' => 'tambah-button']); ?>
     </p>
     <div class="row">
         <div class="col-sm-11">
