@@ -197,7 +197,7 @@ class HomeController extends Controller
             $karyawan = Karyawan::find()->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan])->one();
             $isAda = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
 
-            $base64Image = Yii::$app->request->post('Absensi')['foto_masuk'];
+            $base64Image = Yii::$app->request->post('Absensi')['foto_masuk'] ?? '';
             if ($base64Image) {
                 $compressedImage = $comporess->compressBase64Image($base64Image);
                 $model->foto_masuk = $compressedImage;
@@ -370,7 +370,7 @@ class HomeController extends Controller
                             Yii::$app->session->setFlash(
                                 'error',
                                 'Absen masuk tidak berhasil. Tingkat kemiripan wajah Anda hanya ' . $similarPercentage . '%. '
-                                    . 'Silakan ulangi pemindaian wajah hingga mencapai minimal ' . $similarPercentage . '%.'
+                                    . 'Silakan ulangi pemindaian wajah hingga mencapai nilai minimal ' 
                             );
                         }else{
                              $similarPercentage = round($similar * 100);
@@ -396,6 +396,8 @@ class HomeController extends Controller
 
                     }
                 } else {
+                           $model->foto_masuk = null;
+                    $model->similarity = 0;
                     if ($model->save()) {
                         Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil');
                     } else {
@@ -685,7 +687,7 @@ class HomeController extends Controller
             $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
             $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
             $model->alasan_terlambat = Yii::$app->request->post('Absensi')['alasan_terlambat'];
-            $base64Image = Yii::$app->request->post('Absensi')['foto_masuk'];
+            $base64Image = Yii::$app->request->post('Absensi')['foto_masuk'] ?? '-';
             $verificationFr = FaceRecognationHelper::cekVerificationFr(); 
 
 
@@ -809,7 +811,7 @@ class HomeController extends Controller
                             Yii::$app->session->setFlash(
                                 'error',
                                 'Absen masuk tidak berhasil. Tingkat kemiripan wajah Anda hanya ' . $similarPercentage . '%. '
-                                    . 'Silakan ulangi pemindaian wajah hingga mencapai minimal ' . $similarPercentage . '%.'
+                                    . 'Silakan ulangi pemindaian wajah hingga mencapai nilai minimal ' 
                             );
                         }else{
                              $similarPercentage = round($similar * 100);
@@ -835,6 +837,8 @@ class HomeController extends Controller
 
                     }
                 } else {
+                           $model->foto_masuk = null;
+                    $model->similarity = 0;
                     if ($model->save()) {
                         Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil');
                      
@@ -861,7 +865,7 @@ class HomeController extends Controller
         $model = new Absensi();
         if ($this->request->isPost) {
 
-            $base64Image = Yii::$app->request->post('Absensi')['foto_masuk'];
+            $base64Image = Yii::$app->request->post('Absensi')['foto_masuk'] ?? '-';
             if ($base64Image) {
                 $compressedImage = $comporess->compressBase64Image($base64Image);
                 $model->foto_masuk = $compressedImage;
@@ -949,6 +953,7 @@ class HomeController extends Controller
 
 
                 $setting_fr = FaceRecognationHelper::cekFaceRecognation();
+
                 if ($setting_fr == 1) {
 
                     $similar = 0;
@@ -1062,9 +1067,9 @@ class HomeController extends Controller
 
                     }
                 } else {
+                    $model->foto_masuk = null;
+                    $model->similarity = 0;
                     if ($model->save()) {
-                        
-
                         Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil');
                     } else {
                         Yii::$app->session->setFlash('error', 'Absen Masuk tidak Berhasil');

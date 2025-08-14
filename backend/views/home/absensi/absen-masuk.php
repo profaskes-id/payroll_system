@@ -51,7 +51,7 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
     <!-- Confirmation Modals -->
     <?php foreach ($modals as $modal): ?>
         <div id="<?= $modal['id'] ?>" tabindex="-1"
-            class="fixed inset-0 z-50 flex items-center justify-center hidden w-full h-full bg-gray-200 bg-opacity-50">
+            class="fixed inset-0 z-50 flex items-center justify-center hidden w-full h-full bg-gray-100/50">
             <div class="relative w-full max-w-md p-4">
                 <div class="<?= $modalStyles['content'] ?>">
                     <!-- Close Button -->
@@ -73,10 +73,10 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                                     class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
                                     Ambil Foto
                                 </button>
-                                <button onclick="stopCamera('<?= $modal['id'] ?>')"
+                                <!-- <button onclick="stopCamera('<?php // $modal['id'] ?>')"
                                     class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">
                                     Tutup Kamera
-                                </button>
+                                </button> -->
                             </div>
                         </div>
 

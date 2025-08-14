@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\AtasanKaryawan;
 use yii\helpers\Html;
 
 $this->title = 'Dashboard';
@@ -119,7 +120,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-l-xl"></div>
 
                     <!-- SVG Speaker/Announcement Icon -->
-                    <div class="flex items-center justify-center w-full h-48 md:h-full bg-blue-50 rounded-l-xl">
+                    <div class="flex items-center justify-center w-full h-48 bg-gray-100 md:h-full rounded-l-xl">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 8a3 3 0 0 1 0 6M18 8a3 3 0 0 0 0-6H5.75A1.75 1.75 0 0 0 4 3.75v8.5c0 .966.784 1.75 1.75 1.75H18z" />
                             <path d="M8 15v2a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-2" />
@@ -175,7 +176,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <!-- Shift Information -->
     <?php if ($jamKerjaToday && $jamKerjaToday['is_shift'] != 0 && $dataShift !== null): ?>
-        <div class="container relative z-50 px-4 mx-auto mt-8 md:px-6">
+        <div class="container relative z-40 px-4 mx-auto mt-8 md:px-6">
             <div class="p-4 bg-blue-600 rounded-lg shadow-md">
                 <div class="flex flex-col items-center justify-between md:flex-row">
                     <div class="text-center text-white md:text-left">
@@ -225,7 +226,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <h3 class="font-medium text-center text-gray-700">Lembur</h3>
                 </div>
             </a>
-
+                
             <!-- Dinas Luar -->
             <a href="/panel/pengajuan/dinas" class="transition transform hover:scale-105">
                 <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
@@ -295,65 +296,96 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
-    <!-- For Supervisors -->
-    <?php if ($karyawan['is_atasan'] == 1): ?>
-        <div class="container px-4 py-8 mx-auto bg-blue-50 md:px-6">
-            <h2 class="mb-6 text-xl font-bold text-gray-800">Persetujuan Pengajuan</h2>
-            <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-                <!-- WFH Approval -->
-                <a href="/panel/tanggapan/wfh" class="transition transform hover:scale-105">
-                    <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
-                        <div class="p-3 mb-4 bg-purple-100 rounded-full">
-                            <!-- Icon WFH -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                            </svg>
-                        </div>
-                        <h3 class="font-medium text-center text-gray-700">WFH</h3>
+<!-- For Supervisors -->
+<?php 
+$atasan = AtasanKaryawan::find()->where(['id_atasan' => $karyawan['id_karyawan']])->one();
+?>
+<?php if ($atasan): ?>
+    <div class="container relative z-40 px-4 py-8 mx-auto bg-gradient-to-r from-blue-50 to-indigo-50 md:px-6 rounded-xl">
+        <h2 class="mb-6 text-xl font-bold text-gray-800">Persetujuan Pengajuan</h2>
+        <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <!-- WFH Approval -->
+            <a href="/panel/tanggapan/wfh" class="transition-all duration-300 group hover:-translate-y-1">
+                <div class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-xl hover:border-purple-300 hover:shadow-lg">
+                    <div class="p-3 mb-4 rounded-full bg-gradient-to-br from-purple-100 to-purple-50 group-hover:from-purple-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                        </svg>
                     </div>
-                </a>
+                    <h3 class="font-medium text-center text-gray-700">WFH</h3>
+                    <p class="mt-1 text-xs text-center text-gray-500">Menunggu persetujuan</p>
+                </div>
+            </a>
 
-                <!-- Cuti Approval -->
-                <a href="/panel/tanggapan/cuti" class="transition transform hover:scale-105">
-                    <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
-                        <div class="p-3 mb-4 bg-green-100 rounded-full">
-                            <!-- Icon Cuti -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </div>
-                        <h3 class="font-medium text-center text-gray-700">Cuti</h3>
+            <!-- Cuti Approval -->
+            <a href="/panel/tanggapan/cuti" class="transition-all duration-300 group hover:-translate-y-1">
+                <div class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-xl hover:border-green-300 hover:shadow-lg">
+                    <div class="p-3 mb-4 rounded-full bg-gradient-to-br from-green-100 to-green-50 group-hover:from-green-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
                     </div>
-                </a>
+                    <h3 class="font-medium text-center text-gray-700">Cuti</h3>
+                    <p class="mt-1 text-xs text-center text-gray-500">Menunggu persetujuan</p>
+                </div>
+            </a>
 
-                <!-- Lembur Approval -->
-                <a href="/panel/tanggapan/lembur" class="transition transform hover:scale-105">
-                    <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
-                        <div class="p-3 mb-4 bg-red-100 rounded-full">
-                            <!-- Icon Lembur -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <h3 class="font-medium text-center text-gray-700">Lembur</h3>
+            <!-- Lembur Approval -->
+            <a href="/panel/tanggapan/lembur" class="transition-all duration-300 group hover:-translate-y-1">
+                <div class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-xl hover:border-red-300 hover:shadow-lg">
+                    <div class="p-3 mb-4 rounded-full bg-gradient-to-br from-red-100 to-red-50 group-hover:from-red-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                     </div>
-                </a>
+                    <h3 class="font-medium text-center text-gray-700">Lembur</h3>
+                    <p class="mt-1 text-xs text-center text-gray-500">Menunggu persetujuan</p>
+                </div>
+            </a>
 
-                <!-- Dinas Approval -->
-                <a href="/panel/tanggapan/dinas" class="transition transform hover:scale-105">
-                    <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
-                        <div class="p-3 mb-4 bg-blue-100 rounded-full">
-                            <!-- Icon Dinas -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7l4-4m0 0l4 4m-4-4v18m-7-4h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                            </svg>
-                        </div>
-                        <h3 class="font-medium text-center text-gray-700">Dinas</h3>
+            <!-- Dinas Approval -->
+            <a href="/panel/tanggapan/dinas" class="transition-all duration-300 group hover:-translate-y-1">
+                <div class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-xl hover:border-blue-300 hover:shadow-lg">
+                    <div class="p-3 mb-4 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 group-hover:from-blue-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7l4-4m0 0l4 4m-4-4v18m-7-4h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
                     </div>
-                </a>
-            </div>
+                    <h3 class="font-medium text-center text-gray-700">Dinas</h3>
+                    <p class="mt-1 text-xs text-center text-gray-500">Menunggu persetujuan</p>
+                </div>
+            </a>
+
+                        <?php if($deviasiAbsensi && $deviasiAbsensi['nilai_setting'] == 1) : ?>
+
+            <a href="/panel/tanggapan/absensi" class="transition-all duration-300 group hover:-translate-y-1">
+                <div class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-xl hover:border-red-300 hover:shadow-lg">
+                    <div class="p-3 mb-4 rounded-full bg-gradient-to-br from-red-100 to-red-50 group-hover:from-red-200">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                    </div>
+                    <h3 class="font-medium text-center text-gray-700">Deviasi absensi</h3>
+                    <p class="mt-1 text-xs text-center text-gray-500">Menunggu persetujuan</p>
+                </div>
+            </a>
+
+            <?php endif; ?>
+            <!-- Dinas Approval -->
+            <a href="/panel/tanggapan/tugas-luar" class="transition-all duration-300 group hover:-translate-y-1">
+                <div class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-xl hover:border-blue-300 hover:shadow-lg">
+                    <div class="p-3 mb-4 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 group-hover:from-blue-200">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-medium text-center text-gray-700">Tugas Luar</h3>
+                    <p class="mt-1 text-xs text-center text-gray-500">Menunggu persetujuan</p>
+                </div>
+            </a>
         </div>
-    <?php endif; ?>
+    </div>
+<?php endif; ?>
 </div>
 
 <script>

@@ -12,7 +12,9 @@ use yii\helpers\Html; ?>
                 <div>
                     <div class="flex items-start justify-between">
                         <h2 class="text-xl font-bold text-gray-800 sm:text-2xl">Detail Tugas Luar</h2>
+                        <?php if ($model->status_pengajuan == 0): ?>
                         <a href="<?= \yii\helpers\Url::to(['/pengajuan/tugas-luar-update', 'id' => $model->id_tugas_luar]) ?>" class="text-sm text-gray-600 hover:underline">Edit</a>
+                        <?php endif; ?>
                     </div>
                     <div class="flex flex-col mt-2 space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4 sm:mt-3">
                         <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full w-fit
@@ -60,7 +62,7 @@ use yii\helpers\Html; ?>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-start">
                                 <div class="flex items-center justify-center flex-shrink-0 w-6 h-6 mt-0.5 mr-2 text-sm font-bold text-blue-600 rounded-full sm:w-8 sm:h-8 sm:text-lg sm:mt-1 sm:mr-3 bg-blue-50">
-                                    <?= $counter + 1 ?>
+                                    <?= ++$counter ?>
                                 </div>
                                 <div class="min-w-0">
                                     <h3 class="text-sm font-semibold text-gray-800 truncate sm:text-lg"><?= $detail->keterangan ?></h3>
@@ -98,6 +100,24 @@ use yii\helpers\Html; ?>
                                                 <span class="ml-1 text-xs <?= $isLate ? 'text-red-500' : 'text-green-500' ?>">
                                                     (<?= $isLate ? '+' : '-' ?><?= $selisihText ?>)
                                                 </span>
+                                                <span class="inline-block ">
+                                                    <?php
+                                                    $imagePath = Yii::getAlias("@webroot") . '/uploads/bukti_tugas_luar/' . $detail->bukti_foto;
+                                                    $defaultImage = Yii::getAlias("@webroot") . '/images/default-image.jpg'; // Siapkan gambar default
+                                                    ?>
+
+                                                    <?php if (!empty($detail->bukti_foto) && file_exists($imagePath)): ?>
+                                                        <img src="<?= Yii::getAlias("@web") ?>/uploads/bukti_tugas_luar/<?= $detail->bukti_foto ?>"
+                                                            alt="Bukti Tugas Luar"
+                                                            class="object-cover border border-gray-200 rounded-lg w-14 sm:w-24 sm:h-24 ms-5">
+                                                    <?php else: ?>
+                                                        <div class="flex items-center justify-center bg-gray-100 border border-gray-200 rounded-lg w-14 h-14 ms-5 sm:w-24 sm:h-24">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                            </svg>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                </span>
                                             </span>
                                         <?php endif; ?>
                                     </div>
@@ -130,6 +150,7 @@ use yii\helpers\Html; ?>
     <!-- Check-in Modal (Mobile Optimized) -->
     <div id="checkInModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/50 backdrop-blur-sm">
         <div class="w-full mx-2 overflow-hidden bg-white shadow-xl rounded-xl sm:max-w-md sm:mx-4 sm:rounded-2xl">
+            <!-- Header tetap sama -->
             <div class="p-4 sm:p-6 bg-gradient-to-r from-blue-600 to-blue-500">
                 <div class="flex items-center justify-between">
                     <h3 class="text-lg font-bold text-white sm:text-xl">Check-in Tugas</h3>
@@ -142,6 +163,7 @@ use yii\helpers\Html; ?>
             </div>
 
             <div class="p-4 space-y-4 sm:p-6 sm:space-y-6">
+                <!-- Lokasi tetap sama -->
                 <div class="p-3 rounded-lg sm:p-4 bg-gray-50">
                     <div class="flex items-center">
                         <div class="flex-shrink-0 p-1 text-blue-600 bg-blue-100 rounded-full sm:p-2">
@@ -159,25 +181,7 @@ use yii\helpers\Html; ?>
                     </div>
                 </div>
 
-                <!-- Add this new section for photo upload -->
-                <!-- <div class="p-3 rounded-lg sm:p-4 bg-gray-50">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0 p-1 text-blue-600 bg-blue-100 rounded-full sm:p-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </div>
-                        <div class="ml-3 sm:ml-4">
-                            <label for="buktiFoto" class="block text-xs font-medium text-gray-700 sm:text-sm">Upload Bukti Foto</label>
-                            <div class="mt-1">
-                                <input type="file" id="buktiFoto" name="bukti_foto" accept="image/*" capture="environment" class="block w-full text-xs text-gray-700 border border-gray-300 rounded-lg cursor-pointer file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 sm:text-sm">
-                            </div>
-                            <p class="mt-1 text-xs text-gray-500">Foto akan digunakan sebagai bukti check-in</p>
-                        </div>
-                    </div>
-                </div> -->
-
-
+                <!-- Input file dengan preview gambar -->
                 <div class="space-y-2">
                     <input type="file"
                         id="buktiFoto"
@@ -185,13 +189,17 @@ use yii\helpers\Html; ?>
                         accept="image/*"
                         class="block w-full text-xs text-gray-700 border border-gray-300 rounded-lg cursor-pointer file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 sm:text-sm">
 
-
+                    <!-- Preview gambar -->
+                    <div id="imagePreviewContainer" class="hidden mt-2">
+                        <p class="text-xs font-medium text-gray-500">Preview:</p>
+                        <img id="imagePreview" src="#" alt="Preview gambar" class="object-cover w-20 h-20 mt-1 border border-gray-200 rounded-lg sm:w-24 sm:h-24">
+                    </div>
                 </div>
-
 
                 <input type="hidden" id="detailId">
             </div>
 
+            <!-- Footer tetap sama -->
             <div class="px-4 py-3 sm:px-6 sm:py-4 bg-gray-50">
                 <div class="flex justify-end space-x-2 sm:space-x-3">
                     <button id="cancelCheckIn" class="px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors bg-white border border-gray-300 rounded-lg sm:px-5 sm:py-2 sm:text-sm hover:bg-gray-50">
@@ -204,10 +212,32 @@ use yii\helpers\Html; ?>
             </div>
         </div>
     </div>
+
 </section>
 
 <!-- jQuery CDN -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.getElementById('buktiFoto').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        const previewImage = document.getElementById('imagePreview');
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                previewContainer.classList.remove('hidden');
+            }
+
+            reader.readAsDataURL(file);
+        } else {
+            previewContainer.classList.add('hidden');
+            previewImage.src = '#';
+        }
+    });
+</script>
 
 
 <script>

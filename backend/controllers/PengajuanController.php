@@ -186,6 +186,15 @@ class PengajuanController extends \yii\web\Controller
 
                 if (isset($_POST['DetailTugasLuar']) && is_array($_POST['DetailTugasLuar'])) {
                     // Hapus semua detail yang ada (kita akan buat ulang)
+
+            foreach ($model->detailTugasLuars as $detail) {
+                if (!empty($detail->bukti_foto)) {
+                    $filePath = Yii::getAlias('@webroot/uploads/bukti_tugas_luar/') . $detail->bukti_foto;
+                    if (file_exists($filePath) && is_file($filePath) && !unlink($filePath)) {
+                        throw new \Exception("Gagal menghapus file: " . $detail->bukti_foto);
+                    }
+                }
+            }
                     DetailTugasLuar::deleteAll(['id_tugas_luar' => $model->id_tugas_luar]);
 
                     foreach ($_POST['DetailTugasLuar'] as $i => $detailData) {

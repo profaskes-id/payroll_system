@@ -986,16 +986,16 @@ class TanggapanController extends Controller
                 $transaction->commit();
                 
                 // Send notification
-                // $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
-                // $sender = Yii::$app->user->identity->id;
+                $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+                $sender = Yii::$app->user->identity->id;
 
-                // $params = [
-                //     'judul' => 'Pengajuan Tugas Luar',
-                //     'deskripsi' => 'Pengajuan Tugas Luar Anda Telah Ditanggapi Oleh Atasan.',
-                //     'nama_transaksi' => "tugas-luar",
-                //     'id_transaksi' => $model->id_tugas_luar,
-                // ];
-                // $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan Tugas Luar Dari " . $model->karyawan->nama);
+                $params = [
+                    'judul' => 'Pengajuan Tugas Luar',
+                    'deskripsi' => 'Pengajuan Tugas Luar Anda Telah Ditanggapi Oleh Atasan.',
+                    'nama_transaksi' => "tugas-luar",
+                    'id_transaksi' => $model->id_tugas_luar,
+                ];
+                $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan Tugas Luar Dari " . $model->karyawan->nama);
                 
                 Yii::$app->session->setFlash('success', 'Data berhasil diperbarui');
                 return $this->redirect(['tugas-luar-view', 'id' => $model->id_tugas_luar]);
@@ -1027,6 +1027,17 @@ class TanggapanController extends Controller
     public function actionTugasLuarDelete($id_tugas_luar)
     {
         $model = PengajuanTugasLuar::find()->where(['id_tugas_luar' => $id_tugas_luar])->one();
+
+        if ($model->detailTugasLuars) {
+            foreach ($model->detailTugasLuars as $detail) {
+                if (!empty($detail->bukti_foto)) {
+                    $filePath = Yii::getAlias('@webroot/uploads/bukti_tugas_luar/') . $detail->bukti_foto;
+                    if (file_exists($filePath) && is_file($filePath) && !unlink($filePath)) {
+                        throw new \Exception("Gagal menghapus file: " . $detail->bukti_foto);
+                    }
+                }
+            }
+        }
         if ($model->delete()) {
             Yii::$app->session->setFlash('success', 'Berhasil Menghapus Pengajuan');
             return $this->redirect(['/tanggapan/tugas-luar']);
@@ -1039,6 +1050,16 @@ class TanggapanController extends Controller
 
     public function actionTugasLuarDeleteDetail($id){
         $model = DetailTugasLuar::find()->where(['id_detail' => $id])->one();
+        if ($model->detailTugasLuars) {
+            foreach ($model->detailTugasLuars as $detail) {
+                if (!empty($detail->bukti_foto)) {
+                    $filePath = Yii::getAlias('@webroot/uploads/bukti_tugas_luar/') . $detail->bukti_foto;
+                    if (file_exists($filePath) && is_file($filePath) && !unlink($filePath)) {
+                        throw new \Exception("Gagal menghapus file: " . $detail->bukti_foto);
+                    }
+                }
+            }
+        }
         if ($model->delete()) {
             Yii::$app->session->setFlash('success', 'Berhasil Menghapus Detail Pengajuan');
             return $this->redirect(['/tanggapan/tugas-luar']);

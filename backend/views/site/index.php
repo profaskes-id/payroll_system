@@ -28,9 +28,9 @@ $result = $tanggal->getIndonesiaFormatLong(date('l, d F Y'));
                     <!-- Header Section -->
                     <div class="flex items-start justify-between">
                         <div class="mb-6">
- <h2 class="text-2xl font-bold text-gray-800">Sellerku Payroll</h2>
-                       <p class="text-sm text-gray-600">Kelola absensi, pengajuan, dan pendataan dengan mudah dalam satu aplikasi</p>
-                    </div>
+                            <h2 class="text-2xl font-bold text-gray-800">Sellerku Payroll</h2>
+                            <p class="text-sm text-gray-600">Kelola absensi, pengajuan, dan pendataan dengan mudah dalam satu aplikasi</p>
+                        </div>
                         <div class="flex items-center px-2 py-1 ml-2 rounded-full">
                             <a href="/panel/admin-notification" class="relative">
                                 <i class="text-[22px]  fa  fa-regular fa-bell"></i> <!-- Ukuran ikon diubah menjadi lebih kecil -->
@@ -96,10 +96,10 @@ $result = $tanggal->getIndonesiaFormatLong(date('l, d F Y'));
         <!-- Header with better hierarchy -->
         <div class="flex flex-col mb-6 space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0">
             <div>
-                <h2 class="text-2xl font-bold text-gray-800">Statistik  Dan Pengajuan Karyawan</h2>
+                <h2 class="text-2xl font-bold text-gray-800">Statistik Dan Pengajuan Karyawan</h2>
                 <p class="text-sm text-gray-500">Data Statistik Dan Ringkasan pengajuan bulan ini</p>
             </div>
-                        <h3 class="text-sm font-semibold tracking-wider text-gray-700 uppercase">Detail Pengajuan</h3>
+            <h3 class="text-sm font-semibold tracking-wider text-gray-700 uppercase">Detail Pengajuan</h3>
 
         </div>
 
@@ -108,21 +108,21 @@ $result = $tanggal->getIndonesiaFormatLong(date('l, d F Y'));
             <!-- First Grid - Chart Area (2/3 width) -->
             <div class="lg:col-span-2">
                 <!-- Placeholder for Chart -->
-                        <div id="chart-container">
-                <!-- Placeholder akan ditampilkan secara default -->
-                <div class="flex items-center justify-center h-full p-8 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100" id="chart-placeholder">
-                    <div class="text-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mx-auto text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                        <p class="mt-4 font-medium text-gray-600">Area chart akan ditampilkan di sini</p>
+                <div id="chart-container">
+                    <!-- Placeholder akan ditampilkan secara default -->
+                    <div class="flex items-center justify-center h-full p-8 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100" id="chart-placeholder">
+                        <div class="text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mx-auto text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            <p class="mt-4 font-medium text-gray-600">Area chart akan ditampilkan di sini</p>
+                        </div>
                     </div>
+                    <!-- Div untuk chart, awalnya disembunyikan -->
+                    <div id="chart" style="display: none;"></div>
                 </div>
-                <!-- Div untuk chart, awalnya disembunyikan -->
-                <div id="chart" style="display: none;"></div>
-            </div>
 
-                  <a href="/panel/rekap-absensi" class="text-sm font-medium text-blue-600 transition-colors hover:text-blue-800">
+                <a href="/panel/rekap-absensi" class="text-sm font-medium text-blue-600 transition-colors hover:text-blue-800">
                     Lihat Rekap Absensi Lengkap →
                 </a>
             </div>
@@ -222,6 +222,42 @@ $result = $tanggal->getIndonesiaFormatLong(date('l, d F Y'));
                                 </div>
                             </div>
                             <span class="px-2.5 py-0.5 text-xs font-semibold text-purple-800 bg-purple-100 rounded-full"><?= $pengajuanDinas ?></span>
+                        </div>
+                    </div>
+
+                    <!-- deviasi absensi -->
+                    <div class="p-3 transition-all bg-white border border-gray-100 rounded-xl hover:shadow-xs">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="p-2 rounded-full bg-purple-50">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-800">Deviasi Absensi</h3>
+                                    <p class="text-xs text-gray-500">Absensi Tertinggal</p>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-0.5 text-xs font-semibold text-purple-800 bg-purple-100 rounded-full"><?= $pengajuanAbsensi ?></span>
+                        </div>
+                    </div>
+
+                    <!-- tugas luar -->
+                    <div class="p-3 transition-all bg-white border border-gray-100 rounded-xl hover:shadow-xs">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="p-2 rounded-full bg-purple-50">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-800">Tugas Luar</h3>
+                                    <p class="text-xs text-gray-500">Bertugas luar</p>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-0.5 text-xs font-semibold text-purple-800 bg-purple-100 rounded-full"><?= $pengajuanTugasLuar ?></span>
                         </div>
                     </div>
                 </div>
@@ -325,7 +361,7 @@ $result = $tanggal->getIndonesiaFormatLong(date('l, d F Y'));
     });
 </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     let dates = <?= $datesAsJson ?>;
     let total_karyawan = <?= $TotalKaryawan ?>;
@@ -343,11 +379,11 @@ $result = $tanggal->getIndonesiaFormatLong(date('l, d F Y'));
         const [day, month, year] = key.split('-');
         const formattedDate = `${parseInt(day)} ${monthNames[parseInt(month)-1]}`;
         tanggal.push(formattedDate);
-        
+
         // Hitung kehadiran
         const count = (dates[key] == null) ? 0 : Object.keys(dates[key]).length;
         totalHadir += count;
-        
+
         // Data untuk bar hadir (biru) dan tidak hadir (merah)
         seriesDataHadir.push(count);
         seriesDataTidakHadir.push((total_karyawan ?? 0) - count);
@@ -357,7 +393,7 @@ $result = $tanggal->getIndonesiaFormatLong(date('l, d F Y'));
     if (totalHadir > 0) {
         document.getElementById('chart-placeholder').style.display = 'none';
         document.getElementById('chart').style.display = 'block';
-        
+
         var options = {
             chart: {
                 type: 'bar',
@@ -409,15 +445,16 @@ $result = $tanggal->getIndonesiaFormatLong(date('l, d F Y'));
                     fontSize: '10px'
                 },
                 y: {
-                    formatter: function(val, { seriesIndex }) {
-                        return seriesIndex === 0 
-                            ? `${val} hadir` 
-                            : `${val} tidak hadir`;
+                    formatter: function(val, {
+                        seriesIndex
+                    }) {
+                        return seriesIndex === 0 ?
+                            `${val} hadir` :
+                            `${val} tidak hadir`;
                     }
                 }
             },
-            series: [
-                {
+            series: [{
                     name: 'Hadir',
                     data: seriesDataHadir
                 },
