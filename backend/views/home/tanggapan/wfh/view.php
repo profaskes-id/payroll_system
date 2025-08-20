@@ -9,7 +9,7 @@ use yii\helpers\Html;
 $tanggalFormater = new Tanggal();
 ?>
 
-<div class="container p-6 mx-auto relative z-[50]">
+<div class="container relative z-40 p-0 mx-auto md:p-6">
 
 
     <div class="flex items-center justify-between">

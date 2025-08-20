@@ -8,6 +8,8 @@ use amnah\yii2\user\models\Profile;
 use yii\web\Controller;
 use amnah\yii2\user\models\User;
 use backend\models\Karyawan;
+use mdm\admin\models\Assignment;
+use Mpdf\Tag\Time;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
 use Yii;
 use yii\web\BadRequestHttpException;
@@ -63,13 +65,21 @@ class AutoLoginController extends Controller
             $user->newPassword = $password;
             $user->setRegisterAttributes(2, 1);
             $user->base_url = Yii::$app->params['base_url'];
+            
+
+            
             if ($user->save()) {
-                // Simpan profil user ke database utama (db)
+                $items = ['Karyawan'];
+                $model = new Assignment($user->id);
+                $success = $model->assign($items);
+                Yii::$app->getResponse()->format = 'json';
+
                 $profile = new Profile();
                 $profile->user_id = $user->id;
                 $profile->full_name = $model->nama;
 
                 if ($profile->save()) {
+
                     // Simpan user ke database induk (db_induk)
                     if (Yii::$app->params['base_url'] != Yii::$app->params['base_parent_url']) {
                         $userInduk = new UserInduk(); // Gunakan model UserInduk
@@ -96,15 +106,15 @@ class AutoLoginController extends Controller
                             return $this->redirect(['/']);
                         }
                     } else {
-                        Yii::$app->session->setFlash('success', ' Login berhasil dan data disimpan ke database utama.');
+                        Yii::$app->session->setFlash('success', ' Login berhasil dan data disimpan .');
                         return $this->redirect(['/']);
                     }
                 } else {
-                    Yii::$app->session->setFlash('error', 'Gagal menyimpan profil di database utama.');
+                    Yii::$app->session->setFlash('error', 'Gagal menyimpan profil .');
                     return $this->redirect(['/']);
                 }
             } else {
-                Yii::$app->session->setFlash('error', 'Gagal menyimpan user di database utama.');
+                Yii::$app->session->setFlash('error', 'Gagal menyimpan user .');
                 return $this->redirect(['/']);
             }
         }

@@ -1550,14 +1550,6 @@ input:checked + .toggle-bg {
   display: none;
 }
 
-.aspect-\[3\/4\] {
-  aspect-ratio: 3/4;
-}
-
-.aspect-\[9\/16\] {
-  aspect-ratio: 9/16;
-}
-
 .h-1 {
   height: 0.25rem;
 }
@@ -2710,10 +2702,6 @@ input:checked + .toggle-bg {
 .bg-yellow-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(253 253 234 / var(--tw-bg-opacity));
-}
-
-.bg-opacity-50 {
-  --tw-bg-opacity: 0.5;
 }
 
 .bg-gradient-to-b {
@@ -4629,10 +4617,6 @@ input:checked + .toggle-bg {
     display: flex;
   }
 
-  .md\:aspect-video {
-    aspect-ratio: 16 / 9;
-  }
-
   .md\:h-full {
     height: 100%;
   }
@@ -4683,6 +4667,10 @@ input:checked + .toggle-bg {
 
   .md\:justify-between {
     justify-content: space-between;
+  }
+
+  .md\:gap-6 {
+    gap: 1.5rem;
   }
 
   .md\:space-y-0 > :not([hidden]) ~ :not([hidden]) {

@@ -85,18 +85,17 @@ class AtasanKaryawanController extends Controller
                 if (($this->request->get('id_atasan'))) {
                     $model->id_atasan = intval($this->request->get('id_atasan'));
                 }
-
-
-
+                
+                
                 $atasan = Karyawan::findOne(['id_karyawan' => $model->atasan]);
                 if ($atasan === null) {
                     Yii::$app->session->setFlash('error', 'Atasan tidak ditemukan.');
                     return $this->redirect(['index']);
                 }
-
+                
                 // Mark the selected atasan as an official atasan
                 $atasan->is_atasan = 1;
-
+                
                 // Wrap in transaction for atomic save
                 $transaction = Yii::$app->db->beginTransaction();
                 try {
@@ -106,7 +105,7 @@ class AtasanKaryawanController extends Controller
                         $transaction->commit();
                         Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data');
                         // Redirect with id_atasan
-                        return $this->redirect(['create', 'id_atasan' => $model->id_atasan]);
+                        return $this->redirect(['index']);
                     } else {
                         // Rollback if either save operation fails
                         $transaction->rollBack();

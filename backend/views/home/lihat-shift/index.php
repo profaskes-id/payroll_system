@@ -54,7 +54,7 @@ $shiftColors = [
 ];
 ?>
 
-<div class="container px-4 py-6 mx-auto">
+<div class="container relative z-50 px-4 py-6 mx-auto">
     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home', 'title' => 'Jadwal Shift Kerja ']); ?>
     <a href="/panel/home/pengajuan-shift?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>">
         <p class="mb-4 text-blue-600 underline">Buat Perubahan Shift Kerja Anda ? </p>

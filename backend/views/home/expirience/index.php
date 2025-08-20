@@ -2,14 +2,11 @@
 
 use backend\models\helpers\FaceRecognationHelper;
 use backend\models\MasterKode;
-use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
-use yii\helpers\Url;
 
 $this->title = 'Expirience';
 
 ?>
-
 
 <style>
     .modal-overlay {
@@ -160,7 +157,7 @@ $this->title = 'Expirience';
                                                         <?= Html::img(
                                                             'data:image/jpeg;base64,' . $karyawan->wajah,
                                                             [
-                                                                'style' => 'width:120px; height:90px; object-fit:cover; border-radius:20%;',
+                                                                'style' => 'width:120px;  object-fit:contain; border-radius:8px;',
                                                                 'onclick' => 'document.getElementById("modal-image").src="data:image/jpeg;base64,' . $karyawan->wajah . '"'
                                                             ]
                                                         ) ?>
@@ -190,7 +187,7 @@ $this->title = 'Expirience';
                                         <div class="w-full col-span-12 p-2 border border-gray-300 lg:col-span-6">
                                             <div class="mt-4">
                                                 <button type="button" onclick="openFaceModal()" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
-                                                    Register Wajah
+    <?=  $karyawan->wajah ? "Update Wajah" :  "Register Wajah" ?>                                                  
                                                 </button>
                                             </div>
                                         </div>
@@ -215,7 +212,7 @@ $this->title = 'Expirience';
                                                     </div>
                                                     <div id="results" class="hidden">
                                                         <p class="mb-2">Hasil Foto:</p>
-                                                        <div id="snapshotResult" class="mb-4 bg-red-500 aspect-[9/16] md:aspect-video "></div>
+                                                        <div id="snapshotResult" class="mx-auto mb-4 bg-gray-200 "></div>
                                                         <?php $form = yii\widgets\ActiveForm::begin([
                                                             'id' => 'face-form',
                                                             'action' => ['karyawan/upload-face'],
@@ -728,12 +725,6 @@ $this->title = 'Expirience';
 
 
 
-
-
-
-
-
-
 <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative w-full max-w-md max-h-full p-4">
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -786,15 +777,18 @@ $this->title = 'Expirience';
     }
 
     function startCamera() {
-        Webcam.set({
+  Webcam.set({
             image_format: 'jpeg',
             jpeg_quality: 90,
             flip_horiz: true,
+            width: 300,
+            height: 400,
             constraints: {
                 facingMode: 'user',
-                aspectRatio: window.innerWidth <= 768 ? 9 / 16 : 16 / 9
             }
         });
+
+
 
         Webcam.attach('#camera');
     }
@@ -811,7 +805,7 @@ $this->title = 'Expirience';
             document.getElementById('snapshotResult').style.display = 'block';
             document.getElementById('controls').style.display = 'none';
             document.getElementById('snapshotResult').innerHTML =
-                '<img src="' + data_uri + '" class="w-full h-full object-cover aspect-[9/16] md:aspect-video"/>';
+                '<img src="' + data_uri + '" class="mx-auto mb-4 bg-gray-200 "/>';
             document.getElementById('faceData').value = data_uri;
             // Only show results if there's a photo value
             if (data_uri) {

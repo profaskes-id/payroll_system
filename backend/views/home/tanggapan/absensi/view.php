@@ -8,7 +8,7 @@ use yii\helpers\Html;
 $tanggalFormater = new Tanggal();
 ?>
 
-<div class="container relative z-50 p-6 mx-auto">
+<div class="container relative z-50 p-0 mx-auto md:p-6">
     <div class="flex items-center justify-between">
         <h1 class="mb-4 text-2xl font-bold">Detail Pengajuan Absensi</h1>
         <p class="">

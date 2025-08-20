@@ -17,9 +17,9 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+    <div class="grid grid-cols-1 md:gap-6 md:grid-cols-2">
 
-        <div class="">
+        <div class="col-span-1">
             <p class="block mb-2 text-sm font-medium text-gray-900 capitalize ">Karyawan</p>
             <?php
             $data = \yii\helpers\ArrayHelper::map(KaryawanHelper::getKaryawanData(), 'id_karyawan', 'nama');
@@ -33,9 +33,10 @@ use yii\widgets\ActiveForm;
             )->label(false);
             ?>
         </div>
+        </div>
 
         <!-- Jenis Cuti Field -->
-        <div class="">
+        <div class="mb-4">
             <p class="block mb-2 text-sm font-medium text-gray-900 capitalize ">Jenis Cuti</p>
 
             <?php

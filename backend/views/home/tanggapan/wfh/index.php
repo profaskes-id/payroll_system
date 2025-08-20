@@ -29,7 +29,7 @@ $tanggalFormater = new Tanggal();
 
 
 
-<div class="relative z-50 px-5 overflow-x-auto">
+<div class="relative z-40 px-5 overflow-x-auto">
     <table class="w-full text-sm text-left text-gray-500 rtl:text-right dark:text-gray-400" id="table_id" class="display">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>

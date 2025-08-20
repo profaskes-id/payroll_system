@@ -40,7 +40,25 @@ class AtasanKaryawanSearch extends AtasanKaryawan
      */
     public function search($params)
     {
-        $query = AtasanKaryawan::find();
+   $query = Karyawan::find()
+    ->select([
+        'karyawan.id_karyawan',
+        'karyawan.nama',
+        'atasan_karyawan.id_atasan_karyawan',
+        'atasan.nama AS nama_atasan', // Ambil nama dari tabel karyawan atasan
+        'mk.nama_kode AS jabatan',
+        'ml.nama_lokasi AS nama_lokasi',
+        'ml.label'
+    ])
+    ->leftJoin('atasan_karyawan', 'atasan_karyawan.id_karyawan = karyawan.id_karyawan')
+    ->leftJoin('karyawan atasan', 'atasan_karyawan.id_atasan = atasan.id_karyawan') // Join ke tabel karyawan lagi untuk dapatkan nama atasan
+    ->leftJoin(['dp' => DataPekerjaan::find()->where(['is_aktif' => 1])], 'dp.id_karyawan = karyawan.id_karyawan')
+    ->leftJoin('master_kode mk', 'mk.nama_group = "jabatan" and dp.jabatan = mk.kode')
+    ->leftJoin('master_lokasi ml', 'ml.id_master_lokasi = atasan_karyawan.id_master_lokasi')
+    ->where(['karyawan.is_aktif' => 1])
+    ->asArray();
+
+
 
         // add conditions that should always apply here
 

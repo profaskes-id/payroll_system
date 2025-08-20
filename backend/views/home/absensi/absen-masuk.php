@@ -45,6 +45,12 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
 ?>
 
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+
+
 
 
 <section class="min-h-[90dvh] relative overflow-x-hidden z-50">
@@ -73,7 +79,8 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                                     class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
                                     Ambil Foto
                                 </button>
-                                <!-- <button onclick="stopCamera('<?php // $modal['id'] ?>')"
+                                <!-- <button onclick="stopCamera('<?php // $modal['id'] 
+                                                                    ?>')"
                                     class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">
                                     Tutup Kamera
                                 </button> -->
@@ -83,7 +90,7 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                         <!-- Results Container -->
                         <div id="results-<?= $modal['id'] ?>" class="hidden">
                             <p class="mb-2">Hasil Foto:</p>
-                            <div id="snapshotResult-<?= $modal['id'] ?>" class="object-cover w-[100%] mb-4 bg-gray-200 aspect-[3/4] "></div>
+                            <div id="snapshotResult-<?= $modal['id'] ?>" class="mx-auto mb-4 bg-gray-200 "></div>
 
                             <input type="hidden" id="faceData-<?= $modal['id'] ?>" name="<?= $modal['face_input'] ?>">
 
@@ -207,7 +214,7 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                             ]) ?>
                             <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'coordinate lat'])->label(false) ?>
                             <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'coordinate lon'])->label(false) ?>
-                            <?= $formAbsen->field($model, 'foto_masuk')->hiddenInput(['id' => 'foto_masuk' , 'class' => 'foto_fr'] )->label(false) ?>
+                            <?= $formAbsen->field($model, 'foto_masuk')->hiddenInput(['id' => 'foto_masuk', 'class' => 'foto_fr'])->label(false) ?>
                             <?php if ($dataJam['karyawan']['is_shift'] && $manual_shift == 0): ?>
                                 <?php
                                 $dataShift = ShiftKerja::find()->asArray()->all();
@@ -339,7 +346,6 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
 <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <?php
 $dataToday = ArrayHelper::toArray($dataJam) ?? [];
 $dataTodayJson = json_encode($dataToday, JSON_PRETTY_PRINT) ?? [];
@@ -348,20 +354,77 @@ $dataAtasanPenempatanJson = json_encode($dataAtasanPenempatan, JSON_PRETTY_PRINT
 $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
 ?>
 
+
 <script>
-    // Global Variables
+    let datawajah = <?= $dataToday['wajah'] ?>;
+
+    if (!datawajah) {
+
+        Swal.fire({
+            title: 'Absensi Wajah Tidak Terdaftar',
+            html: `
+            <div class="text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mx-auto text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <h3 class="mt-4 text-lg font-medium text-gray-900">Wajah Anda Belum Terdaftar</h3>
+            <div class="mt-2 text-sm text-gray-600">
+            <p>Untuk melakukan absensi wajah, silahkan daftarkan wajah Anda terlebih dahulu. di data pribadi ada tombol register wajah</p>
+            </div>
+            </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Daftarkan Wajah',
+            cancelButtonText: 'Nanti Saja',
+            confirmButtonColor: '#3B82F6',
+            cancelButtonColor: '#EF4444',
+            focusConfirm: false,
+            customClass: {
+                popup: 'rounded-lg shadow-xl',
+                confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2',
+                cancelButton: 'bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded'
+            },
+            buttonsStyling: false,
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+                return new Promise((resolve) => {
+                    window.location.href = '/panel/home/expirience'; // Ganti dengan URL yang sesuai
+                });
+            }
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire({
+                    title: 'Peringatan',
+                    text: 'Anda tidak dapat melakukan absensi wajah sampai mendaftarkan wajah Anda',
+                    icon: 'warning',
+                    confirmButtonText: 'Mengerti',
+                    confirmButtonColor: '#3B82F6',
+                    customClass: {
+                        popup: 'rounded-lg shadow-xl'
+                    }
+                });
+            }
+        });
+
+    }
+</script>
+
+
+
+
+<script>
     let manual_shift = <?= $manual_shift ?> ?? 0;
     let todayJson = <?= $dataTodayJson ?> ?? 0;
     let AtasanKaryawanJson = <?= $dataAtasanPenempatanJson ?> ?? 0;
     let globatLat = 0;
     let globatLong = 0;
-    
-    
+
+
     // Variabel global untuk koordinat
     let currentLat = 0;
     let currentLon = 0;
     let wajah_fr = '';
-    
+
     // DOM Elements
     const jam_masuk = todayJson?.today?.jam_masuk;
     const max_telat = todayJson?.karyawan?.max_terlambat;
@@ -378,23 +441,23 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
     // alert(JSON.stringify({viewportHeight , viewportWidth}, null,2));
 
     // Functions
-    
-    
-    const updateCoordinates = function(position) {
-            
-            currentLat = position.coords.latitude.toFixed(10);
-            currentLon = position.coords.longitude.toFixed(10);
-            
-            // Update semua input koordinat di semua form
-            document.querySelectorAll('.coordinate.lat').forEach(el => el.value = currentLat);
-            document.querySelectorAll('.coordinate.lon').forEach(el => el.value = currentLon);
-            
-            globatLat = currentLat;
-            globatLong = currentLon;
-            dapatkanAlamat(currentLat, currentLon);
-        };
 
-    
+
+    const updateCoordinates = function(position) {
+
+        currentLat = position.coords.latitude.toFixed(10);
+        currentLon = position.coords.longitude.toFixed(10);
+
+        // Update semua input koordinat di semua form
+        document.querySelectorAll('.coordinate.lat').forEach(el => el.value = currentLat);
+        document.querySelectorAll('.coordinate.lon').forEach(el => el.value = currentLon);
+
+        globatLat = currentLat;
+        globatLong = currentLon;
+        dapatkanAlamat(currentLat, currentLon);
+    };
+
+
     navigator.geolocation.watchPosition(updateCoordinates, function(error) {
         Swal.fire({
             icon: 'error',
@@ -458,21 +521,21 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
         }
     }
 
- function dapatkanAlamat(lat, lon) {
-  const elemenAlamat = document.getElementById("alamat"); 
-  fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`, {
+    function dapatkanAlamat(lat, lon) {
+        const elemenAlamat = document.getElementById("alamat");
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`, {
 
-  })
-  .then(response => response.json())
+            })
+            .then(response => response.json())
 
-  .then(data => {
-    console.log(data.display_name);
-    if (elemenAlamat) {
-      elemenAlamat.textContent = data.display_name;
+            .then(data => {
+                console.log(data.display_name);
+                if (elemenAlamat) {
+                    elemenAlamat.textContent = data.display_name;
+                }
+            })
+            .catch(error => console.error('Error:', error));
     }
-  })
-  .catch(error => console.error('Error:', error));
-}
 
     function cekWaktu() {
         const sekarang = new Date();
@@ -516,7 +579,7 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
 
             wajah_fr = faceData;
 
-             // Update semua input koordinat di semua form
+            // Update semua input koordinat di semua form
             document.querySelectorAll('.foto_fr').forEach(el => el.value = faceData);
 
             const alasanTerlambat = document.querySelector('#alasanTerlambat');
@@ -562,6 +625,12 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
                 if (distance.toFixed(0) <= AtasanKaryawanJson.radius) {
                     form.submit();
                 } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Jarak Terlalu Jauh',
+                        text: 'Anda berada di luar radius yang diizinkan. Silakan scroll ke bawah untuk mengisi alasan.',
+                        confirmButtonText: 'Mengerti'
+                    });
                     if (alasanterlalujauh) alasanterlalujauh.classList.toggle('hidden');
                 }
             } else if (isTerlambat(jam, menit, detik, batasJam, maximalTelatbatasMenit)) {
@@ -569,12 +638,30 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
                     if (distance.toFixed(0) <= AtasanKaryawanJson.radius) {
                         form.submit();
                     } else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Jarak Terlalu Jauh',
+                            text: 'Anda berada di luar radius yang diizinkan. Silakan scroll ke bawah untuk mengisi alasan.',
+                            confirmButtonText: 'Mengerti'
+                        });
                         if (alasanterlalujauh) alasanterlalujauh.classList.toggle('hidden');
                     }
                 } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Anda Terlambat',
+                        text: 'Waktu kehadiran Anda melebihi batas yang ditentukan. Silakan scroll ke bawah untuk mengisi alasan keterlambatan.',
+                        confirmButtonText: 'Mengerti'
+                    });
                     if (alasanTerlambat) alasanTerlambat.classList.toggle('hidden');
                 }
             } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Anda Terlambat',
+                    text: 'Waktu kehadiran Anda melebihi batas yang ditentukan. Silakan scroll ke bawah untuk mengisi alasan keterlambatan.',
+                    confirmButtonText: 'Mengerti'
+                });
                 if (alasanTerlambat) alasanTerlambat.classList.toggle('hidden');
             }
         });
@@ -616,17 +703,16 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
         }
 
 
-Webcam.set({
-    image_format: 'jpeg',
-    jpeg_quality: 80,
-    flip_horiz: true,
-    width:  300,
-    height: 400,
-    constraints: {
-        facingMode: 'user',
-        aspectRatio: 3/4,
-    }
-});
+        Webcam.set({
+            image_format: 'jpeg',
+            jpeg_quality: 80,
+            flip_horiz: true,
+            width: 300,
+            height: 400,
+            constraints: {
+                facingMode: 'user',
+            }
+        });
 
         Webcam.attach('#camera-' + modalId);
         cameraStates[modalId].isCameraOn = true;
@@ -654,7 +740,7 @@ Webcam.set({
 
             if (cameraContainer) cameraContainer.classList.add('hidden');
             if (snapshotResult) {
-                snapshotResult.innerHTML = '<img src="' + data_uri + '" class="aspect-[3/4] "/>';
+                snapshotResult.innerHTML = '<img src="' + data_uri + '" class="mx-auto mb-4 bg-gray-200 "/>';
             }
             if (faceDataInput) faceDataInput.value = data_uri;
             if (resultsContainer) resultsContainer.classList.remove('hidden');
@@ -683,10 +769,7 @@ Webcam.set({
     function closeModal(modalId) {
         const modal = document.getElementById(modalId);
         const bg = document.querySelector('.z-40');
-        console.info({
-            modal,
-            bg
-        });
+
         if (modal) {
             // Webcam.reset('#camera-' + modalId);
             modal.classList.add('hidden');
@@ -728,7 +811,7 @@ Webcam.set({
     if (btnAmbilFoto) {
         btnAmbilFoto.addEventListener('click', function() {
             takeSnapshot('popup-modal'); // Ganti dengan ID modal Anda
-             // Update semua input koordinat di semua form
+            // Update semua input koordinat di semua form
             document.querySelectorAll('.foto_fr').forEach(el => el.value = wajah_fr);
         });
     }
@@ -748,7 +831,7 @@ Webcam.set({
             document.querySelectorAll('.latitude, .longitude').forEach(el => {
                 el.value = el.classList.contains('latitude') ? currentLat : currentLon;
             });
-            
+
             if (position) {
                 dapatkanAlamat(globatLat, globatLong);
             }

@@ -10,6 +10,7 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
+        <?php $id_karyawan = Yii::$app->request->get('id_karyawan')  ?? $model->id_karyawan ?>
 
 
 
@@ -62,24 +63,7 @@ use yii\widgets\ActiveForm;
             }
             ?>
         </div>
-        <div class="col-12">
-            <?php
-            $data = \yii\helpers\ArrayHelper::map(
-                $dataKaryawan,
-                'id_karyawan',
-                'nama'
-            );
-
-            echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
-                'data' => $data,
-                'language' => 'id',
-                'options' => ['placeholder' => 'Pilih karyawan ...'],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ])->label('Karyawan');
-            ?>
-        </div>
+                    <?= $form->field($model, 'id_karyawan')->hiddenInput(['value' => $id_karyawan ?? $model->id_karyawan])->label(false) ?>
         <div class="col-12">
             <?php
             $data = \yii\helpers\ArrayHelper::map(MasterLokasi::find()->all(), 'id_master_lokasi', 'nama_lokasi');

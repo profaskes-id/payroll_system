@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="container p-6 mx-auto">
+<div class="container p-2 mx-auto md:p-6">
     <div class="p-6 bg-white rounded-lg shadow-md">
         <?php $form = ActiveForm::begin(['options' => ['class' => 'space-y-4']]); ?>
 

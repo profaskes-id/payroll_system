@@ -184,11 +184,11 @@ class HomeController extends Controller
 
     public function actionAbsenMasuk()
     {
+        $this->layout = 'mobile-main';
         $manual_shift = ManualSHiftHelper::isManual();
         $comporess = new CompressImagesHelper();
         $setting_fr = FaceRecognationHelper::cekFaceRecognation();
         $verificationFr = FaceRecognationHelper::cekVerificationFr(); 
-        $this->layout = 'mobile-main';
         $model = new Absensi();
         $verificationFr = FaceRecognationHelper::cekVerificationFr(); 
 
@@ -249,7 +249,7 @@ class HomeController extends Controller
                         }
                         $jamMasukShift = $dataShift['jam_masuk']; // Misalnya '15:00:00'
 
-                        $jamSekarang = date('H:i:s'); // '14:21:00'
+                        $jamSekarang = date('H:i:s'); 
 
                         // Konversi ke timestamp untuk perbandingan
                         $timestampShift = strtotime($jamMasukShift);
@@ -531,8 +531,12 @@ class HomeController extends Controller
 
 
 
+        $wajah = karyawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one()['wajah'];
+
+
 
         $dataJam = [
+            'wajah' => $wajah ? 1 : 0,
             'karyawan' => $jamKerjaKaryawan,
             'today' => $jamKerjaToday,
             'lembur' => $hasilLembur,
@@ -1280,6 +1284,7 @@ class HomeController extends Controller
             $jadwalShiftHariIni = JadwalShift::find()
                 ->where(['id_karyawan' => $nowShift['id_karyawan'], 'tanggal' => $tanggalHariIni])
                 ->one();
+
             $currentShift = ShiftKerja::find()
                 ->where(['id_shift_kerja' => $jadwalShiftHariIni['id_shift_kerja']])
                 ->one();
