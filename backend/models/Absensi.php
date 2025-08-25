@@ -117,9 +117,11 @@ class Absensi extends \yii\db\ActiveRecord
             ->select([
                 'absensi.id_karyawan',
                 'MIN(absensi.jam_masuk) AS jam_masuk', // Ambil jam masuk paling awal
+                'MIN(absensi.jam_pulang) AS jam_pulang', // Ambil jam masuk paling awal
                 'absensi.tanggal',
                 'absensi.is_lembur',
                 'absensi.is_wfh',
+                'sk.nama_shift as id_shift',
                 'absensi.is_24jam',
                 'absensi.kode_status_hadir',
                 'absensi.is_terlambat',
@@ -130,6 +132,7 @@ class Absensi extends \yii\db\ActiveRecord
             ])
             ->asArray()
             ->leftJoin('jam_kerja_karyawan jkk', 'jkk.id_karyawan = absensi.id_karyawan')
+            ->leftJoin('shift_kerja sk', 'sk.id_shift_kerja = absensi.id_shift')
             ->leftJoin('jadwal_kerja jdk', 'jkk.id_jam_kerja = jdk.id_jam_kerja AND jdk.nama_hari = DAYOFWEEK(absensi.tanggal) - 1')
             ->andWhere(['>=', 'absensi.tanggal', $firstDayOfMonth])
             ->andWhere(['<=', 'absensi.tanggal', $lastDayOfMonth])
@@ -222,12 +225,12 @@ class Absensi extends \yii\db\ActiveRecord
             } else {
 
                 // jika tidak diajukan
-                $absensi = Absensi::find()
+                $absens = Absensi::find()
                     ->where(['between', 'tanggal', $firstDayOfMonth, $lastDayOfMonth])
                     ->asArray()
                     ->all();
 
-                foreach ($absensi as $absen) {
+                foreach ($absens as $absen) {
                     $id = $absen['id_karyawan'];
 
                     if (!isset($lemburPerKaryawan[$id])) {
@@ -292,7 +295,6 @@ class Absensi extends \yii\db\ActiveRecord
                 for ($i = 1; $i <= $totalHari; $i++) {
                     $tanggal = $tanggal_bulanan[$i - 1];
                     $absensiRecord = array_filter($absensi, function ($record) use ($karyawan, $tanggal) {
-
                         return $record['id_karyawan'] == $karyawan['id_karyawan'] && $record['tanggal'] == $tanggal;
                     });
 
@@ -307,10 +309,11 @@ class Absensi extends \yii\db\ActiveRecord
                     $jamMasukKaryawan = null;
                     $jamMasukKantor = null;
                     $jam_pulang = null;
+                    $id_shift = null;
+
 
                     if (!empty($absensiRecord)) {
                         $record = array_values($absensiRecord)[0];
-
                         $statusHadir = $record['kode_status_hadir'];
                         $is_24jam = $record['is_24jam'];
                         $is_lembur = $record['is_lembur'];
@@ -318,8 +321,9 @@ class Absensi extends \yii\db\ActiveRecord
                         $jamMasukKaryawan = $record['jam_masuk'];
                         $jamMasukKantor = $record['jam_masuk_kerja'] ?? null;
                         $jam_pulang = $record['jam_pulang'] ?? null;
-
-
+                        $id_shift = $record['id_shift'] ?? null;
+                        
+                        
                         if ($statusHadir == 'H') {
 
                             if ($record['is_terlambat'] == 1 && $record['is_lembur'] == 0 && $record['is_wfh'] == 0) {
@@ -341,19 +345,23 @@ class Absensi extends \yii\db\ActiveRecord
                     }
 
                     $karyawanData[] = [
+                        'jam_masuk_kantor' => $jamMasukKantor,
+                        'jam_masuk_karyawan' => $jamMasukKaryawan,
+                        'jam_pulang' => $jam_pulang,
+                        'id_shift' => $id_shift,
                         'status_hadir' => $statusHadir,
                         'is_lembur' => $is_lembur,
                         'is_wfh' => $is_wfh,
                         'is_24jam' => $is_24jam,
                         'is_terlambat' => $is_terlambat,
                         'lama_terlambat' => $lama_terlambat,
-                        'jam_masuk_karyawan' => $jamMasukKaryawan,
-                        'jam_masuk_kantor' => $jamMasukKantor,
-                        'jam_pulang' => $jam_pulang,
-
                         'total_terlambat_hari_ini' => $keterlambatanPerTanggal[$i] ?? 0, // Tambahkan info keterlambatan per tanggal
                     ];
+
                 }
+
+              
+
 
 
 

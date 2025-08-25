@@ -47,6 +47,7 @@ $tanggal = new Tanggal();
             <?php foreach ($hasil as $karyawan) : ?>
                 <tr>
                     <?php foreach ($karyawan as $key => $data) : ?>
+
                         <?php if ($key == 0) : ?>
                             <!-- Employee Info -->
                             <td style="border: 1px solid #000; padding: 5px; text-align: left;">
@@ -65,12 +66,12 @@ $tanggal = new Tanggal();
                                 ?>
                                 <!-- Attendance Data -->
                                 <td style="border: 1px solid #000; padding: 3px; background-color: <?= $bg_color ?>; font-size: 10px;">
-                                
+
                                     <?= ($data !== null && isset($data['status_hadir'])) ? $data['status_hadir'] : '-' ?>
                                     <br>
-                                  <?= ($data !== null && isset($data['jam_keluar'])) ? $data['jam_keluar'] : '-' ?>
-                                <br>
-                                <?= ($data !== null && isset($data['jam_masuk_karyawan'])) ? $data['jam_masuk_karyawan'] : '-' ?>
+                                    <?= ($data !== null && isset($data['jam_masuk_karyawan'])) ? $data['jam_masuk_karyawan'] : '-' ?>
+                                    <br>
+                                    <?= ($data !== null && isset($data['jam_pulang'])) ? $data['jam_pulang'] : '-' ?>
                                 </td>
 
                             <?php elseif ($key == (count($karyawan) - 5)) : ?>

@@ -140,13 +140,9 @@ class PengajuanCutiController extends Controller
                 $rekapAsensi->id_karyawan = $model->id_karyawan;
                 $rekapAsensi->id_master_cuti = $model->jenis_cuti;
 
-
-
-                // $timestamp_mulai = strtotime($model->tanggal_mulai);
-                // $timestamp_selesai = strtotime($model->tanggal_selesai);
                 $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $model->id_karyawan])->one();
                 $containsNumber = strpos($jamKerjaKaryawan->jamKerja->nama_jam_kerja, preg_match('/\d+/', "5", $matches) ? $matches[0] : '') !== false;
-
+                dd($containsNumber);
                 $hari_kerja = $this->hitungHariKerja($model->tanggal_mulai, $model->tanggal_selesai, $containsNumber);
                 // Menghitung selisih hari
                 // $selisih_detik = $timestamp_selesai - $timestamp_mulai;
