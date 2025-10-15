@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 
@@ -83,7 +83,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
 
     </div>
-    <div class=" w-full" id="map" style=" height: 400px; z-index: 2 !important "></div>
+    <div class="w-full " id="map" style=" height: 400px; z-index: 2 !important "></div>
 </div>
 
 

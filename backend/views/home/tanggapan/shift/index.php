@@ -28,11 +28,11 @@ $tanggalFormater = new Tanggal();
 </style>
 
 
-<h1 class="p-5 text-2xl font-bold">Pengajuan WFH</h1>
+<h1 class="p-5 text-2xl font-bold">Pengajuan Shift</h1>
 
 
 
-<div class="relative px-5 overflow-x-auto">
+<div class="relative z-40 px-5 overflow-x-auto">
     <table class="w-full text-sm text-left text-gray-500 rtl:text-right dark:text-gray-400" id="table_id" class="display">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>

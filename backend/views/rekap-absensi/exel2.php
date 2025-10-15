@@ -97,7 +97,7 @@ header("Content-Disposition: attachment; filename=Rekapan-absensi(" . $tanggal->
                                 </td>
                                 <!-- Jam Pulang -->
                                 <td style="border: 1px solid #808080; padding: 2px; text-align: center; <?= ($day_of_week == 0) ? 'background-color: #aaa; color:white;' : '' ?>">
-                                    <?= ($data !== null && isset($data['jam_keluar'])) ? $data['jam_keluar'] : '' ?>
+                                    <?= ($data !== null && isset($data['jam_pulang'])) ? $data['jam_pulang'] : '' ?>
                                 </td>
                             <?php elseif ($key == (count($karyawan) - 5)) : ?>
                                 <td style="text-align: center;"><?= $data['total_hadir'] ?></td>

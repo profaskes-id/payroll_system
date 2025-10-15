@@ -71,49 +71,74 @@ $this->params['breadcrumbs'][] = $this->title;
 
     </div>
 
-    <div class="settingan-umum-index">
-        <div class="table-container table-responsive" style="margin-top: 30px;">
-            <h3>Pengaturan Tanggal Cut Off</h3>
-            <p class="text-muted">Tanggal cut off menentukan periode dimulainya perhitungan penggajian</p>
 
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th style="width: 5%; text-align: center;">Aksi</th>
-                        <th>Nama Group</th>
-                        <th>Setiap Tanggal</th>
-                        <th>Deskripsi</th>
-                        <th>Status</th>
+</div>
+<div class="settingan-umum-index">
+    <div class="table-container table-responsive" style="margin-top: 30px;">
+        <h3>Pengaturan Nilai Lainnya</h3>
+        <p class="text-muted">Atur Nilai untuk beberapa pengaturan lain</p>
 
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th style="width: 5%; text-align: center;">Aksi</th>
+                    <th>Nama Group</th>
+                    <th>Nilai</th>
+                    <th>Deskripsi</th>
+                    <th>Status</th>
 
-                            <?= Html::a(
-                                '<i class="fas fa-edit"></i>',
-                                ['/your-controller/edit', 'id' => $tanggal_cut_of['kode']], // Update with your actual route
-                                [
-                                    'class' => 'btn btn-sm btn-primary btn-edit', // Added btn-edit class
-                                    'title' => 'Edit',
-                                    'data-toggle' => 'tooltip'
-                                ]
-                            ) ?>
-                        </td>
-                        <td><?= Html::encode($tanggal_cut_of['nama_group']) ?></td>
-                        <td><?= Html::encode($tanggal_cut_of['nama_kode']) ?></td>
-                        <td>Tanggal dimulai perhitungan penggajian</td>
-                        <td>
-                            <span class="badge <?= $tanggal_cut_of['status'] == 1 ? 'badge-success' : 'badge-danger' ?>">
-                                <?= $tanggal_cut_of['status'] == 1 ? 'Aktif' : 'Tidak Aktif' ?>
-                            </span>
-                        </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
 
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                        <?= Html::a(
+                            '<i class="fas fa-edit"></i>',
+                            ['/your-controller/edit', 'id' => $tanggal_cut_of['kode']], // Update with your actual route
+                            [
+                                'class' => 'btn btn-sm btn-primary btn-edit', // Added btn-edit class
+                                'title' => 'Edit',
+                                'data-toggle' => 'tooltip-2'
+                            ]
+                        ) ?>
+                    </td>
+                    <td><?= Html::encode($tanggal_cut_of['nama_group']) ?></td>
+                    <td><?= Html::encode($tanggal_cut_of['nama_kode']) ?></td>
+                    <td class="text-capitalize">Tanggal dimulai perhitungan penggajian dengan menginputkan (tanggal)</td>
+                    <td>
+                        <span class="badge <?= $tanggal_cut_of['status'] == 1 ? 'badge-success' : 'badge-danger' ?>">
+                            <?= $tanggal_cut_of['status'] == 1 ? 'Aktif' : 'Tidak Aktif' ?>
+                        </span>
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <td>
+
+                        <?= Html::a(
+                            '<i class="fas fa-edit"></i>',
+                            ['/your-controller/edit', 'id' => $potongan_persenan_wfh['kode']], // Update with your actual route
+                            [
+                                'class' => 'btn btn-sm btn-primary btn-edit b', // Added btn-edit class
+                                'title' => 'Edit',
+                                'data-toggle' => 'tooltip-wfh'
+                            ]
+                        ) ?>
+                    </td>
+                    <td><?= Html::encode($potongan_persenan_wfh['nama_group']) ?></td>
+                    <td><?= Html::encode($potongan_persenan_wfh['nama_kode']) ?></td>
+                    <td style="text-transform: capitalize;">Potongan Persenan jika karyawan WFH</td>
+                    <td>
+                        <span class="badge <?= $potongan_persenan_wfh['status'] == 1 ? 'badge-success' : 'badge-danger' ?>">
+                            <?= $potongan_persenan_wfh['status'] == 1 ? 'Aktif' : 'Tidak Aktif' ?>
+                        </span>
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -158,6 +183,53 @@ $this->registerJs("$('[data-toggle=\"tooltip\"]').tooltip();");
 $this->registerJs(
     <<<JS
     $(document).on('click', '.btn-edit', function(e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        
+        // Load the form via AJAX
+        $('#editModalBody').load(url, function() {
+            $('#editModal').modal('show');
+            
+            // Initialize Select2 in the modal if needed
+            if ($('#masterkode-nama_group').length) {
+                $('#masterkode-nama_group').select2({
+                    language: 'id',
+                    placeholder: 'Masukan Nama Group ...',
+                    allowClear: true
+                });
+            }
+        });
+    });
+    
+    // Handle modal form submission
+    $(document).on('beforeSubmit', '#editModalBody form', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        $.ajax({
+            url: form.attr('action'),
+            type: 'post',
+            data: form.serialize(),
+            success: function(response) {
+                if (response.success) {
+                    $('#editModal').modal('hide');
+                    // Reload the page or update specific elements
+                    location.reload();
+                } else {
+                    // Update the form with validation errors
+                    $('#editModalBody').html(response.form);
+                }
+            }
+        });
+        return false;
+    });
+JS
+);
+$this->registerJs("$('[data-toggle=\"tooltip-2\"]').tooltip();");
+
+// JavaScript to handle modal loading
+$this->registerJs(
+    <<<JS
+    $(document).on('click', '.btn-wfh', function(e) {
         e.preventDefault();
         var url = $(this).attr('href');
         

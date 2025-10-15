@@ -2,6 +2,10 @@
 return [
     'base_parent_url' => 'https://payroll.profaskes.id',
     'base_url' => 'https://payroll.profaskes.id',
+    'api_url_fr' => "https://face.athenateknologi.com",
+    'minimal_kemiripan_fr' => 60,
+    // "cluster_fr" => "absensi_fr",
+    "cluster_fr" => "test",
 
 
     'bsDependencyEnabled' => false,
@@ -36,5 +40,18 @@ return [
     "kalkulasi_jam_lembur" => "kalkulasi_jam_lembur",
     "manual_shift" => "manual_shift",
     "ajukan_lembur" => "ajukan_lembur",
-    "pengajuan-absensi-tertinggal" => "pengajuan absensi tertinggal"
+    "absensi-tertinggal" => "absensi-tertinggal",
+    "change_fr" => "change_fr",
+    "verifikasi_fr" => "verifikasi_fr",
+    'penggajian_hari_kalender' => 'penggajian_hari_kalender',
+    'potongan_hari_kerja_efektif' => 'potongan_hari_kerja_efektif',
+    'penggajian_berbasis_jam_kerja' => 'penggajian_berbasis_jam_kerja',
+
+
+    'minimum-menit-lembur' => 'minimum-menit-lembur',
+    'maximal-jam-lembur' => 'maximal-jam-lembur',
+    'potongan-persen-wfh' => 'potongan-persen-wfh',
+
+    "teleransi-keterlambatan" => "teleransi-keterlambatan"
+
 ];

@@ -6,23 +6,21 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var backend\models\PengajuanLembur $model */
+/** @var backend\models\RekapLembur $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="pengajuan-lembur-form table-container">
-
+<div class="rekap-lembur-form table-container">
 
     <?php $form = ActiveForm::begin(); ?>
-
-
     <div class="row">
 
-        <div class="col-md-6">
+
+        <div class="col-md-6 col-12">
             <?php
-            $jenisShift = \yii\helpers\ArrayHelper::map(Karyawan::find()->orderBy(['nama' => SORT_ASC])->all(), 'id_karyawan', 'nama');
+            $data = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
             echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
-                'data' => $jenisShift,
+                'data' => $data,
                 'language' => 'id',
                 'options' => ['placeholder' => 'Pilih Karyawan ...'],
                 'pluginOptions' => [
@@ -33,46 +31,15 @@ use yii\widgets\ActiveForm;
         </div>
 
 
-        <div class="col-md-6"></div>
-
-
-        <div class="col-md-6">
-            <?= $form->field($model, 'pekerjaan')->textarea(['rows' => 6]) ?>
+        <div class="col-12 col-md-6">
+            <?= $form->field($model, 'tanggal')->textInput(['type' => 'date']) ?>
         </div>
 
 
-        <div class="col-md-6">
-            <?= $form->field($model, 'status')->textInput() ?>
+        <div class="col-12 ">
+            <?= $form->field($model, 'jam_total')->textInput() ?>
         </div>
-
-
-        <div class="col-md-6">
-            <?= $form->field($model, 'jam_mulai')->textInput() ?>
-        </div>
-
-
-        <div class="col-md-6">
-            <?= $form->field($model, 'jam_selesai')->textInput() ?>
-        </div>
-
-
-        <div class="col-md-6">
-            <?= $form->field($model, 'tanggal')->textInput() ?>
-        </div>
-
-
-        <div class="col-md-6">
-            <?= $form->field($model, 'disetujui_oleh')->textInput() ?>
-        </div>
-
-        <div class="col-md-6">
-            <?= $form->field($model, 'disetujui_pada')->textInput() ?>
-        </div>
-
-
-
     </div>
-
 
     <div class="form-group">
         <button class="add-button" type="submit">

@@ -20,6 +20,8 @@ class m250729_023544_create_pengajuan_tugas_luar_table extends Migration
             'status_pengajuan' => $this->smallInteger()->notNull()->defaultValue(0)->comment('0=pending, 1=disetujui, 2=ditolak'),
             'created_at' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'updated_at' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+              'created_by' => $this->integer()->null(),
+            'updated_by' => $this->integer()->null(),
         ]);
 
         // Buat tabel untuk detail lokasi tugas luar (seperti todo list)
@@ -36,7 +38,7 @@ class m250729_023544_create_pengajuan_tugas_luar_table extends Migration
             'bukti_foto' => $this->string(100)->null(),
             'created_at' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'updated_at' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
-
+          
         ]);
 
         // Tambahkan foreign key

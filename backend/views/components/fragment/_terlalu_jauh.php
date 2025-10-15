@@ -35,40 +35,54 @@ use yii\widgets\ActiveForm;
                 <p class="text-lg font-semibold">Refresh Jika Anda Telah DI lokasi yang benar</p>
                 <?php
                 $formAbsen = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',  'action' => ['home/absen-terlalujauh']]); ?>
-                <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'lati'])->label(false) ?>
-                <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'longi'])->label(false) ?>
+                <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'coordinate lat'])->label(false) ?>
+                <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'coordinate lon'])->label(false) ?>
+                <?= $formAbsen->field($model, 'foto_masuk')->hiddenInput(['id' => 'foto_masuk', 'class' => 'foto_fr'])->label(false) ?>
+
                 <?= $formAbsen->field($model, 'alasan_terlalu_jauh')->textarea(['class' => 'py-1 w-full border border-gray-200 rounded-md', 'required' => true, 'rows' => 7, 'placeholder' => 'Alasan Anda Terlalu Jauh Dari Lokasi Penempatan Kerja'])->label(false) ?>
 
 
-                <p>Tentukan Shift Masuk Anda</p>
-                <?php if ($dataJam['karyawan']['is_shift'] && $manual_shift == 0): ?>
+                <?php
+                // Cek apakah variabel $dataJam ada dan memiliki struktur yang diharapkan
+                if ($manual_shift == 0):
+                ?>
+                    <p>Tentukan Shift Masuk Anda</p>
 
                     <?php
-                    // Ambil data shift dari database (pastikan ini sudah dijalankan sebelumnya)
-                    $dataShift = ShiftKerja::find()->asArray()->all();
+                    // Ambil data shift dari database dengan pengecekan
+                    $dataShift =  ShiftKerja::find()->asArray()->all();
 
-                    // Format pilihan radioList
+
+                    // Format pilihan radioList dengan pengecekan
                     $shiftOptions = [];
-                    foreach ($dataShift as $shift) {
-                        $jamMasuk = substr($shift['jam_masuk'], 0, 5);
-                        $jamKeluar = substr($shift['jam_keluar'], 0, 5);
-                        $shiftOptions[$shift['id_shift_kerja']] = $shift['nama_shift'] . " ($jamMasuk - $jamKeluar)";
+                    if (!empty($dataShift) && is_array($dataShift)) {
+                        foreach ($dataShift as $shift) {
+                            if (isset($shift['id_shift_kerja'], $shift['nama_shift'], $shift['jam_masuk'], $shift['jam_keluar'])) {
+                                $jamMasuk = substr($shift['jam_masuk'], 0, 5);
+                                $jamKeluar = substr($shift['jam_keluar'], 0, 5);
+                                $shiftOptions[$shift['id_shift_kerja']] = $shift['nama_shift'] . " ($jamMasuk - $jamKeluar)";
+                            }
+                        }
                     }
                     ?>
 
-                    <div class="max-w-md mx-auto space-y-3">
-                        <?= $formAbsen->field($model, 'id_shift')->radioList($shiftOptions, [
-                            'item' => function ($index, $label, $name, $checked, $value) {
-                                return "
-                <div>
-                    <input type='radio' name='{$name}' id='shift-terlalujauh-{$value}' value='{$value}' class='hidden peer' " . ($checked ? 'checked' : '') . ">
-                    <label for='shift-terlalujauh-{$value}' class='block p-3 text-sm font-medium text-gray-600 transition bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-400 hover:bg-blue-100'>
-                        {$label}
-                    </label>
-                </div>";
-                            }
-                        ])->label(false) ?>
-                    </div>
+                    <?php if (!empty($shiftOptions)): ?>
+                        <div class="max-w-md mx-auto space-y-3">
+                            <?= $formAbsen->field($model, 'id_shift')->radioList($shiftOptions, [
+                                'item' => function ($index, $label, $name, $checked, $value) {
+                                    return "
+                    <div>
+                        <input type='radio' name='{$name}' id='shift-terlalujauh-{$value}' value='{$value}' class='hidden peer' " . ($checked ? 'checked' : '') . ">
+                        <label for='shift-terlalujauh-{$value}' class='block p-3 text-sm font-medium text-gray-600 transition bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-400 hover:bg-blue-100'>
+                            {$label}
+                        </label>
+                    </div>";
+                                }
+                            ])->label(false) ?>
+                        </div>
+                    <?php else: ?>
+                        <p class="text-red-500">Tidak ada data shift yang tersedia.</p>
+                    <?php endif; ?>
 
                 <?php endif; ?>
 
@@ -91,15 +105,29 @@ use yii\widgets\ActiveForm;
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Ketika modal terlalu jauh akan ditampilkan
-        document.querySelector('[data-modal-toggle="popup-modal-terlalujauh"]').addEventListener('click', function() {
-            // Cari radio button yang dipilih di form utama
-            const selectedShift = document.querySelector('#my-form .shift-radio:checked');
+        // Pastikan variabel global dapat diakses
+        if (typeof currentLat === 'undefined' || typeof currentLon === 'undefined') {
+            currentLat = 0;
+            currentLon = 0;
+            wajah_fr = 0;
+        }
 
+        document.querySelector('[data-modal-toggle="popup-modal-terlalujauh"]')?.addEventListener('click', function() {
+            // Update koordinat saat modal dibuka
+            document.querySelectorAll('.coordinate.lat').forEach(el => el.value = currentLat);
+            document.querySelectorAll('.coordinate.lon').forEach(el => el.value = currentLon);
+            document.querySelectorAll('.foto_fr').forEach(el => el.value = wajah_fr);
+
+
+            // Copy shift yang dipilih
+            const selectedShift = document.querySelector('#my-form input[name="id_shift"]:checked');
             if (selectedShift) {
                 const shiftValue = selectedShift.value;
-                // Set nilai yang sama di form terlalu jauh
-                document.querySelector(`#my-form-terlalujauh input.shift-radio[value="${shiftValue}"]`).checked = true;
+                document.querySelectorAll('#my-form-terlalujauh input[name="id_shift"]').forEach(radio => {
+                    if (radio.value === shiftValue) {
+                        radio.checked = true;
+                    }
+                });
             }
         });
     });

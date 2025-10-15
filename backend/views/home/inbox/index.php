@@ -14,7 +14,9 @@
                 <form action="/panel/home/open-message" method="POST">
                     <input type="hidden" name="messageId" value="<?= htmlspecialchars($message['id_message']); ?>">
                     <input type="hidden" name="nama_transaksi" value="<?= htmlspecialchars($message['nama_transaksi']); ?>">
-                    <input type="hidden" name="id_transaksi" value="<?= htmlspecialchars($message['id_transaksi']); ?>">
+                    <?php if (!empty($message['id_transaksi'])): ?>
+                        <input type="hidden" name="id_transaksi" value="<?= htmlspecialchars($message['id_transaksi'], ENT_QUOTES, 'UTF-8'); ?>">
+                    <?php endif; ?>
                     <button type="submit" class="relative z-30" data-isopen="<?= $message['is_open'] ?>" class="w-full " style="cursor:pointer; text-decoration: none; color: inherit; border: none; background: none; display: block;">
                         <div role="alert" class="p-4  <?= $borderClass ?> rounded-sm border-s-4 flex flex-col items-start justify-start  ">
                             <strong class="text-start font-medium  <?= $textClass ?>"> <?= $message['judul']; ?> </strong>

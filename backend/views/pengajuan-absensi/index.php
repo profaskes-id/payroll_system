@@ -17,7 +17,7 @@ $tanggal = new Tanggal();
 $this->title = Yii::t('app', 'Pengajuan Absensi');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="pengajuan-absensi-index">
+<div class="relative pengajuan-absensi-index">
 
     <div class="costume-container">
         <p class="">

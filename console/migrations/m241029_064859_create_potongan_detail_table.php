@@ -17,6 +17,8 @@ class m241029_064859_create_potongan_detail_table extends Migration
             'id_potongan' => $this->integer()->notNull(),
             'id_karyawan' => $this->integer()->notNull(),
             'jumlah' => $this->decimal(10, 2)->notNull(), // untuk tipe jumlah yang berupa angka desimal
+            'status' => $this->smallInteger()->defaultValue(0),
+
         ]);
 
         // Membuat indeks dan menambahkan foreign key untuk id_potongan ke tabel potongan

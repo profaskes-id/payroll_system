@@ -46,8 +46,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 [
                     'attribute' => 'Tanggal Absen',
-                    'value' => function ($model) use ($tanggalFormat) {
-                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_absen) ?? '-';
+                    'value' => function ($model)  {
+    return $model->tanggal_absen ?? '-';
                     }
                 ],
                 'jam_masuk',
@@ -55,9 +55,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'alasan_pengajuan:ntext',
                 [
                     'attribute' => 'Diajukan Pada',
-                    'value' => function ($model) use ($tanggalFormat) {
+                    'value' => function ($model)  {
 
-                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_pengajuan) ?? '-';
+                        return $model->tanggal_pengajuan ?? '-';
                     }
                 ],
 
@@ -79,8 +79,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         if ($model->status == 0) {
                             return '<span class="text-warning">Menuggu Tanggapan</span>';
                         }
-
-                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_disetujui) ?? '-';
+                        return $model->tanggal_disetujui ?? '-';
                     }
                 ],
                 [

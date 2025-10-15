@@ -175,6 +175,23 @@ class PengajuanDinasController extends Controller
         return $this->redirect(['index']);
     }
 
+
+    public function actionBayarkan($id)
+    {
+        $model = PengajuanDinas::findOne($id);
+        if (Yii::$app->request->isPost) {
+
+            $model->status_dibayar = 1;
+            if ($model->save(false)) {
+                Yii::$app->session->setFlash('success', 'Status berhasil diperbarui menjadi dibayarkan.');
+            } else {
+                Yii::$app->session->setFlash('error', 'Gagal memperbarui status.');
+            }
+        }
+        return $this->redirect(Yii::$app->request->referrer ?: ['index']);
+    }
+
+
     /**
      * Finds the PengajuanDinas model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

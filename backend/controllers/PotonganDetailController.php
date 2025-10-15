@@ -90,7 +90,7 @@ class PotonganDetailController extends Controller
             if ($model->load($this->request->post())) {
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Data berhasil ditambahkan');
-                    return $this->redirect(['index']);
+                    return $this->redirect(['/tunjangan-potongan/index#custom-tabs-one-potongan']);
                 } else {
                     Yii::$app->session->setFlash('error', 'Data gagal ditambahkan');
                 }
@@ -119,7 +119,7 @@ class PotonganDetailController extends Controller
         if ($this->request->isPost && $model->load($this->request->post())) {
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'Data berhasil diperbarui');
-                return $this->redirect(['index']);
+                return $this->redirect(['/tunjangan-potongan/index#custom-tabs-one-potongan']);
             } else {
                 Yii::$app->session->setFlash('error', 'Data gagal diperbarui');
             }
@@ -142,11 +142,11 @@ class PotonganDetailController extends Controller
         $model = $this->findModel($id_potongan_detail);
         if ($model->delete()) {
             Yii::$app->session->setFlash('success', 'Data berhasil dihapus');
-            return $this->redirect(['index']);
+            return $this->redirect(['/tunjangan-potongan/index']);
         } else {
             Yii::$app->session->setFlash('error', 'Data gagal dihapus');
         }
-        return $this->redirect(['index']);
+        return $this->redirect(['/tunjangan-potongan/index']);
     }
 
     /**

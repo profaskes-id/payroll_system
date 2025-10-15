@@ -3,12 +3,10 @@
 namespace backend\controllers;
 
 use backend\models\Absensi;
-use backend\models\AbsensiSearch;
 use backend\models\AtasanKaryawan;
 use backend\models\Karyawan;
 use backend\models\MasterKode;
-use backend\models\TotalHariKerja;
-use DateInterval;
+use backend\service\RekapService;
 use DateTime;
 use Exception;
 use kartik\mpdf\Pdf;
@@ -16,6 +14,7 @@ use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+
 
 /**
  * RekapAbsensiController implements the CRUD actions for Absensi model.
@@ -80,11 +79,9 @@ class RekapAbsensiController extends Controller
             $tanggal_akhir = $tanggal_akhir_dt->format('Y-m-d');
         }
 
-        // Debug untuk verifikasi
-        // dd($tanggal_awal, $tanggal_akhir); // Uncomment jika ingin cek   
 
         // Ambil data rekapan berdasarkan tanggal
-        $data = $this->RekapData([
+        $data = RekapService::RekapData([
             'tanggal_awal' => $tanggal_awal,
             'tanggal_akhir' => $tanggal_akhir
         ]);
@@ -137,11 +134,10 @@ class RekapAbsensiController extends Controller
         }
 
 
-        $data = $this->RekapData([
+        $data = RekapService::RekapData([
             'tanggal_awal' => $tanggal_awal,
             'tanggal_akhir' => $tanggal_akhir
         ]);
-
 
 
 
@@ -156,6 +152,8 @@ class RekapAbsensiController extends Controller
 
         ]);
     }
+
+
 
     public function actionReport()
     {
@@ -190,7 +188,7 @@ class RekapAbsensiController extends Controller
 
 
         // Ambil data rekapan berdasarkan tanggal
-        $data = $this->RekapData([
+        $data = RekapService::RekapData([
             'tanggal_awal' => $tanggal_awal,
             'tanggal_akhir' => $tanggal_akhir
         ]);
@@ -226,6 +224,7 @@ class RekapAbsensiController extends Controller
     }
 
 
+
     function getTanggalKerjaSampaiHariIni($work_days_type = 5)
     {
         // ?megambil hariyang terlewati dari sekarang
@@ -257,80 +256,6 @@ class RekapAbsensiController extends Controller
     }
 
 
-
-    public function RekapData($params = null)
-    {
-        $model  = new Absensi();
-        $karyawan = new Karyawan();
-
-
-        $firstDayOfMonth = $params['tanggal_awal'];
-        $lastDayOfMonth = $params['tanggal_akhir'];
-
-        // ! Get total karyawan
-        $karyawanTotal = $karyawan::find()->where(['is_aktif' => 1])->count();
-
-        //! mendapatkan seluruh data absensi karyawan,jam-karyawan dari firstDayOfMonth - lastDayOfMonth
-        $absensi = $model->getAllAbsensiFromFirstAndLastMonth($model, $firstDayOfMonth, $lastDayOfMonth);
-
-        //    ! get all data dari tanggal awal dan akhir bulan
-        $tanggal_bulanan = $model->getTanggalFromFirstAndLastMonth($firstDayOfMonth, $lastDayOfMonth);
-        $dataKaryawan = $model->getAllDetailDataKaryawan($karyawan);
-
-        // memasukan absensi ke masing masing data karyawan
-        $absensiAndTelat = $model->getIncludeKaryawanAndAbsenData($dataKaryawan, $absensi, $firstDayOfMonth, $lastDayOfMonth, $tanggal_bulanan);
-
-        $keterlambatanPerTanggal = $absensiAndTelat['keterlambatanPerTanggal'];
-
-        $rekapanAbsensi = [];
-        $tanggalBulan = $tanggal_bulanan;
-        $firstDayOfMonth = $params['tanggal_awal'];  // "2025-01-27"
-        $lastDayOfMonth = $params['tanggal_akhir'];  // "2025-02-26"
-
-        // Ambil data absensi
-        $dataAbsensiHadir = $model->getAbsnesiDataWereHadir($model, $firstDayOfMonth, $lastDayOfMonth);
-
-        // Siapkan tanggal bulanan (semua tanggal dari awal ke akhir)
-        $tanggalBulan = [];
-        $start = new DateTime($firstDayOfMonth);
-        $end = new DateTime($lastDayOfMonth);
-        while ($start <= $end) {
-            $tanggalBulan[] = $start->format('Y-m-d');
-            $start->modify('+1 day');
-        }
-
-        // Hitung jumlah absensi hadir per tanggal
-        $rekapanAbsensi = [];
-        foreach ($dataAbsensiHadir as $absensi) {
-            $tanggal = $absensi['tanggal'];
-            $rekapanAbsensi[$tanggal] = isset($rekapanAbsensi[$tanggal]) ? $rekapanAbsensi[$tanggal] + 1 : 1;
-        }
-
-        // Pastikan setiap tanggal ada, kalau tidak, isi 0
-        foreach ($tanggalBulan as $tanggal) {
-            if (!isset($rekapanAbsensi[$tanggal])) {
-                $rekapanAbsensi[$tanggal] = 0;
-            }
-        }
-
-        // Urutkan berdasarkan tanggal
-        ksort($rekapanAbsensi);
-
-        // Hitung total hadir
-        // $totalAbsensiHadir = count($dataAbsensiHadir);
-        // $rekapanAbsensi[] = $totalAbsensiHadir;
-
-
-
-        return [
-            'tanggal_bulanan' => $tanggal_bulanan,
-            'hasil' => $absensiAndTelat['hasil'],
-            'rekapanAbsensi' => $rekapanAbsensi,
-            'karyawanTotal' => $karyawanTotal,
-            'keterlambatanPerTanggal' => $keterlambatanPerTanggal,
-
-        ];
-    }
 
 
     public function actionView($id_absensi)

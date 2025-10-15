@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use DateTime;
 use Yii;
 
 /**
@@ -59,24 +60,57 @@ class PeriodeGaji extends \yii\db\ActiveRecord
         $result = [];
 
         for ($i = 1; $i <= 12; $i++) {
-            $bulan = $i;
-            $tanggal_awal = sprintf('%04d-%02d-%02d', $tahun, $i, $tanggal_set);
+            // Menentukan tahun dan bulan untuk tanggal_awal (bulan sebelumnya)
+            $prev_month = $i - 1;
+            $prev_year = $tahun;
 
-            // Menghitung tanggal akhir
-            if ($i == 12) { // Jika bulan Desember
-                $tanggal_akhir = sprintf('%04d-%02d-%02d', $tahun + 1, 1, $tanggal_set - 1);
-            } else {
-                $tanggal_akhir = sprintf('%04d-%02d-%02d', $tahun, $i + 1, $tanggal_set - 1);
+            if ($prev_month === 0) {
+                $prev_month = 12;
+                $prev_year = $tahun - 1;
             }
 
-            // Menghitung tanggal terima (tanggal akhir + 1 hari)
+            // Tanggal awal = tanggal_set bulan sebelumnya
+            $tanggal_awal = sprintf('%04d-%02d-%02d', $prev_year, $prev_month, $tanggal_set);
+
+            // Tanggal akhir = tanggal_set - 1 di bulan ini
+            $tanggal_akhir = sprintf('%04d-%02d-%02d', $tahun, $i, $tanggal_set - 1);
+
+            // Tanggal terima = tanggal_akhir + 1 hari
             $tanggal_terima = date('Y-m-d', strtotime($tanggal_akhir . ' +1 day'));
 
+            // Hitung hari per bulan
+            $start_date = new DateTime($tanggal_awal);
+            $end_date = new DateTime($tanggal_akhir);
+
+            $periode_start = clone $start_date;
+            $periode_end = clone $end_date;
+
+            $hari_di_bulan_awal = 0;
+            $hari_di_bulan_berikutnya = 0;
+
+            while ($periode_start <= $periode_end) {
+                if ((int)$periode_start->format('n') == $prev_month) {
+                    $hari_di_bulan_awal++;
+                } else {
+                    $hari_di_bulan_berikutnya++;
+                }
+                $periode_start->modify('+1 day');
+            }
+
+            // Tentukan bulan dominan (bulan gaji)
+            if ($hari_di_bulan_awal > $hari_di_bulan_berikutnya) {
+                $bulan_gaji = $prev_month;
+            } else {
+                $bulan_gaji = $i;
+            }
+
             $result[] = [
-                'bulan' => $bulan,
+                'bulan' => $bulan_gaji,
                 'tanggal_awal' => $tanggal_awal,
                 'tanggal_akhir' => $tanggal_akhir,
                 'tanggal_terima' => $tanggal_terima,
+                'hari_di_bulan_awal' => $hari_di_bulan_awal,
+                'hari_di_bulan_berikutnya' => $hari_di_bulan_berikutnya,
             ];
         }
 

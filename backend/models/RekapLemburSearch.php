@@ -4,12 +4,12 @@ namespace backend\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\PengajuanLembur;
+use backend\models\RekapLembur;
 
 /**
- * RekapLemburSearch represents the model behind the search form of `backend\models\PengajuanLembur`.
+ * RekapLemburSearch represents the model behind the search form of `backend\models\RekapLembur`.
  */
-class RekapLemburSearch extends PengajuanLembur
+class RekapLemburSearch extends RekapLembur
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class RekapLemburSearch extends PengajuanLembur
     public function rules()
     {
         return [
-            [['id_pengajuan_lembur', 'id_karyawan', 'status', 'disetujui_oleh'], 'integer'],
-            [['pekerjaan', 'jam_mulai', 'jam_selesai', 'tanggal', 'disetujui_pada'], 'safe'],
+            [['id_rekap_lembur', 'id_karyawan', 'jam_total'], 'integer'],
+            [['tanggal'], 'safe'],
         ];
     }
 
@@ -35,22 +35,21 @@ class RekapLemburSearch extends PengajuanLembur
      * Creates data provider instance with search query applied
      *
      * @param array $params
+     * @param string|null $formName Form name to be used into `->load()` method.
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $formName = null)
     {
-        $query = PengajuanLembur::find();
+        $query = RekapLembur::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-                        'sort' => ['defaultOrder' => ['status' => SORT_ASC]],
-
         ]);
 
-        $this->load($params);
+        $this->load($params, $formName);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -60,17 +59,11 @@ class RekapLemburSearch extends PengajuanLembur
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id_pengajuan_lembur' => $this->id_pengajuan_lembur,
+            'id_rekap_lembur' => $this->id_rekap_lembur,
             'id_karyawan' => $this->id_karyawan,
-            'status' => $this->status,
-            'jam_mulai' => $this->jam_mulai,
-            'jam_selesai' => $this->jam_selesai,
             'tanggal' => $this->tanggal,
-            'disetujui_oleh' => $this->disetujui_oleh,
-            'disetujui_pada' => $this->disetujui_pada,
+            'jam_total' => $this->jam_total,
         ]);
-
-        $query->andFilterWhere(['like', 'pekerjaan', $this->pekerjaan]);
 
         return $dataProvider;
     }

@@ -2,8 +2,9 @@
 
 namespace backend\models;
 
-use common\models\User;
+use amnah\yii2\user\models\User;
 use Yii;
+
 
 /**
  * This is the model class for table "izin_pulang_cepat".

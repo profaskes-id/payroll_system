@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\GajiTunjangan $model */
 
-$this->title = Yii::t('app', 'Tambah Pengajuan WFH Karyawan');
+$this->title = Yii::t('app', 'Tambah Pengajuan Shift Karyawan');
 ?>
 <div class="relative z-50 mx-10 mt-5">
 

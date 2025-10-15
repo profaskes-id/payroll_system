@@ -89,15 +89,11 @@ class RekapCutiSearch extends RekapCuti
     {
         $this->load($params);
 
+
         // Ambil nilai dari params jika ada, kalau tidak set default 1
-        $jenis_cuti = $this->id_master_cuti ?: 1;
-        $tahun = $this->tahun ?: date('Y');
+        $jenis_cuti = $params['RekapCutiSearch']['id_master_cuti'] ?? 1;
+        $tahun = !empty($params['RekapCutiSearch']['tahun']) ? $params['RekapCutiSearch']['tahun'] : date('Y');
 
-        // $rekapId18Karyawan = RekapCuti::find()
-        //     ->where(['id_karyawan' => 18, 'tahun' => $tahun, 'id_master_cuti' => $jenis_cuti])
-        //     ->all();
-
-        // dd($rekapId18Karyawan);
 
 
         $query = (new \yii\db\Query())
@@ -109,7 +105,9 @@ class RekapCutiSearch extends RekapCuti
                 'COALESCE(SUM(rekap_cuti.total_hari_terpakai), 0) AS total_hari_terpakai',
                 'COALESCE(rekap_cuti.tahun, :tahun) AS tahun',
                 'master_cuti.jenis_cuti',
-                'master_cuti.total_hari_pertahun',
+                'jatah_cuti_karyawan.jatah_hari_cuti',
+                'jatah_cuti_karyawan.id_jatah_cuti',
+
                 'COALESCE(rekap_cuti.id_master_cuti, 0) AS id_master_cuti',
             ])
             ->from('karyawan')
@@ -124,6 +122,14 @@ class RekapCutiSearch extends RekapCuti
                 ]
             )
             ->leftJoin('master_cuti', 'master_cuti.id_master_cuti = rekap_cuti.id_master_cuti')
+            ->leftJoin(
+                'jatah_cuti_karyawan',
+                'jatah_cuti_karyawan.id_karyawan = karyawan.id_karyawan 
+    AND jatah_cuti_karyawan.tahun = :tahun 
+    AND (:id_master_cuti = 0 OR jatah_cuti_karyawan.id_master_cuti = :id_master_cuti)'
+            )
+
+
             ->where(['karyawan.is_aktif' => 1,])
             ->groupBy([
                 'karyawan.id_karyawan',
@@ -131,18 +137,19 @@ class RekapCutiSearch extends RekapCuti
                 'karyawan.kode_jenis_kelamin',
                 'rekap_cuti.tahun',
                 'master_cuti.jenis_cuti',
-                'master_cuti.total_hari_pertahun',
                 'rekap_cuti.id_master_cuti',
+                'jatah_cuti_karyawan.jatah_hari_cuti',
+                'jatah_cuti_karyawan.id_jatah_cuti',
+                'jatah_cuti_karyawan.tahun',
             ])
+
             ->orderBy(['karyawan.nama' => SORT_ASC]);
         if (!empty($this->id_karyawan)) {
             $query->andWhere(['karyawan.id_karyawan' => $this->id_karyawan]);
         }
-
         if ($jenis_cuti == 2) {
             $query->andWhere(['karyawan.kode_jenis_kelamin' => 'P']);
         }
-
         // Simpan untuk ke form dan view
         $this->id_master_cuti = $jenis_cuti;
         $this->tahun = $tahun;

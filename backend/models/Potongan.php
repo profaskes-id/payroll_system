@@ -25,10 +25,13 @@ class Potongan extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+
+
     public function rules()
     {
         return [
-            [['nama_potongan'], 'required'],
+            [['nama_potongan', 'jumlah', 'satuan'], 'required'],
             [['nama_potongan'], 'string', 'max' => 255],
         ];
     }
@@ -41,6 +44,8 @@ class Potongan extends \yii\db\ActiveRecord
         return [
             'id_potongan' => 'Id Potongan',
             'nama_potongan' => 'Nama Potongan',
+            'jumlah' => 'Jumlah',
+            'satuan' => 'Satuan',
         ];
     }
 

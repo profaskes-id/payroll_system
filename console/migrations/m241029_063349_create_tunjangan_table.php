@@ -15,6 +15,8 @@ class m241029_063349_create_tunjangan_table extends Migration
         $this->createTable('tunjangan', [
             'id_tunjangan' => $this->primaryKey(),
             'nama_tunjangan' => $this->string()->notNull(),
+            'jumlah' => $this->decimal(10, 2)->notNull(),
+            'satuan' => $this->string()->notNull(),
         ]);
     }
 

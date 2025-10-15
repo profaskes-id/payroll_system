@@ -46,6 +46,8 @@ class PengajuanShiftSearch extends PengajuanShift
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['diajukan_pada' => SORT_DESC]],
+
         ]);
 
         $this->load($params);

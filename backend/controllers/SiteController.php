@@ -7,14 +7,15 @@ use backend\models\IzinPulangCepat;
 use backend\models\Karyawan;
 use backend\models\MasterKode;
 use backend\models\MessageReceiver;
+use backend\models\PengajuanAbsensi;
 use backend\models\PengajuanCuti;
 use backend\models\PengajuanDinas;
 use backend\models\PengajuanLembur;
+use backend\models\PengajuanTugasLuar;
 use backend\models\PengajuanWfh;
 use backend\models\Pengumuman;
 use common\models\LoginForm;
-use common\models\User;
-use Symfony\Component\CssSelector\Parser\Shortcut\ElementParser;
+
 use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -77,7 +78,7 @@ class SiteController extends Controller
 
         if (Yii::$app->user->isGuest) {
             return $this->redirect(['user/login']);
-        } elseif ($roleNames[0] == 'Karyawan') {
+        } elseif ($roleNames[0] == 'Karyawan' || $roleNames[0] == 'Magang') {
             return $this->redirect(['home/index']);
         } else {
 
@@ -94,13 +95,15 @@ class SiteController extends Controller
             $pengajuanDinas = PengajuanDinas::find()->where(['status' => '0'])->count();
             $pengajuanPulangCepat = IzinPulangCepat::find()->where(['status' => '0'])->count();
             $pengajuanWFH = PengajuanWfh::find()->where(['status' => '0'])->count();
-
+            $pengajuanAbsensi = PengajuanAbsensi::find()->where(['status' => '0'])->count();
+            $pengajuanTugasLuar = PengajuanTugasLuar::find()->where(['status_pengajuan' => '0'])->count();
 
             $dates = [];
             for ($i = 6; $i >= 0; $i--) {
                 $date = date('d-m-Y', strtotime("-$i days"));
                 $dates[$date] = null;
             }
+
 
             $absensi = Absensi::find()
                 ->asArray()
@@ -132,7 +135,7 @@ class SiteController extends Controller
                 ->count();
 
 
-            return $this->render('index', compact('is_ada_notif', 'datesAsJson', 'TotalKaryawan', 'TotalData', 'TotalDataBelum', 'TotalIzin', 'totalPengumuman', 'pengajuanLembur', 'pengajuanCuti', 'pengajuanDinas', 'pengajuanPulangCepat', 'pengajuanWFH'));
+            return $this->render('index', compact('is_ada_notif', 'datesAsJson', 'TotalKaryawan', 'TotalData', 'TotalDataBelum', 'TotalIzin', 'totalPengumuman', 'pengajuanLembur', 'pengajuanCuti', 'pengajuanDinas', 'pengajuanPulangCepat', 'pengajuanWFH', 'pengajuanAbsensi', 'pengajuanTugasLuar'));
         }
     }
 

@@ -105,7 +105,7 @@ return [
         'allowActions' => [
             'v1/*', // add or remove allowed actions to this list
             'auto-login/*',
-            'admin/*', // add or remove allowed actions to this list
+            // 'admin/*', // add or remove allowed actions to this list
             'user/default/login', // add or remove allowed actions to this list
             'user/default/forgot', // add or remove allowed actions to this list
             'user/default/logout', // add or remove allowed actions to this list

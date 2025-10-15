@@ -17,6 +17,7 @@ class m241029_063519_create_tunjangan_detail_table extends Migration
             'id_tunjangan' => $this->integer()->notNull(),
             'id_karyawan' => $this->integer()->notNull(),
             'jumlah' => $this->decimal(10, 2)->notNull(),
+            'status' => $this->smallInteger()->defaultValue(0),
 
         ]);
 

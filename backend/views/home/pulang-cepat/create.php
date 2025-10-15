@@ -15,12 +15,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 
-<div class="w-full mx-auto px-5 lg:px-8">
+<div class="relative z-40 w-full px-5 mx-auto lg:px-8">
 
 
 
     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home/absen-masuk', 'title' => 'Izin Pulang Cepat']); ?>
-    <section class="grid grid-cols-12 justify-center mt-2 gap-y-10">
+    <section class="grid justify-center grid-cols-12 mt-2 gap-y-10">
 
 
 
@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alasan Pulang Cepat</label>
 
             <?= $form->field($model, 'alasan')->textarea(['id' => 'message', 'rows' => 12, 'class' => 'block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600'])->label(false) ?>
-            <div class="col-span-12 absolute bottom-3 left-0 right-0">
+            <div class="absolute left-0 right-0 col-span-12 bottom-3">
                 <div class="">
                     <?= $this->render('@backend/views/components/element/_submit-button', ['text' => 'Submit']); ?>
                 </div>

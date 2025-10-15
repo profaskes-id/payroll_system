@@ -166,6 +166,18 @@ class PeriodeGajiController extends Controller
         }
     }
 
+    public function actionDeleteAll()
+    {
+        $deletedRows = PeriodeGaji::deleteAll();
+        if ($deletedRows > 0) {
+            Yii::$app->session->setFlash('success', "$deletedRows data berhasil dihapus.");
+        } else {
+            Yii::$app->session->setFlash('error', 'Tidak ada data yang dihapus.');
+        }
+
+        return $this->redirect(['index']);
+    }
+
     /**
      * Finds the PeriodeGaji model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

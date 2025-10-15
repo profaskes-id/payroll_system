@@ -2,6 +2,7 @@
 
 use amnah\yii2\user\models\User;
 use backend\models\Tanggal;
+use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -17,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 
@@ -56,22 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         // return date('d-m-Y', strtotime($model->tanggal_pengajuan));
                     }
                 ],
-                [
-                    'label' => 'Tanggal Mulai Cuti',
-                    'value' => function ($model) {
-                        $tanggalFormat = new Tanggal();
-                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_mulai);
-                        // return date('d-m-Y', strtotime($model->tanggal_mulai));
-                    }
-                ],
-                [
-                    'label' => 'Tanggal Selesai Cuti',
-                    'value' => function ($model) {
-                        $tanggalFormat = new Tanggal();
-                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_selesai);
-                        // return date('d-m-Y', strtotime($model->tanggal_selesai));
-                    }
-                ],
+
                 'alasan_cuti:ntext',
                 [
                     'attribute' => 'Ditanggapi Oleh',
@@ -113,6 +99,76 @@ $this->params['breadcrumbs'][] = $this->title;
                             return "<span class='text-danger'>master kode tidak aktif</span>";
                         }
                     },
+                ],
+            ],
+        ]); ?>
+
+
+        <h4 class="mt-4">Detail Tugas Luar</h4>
+
+        <?= GridView::widget([
+            'dataProvider' => new \yii\data\ArrayDataProvider([
+                'allModels' => $model->detailCuti, // ganti sesuai data yang ingin ditampilkan
+                'pagination' => false,
+            ]),
+            'tableOptions' => ['class' => 'table table-striped table-bordered'],
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+
+                [
+                    'attribute' => 'tanggal',
+                    'value' => function ($model) {
+                        return Yii::$app->formatter->asDate($model->tanggal, 'php:d M Y');
+                    },
+                    'headerOptions' => ['style' => 'text-align: center;'],
+                    'contentOptions' => ['style' => 'text-align: center;'],
+                ],
+
+                [
+                    'attribute' => 'keterangan',
+                    'value' => function ($model) {
+                        return $model->keterangan ?? '-';
+                    },
+                    'headerOptions' => ['style' => 'text-align: center;'],
+                    'contentOptions' => ['style' => 'text-align: left;'],
+                ],
+
+                [
+                    'attribute' => 'status',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        $status = (int) $model->status;
+                        return match ($status) {
+                            0 => "<span class='text-warning'>Pending</span>",
+                            1 => "<span class='text-success'>Disetujui</span>",
+                            2 => "<span class='text-danger'>Ditolak</span>",
+                            default => "<span class='text-secondary'>Tidak Diketahui</span>",
+                        };
+                    },
+                    'headerOptions' => ['style' => 'text-align: center;'],
+                    'contentOptions' => ['style' => 'text-align: center;'],
+                ],
+
+                [
+                    'class' => 'yii\grid\ActionColumn',
+                    'template' => '{delete}',
+                    'buttons' => [
+                        'delete' => function ($url, $model, $key) {
+                            return Html::a(
+                                '<i class="fas fa-trash"></i>',
+                                ['delete-detail', 'id' => $model->id_detail_cuti, 'id_pengajuan_cuti' => $model->id_pengajuan_cuti],
+                                [
+                                    'class' => 'btn btn-sm btn-danger',
+                                    'data' => [
+                                        'confirm' => 'Apakah Anda yakin ingin menghapus detail ini?',
+                                        'method' => 'post',
+                                    ],
+                                    'title' => 'Hapus'
+                                ]
+                            );
+                        }
+                    ],
+                    'contentOptions' => ['style' => 'width: 50px; text-align: center;'],
                 ],
             ],
         ]); ?>

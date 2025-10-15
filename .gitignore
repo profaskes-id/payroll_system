@@ -28,6 +28,7 @@ Thumbs.db
 
 /vendor/*
 !/vendor/amnah/
+!/vendor/mdmsoft/
 !/vendor/yiisoft/yii2/grid/
 
 # composer itself is not needed

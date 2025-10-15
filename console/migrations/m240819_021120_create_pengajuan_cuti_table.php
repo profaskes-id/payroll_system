@@ -16,8 +16,6 @@ class m240819_021120_create_pengajuan_cuti_table extends Migration
             'id_pengajuan_cuti' => $this->primaryKey(),
             'id_karyawan' => $this->integer()->notNull(),
             'tanggal_pengajuan' => $this->date()->notNull(),
-            'tanggal_mulai' => $this->date()->notNull(),
-            'tanggal_selesai' => $this->date()->notNull(),
             'jenis_cuti' => $this->integer()->notNull(),
             'alasan_cuti' => $this->text(),
             'status' => $this->integer()->defaultValue(0),

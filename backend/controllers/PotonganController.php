@@ -49,6 +49,55 @@ class PotonganController extends Controller
         ]);
     }
 
+    public function actionSelectedPotongan($id_potongan)
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $model = Potongan::findOne($id_potongan);
+
+        if ($model) {
+            return [
+                'jumlah' => $model->jumlah,
+                'satuan' => $model->satuan, // asumsi ini "rupiah" atau "persen"
+            ];
+        }
+
+        return ['error' => 'Data tidak ditemukan'];
+    }
+
+
+    public function actionCreateAjax()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $model = new Potongan();
+
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save()) {
+                return [
+                    'success' => true,
+                    'message' => 'Potongan berhasil disimpan.',
+                    'id' => $model->id_potongan,
+                    'text' => $model->nama_potongan
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Gagal menyimpan potongan.',
+                    'errors' => $model->getErrors(),
+                ];
+            }
+        }
+
+        // 🛑 Tambahkan ini agar selalu return
+        return [
+            'success' => false,
+            'message' => 'Data tidak terkirim.',
+            'errors' => ['request' => ['Data POST tidak diterima atau tidak valid']],
+        ];
+    }
+
+
     /**
      * Displays a single Potongan model.
      * @param int $id_potongan Id Potongan

@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\MasterKode;
 use backend\models\PeriodeGaji;
 use backend\models\Tanggal;
 use PhpParser\Node\Stmt\Return_;
@@ -15,6 +16,10 @@ use yii\grid\GridView;
 
 $this->title = Yii::t('app', 'Periode Gaji');
 $this->params['breadcrumbs'][] = $this->title;
+
+
+$data = MasterKode::find()->where(['nama_group' => Yii::$app->params['tanggal-cut-of']])->one();
+
 ?>
 <div class="periode-gaji-index">
 
@@ -52,7 +57,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         'type' => 'number',
                         'placeholder' => 'Tanggal Awal',
                         'min' => 1,
-                        'max' => 31
+                        'max' => 31,
+                        'value' => $data['nama_kode']
                     ])->label('Tanggal Awal Gajian Mulai Dari') ?>
 
                 </div>
@@ -82,6 +88,18 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
     <div class="table-container table-responsive">
+
+
+        <div class="mb-2 d-flex justify-content-end">
+            <div>
+                <a href="/panel/periode-gaji/delete-all"
+                    onclick="return confirm('Apakah Anda yakin ingin menghapus semua data?');"
+                    class="reset-button">
+                    <i class="fas fa-trash"></i> Hapus Semua Data
+                </a>
+            </div>
+        </div>
+
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'columns' => [
@@ -119,7 +137,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                 ],
                 [
-                    'label' => 'Bulan',
+                    'label' => 'Periode Bulan',
                     'value' => function ($model) {
                         $tanggal = new Tanggal();
                         return $tanggal->getBulan($model->bulan);

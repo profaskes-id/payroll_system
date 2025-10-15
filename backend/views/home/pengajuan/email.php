@@ -80,10 +80,10 @@ $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:
                         <p>
                             <strong>Judul Pengajuan:</strong> <?= $params['judul'] ?><br />
                             <strong>Deskripsi:</strong> <?= $params['deskripsi'] ?><br />
-                        </p>
-
-                        <p>
-                            Silahkan login ke aplikasi untuk melihat tanggapan dari admin
+                            <strong>Halaman untuk melihat pengajuan:</strong>
+                            <a href="<?= Yii::getAlias('@root') . $params['nama_transaksi'] . '=' . $params['id_transaksi'] ?>">
+                                Lihat Pengajuan
+                            </a>
                         </p>
 
 

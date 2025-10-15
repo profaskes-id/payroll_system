@@ -122,6 +122,37 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     },
                 ],
+                [
+                    'headerOptions' => ['style' => 'text-align: center;'],
+                    'contentOptions' => ['style' => 'text-align: center;'],
+                    'format' => 'raw',
+                    'label' => 'Status Dibayarkan',
+                    'value' => function ($model) {
+                        if ($model->status_dibayar == 1) {
+                            return Html::button('Lunas', [
+                                'class' => 'btn btn-success btn-sm',
+                                'disabled' => true,
+                                'title' => 'Sudah dibayarkan',
+                            ]);
+                        } else {
+                            return Html::beginTag('form', [
+                                'method' => 'post',
+                                'action' => Url::to(['pengajuan-dinas/bayarkan', 'id' => $model->id_pengajuan_dinas]),
+                                'style' => 'display:inline-block;',
+                            ]) .
+                                Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->getCsrfToken()) . // manual CSRF
+                                Html::submitButton('Belum Dibayar', [
+                                    'class' => 'btn btn-danger btn-sm',
+                                    'title' => 'Klik untuk tandai sudah dibayar',
+                                    'onclick' => "return confirm('Yakin ingin menandai sebagai sudah dibayarkan?')"
+                                ]) .
+                                Html::endTag('form');
+                        }
+                    },
+                ],
+
+
+
             ],
         ]); ?>
     </div>
