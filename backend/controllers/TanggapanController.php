@@ -5,9 +5,13 @@ namespace backend\controllers;
 use amnah\yii2\user\models\User;
 use backend\models\Absensi;
 use backend\models\AtasanKaryawan;
+use backend\models\DetailCuti;
 use backend\models\DetailTugasLuar;
 use backend\models\helpers\EmailHelper;
 use backend\models\helpers\NotificationHelper;
+use backend\models\helpers\UseMessageHelper;
+use backend\models\IzinPulangCepat;
+use backend\models\JadwalShift;
 use backend\models\JamKerjaKaryawan;
 use backend\models\MasterKode;
 use backend\models\PengajuanAbsensi;
@@ -168,12 +172,12 @@ class TanggapanController extends Controller
 
                     $params = [
                         'judul' => 'Pengajuan wfh',
-                        'deskripsi' => 'Pengajuan Lembur Anda telah ditanggapi oleh atasan.',
-                        'nama_transaksi' => "wfh",
+                        'deskripsi' => 'Pengajuan Wfh Anda telah ditanggapi oleh atasan.',
+                        'nama_transaksi' => "/panel/pengajuan/wfh-detail?id",
                         'id_transaksi' => $pengajuanWfh['id_pengajuan_wfh'],
                     ];
 
-                    $this->sendNotif($params, $sender, $pengajuanWfh, $adminUsers, "Pengajuan wfh Baru Dari " . $pengajuanWfh->karyawan->nama);
+                    $this->sendNotif($params, $sender, $pengajuanWfh, $adminUsers, "Pengajuan wfh  ");
 
                     // Redirect ke halaman view setelah berhasil diupdate
                     return $this->redirect(['/tanggapan/wfh-view', 'id_pengajuan_wfh' => $pengajuanWfh->id_pengajuan_wfh,]);
@@ -330,11 +334,11 @@ class TanggapanController extends Controller
                 $params = [
                     'judul' => 'Pengajuan lembur',
                     'deskripsi' => 'Pengajuan Lembur Anda telah ditanggapi oleh atasan.',
-                    'nama_transaksi' => "lembur",
+                    'nama_transaksi' => "/panel/pengajuan/lembur-detail?id",
                     'id_transaksi' => $model['id_pengajuan_lembur'],
                 ];
 
-                $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan lembur Baru Dari " . $model->karyawan->nama);
+                $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan lembur  ");
                 return $this->redirect(['/tanggapan/lembur-view', 'id_pengajuan_lembur' => $model->id_pengajuan_lembur,]);
             }
         }
@@ -472,35 +476,57 @@ class TanggapanController extends Controller
 
                 if ($model->save()) {
 
-                    $rekapAsensi = new RekapCuti();
-                    $rekapAsensi->id_karyawan = $model->id_karyawan;
-                    $rekapAsensi->id_master_cuti = $model->jenis_cuti;
+                    $existingDetails = DetailCuti::find()
+                        ->where(['id_pengajuan_cuti' => $model->id_pengajuan_cuti])
+                        ->indexBy('id_detail_cuti')
+                        ->all();
 
+                    $postDetails = Yii::$app->request->post('DetailCuti', []);
+                    $usedIds = [];
+                    $approvedCount = 0;
 
+                    foreach ($postDetails as $key => $data) {
+                        if (!empty($data['id_detail_cuti']) && isset($existingDetails[$data['id_detail_cuti']])) {
+                            // Update
+                            $detail = $existingDetails[$data['id_detail_cuti']];
+                            $detail->load($data, '');
+                            $detail->save();
+                            $usedIds[] = $data['id_detail_cuti'];
+                        } else {
+                            // New
+                            $detail = new DetailCuti();
+                            $detail->id_pengajuan_cuti = $model->id_pengajuan_cuti;
+                            $detail->load($data, '');
+                            $detail->save();
+                        }
 
-                    $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $model->id_karyawan])->one();
-                    $containsNumber = strpos($jamKerjaKaryawan->jamKerja->nama_jam_kerja, preg_match('/\d+/', "5", $matches) ? $matches[0] : '') !== false;
+                        if (isset($data['status']) && $data['status'] == 1) {
+                            $approvedCount++;
+                        }
+                    }
 
-                    $hari_kerja = $this->hitungHariKerja($model->tanggal_mulai, $model->tanggal_selesai, $containsNumber);
-                    // Menghitung selisih hari
+                    // Delete yang dihapus di form
+                    foreach ($existingDetails as $id => $detail) {
+                        if (!in_array($id, $usedIds)) {
+                            $detail->delete();
+                        }
+                    }
+
 
 
 
                     if ($model->status == Yii::$app->params['disetujui']) {
-                        $rekapan = RekapCuti::find()->where(['id_karyawan' => $model->id_karyawan, 'id_master_cuti' => $model->jenis_cuti, 'tahun' => date('Y', strtotime($model->tanggal_mulai))])->one();
+                        $rekapan = RekapCuti::find()->where(['id_karyawan' => $model->id_karyawan, 'id_master_cuti' => $model->jenis_cuti, 'tahun' => date('Y')])->one();
                         if ($rekapan) {
-                            $rekapan->total_hari_terpakai += $hari_kerja;
+                            $rekapan->total_hari_terpakai += $approvedCount;
                             $rekapan->save();
                         } else {
-                            $timestamp_mulai = strtotime($model->tanggal_mulai);
-                            $timestamp_selesai = strtotime($model->tanggal_selesai);
-                            $selisih_detik = $timestamp_selesai - $timestamp_mulai == 0 ? (1 * 60 * 60 * 24) : $timestamp_selesai - $timestamp_mulai;
-                            $selisih_hari = $selisih_detik / (60 * 60 * 24);
+
                             $NewrekapAsensi = new RekapCuti();
                             $NewrekapAsensi->id_karyawan = $model->id_karyawan;
                             $NewrekapAsensi->id_master_cuti = $model->jenis_cuti;
-                            $NewrekapAsensi->total_hari_terpakai = $selisih_hari;
-                            $NewrekapAsensi->tahun = date('Y', strtotime($model->tanggal_mulai));
+                            $NewrekapAsensi->total_hari_terpakai = $approvedCount;
+                            $NewrekapAsensi->tahun = date('Y');
                             $NewrekapAsensi->save();
                         }
                     }
@@ -511,12 +537,12 @@ class TanggapanController extends Controller
 
                     $params = [
                         'judul' => 'Pengajuan cuti',
-                        'deskripsi' => 'Pengajuan Lembur Anda telah ditanggapi oleh atasan.',
-                        'nama_transaksi' => "cuti",
+                        'deskripsi' => 'Pengajuan cuti Anda telah ditanggapi oleh atasan.',
+                        'nama_transaksi' => "/panel/pengajuan/cuti-detail?id",
                         'id_transaksi' => $model['id_pengajuan_cuti'],
                     ];
 
-                    $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan cuti Baru Dari " . $model->karyawan->nama);
+                    // $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan cuti Baru Dari " . $model->karyawan->nama);
                     return $this->redirect(['/tanggapan/cuti-view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti,]);
                 } else {
 
@@ -551,7 +577,13 @@ class TanggapanController extends Controller
     }
 
 
-
+    public function actionDeleteCutiDetail($id, $id_pengajuan_cuti)
+    {
+        $model = DetailCuti::find()->where(['id_detail_cuti' => $id])->one();
+        $model->delete();
+        Yii::$app->session->setFlash('success', 'Berhasil Menghapus Pengajuan');
+        return $this->redirect('/panel/tanggapan/cuti-view?id_pengajuan_cuti=' . $id_pengajuan_cuti);
+    }
 
 
 
@@ -592,10 +624,10 @@ class TanggapanController extends Controller
             $params = [
                 'judul' => 'Pengajuan dinas',
                 'deskripsi' => 'Pengajuan Dinas luar Anda Telah Ditanggapi Oleh Atasan.',
-                'nama_transaksi' => "dinas",
+                'nama_transaksi' => "/panel/pengajuan/dinas-detail?id",
                 'id_transaksi' => $model['id_pengajuan_dinas'],
             ];
-            $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan dinas Baru Dari " . $model->karyawan->nama);
+            $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan dinas  ");
 
 
             return $this->redirect(['view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]);
@@ -685,10 +717,10 @@ class TanggapanController extends Controller
                 $params = [
                     'judul' => 'Pengajuan dinas',
                     'deskripsi' => 'Pengajuan Dinas luar Anda Telah Ditanggapi Oleh Atasan.',
-                    'nama_transaksi' => "dinas",
+                    'nama_transaksi' => "/panel/pengajuan/dinas-detail?id",
                     'id_transaksi' => $model['id_pengajuan_dinas'],
                 ];
-                $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan dinas Baru Dari " . $model->karyawan->nama);
+                $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan dinas ");
 
 
                 return $this->redirect(['/tanggapan/dinas-view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]);
@@ -754,11 +786,11 @@ class TanggapanController extends Controller
 
             $params = [
                 'judul' => 'Pengajuan absensi',
-                'deskripsi' => 'Pengajuan Absensi luar Anda Telah Ditanggapi Oleh Atasan.',
-                'nama_transaksi' => "absensi",
+                'deskripsi' => 'Pengajuan Absensi  Anda Telah Ditanggapi Oleh Atasan.',
+                'nama_transaksi' => "/panel/pengajuan/absensi-detail?id",
                 'id_transaksi' => $model['id_pengajuan_absensi'],
             ];
-            $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan absensi Baru Dari " . $model->karyawan->nama);
+            $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan absensi  ");
 
 
             return $this->redirect(['view', 'id_pengajuan_absensi' => $model->id_pengajuan_absensi]);
@@ -814,11 +846,11 @@ class TanggapanController extends Controller
 
                         $params = [
                             'judul' => 'Pengajuan Absensi',
-                            'deskripsi' => 'Pengajuan Absensi luar Anda Telah Ditanggapi Oleh Atasan.',
-                            'nama_transaksi' => "absensi",
+                            'deskripsi' => 'Pengajuan Absensi  Anda Telah Ditanggapi Oleh Atasan.',
+                            'nama_transaksi' => "/panel/pengajuan/absensi-detail?id",
                             'id_transaksi' => $model['id'],
                         ];
-                        $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan Absensi  Dari " . $model->karyawan->nama);
+                        $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan Absensi ");
                         return $this->redirect(['/tanggapan/absensi-view', 'id' => $model->id]);
                     } else {
                         Yii::$app->session->setFlash('error', 'gagal menambahkan absensi karyawan pada tanggal ' . $model->tanggal_absen);
@@ -855,6 +887,98 @@ class TanggapanController extends Controller
 
 
 
+    // pulang cepat
+    public function actionPulangCepat()
+    {
+        $id_admin = Yii::$app->user->identity->id_karyawan;
+
+        // Ambil karyawan bawahan
+        $bawahan = AtasanKaryawan::find()
+            ->where(['id_atasan' => $id_admin])
+            ->asArray()->all();
+        $idKaryawanList = array_column($bawahan, 'id_karyawan');
+
+        // Ambil daftar pengajuan
+        $listPengajuan = IzinPulangCepat::find()
+            ->where(['id_karyawan' => $idKaryawanList])
+            ->orderBy(['tanggal' => SORT_DESC])
+            ->all();
+
+        // Layout mobile
+        $this->layout = 'mobile-main';
+
+        return $this->render('/home/tanggapan/pulang-cepat/index', [
+            'listPengajuan' => $listPengajuan
+        ]);
+    }
+
+    public function actionPulangCepatView($id)
+    {
+        $this->layout = 'mobile-main';
+        $model = IzinPulangCepat::findOne($id);
+
+        return $this->render('/home/tanggapan/pulang-cepat/view', [
+            'model' => $model
+        ]);
+    }
+
+    public function actionPulangCepatUpdate($id)
+    {
+        $model = IzinPulangCepat::findOne($id);
+        $id_admin = Yii::$app->user->identity->id_karyawan;
+
+        $karyawanBawahanAdmin = AtasanKaryawan::find()
+            ->where(['id_atasan' => $id_admin])
+            ->asArray()->all();
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->disetujui_oleh = Yii::$app->user->identity->id;
+            $model->disetujui_pada = date('Y-m-d H:i:s');
+
+            if ($model->save()) {
+
+                $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+                $sender = Yii::$app->user->identity->id;
+
+                $params = [
+                    'judul' => 'Pengajuan Pulang Cepat',
+                    'deskripsi' => 'Pengajuan Pulang Cepat Anda telah ditanggapi',
+                    'nama_transaksi' => "/panel/home/pulang-cepat",
+                    'id_transaksi' => '',
+                ];
+
+                $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan perubahan pulang cepat");
+
+
+                Yii::$app->session->setFlash('success', 'Berhasil memperbarui pengajuan');
+                return $this->redirect(['pulang-cepat-view', 'id' => $model->id_izin_pulang_cepat]);
+            } else {
+                Yii::$app->session->setFlash('error', 'Gagal memperbarui pengajuan');
+            }
+        }
+
+        $this->layout = 'mobile-main';
+        return $this->render('/home/tanggapan/pulang-cepat/update', [
+            'model' => $model,
+            'karyawanBawahanAdmin' => $karyawanBawahanAdmin,
+        ]);
+    }
+
+    public function actionPulangCepatDelete($id)
+    {
+        $model = IzinPulangCepat::findOne($id);
+
+        if ($model && $model->delete()) {
+            Yii::$app->session->setFlash('success', 'Berhasil menghapus pengajuan');
+        } else {
+            Yii::$app->session->setFlash('error', 'Gagal menghapus pengajuan');
+        }
+
+        return $this->redirect(['pulang-cepat']);
+    }
+
+
+
 
     public function actionTugasLuar()
     {
@@ -887,11 +1011,11 @@ class TanggapanController extends Controller
 
             $params = [
                 'judul' => 'Pengajuan tugas luar',
-                'deskripsi' => 'Pengajuan TugasLuar luar Anda Telah Ditanggapi Oleh Atasan.',
-                'nama_transaksi' => "tugas-luar",
+                'deskripsi' => 'Pengajuan Tugas Luar  Anda Telah Ditanggapi Oleh Atasan.',
+                'nama_transaksi' => "/panel/pengajuan/tugas-luar-detail?id",
                 'id_transaksi' => $model['id_tugas_luar'],
             ];
-            $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan tugas-luar Baru Dari " . $model->karyawan->nama);
+            $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan tugas-luar");
 
 
             return $this->redirect(['view', 'id_tugas_luar' => $model->id_tugas_luar]);
@@ -906,122 +1030,122 @@ class TanggapanController extends Controller
         $this->layout = 'mobile-main';
         $model = PengajuanTugasLuar::find()->where(['id_tugas_luar' => $id])->one();
         $detail = DetailTugasLuar::find()->where(['id_tugas_luar' => $id])->all();
-        
-        return $this->render('/home/tanggapan/tugas-luar/view', compact('model' , "detail"));
+
+        return $this->render('/home/tanggapan/tugas-luar/view', compact('model', "detail"));
     }
-   public function actionTugasLuarUpdate($id_tugas_luar)
-{
-    $model = PengajuanTugasLuar::find()->where(['id_tugas_luar' => $id_tugas_luar])->one();
-    $detailModels = $model->detailTugasLuars;
+    public function actionTugasLuarUpdate($id_tugas_luar)
+    {
+        $model = PengajuanTugasLuar::find()->where(['id_tugas_luar' => $id_tugas_luar])->one();
+        $detailModels = $model->detailTugasLuars;
 
-    if (empty($detailModels)) {
-        $detailModels = [new DetailTugasLuar()];
-    }
+        if (empty($detailModels)) {
+            $detailModels = [new DetailTugasLuar()];
+        }
 
-    if ($this->request->isPost) {
-        $postData = $this->request->post();
-        $transaction = Yii::$app->db->beginTransaction();
+        if ($this->request->isPost) {
+            $postData = $this->request->post();
+            $transaction = Yii::$app->db->beginTransaction();
 
-        try {
-            // Load and save main model
-            if ($model->load($postData)) {
-                $model->updated_at = date('Y-m-d H:i:s');
-                $model->updated_by = Yii::$app->user->identity->id;
-                
-                if (!$model->save()) {
-                    throw new \Exception('Gagal menyimpan pengajuan: ' . json_encode($model->errors));
-                }
+            try {
+                // Load and save main model
+                if ($model->load($postData)) {
+                    $model->updated_at = date('Y-m-d H:i:s');
+                    $model->updated_by = Yii::$app->user->identity->id;
 
-                // Process detail data
-                $details = $postData['DetailTugasLuar'] ?? [];
-
-                // Get existing detail IDs
-                $existingDetails = DetailTugasLuar::find()
-                    ->where(['id_tugas_luar' => $model->id_tugas_luar])
-                    ->indexBy('id_detail')
-                    ->all();
-
-                $savedDetails = [];
-                $urutan = 1;
-
-                foreach ($details as $detailData) {
-                    if (!empty($detailData['id_detail']) && isset($existingDetails[$detailData['id_detail']])) {
-                        // Update existing detail
-                        $detail = $existingDetails[$detailData['id_detail']];
-                        unset($existingDetails[$detailData['id_detail']]); // Remove from delete list
-                    } else {
-                        // Create new detail
-                        $detail = new DetailTugasLuar();
-                        $detail->id_tugas_luar = $model->id_tugas_luar;
-                        $detail->created_at = date('Y-m-d H:i:s');
+                    if (!$model->save()) {
+                        throw new \Exception('Gagal menyimpan pengajuan: ' . json_encode($model->errors));
                     }
 
-                    // Set default values if not provided
-                    $detailData['status_check'] = $detailData['status_check'] ?? 0;
-                    $detailData['status_pengajuan_detail'] = $detailData['status_pengajuan_detail'] ?? 1;
-                    $detailData['urutan'] = $urutan++;
+                    // Process detail data
+                    $details = $postData['DetailTugasLuar'] ?? [];
 
-                    $detail->updated_at = date('Y-m-d H:i:s');
+                    // Get existing detail IDs
+                    $existingDetails = DetailTugasLuar::find()
+                        ->where(['id_tugas_luar' => $model->id_tugas_luar])
+                        ->indexBy('id_detail')
+                        ->all();
 
-                    if (!$detail->load($detailData, '') || !$detail->save()) {
-                        throw new \Exception(
-                            'Gagal menyimpan detail: ' . json_encode($detail->errors) .
-                                ' Data: ' . json_encode($detailData)
-                        );
+                    $savedDetails = [];
+                    $urutan = 1;
+
+                    foreach ($details as $detailData) {
+                        if (!empty($detailData['id_detail']) && isset($existingDetails[$detailData['id_detail']])) {
+                            // Update existing detail
+                            $detail = $existingDetails[$detailData['id_detail']];
+                            unset($existingDetails[$detailData['id_detail']]); // Remove from delete list
+                        } else {
+                            // Create new detail
+                            $detail = new DetailTugasLuar();
+                            $detail->id_tugas_luar = $model->id_tugas_luar;
+                            $detail->created_at = date('Y-m-d H:i:s');
+                        }
+
+                        // Set default values if not provided
+                        $detailData['status_check'] = $detailData['status_check'] ?? 0;
+                        $detailData['status_pengajuan_detail'] = $detailData['status_pengajuan_detail'] ?? 1;
+                        $detailData['urutan'] = $urutan++;
+
+                        $detail->updated_at = date('Y-m-d H:i:s');
+
+                        if (!$detail->load($detailData, '') || !$detail->save()) {
+                            throw new \Exception(
+                                'Gagal menyimpan detail: ' . json_encode($detail->errors) .
+                                    ' Data: ' . json_encode($detailData)
+                            );
+                        }
+
+                        $savedDetails[] = $detail;
                     }
 
-                    $savedDetails[] = $detail;
+                    // Delete details that were removed
+                    if (!empty($existingDetails)) {
+                        DetailTugasLuar::deleteAll(['id_detail' => array_keys($existingDetails)]);
+                    }
+
+                    // Validate at least one detail exists
+                    if (empty($savedDetails)) {
+                        throw new \Exception('Setidaknya harus ada satu detail tugas');
+                    }
+
+                    $transaction->commit();
+
+                    // Send notification
+                    $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+                    $sender = Yii::$app->user->identity->id;
+
+                    $params = [
+                        'judul' => 'Pengajuan Tugas Luar',
+                        'deskripsi' => 'Pengajuan Tugas Luar Anda Telah Ditanggapi Oleh Atasan.',
+                        'nama_transaksi' => "/panel/pengajuan/tugas-luar-detail?id=",
+                        'id_transaksi' => $model->id_tugas_luar,
+                    ];
+                    $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan Tugas luar ");
+
+                    Yii::$app->session->setFlash('success', 'Data berhasil diperbarui');
+                    return $this->redirect(['tugas-luar-view', 'id' => $model->id_tugas_luar]);
+                } else {
+                    throw new \Exception('Gagal memproses data pengajuan');
                 }
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::$app->session->setFlash('danger', 'Gagal menyimpan: ' . $e->getMessage());
 
-                // Delete details that were removed
-                if (!empty($existingDetails)) {
-                    DetailTugasLuar::deleteAll(['id_detail' => array_keys($existingDetails)]);
+                // Reload detail models for form
+                $detailModels = [];
+                foreach ($postData['DetailTugasLuar'] as $detailData) {
+                    $detail = new DetailTugasLuar();
+                    $detail->attributes = $detailData;
+                    $detailModels[] = $detail;
                 }
-
-                // Validate at least one detail exists
-                if (empty($savedDetails)) {
-                    throw new \Exception('Setidaknya harus ada satu detail tugas');
-                }
-
-                $transaction->commit();
-                
-                // Send notification
-                $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
-                $sender = Yii::$app->user->identity->id;
-
-                $params = [
-                    'judul' => 'Pengajuan Tugas Luar',
-                    'deskripsi' => 'Pengajuan Tugas Luar Anda Telah Ditanggapi Oleh Atasan.',
-                    'nama_transaksi' => "tugas-luar",
-                    'id_transaksi' => $model->id_tugas_luar,
-                ];
-                $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan Tugas Luar Dari " . $model->karyawan->nama);
-                
-                Yii::$app->session->setFlash('success', 'Data berhasil diperbarui');
-                return $this->redirect(['tugas-luar-view', 'id' => $model->id_tugas_luar]);
-            } else {
-                throw new \Exception('Gagal memproses data pengajuan');
-            }
-        } catch (\Exception $e) {
-            $transaction->rollBack();
-            Yii::$app->session->setFlash('danger', 'Gagal menyimpan: ' . $e->getMessage());
-
-            // Reload detail models for form
-            $detailModels = [];
-            foreach ($postData['DetailTugasLuar'] as $detailData) {
-                $detail = new DetailTugasLuar();
-                $detail->attributes = $detailData;
-                $detailModels[] = $detail;
             }
         }
-    }
 
-    $this->layout = 'mobile-main';
-    return $this->render('/home/tanggapan/tugas-luar/update', [
-        'model' => $model,
-        'detailModels' => $detailModels,
-    ]);
-}
+        $this->layout = 'mobile-main';
+        return $this->render('/home/tanggapan/tugas-luar/update', [
+            'model' => $model,
+            'detailModels' => $detailModels,
+        ]);
+    }
 
 
     public function actionTugasLuarDelete($id_tugas_luar)
@@ -1048,21 +1172,19 @@ class TanggapanController extends Controller
     }
 
 
-    public function actionTugasLuarDeleteDetail($id){
-        $model = DetailTugasLuar::find()->where(['id_detail' => $id])->one();
-        if ($model->detailTugasLuars) {
-            foreach ($model->detailTugasLuars as $detail) {
-                if (!empty($detail->bukti_foto)) {
-                    $filePath = Yii::getAlias('@webroot/uploads/bukti_tugas_luar/') . $detail->bukti_foto;
-                    if (file_exists($filePath) && is_file($filePath) && !unlink($filePath)) {
-                        throw new \Exception("Gagal menghapus file: " . $detail->bukti_foto);
-                    }
-                }
+    public function actionTugasLuarDeleteDetail($id_tugas_luar, $id_detail)
+    {
+        $model = DetailTugasLuar::find()->where(['id_detail' => $id_detail])->one();
+
+        if (!empty($model->bukti_foto)) {
+            $filePath = Yii::getAlias('@webroot/uploads/bukti_tugas_luar/') . $model->bukti_foto;
+            if (file_exists($filePath) && is_file($filePath) && !unlink($filePath)) {
+                throw new \Exception("Gagal menghapus file: " . $model->bukti_foto);
             }
         }
         if ($model->delete()) {
             Yii::$app->session->setFlash('success', 'Berhasil Menghapus Detail Pengajuan');
-            return $this->redirect(['/tanggapan/tugas-luar']);
+            return $this->redirect(['/tanggapan/tugas-luar-view', 'id' => $id_tugas_luar]);
         }
     }
 
@@ -1122,21 +1244,66 @@ class TanggapanController extends Controller
         if ($this->request->isPost && $model->load($this->request->post())) {
             $model->ditanggapi_oleh = Yii::$app->user->identity->id;
             $model->ditanggapi_pada = date('Y-m-d H:i:s');
+            if ($model->status == '1') {
 
+                $tanggalMulai = $model['tanggal_awal']; // dari form
+                $tanggalSelesai = $model['tanggal_akhir']; // dari form
+                $start = new \DateTime($tanggalMulai);
+                $end = new \DateTime($tanggalSelesai);
+                $end = $end->modify('+1 day'); // supaya termasuk tanggal selesai
+
+                $successCount = 0;
+                $failedCount = 0;
+
+                $interval = new \DateInterval('P1D');
+                $dateRange = new \DatePeriod($start, $interval, $end);
+
+                foreach ($dateRange as $date) {
+                    $tanggal = $date->format('Y-m-d');
+
+                    // Cek apakah data untuk tanggal & karyawan ini sudah ada
+                    $jadwal = JadwalShift::findOne([
+                        'id_karyawan' => $model->id_karyawan,
+                        'tanggal' => $tanggal
+                    ]);
+
+
+
+
+                    if (!$jadwal) {
+                        $jadwal = new JadwalShift();
+                        $jadwal->id_karyawan = $model->id_karyawan;
+                        $jadwal->tanggal = $tanggal;
+                        $jadwal->id_shift_kerja = $model->id_shift_kerja;
+                    }
+                    $jadwal->id_shift_kerja = $model->id_shift_kerja;
+
+                    if ($jadwal->save()) {
+                        $successCount++;
+                    } else {
+                        $failedCount++;
+                    }
+                }
+                if ($successCount > 0) {
+                    Yii::$app->session->setFlash('success', "$successCount shift berhasil diubah.");
+                }
+                if ($failedCount > 0) {
+                    Yii::$app->session->setFlash('error', "$failedCount shift gagal diubah.");
+                }
+            }
             if ($model->save()) {
-                # code...
-
                 $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
                 $sender = Yii::$app->user->identity->id;
 
                 $params = [
                     'judul' => 'Pengajuan Perubahan shift',
                     'deskripsi' => 'Pengajuan Perubahan Shift luar Anda Telah Ditanggapi Oleh Atasan.',
-                    'nama_transaksi' => "shift",
-                    'id_transaksi' => $model['id_pengajuan_shift'],
+                    'nama_transaksi' => "/panel/home/lihat-shift?id_karyawan",
+                    'id_transaksi' => $model['id_karyawan'],
                 ];
-                $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan perubahan shift Baru Dari " . $model->karyawan->nama);
+                $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan perubahan shift  ");
 
+                Yii::$app->session->setFlash('success', 'Berhasil Mengupdate Pengajuan');
 
                 return $this->redirect(['/tanggapan/shift-view', 'id_pengajuan_shift' => $model->id_pengajuan_shift]);
             }
@@ -1150,6 +1317,17 @@ class TanggapanController extends Controller
             'karyawanBawahanAdmin' => $karyawanBawahanAdmin,
         ]);
     }
+    public function actionShiftDelete($id)
+    {
+        $model = PengajuanShift::findOne($id);
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Berhasil Menghapus Pengajuan');
+            return $this->redirect(['/tanggapan/shift']);
+        } else {
+            Yii::$app->session->setFlash('error', 'Gagal Menghapus Pengajuan');
+        }
+    }
+
 
 
 
@@ -1195,11 +1373,9 @@ class TanggapanController extends Controller
             Yii::error("Runtime error: " . $e->getMessage());
         }
 
-        // return $this->renderPartial('@backend/views/home/pengajuan/email', compact('model', 'adminUsers', 'subject'));
-        $msgToCheck = $this->renderPartial('@backend/views/home/pengajuan/email_user', compact('model', 'params'));
+        $msgToCheck =  $this->renderPartial('@backend/views/home/pengajuan/email', compact('model', 'params'));
 
-        // $msgToCheck = $this->renderPartial('@backend/views/home/pengajuan/email');
-        // Mengirim email ke setiap pengguna
+
         foreach ($adminUsers as $user) {
             $to = $user->email;
             if (EmailHelper::sendEmail($to, $subject, $msgToCheck)) {

@@ -37,7 +37,7 @@ class PengajuanDinas extends \yii\db\ActiveRecord
     {
         return [
             [['id_karyawan', 'keterangan_perjalanan', 'tanggal_mulai', 'tanggal_selesai', 'estimasi_biaya', 'status'], 'required'],
-            [['id_karyawan', 'disetujui_oleh'], 'integer'],
+            [['id_karyawan', 'disetujui_oleh', 'status_dibayar'], 'integer'],
             [['keterangan_perjalanan', 'catatan_admin', 'dokumentasi'], 'string'],
             [['tanggal_mulai', 'tanggal_selesai', 'disetujui_pada', "disetujui_oleh"], 'safe'],
             [['estimasi_biaya', 'biaya_yang_disetujui'], 'number'],
@@ -65,6 +65,7 @@ class PengajuanDinas extends \yii\db\ActiveRecord
             'status' => 'status',
             'dokumentasi' => 'dokumentasi',
             'catatan_admin' => 'Catatan Admin',
+            'status_dibayar' => 'Status Dibayar',
 
 
         ];

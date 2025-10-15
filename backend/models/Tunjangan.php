@@ -25,10 +25,11 @@ class Tunjangan extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
     public function rules()
     {
         return [
-            [['nama_tunjangan'], 'required'],
+            [['nama_tunjangan', 'jumlah', 'satuan'], 'required'],
             [['nama_tunjangan'], 'string', 'max' => 255],
         ];
     }
@@ -41,6 +42,8 @@ class Tunjangan extends \yii\db\ActiveRecord
         return [
             'id_tunjangan' => 'Id Tunjangan',
             'nama_tunjangan' => 'Nama Tunjangan',
+            'jumlah' => 'jumlah',
+            'satuan' => 'satuan',
         ];
     }
 

@@ -21,7 +21,8 @@ use yii\widgets\ActiveForm;
 
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2 ">
 
-        <div class="">
+        <div class="grid grid-cols-1 col-span-2 gap-6 md:grid-cols-2">
+
             <p class="block mb-2 text-sm font-medium text-gray-900 capitalize ">Karyawan</p>
             <?php
             $data = \yii\helpers\ArrayHelper::map(KaryawanHelper::getKaryawanData(), 'id_karyawan', 'nama');
@@ -36,7 +37,8 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
 
-        <div>
+        <div class="grid grid-cols-1 col-span-2 gap-6 md:grid-cols-2">
+
             <?= $form->field($model, 'alasan')->textarea(['rows' => 3, 'class' => 'w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'])->label('Alasan') ?>
         </div>
 
@@ -57,7 +59,8 @@ use yii\widgets\ActiveForm;
                 ])->label('Tanggal Selesai') ?>
             </div>
         </div>
-        <div >
+        <div class="grid grid-cols-1 col-span-2 gap-6 md:grid-cols-2">
+
             <?= $form->field($model, 'lokasi')->textInput(['maxlength' => true, 'placeholder' => 'Tentukan Lokasi', 'autocomplete' => 'off', 'value' => 'Rumah', 'class' => 'w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'])->label('Lokasi') ?>
         </div>
 
@@ -100,7 +103,7 @@ use yii\widgets\ActiveForm;
             </div>
 
             <!-- Map Preview -->
-            <div class="mt-4">
+            <div class="col-span-2 mt-4">
                 <div id="map-preview" class="w-full h-48 overflow-hidden border border-gray-300 rounded-lg bg-gray-50">
                     <div class="flex items-center justify-center h-full text-gray-400">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -110,7 +113,7 @@ use yii\widgets\ActiveForm;
                         <span>Pratinjau peta akan muncul di sini</span>
                     </div>
                 </div>
-                <div class="flex justify-end mt-2">
+                <div class="flex justify-end mt-2 ">
                     <button type="button" id="refresh-location" class="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-600 rounded-md bg-blue-50 hover:bg-blue-100">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -133,7 +136,7 @@ use yii\widgets\ActiveForm;
 
 
 
-        <div class="col-12">
+        <div class="col-span-2">
 
             <?php
             $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
@@ -162,7 +165,7 @@ use yii\widgets\ActiveForm;
 
         <!-- Catatan Admin Field (hanya jika bukan record baru) -->
         <?php if (!$model->isNewRecord): ?>
-            <div class="">
+            <div class="col-span-2">
                 <?= $form->field($model, 'catatan_admin')->textarea([
                     'rows' => 2,
                     'class' => 'w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500'

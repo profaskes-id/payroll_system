@@ -14,13 +14,18 @@ class MasterGajiSearch extends MasterGaji
     /**
      * {@inheritdoc}
      */
+    public $jabatan;
+    public $nominal_gaji;
+
     public function rules()
     {
         return [
-            [['id_gaji', 'id_karyawan'], 'integer'],
+            [['id_karyawan'], 'integer'],
+            [['nama', 'jabatan'], 'safe'],
             [['nominal_gaji'], 'number'],
         ];
     }
+
 
     /**
      * {@inheritdoc}
@@ -40,9 +45,20 @@ class MasterGajiSearch extends MasterGaji
      */
     public function search($params)
     {
-        $query = MasterGaji::find();
-
-        // add conditions that should always apply here
+        $query = (new \yii\db\Query())
+            ->select([
+                'k.id_karyawan',
+                'k.nama',
+                'k.kode_karyawan',
+                'mk.nama_kode AS jabatan',
+                'COALESCE(mg.nominal_gaji, 0) AS nominal_gaji',
+                'mg.id_gaji AS id_gaji', // Tambahkan ini
+            ])
+            ->from('karyawan k')
+            ->leftJoin('data_pekerjaan dp', 'dp.id_karyawan = k.id_karyawan AND dp.is_aktif = 1')
+            ->leftJoin('master_gaji mg', 'mg.id_karyawan = k.id_karyawan')
+            ->leftJoin('master_kode mk', 'mk.nama_group = "jabatan" and dp.jabatan = mk.kode')
+            ->where(['k.is_aktif' => 1]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -51,18 +67,8 @@ class MasterGajiSearch extends MasterGaji
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
-
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id_gaji' => $this->id_gaji,
-            'id_karyawan' => $this->id_karyawan,
-            'nominal_gaji' => $this->nominal_gaji,
-        ]);
-
 
         return $dataProvider;
     }

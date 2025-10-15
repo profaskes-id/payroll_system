@@ -75,14 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ['/home/view', 'id_user' => Yii::$app->user->identity->id]
                         ) ?>
 
-                        <!-- User Menu (Dropdown) -->
-                        <!-- <div class="relative ml-2">
-                            <button class="p-1 rounded-full hover:bg-blue-700 focus:outline-none">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
-                                </svg>
-                            </button>
-                        </div> -->
+
                     </div>
                 </div>
             </div>
@@ -178,35 +171,42 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php if ($jamKerjaToday && $jamKerjaToday['is_shift'] != 0 && $dataShift !== null): ?>
         <div class="container relative z-40 px-4 mx-auto mt-8 md:px-6">
             <?php if ($manual_shift == 1): ?>
-            
-        <div class="p-4 bg-blue-600 rounded-lg shadow-md">
-                <div class="flex flex-col items-center justify-between md:flex-row">
-                    <div class="text-center text-white md:text-left">
-                        <h3 class="text-lg font-semibold">Jadwal Shift Hari Ini</h3>
-                        <p class="text-blue-100"><?= $dataShift['nama_shift'] ?? '-' ?></p>
-                    </div>
-                    <div class="flex items-center mt-4 space-x-4 md:mt-0">
-                        <div class="text-center text-white">
-                            <p class="text-sm text-blue-100">Jam Masuk</p>
-                            <p class="font-bold"><?= $dataShift['jam_masuk'] ?? '-' ?></p>
+
+                <div class="p-4 bg-blue-600 rounded-lg shadow-md">
+                    <div class="flex flex-col items-center justify-between md:flex-row">
+                        <div class="text-center text-white md:text-left">
+                            <h3 class="text-lg font-semibold">Jadwal Shift Hari Ini</h3>
+                            <p class="text-blue-100"><?= $dataShift['nama_shift'] ?? '-' ?></p>
                         </div>
-                        <div class="text-center text-white">
-                            <p class="text-sm text-blue-100">Jam Keluar</p>
-                            <p class="font-bold"><?= $dataShift['jam_keluar'] ?? '-' ?></p>
+                        <div class="flex items-center mt-4 space-x-4 md:mt-0">
+                            <div class="text-center text-white">
+                                <p class="text-sm text-blue-100">Jam Masuk</p>
+                                <p class="font-bold"><?= $dataShift['jam_masuk'] ?? '-' ?></p>
+                            </div>
+                            <div class="text-center text-white">
+                                <p class="text-sm text-blue-100">Jam Keluar</p>
+                                <p class="font-bold"><?= $dataShift['jam_keluar'] ?? '-' ?></p>
+                            </div>
                         </div>
+                        <?php if ($change_shift == 0): ?>
+                            <a href="/panel/home/pengajuan-shift?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>"
+                                class="px-4 py-2 mt-4 text-sm font-medium text-blue-600 bg-white rounded-md hover:bg-blue-50 md:mt-0">
+                                Ubah Shift
+                            </a>
+                        <?php else: ?>
+                            <a href="/panel/home/change-shift?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>"
+                                class="px-4 py-2 mt-4 text-sm font-medium text-blue-600 bg-white rounded-md hover:bg-blue-50 md:mt-0">
+                                Ubah Shift
+                            </a>
+                        <?php endif; ?>
                     </div>
-                    <?php if ($manual_shift == 1): ?>
-                        <a href="/panel/home/pengajuan-shift?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>"
-                            class="px-4 py-2 mt-4 text-sm font-medium text-blue-600 bg-white rounded-md hover:bg-blue-50 md:mt-0">
-                            Ubah Shift
-                        </a>
-                    <?php endif; ?>
                 </div>
-            </div>
-                <div class="mt-2 text-center">
-                    <a href="/panel/home/lihat-shift?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>"
-                        class="text-sm text-blue-600 hover:underline">Lihat Detail Shift</a>
-                </div>
+                <?php if ($change_shift == 0): ?>
+                    <div class="mt-2 text-center">
+                        <a href="/panel/home/lihat-shift?id_karyawan=<?= Yii::$app->user->identity->id_karyawan ?>"
+                            class="text-sm text-blue-600 hover:underline">Lihat Detail Shift</a>
+                    </div>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
     <?php endif; ?>
@@ -227,7 +227,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <h3 class="font-medium text-center text-gray-700">Lembur</h3>
                 </div>
             </a>
-                
+
             <!-- Dinas Luar -->
             <a href="/panel/pengajuan/dinas" class="transition transform hover:scale-105">
                 <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
@@ -268,18 +268,18 @@ $this->params['breadcrumbs'][] = $this->title;
             </a>
 
             <!-- Absensi Tertinggal -->
-            <?php if($deviasiAbsensi && $deviasiAbsensi['nilai_setting'] == 1) : ?>
-            <a href="/panel/absensi-tertinggal" class="transition transform hover:scale-105">
-                <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
-                    <div class="p-3 mb-4 bg-blue-100 rounded-full">
-                        <!-- Icon Absensi -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
+            <?php if ($deviasiAbsensi && $deviasiAbsensi['nilai_setting'] == 1) : ?>
+                <a href="/panel/absensi-tertinggal" class="transition transform hover:scale-105">
+                    <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
+                        <div class="p-3 mb-4 bg-blue-100 rounded-full">
+                            <!-- Icon Absensi -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                        </div>
+                        <h3 class="font-medium text-center text-gray-700">Deviasi Absensi</h3>
                     </div>
-                    <h3 class="font-medium text-center text-gray-700">Deviasi Absensi</h3>
-                </div>
-            </a>
+                </a>
             <?php endif; ?>
 
             <!-- Tugas Luar -->
@@ -298,161 +298,161 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
 
-<!-- For Supervisors -->
-<?php 
-$atasan = AtasanKaryawan::find()->where(['id_atasan' => $karyawan['id_karyawan']])->one();
-?>
-<?php if ($atasan): ?>
-    <div class="container block max-w-3xl px-4 py-8 mx-auto md:hidden">
-        <div class="overflow-hidden bg-white shadow-md rounded-xl">
-            <div class="p-6 text-white bg-gradient-to-r from-blue-600 to-indigo-700">
-                <h1 class="flex items-center text-2xl font-bold">
-                    <i class="mr-3 fas fa-clipboard-check"></i>
-                    Persetujuan Pengajuan
-                </h1>
-                <p class="mt-2 opacity-90">Terdapat pengajuan yang membutuhkan persetujuan Anda</p>
-            </div>
-            
-            <div class="divide-y divide-gray-100">
-                <!-- WFH Approval -->
-                <a href="/panel/tanggapan/wfh" class="block transition-all duration-200 group hover:bg-blue-50">
-                    <div class="flex items-center justify-between p-4">
-                        <div class="flex items-center">
-                            <div class="p-3 transition-colors duration-200 bg-purple-100 rounded-lg group-hover:bg-purple-200">
-                                <i class="text-xl text-purple-600 fas fa-cloud"></i>
+    <!-- For Supervisors -->
+    <?php
+    $atasan = AtasanKaryawan::find()->where(['id_atasan' => $karyawan['id_karyawan']])->one();
+    ?>
+    <?php if ($atasan): ?>
+        <div class="container block max-w-3xl py-8 mx-auto md:hidden">
+            <div class="overflow-hidden bg-white shadow-md rounded-xl">
+                <div class="p-6 text-white bg-gradient-to-r from-blue-600 to-indigo-700">
+                    <h1 class="flex items-center text-2xl font-bold">
+
+                        Employee Approval
+                    </h1>
+                    <p class="mt-2 opacity-90">Terdapat pengajuan yang membutuhkan persetujuan Anda</p>
+                </div>
+
+                <div class="divide-y divide-gray-100">
+                    <!-- WFH Approval -->
+                    <a href="/panel/tanggapan/wfh" class="block transition-all duration-200 group hover:bg-blue-50">
+                        <div class="flex items-center justify-between p-4">
+                            <div class="flex items-center">
+                                <div class="p-3 transition-colors duration-200 bg-purple-100 rounded-lg group-hover:bg-purple-200">
+                                    <i class="text-xl text-purple-600 fas fa-cloud"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="font-medium text-gray-800">Work From Home (WFH)</h3>
+                                    <p class="text-sm text-gray-500">Pengajuan kerja dari rumah</p>
+                                </div>
                             </div>
-                            <div class="ml-4">
-                                <h3 class="font-medium text-gray-800">Work From Home (WFH)</h3>
-                                <p class="text-sm text-gray-500">Pengajuan kerja dari rumah</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center">
+                            <!-- <div class="flex items-center">
                             <span class="mr-3 text-sm text-gray-500">12 pending</span>
                             <div class="px-2 py-1 text-xs font-bold text-purple-700 transition-colors duration-200 bg-purple-100 rounded-full group-hover:bg-purple-200">
                                 12
                             </div>
                             <i class="ml-2 text-gray-400 transition-colors duration-200 fas fa-chevron-right group-hover:text-purple-600"></i>
+                        </div> -->
                         </div>
-                    </div>
-                </a>
+                    </a>
 
-                <!-- Cuti Approval -->
-                <a href="/panel/tanggapan/cuti" class="block transition-all duration-200 group hover:bg-green-50">
-                    <div class="flex items-center justify-between p-4">
-                        <div class="flex items-center">
-                            <div class="p-3 transition-colors duration-200 bg-green-100 rounded-lg group-hover:bg-green-200">
-                                <i class="text-xl text-green-600 fas fa-calendar-day"></i>
+                    <!-- Cuti Approval -->
+                    <a href="/panel/tanggapan/cuti" class="block transition-all duration-200 group hover:bg-green-50">
+                        <div class="flex items-center justify-between p-4">
+                            <div class="flex items-center">
+                                <div class="p-3 transition-colors duration-200 bg-green-100 rounded-lg group-hover:bg-green-200">
+                                    <i class="text-xl text-green-600 fas fa-calendar-day"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="font-medium text-gray-800">Cuti</h3>
+                                    <p class="text-sm text-gray-500">Pengajuan waktu cuti</p>
+                                </div>
                             </div>
-                            <div class="ml-4">
-                                <h3 class="font-medium text-gray-800">Cuti</h3>
-                                <p class="text-sm text-gray-500">Pengajuan waktu cuti</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center">
+                            <!-- <div class="flex items-center">
                             <span class="mr-3 text-sm text-gray-500">8 pending</span>
                             <div class="px-2 py-1 text-xs font-bold text-green-700 transition-colors duration-200 bg-green-100 rounded-full group-hover:bg-green-200">
                                 8
                             </div>
                             <i class="ml-2 text-gray-400 transition-colors duration-200 fas fa-chevron-right group-hover:text-green-600"></i>
+                        </div> -->
                         </div>
-                    </div>
-                </a>
+                    </a>
 
-                <!-- Lembur Approval -->
-                <a href="/panel/tanggapan/lembur" class="block transition-all duration-200 group hover:bg-red-50">
-                    <div class="flex items-center justify-between p-4">
-                        <div class="flex items-center">
-                            <div class="p-3 transition-colors duration-200 bg-red-100 rounded-lg group-hover:bg-red-200">
-                                <i class="text-xl text-red-600 fas fa-clock"></i>
+                    <!-- Lembur Approval -->
+                    <a href="/panel/tanggapan/lembur" class="block transition-all duration-200 group hover:bg-red-50">
+                        <div class="flex items-center justify-between p-4">
+                            <div class="flex items-center">
+                                <div class="p-3 transition-colors duration-200 bg-red-100 rounded-lg group-hover:bg-red-200">
+                                    <i class="text-xl text-red-600 fas fa-clock"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="font-medium text-gray-800">Lembur</h3>
+                                    <p class="text-sm text-gray-500">Pengajuan kerja lembur</p>
+                                </div>
                             </div>
-                            <div class="ml-4">
-                                <h3 class="font-medium text-gray-800">Lembur</h3>
-                                <p class="text-sm text-gray-500">Pengajuan kerja lembur</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center">
+                            <!-- <div class="flex items-center">
                             <span class="mr-3 text-sm text-gray-500">5 pending</span>
                             <div class="px-2 py-1 text-xs font-bold text-red-700 transition-colors duration-200 bg-red-100 rounded-full group-hover:bg-red-200">
                                 5
                             </div>
                             <i class="ml-2 text-gray-400 transition-colors duration-200 fas fa-chevron-right group-hover:text-red-600"></i>
+                        </div> -->
                         </div>
-                    </div>
-                </a>
+                    </a>
 
-                <!-- Dinas Approval -->
-                <a href="/panel/tanggapan/dinas" class="block transition-all duration-200 group hover:bg-blue-50">
-                    <div class="flex items-center justify-between p-4">
-                        <div class="flex items-center">
-                            <div class="p-3 transition-colors duration-200 bg-blue-100 rounded-lg group-hover:bg-blue-200">
-                                <i class="text-xl text-blue-600 fas fa-briefcase"></i>
+                    <!-- Dinas Approval -->
+                    <a href="/panel/tanggapan/dinas" class="block transition-all duration-200 group hover:bg-blue-50">
+                        <div class="flex items-center justify-between p-4">
+                            <div class="flex items-center">
+                                <div class="p-3 transition-colors duration-200 bg-blue-100 rounded-lg group-hover:bg-blue-200">
+                                    <i class="text-xl text-blue-600 fas fa-briefcase"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="font-medium text-gray-800">Dinas</h3>
+                                    <p class="text-sm text-gray-500">Pengajuan perjalanan dinas</p>
+                                </div>
                             </div>
-                            <div class="ml-4">
-                                <h3 class="font-medium text-gray-800">Dinas</h3>
-                                <p class="text-sm text-gray-500">Pengajuan perjalanan dinas</p>
-                            </div>
+                            <!-- <div class="flex items-center">
+                                <span class="mr-3 text-sm text-gray-500">3 pending</span>
+                                <div class="px-2 py-1 text-xs font-bold text-blue-700 transition-colors duration-200 bg-blue-100 rounded-full group-hover:bg-blue-200">
+                                    3
+                                </div>
+                                <i class="ml-2 text-gray-400 transition-colors duration-200 fas fa-chevron-right group-hover:text-blue-600"></i>
+                            </div> -->
                         </div>
-                        <div class="flex items-center">
-                            <span class="mr-3 text-sm text-gray-500">3 pending</span>
-                            <div class="px-2 py-1 text-xs font-bold text-blue-700 transition-colors duration-200 bg-blue-100 rounded-full group-hover:bg-blue-200">
-                                3
-                            </div>
-                            <i class="ml-2 text-gray-400 transition-colors duration-200 fas fa-chevron-right group-hover:text-blue-600"></i>
-                        </div>
-                    </div>
-                </a>
+                    </a>
 
-                <!-- Deviasi Absensi -->
-                <a href="/panel/tanggapan/absensi" class="block transition-all duration-200 group hover:bg-yellow-50">
-                    <div class="flex items-center justify-between p-4">
-                        <div class="flex items-center">
-                            <div class="p-3 transition-colors duration-200 bg-yellow-100 rounded-lg group-hover:bg-yellow-200">
-                                <i class="text-xl text-yellow-600 fas fa-exclamation-triangle"></i>
+                    <!-- Deviasi Absensi -->
+                    <a href="/panel/tanggapan/absensi" class="block transition-all duration-200 group hover:bg-yellow-50">
+                        <div class="flex items-center justify-between p-4">
+                            <div class="flex items-center">
+                                <div class="p-3 transition-colors duration-200 bg-yellow-100 rounded-lg group-hover:bg-yellow-200">
+                                    <i class="text-xl text-yellow-600 fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="font-medium text-gray-800">Deviasi Absensi</h3>
+                                    <p class="text-sm text-gray-500">Pengajuan penyesuaian absensi</p>
+                                </div>
                             </div>
-                            <div class="ml-4">
-                                <h3 class="font-medium text-gray-800">Deviasi Absensi</h3>
-                                <p class="text-sm text-gray-500">Pengajuan penyesuaian absensi</p>
-                            </div>
+                            <!-- <div class="flex items-center">
+                                <span class="mr-3 text-sm text-gray-500">7 pending</span>
+                                <div class="px-2 py-1 text-xs font-bold text-yellow-700 transition-colors duration-200 bg-yellow-100 rounded-full group-hover:bg-yellow-200">
+                                    7
+                                </div>
+                                <i class="ml-2 text-gray-400 transition-colors duration-200 fas fa-chevron-right group-hover:text-yellow-600"></i> -->
+                            <!-- </div> -->
                         </div>
-                        <div class="flex items-center">
-                            <span class="mr-3 text-sm text-gray-500">7 pending</span>
-                            <div class="px-2 py-1 text-xs font-bold text-yellow-700 transition-colors duration-200 bg-yellow-100 rounded-full group-hover:bg-yellow-200">
-                                7
-                            </div>
-                            <i class="ml-2 text-gray-400 transition-colors duration-200 fas fa-chevron-right group-hover:text-yellow-600"></i>
-                        </div>
-                    </div>
-                </a>
+                    </a>
 
-                <!-- Tugas Luar -->
-                <a href="/panel/tanggapan/tugas-luar" class="block transition-all duration-200 group hover:bg-indigo-50">
-                    <div class="flex items-center justify-between p-4">
-                        <div class="flex items-center">
-                            <div class="p-3 transition-colors duration-200 bg-indigo-100 rounded-lg group-hover:bg-indigo-200">
-                                <i class="text-xl text-indigo-600 fas fa-file-alt"></i>
+                    <!-- Tugas Luar -->
+                    <a href="/panel/tanggapan/tugas-luar" class="block transition-all duration-200 group hover:bg-indigo-50">
+                        <div class="flex items-center justify-between p-4">
+                            <div class="flex items-center">
+                                <div class="p-3 transition-colors duration-200 bg-indigo-100 rounded-lg group-hover:bg-indigo-200">
+                                    <i class="text-xl text-indigo-600 fas fa-file-alt"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="font-medium text-gray-800">Tugas Luar</h3>
+                                    <p class="text-sm text-gray-500">Pengajuan tugas luar kantor</p>
+                                </div>
                             </div>
-                            <div class="ml-4">
-                                <h3 class="font-medium text-gray-800">Tugas Luar</h3>
-                                <p class="text-sm text-gray-500">Pengajuan tugas luar kantor</p>
-                            </div>
+                            <!-- <div class="flex items-center">
+                                <span class="mr-3 text-sm text-gray-500">4 pending</span>
+                                <div class="px-2 py-1 text-xs font-bold text-indigo-700 transition-colors duration-200 bg-indigo-100 rounded-full group-hover:bg-indigo-200">
+                                    4
+                                </div>
+                                <i class="ml-2 text-gray-400 transition-colors duration-200 fas fa-chevron-right group-hover:text-indigo-600"></i>
+                            </div> -->
                         </div>
-                        <div class="flex items-center">
-                            <span class="mr-3 text-sm text-gray-500">4 pending</span>
-                            <div class="px-2 py-1 text-xs font-bold text-indigo-700 transition-colors duration-200 bg-indigo-100 rounded-full group-hover:bg-indigo-200">
-                                4
-                            </div>
-                            <i class="ml-2 text-gray-400 transition-colors duration-200 fas fa-chevron-right group-hover:text-indigo-600"></i>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            
-            <div class="p-4 text-sm text-center text-gray-500 bg-gray-50">
-                Total 39 pengajuan yang membutuhkan persetujuan
+                    </a>
+                </div>
+
+                <!-- <div class="p-4 text-sm text-center text-gray-500 bg-gray-50">
+                    Total 39 pengajuan yang membutuhkan persetujuan
+                </div> -->
             </div>
         </div>
-    </div>
-<?php endif; ?>
+    <?php endif; ?>
 </div>
 
 <script>

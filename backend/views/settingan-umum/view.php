@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var backend\models\SettinganUmum $model */
 
-$this->title = $model->nama_setting;
+$this->title = $model->kode_setting;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Settingan Lainnya'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);

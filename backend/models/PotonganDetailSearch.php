@@ -40,7 +40,14 @@ class PotonganDetailSearch extends PotonganDetail
      */
     public function search($params)
     {
-        $query = PotonganDetail::find();
+        $query = PotonganDetail::find()
+            ->select(['potongan_detail.*',  'karyawan.nama', 'potongan.nama_potongan',  'potongan_detail.id_potongan_detail', 'bagian.nama_bagian', 'master_kode.nama_kode'])
+            ->leftJoin('karyawan', 'karyawan.id_karyawan = potongan_detail.id_karyawan')
+            ->leftJoin('potongan', 'potongan.id_potongan = potongan_detail.id_potongan')
+            ->leftJoin('data_pekerjaan', 'data_pekerjaan.id_karyawan = karyawan.id_karyawan AND data_pekerjaan.is_aktif = 1')
+            ->leftJoin('bagian', 'bagian.id_bagian = data_pekerjaan.id_bagian ')
+            ->leftJoin('master_kode', 'data_pekerjaan.jabatan = master_kode.kode AND master_kode.nama_group = "jabatan"')
+            ->asArray();
 
         // add conditions that should always apply here
 

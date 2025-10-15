@@ -67,25 +67,27 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-                'label' => 'Tanggal Mulai',
+                'label' => 'Tanggal Cuti',
+                'format' => 'raw',
+                'headerOptions' => ['style' => 'width: 30%; text-align: center;'],
+                'contentOptions' => ['style' => 'text-align: left; vertical-align: middle;'],
                 'value' => function ($model) {
-                    $tanggalFormat = new Tanggal();
-                    return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_mulai);
-                    // return date('d-m-Y', strtotime($model->tanggal_mulai));
+                    if (empty($model->detailCuti)) {
+                        return '-';
+                    }
+
+                    $output = '<ul class="text-sm text-gray-700 list-disc list-inside">';
+                    foreach ($model->detailCuti as $detail) {
+                        $tanggal = Yii::$app->formatter->asDate($detail->tanggal, 'php:d M Y');
+                        $output .= '<li>' . $tanggal . '</li>';
+                    }
+                    $output .= '</ul>';
+                    return $output;
                 },
-                'headerOptions' => ['style' => 'width: 20%; text-align: center;'],
-                'contentOptions' => ['style' => 'width: 20%; text-align: center;'],
             ],
-            [
-                'headerOptions' => ['style' => 'width: 20%; text-align: center;'],
-                'contentOptions' => ['style' => 'width: 20%; text-align: center;'],
-                'label' => 'Tanggal Selesai',
-                'value' => function ($model) {
-                    $tanggalFormat = new Tanggal();
-                    return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_selesai);
-                    // return date('d-m-Y', strtotime($model->tanggal_selesai));
-                }
-            ],
+
+
+
             [
                 'headerOptions' => ['style' => ' text-align: center;'],
                 'contentOptions' => ['style' => ' text-align: center;'],

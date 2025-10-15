@@ -42,56 +42,49 @@ use yii\widgets\ActiveForm;
                 <?= $formAbsen->field($model, 'alasan_terlalu_jauh')->textarea(['class' => 'py-1 w-full border border-gray-200 rounded-md', 'required' => true, 'rows' => 7, 'placeholder' => 'Alasan Anda Terlalu Jauh Dari Lokasi Penempatan Kerja'])->label(false) ?>
 
 
-            <?php 
-// Cek apakah variabel $dataJam ada dan memiliki struktur yang diharapkan
-if (isset($dataJam['karyawan']) && is_array($dataJam['karyawan']) && 
-    !empty($dataJam['karyawan']['is_shift']) && 
-    (empty($manual_shift) || $manual_shift == 0)): 
-?>
-    <p>Tentukan Shift Masuk Anda</p>
+                <?php
+                // Cek apakah variabel $dataJam ada dan memiliki struktur yang diharapkan
+                if ($manual_shift == 0):
+                ?>
+                    <p>Tentukan Shift Masuk Anda</p>
 
-    <?php
-    // Ambil data shift dari database dengan pengecekan
-    $dataShift = [];
-    if (class_exists('ShiftKerja') && method_exists('ShiftKerja', 'find')) {
-        $shiftQuery = ShiftKerja::find();
-        if (method_exists($shiftQuery, 'asArray')) {
-            $dataShift = $shiftQuery->asArray()->all();
-        }
-    }
+                    <?php
+                    // Ambil data shift dari database dengan pengecekan
+                    $dataShift =  ShiftKerja::find()->asArray()->all();
 
-    // Format pilihan radioList dengan pengecekan
-    $shiftOptions = [];
-    if (!empty($dataShift) && is_array($dataShift)) {
-        foreach ($dataShift as $shift) {
-            if (isset($shift['id_shift_kerja'], $shift['nama_shift'], $shift['jam_masuk'], $shift['jam_keluar'])) {
-                $jamMasuk = substr($shift['jam_masuk'], 0, 5);
-                $jamKeluar = substr($shift['jam_keluar'], 0, 5);
-                $shiftOptions[$shift['id_shift_kerja']] = $shift['nama_shift'] . " ($jamMasuk - $jamKeluar)";
-            }
-        }
-    }
-    ?>
 
-    <?php if (!empty($shiftOptions)): ?>
-        <div class="max-w-md mx-auto space-y-3">
-            <?= $formAbsen->field($model, 'id_shift')->radioList($shiftOptions, [
-                'item' => function ($index, $label, $name, $checked, $value) {
-                    return "
+                    // Format pilihan radioList dengan pengecekan
+                    $shiftOptions = [];
+                    if (!empty($dataShift) && is_array($dataShift)) {
+                        foreach ($dataShift as $shift) {
+                            if (isset($shift['id_shift_kerja'], $shift['nama_shift'], $shift['jam_masuk'], $shift['jam_keluar'])) {
+                                $jamMasuk = substr($shift['jam_masuk'], 0, 5);
+                                $jamKeluar = substr($shift['jam_keluar'], 0, 5);
+                                $shiftOptions[$shift['id_shift_kerja']] = $shift['nama_shift'] . " ($jamMasuk - $jamKeluar)";
+                            }
+                        }
+                    }
+                    ?>
+
+                    <?php if (!empty($shiftOptions)): ?>
+                        <div class="max-w-md mx-auto space-y-3">
+                            <?= $formAbsen->field($model, 'id_shift')->radioList($shiftOptions, [
+                                'item' => function ($index, $label, $name, $checked, $value) {
+                                    return "
                     <div>
                         <input type='radio' name='{$name}' id='shift-terlalujauh-{$value}' value='{$value}' class='hidden peer' " . ($checked ? 'checked' : '') . ">
                         <label for='shift-terlalujauh-{$value}' class='block p-3 text-sm font-medium text-gray-600 transition bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-400 hover:bg-blue-100'>
                             {$label}
                         </label>
                     </div>";
-                }
-            ])->label(false) ?>
-        </div>
-    <?php else: ?>
-        <p class="text-red-500">Tidak ada data shift yang tersedia.</p>
-    <?php endif; ?>
+                                }
+                            ])->label(false) ?>
+                        </div>
+                    <?php else: ?>
+                        <p class="text-red-500">Tidak ada data shift yang tersedia.</p>
+                    <?php endif; ?>
 
-<?php endif; ?>
+                <?php endif; ?>
 
 
 
@@ -124,7 +117,7 @@ if (isset($dataJam['karyawan']) && is_array($dataJam['karyawan']) &&
             document.querySelectorAll('.coordinate.lat').forEach(el => el.value = currentLat);
             document.querySelectorAll('.coordinate.lon').forEach(el => el.value = currentLon);
             document.querySelectorAll('.foto_fr').forEach(el => el.value = wajah_fr);
-            
+
 
             // Copy shift yang dipilih
             const selectedShift = document.querySelector('#my-form input[name="id_shift"]:checked');

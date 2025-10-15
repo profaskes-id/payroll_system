@@ -10,6 +10,9 @@ use yii\filters\VerbFilter;
 use yii\web\Response;
 use amnah\yii2\user\models\User;
 use backend\models\Absensi;
+use backend\models\helpers\EmailHelper;
+use backend\models\helpers\NotificationHelper;
+use backend\models\helpers\UseMessageHelper;
 use yii\widgets\ActiveForm;
 
 class AbsensiTertinggalController extends Controller
@@ -55,6 +58,19 @@ class AbsensiTertinggalController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
                 if ($model->save()) {
+
+                    $useMessage = new UseMessageHelper();
+                    $adminUsers = $useMessage->getUserAtasanReceiver($model->id_karyawan);
+
+                    $params = [
+                        'judul' => 'Pengajuan  Deviasi Absensi',
+                        'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan absensi.',
+                        'nama_transaksi' => "/panel/tanggapan/absensi-view?id",
+                        'id_transaksi' => $model['id'],
+                    ];
+
+                    $this->sendNotif($params, $model, $adminUsers, "Pengajuan Absensi Baru Dari " . $model->karyawan->nama);
+
                     Yii::$app->session->setFlash('success', 'Pengajuan absensi berhasil dibuat.');
                     return $this->redirect(['index']);
                 } else {
@@ -125,5 +141,31 @@ class AbsensiTertinggalController extends Controller
         }
 
         throw new NotFoundHttpException('Data yang diminta tidak ditemukan.');
+    }
+
+
+
+    public function sendNotif($params, $model, $adminUsers, $subject = "Pengajuan Karyawan")
+    {
+        try {
+            NotificationHelper::sendNotification($params, $adminUsers);
+        } catch (\InvalidArgumentException $e) {
+            // Handle invalid argument exception
+            Yii::error("Invalid argument: " . $e->getMessage());
+        } catch (\RuntimeException $e) {
+            // Handle runtime exception
+            Yii::error("Runtime error: " . $e->getMessage());
+        }
+
+        $msgToCheck = $this->renderPartial('@backend/views/home/pengajuan/email_user', compact('model', 'params'));
+
+        foreach ($adminUsers as $atasan) {
+            $to = $atasan['email'];
+            if (EmailHelper::sendEmail($to, $subject, $msgToCheck)) {
+                Yii::$app->session->setFlash('success', 'Email berhasil dikirim ke ' . $to);
+            } else {
+                Yii::$app->session->setFlash('error', 'Email gagal dikirim ke ' . $to);
+            }
+        }
     }
 }

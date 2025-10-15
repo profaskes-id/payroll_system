@@ -55,6 +55,11 @@ use yii\widgets\ActiveForm;
             ]);
             ?>
         </div>
+        <div class="col-12 ">
+            <?= $form->field($model, 'jumlah_hari')->textInput(['type' => 'number']) ?>
+        </div>
+
+
     </div>
 
     <div class="form-group">

@@ -45,11 +45,13 @@ class SettinganUmumController extends Controller
         $dataProvider = $searchModel->search($this->request->queryParams);
         $model = new MasterKode();
 
-        $tanggal_cut_of = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one();
+        $tanggal_cut_of = MasterKode::find()->where(['nama_group' => Yii::$app->params["tanggal-cut-of"]])->one();
+        $potongan_persenan_wfh = MasterKode::find()->where(['nama_group' => Yii::$app->params['potongan-persen-wfh']])->one();
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'tanggal_cut_of' => $tanggal_cut_of,
+            'potongan_persenan_wfh' => $potongan_persenan_wfh,
             'model' => $model
         ]);
     }
@@ -57,7 +59,7 @@ class SettinganUmumController extends Controller
     public function actionEditCutoff()
     {
 
-        $model = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one();
+        $model = MasterKode::find()->where(['nama_group' => Yii::$app->params["tanggal-cut-of"]])->one();
 
         if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -81,6 +83,34 @@ class SettinganUmumController extends Controller
             'model' => $model,
         ]);
     }
+
+    public function actionEditWfhPersen()
+    {
+        $model = MasterKode::find()->where(['nama_group' => 'potongan-persen-wfh'])->one();
+
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+            if ($model->save()) {
+                return ['success' => true];
+            } else {
+                return [
+                    'success' => false,
+                    'form' => $this->renderAjax('_form_wfh_persen', ['model' => $model])
+                ];
+            }
+        }
+
+        // Untuk non-AJAX fallback (opsional)
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['index']);
+        }
+
+        return $this->render('edit_wfh_persen', [
+            'model' => $model,
+        ]);
+    }
+
 
 
     /**
@@ -106,13 +136,12 @@ class SettinganUmumController extends Controller
         $model = new SettinganUmum();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) ) {
-                 if($model->save()){
-                Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
-
-            }else{
-                Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
-            }
+            if ($model->load($this->request->post())) {
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
+                } else {
+                    Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
+                }
                 return $this->redirect(['view', 'id_settingan_umum' => $model->id_settingan_umum]);
             }
         } else {
@@ -135,11 +164,10 @@ class SettinganUmumController extends Controller
     {
         $model = $this->findModel($id_settingan_umum);
 
-        if ($this->request->isPost && $model->load($this->request->post()) ) {
-            if($model->save()){
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'Data berhasil disimpan.');
-
-            }else{
+            } else {
                 Yii::$app->session->setFlash('error', 'Data gagal disimpan.');
             }
             return $this->redirect(['view', 'id_settingan_umum' => $model->id_settingan_umum]);

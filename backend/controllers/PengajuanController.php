@@ -7,6 +7,7 @@ use backend\models\AtasanKaryawan;
 use backend\models\DetailTugasLuar;
 use backend\models\helpers\EmailHelper;
 use backend\models\helpers\NotificationHelper;
+use backend\models\helpers\UseMessageHelper;
 use backend\models\Karyawan;
 use backend\models\MasterCuti;
 use backend\models\PengajuanCuti;
@@ -29,7 +30,7 @@ class PengajuanController extends \yii\web\Controller
 
     public function beforeAction($action)
     {
-        if ($action->id == 'lembur-delete' || $action->id == "checkin-tugas-luar") {
+        if ($action->id == 'lembur-delete' || $action->id == "checkin-tugas-luar" || $action->id == "jenis-cuti") {
             // Menonaktifkan CSRF verification untuk aksi 'view'
             $this->enableCsrfValidation = false;
         }
@@ -126,6 +127,21 @@ class PengajuanController extends \yii\web\Controller
                 }
 
                 $transaction->commit();
+
+                $useMessage = new UseMessageHelper();
+                $adminUsers = $useMessage->getUserAtasanReceiver($model->id_karyawan);
+
+
+                $params = [
+                    'judul' => 'Pengajuan Tugas Luar ',
+                    'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan Tugas Luar.',
+                    'nama_transaksi' => "/panel/tanggapan/tugas-luar-view?id",
+                    'id_transaksi' => $model['id_tugas_luar'],
+                ];
+
+                $this->sendNotif($params, $model, $adminUsers, "Pengajuan Tugas Luar Baru Dari " . $model->karyawan->nama);
+
+
                 Yii::$app->session->setFlash('success', 'Pengajuan tugas luar berhasil disimpan.');
                 return $this->redirect(['index']); // Ganti dengan route yang sesuai
 
@@ -187,14 +203,14 @@ class PengajuanController extends \yii\web\Controller
                 if (isset($_POST['DetailTugasLuar']) && is_array($_POST['DetailTugasLuar'])) {
                     // Hapus semua detail yang ada (kita akan buat ulang)
 
-            foreach ($model->detailTugasLuars as $detail) {
-                if (!empty($detail->bukti_foto)) {
-                    $filePath = Yii::getAlias('@webroot/uploads/bukti_tugas_luar/') . $detail->bukti_foto;
-                    if (file_exists($filePath) && is_file($filePath) && !unlink($filePath)) {
-                        throw new \Exception("Gagal menghapus file: " . $detail->bukti_foto);
+                    foreach ($model->detailTugasLuars as $detail) {
+                        if (!empty($detail->bukti_foto)) {
+                            $filePath = Yii::getAlias('@webroot/uploads/bukti_tugas_luar/') . $detail->bukti_foto;
+                            if (file_exists($filePath) && is_file($filePath) && !unlink($filePath)) {
+                                throw new \Exception("Gagal menghapus file: " . $detail->bukti_foto);
+                            }
+                        }
                     }
-                }
-            }
                     DetailTugasLuar::deleteAll(['id_tugas_luar' => $model->id_tugas_luar]);
 
                     foreach ($_POST['DetailTugasLuar'] as $i => $detailData) {
@@ -243,11 +259,6 @@ class PengajuanController extends \yii\web\Controller
             'details' => $details,
         ]);
     }
-
-
-
-
-
 
     public function actionTugasLuarDetail($id)
     {
@@ -327,13 +338,6 @@ class PengajuanController extends \yii\web\Controller
 
 
 
-
-
-
-
-
-
-
     // ?=================================Pengajuan cuti
     public function actionCuti()
     {
@@ -341,7 +345,6 @@ class PengajuanController extends \yii\web\Controller
 
 
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
-
         $pengajuanCuti = PengajuanCuti::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal_pengajuan' => SORT_DESC, 'status' => SORT_ASC,])->all();
         return $this->render('/home/pengajuan/cuti/index', compact('pengajuanCuti'));
     }
@@ -373,29 +376,47 @@ class PengajuanController extends \yii\web\Controller
         $rekapCuti = RekapCuti::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tahun' => date('Y')])->all();
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                $model->tanggal_mulai = $this->request->post('PengajuanCuti')['tanggal_mulai'];
-                $model->tanggal_selesai = $this->request->post('PengajuanCuti')['tanggal_selesai'];
+
+                // Ambil tanggal-tanggal dari form
+                $tanggalString = $this->request->post('PengajuanCuti')['tanggal'];
+                $tanggalArray = array_map('trim', explode(',', $tanggalString));
+
+                // Set properti ke model cuti
                 $model->id_karyawan = $karyawan->id_karyawan;
                 $model->tanggal_pengajuan = date('Y-m-d H:i:s');
                 $model->jenis_cuti = Yii::$app->request->post('jenis_cuti');
-                $model->sisa_hari = 90;
+                $model->sisa_hari = 0;
                 if ($model->save()) {
 
-                    // ? KIRIM NOTIFIKASI
-                    $atasan = $this->getAtasanKaryawan($karyawan->id_karyawan);
-                    if ($atasan != null) {
-                        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['id' => $atasan['id_atasan']])->all();
-                    } else {
-                        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['role_id' => [1, 3]])->all();
+                    // Siapkan data detail cuti
+                    $detailData = [];
+                    foreach ($tanggalArray as $tanggal) {
+                        $detailData[] = [
+                            'id_pengajuan_cuti' => $model->id_pengajuan_cuti, // jika kolom ini ada
+                            'tanggal' => $tanggal,
+                            'keterangan' => null,
+                            'status' => 0,
+                        ];
                     }
 
+
+                    Yii::$app->db->createCommand()
+                        ->batchInsert('{{%detail_cuti}}', ['id_pengajuan_cuti', 'tanggal', 'keterangan', 'status'], $detailData)
+                        ->execute();
+
+                    $useMessage = new UseMessageHelper();
+                    $adminUsers = $useMessage->getUserAtasanReceiver($karyawan->id_karyawan);
+
+
                     $params = [
-                        'judul' => 'Pengajuan cuti',
-                        'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan cuti.',
-                        'nama_transaksi' => "cuti",
+                        'judul' => 'Pengajuan   Cuti',
+                        'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan Cuti.',
+                        'nama_transaksi' => "/panel/tanggapan/cuti-view?id_pengajuan_cuti",
                         'id_transaksi' => $model['id_pengajuan_cuti'],
                     ];
-                    $this->sendNotif($params, $model, $adminUsers, "Pengajuan cuti Baru Dari " . $model->karyawan->nama);
+
+                    $this->sendNotif($params, $model, $adminUsers, "Pengajuan Cuti Baru Dari " . $model->karyawan->nama);
+
 
 
                     Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
@@ -406,6 +427,7 @@ class PengajuanController extends \yii\web\Controller
                 }
             }
         }
+
         return $this->render('home/pengajuan/cuti/create', compact('model', 'jenisCuti', 'rekapCuti'));
     }
 
@@ -419,16 +441,32 @@ class PengajuanController extends \yii\web\Controller
 
         // Ambil seluruh data jenis cuti dengan status aktif
         $jenisCuti = MasterCuti::find()
-            ->where(['status' => 1])
-            ->orderBy(['jenis_cuti' => SORT_ASC])
+            ->alias('mc') // alias untuk master_cuti
+            ->select([
+                'mc.*', // semua kolom dari master_cuti
+                'jatah.jatah_hari_cuti',
+                'jatah.tahun',
+                'jatah.id_karyawan',
+                // Ubah total_hari_terpakai jadi 0 jika NULL
+                new \yii\db\Expression('COALESCE(rekap.total_hari_terpakai, 0) AS total_hari_terpakai'),
+                // Sisa cuti = jatah - terpakai (pastikan keduanya tidak NULL)
+                new \yii\db\Expression('COALESCE(jatah.jatah_hari_cuti, 0) - COALESCE(rekap.total_hari_terpakai, 0) AS sisa_cuti_tahun_ini'),
+            ])
+            ->leftJoin(
+                ['jatah' => 'jatah_cuti_karyawan'],
+                'jatah.id_master_cuti = mc.id_master_cuti'
+            )
+            ->leftJoin(
+                ['rekap' => 'rekap_cuti'],
+                'rekap.id_master_cuti = mc.id_master_cuti AND rekap.id_karyawan = jatah.id_karyawan'
+            )
+            ->where([
+                'mc.status' => 1,
+                'jatah.id_karyawan' => $karyawan->id_karyawan
+            ])
+            ->orderBy(['mc.jenis_cuti' => SORT_ASC])
+            ->asArray()
             ->all();
-
-        // Filter jenis cuti berdasarkan kode jenis kelamin
-        if ($karyawan->kode_jenis_kelamin == 'L') {
-            $jenisCuti = array_filter($jenisCuti, function ($cuti) {
-                return $cuti->jenis_cuti !== 'Cuti Hamil';
-            });
-        }
 
         return $this->asJson($jenisCuti);
     }
@@ -439,12 +477,16 @@ class PengajuanController extends \yii\web\Controller
         $model = PengajuanCuti::find()->where(['id_pengajuan_cuti' => $id])->one();
 
         if ($model) {
-            return $this->render('home/pengajuan/cuti/detail', compact('model' ));
+            return $this->render('home/pengajuan/cuti/detail', compact('model'));
         } else {
             Yii::$app->session->setFlash('error', 'Pengajuan Tidak Ditemukan');
             $this->redirect(['/home/index']);
         }
     }
+
+
+
+
 
     // ?=================================Pengajuan Lembur
     public function actionLembur()
@@ -515,22 +557,19 @@ class PengajuanController extends \yii\web\Controller
 
                 $model->durasi = gmdate('H:i', $selisihDetik);
                 $model->hitungan_jam = $hitunganLembur;
-
                 if ($model->save()) {
-                    // Kirim notifikasi ke atasan
-                    $atasan = $this->getAtasanKaryawan($karyawan->id_karyawan);
-                    if ($atasan != null) {
-                        $adminUsers = User::find()->select(['id', 'email', 'role_id'])->where(['id' => $atasan['id_atasan']])->all();
-                    } else {
-                        $adminUsers = User::find()->select(['id', 'email', 'role_id'])->where(['role_id' => [1, 3]])->all();
-                    }
+                    // dapatkan atasan
+                    $useMessage = new UseMessageHelper();
+                    $adminUsers = $useMessage->getUserAtasanReceiver($karyawan->id_karyawan);
 
+                    // atur parameter yang alkan ditampilkan
                     $params = [
                         'judul' => 'Pengajuan lembur',
                         'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan lembur.',
-                        'nama_transaksi' => "lembur",
+                        'nama_transaksi' => "/panel/tanggapan/lembur-view?id_pengajuan_lembur",
                         'id_transaksi' => $model['id_pengajuan_lembur'],
                     ];
+                    // kirim notifikasi ke notifikasi dan atasan
                     $this->sendNotif($params, $model, $adminUsers, "Pengajuan lembur Baru Dari " . $model->karyawan->nama);
 
                     Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
@@ -603,6 +642,9 @@ class PengajuanController extends \yii\web\Controller
     }
 
 
+
+
+
     //?==============pengajuan dinas
     public function actionDinas()
     {
@@ -628,19 +670,19 @@ class PengajuanController extends \yii\web\Controller
                 $model->status = 0;
 
                 if ($model->save()) {
-                    // ? KIRIM NOTIFIKASI
-                    $atasan = $this->getAtasanKaryawan($karyawan->id_karyawan);
-                    if ($atasan != null) {
-                        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['id' => $atasan['id_atasan']])->all();
-                    } else {
-                        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['role_id' => [1, 3]])->all();
-                    }
+                    // dapatkan atasan
+                    $useMessage = new UseMessageHelper();
+                    $adminUsers = $useMessage->getUserAtasanReceiver($karyawan->id_karyawan);
+
+                    // atur parameter yang alkan ditampilkan
                     $params = [
                         'judul' => 'Pengajuan Dinas',
                         'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan dinas luar.',
-                        'nama_transaksi' => "dinas",
+                        'nama_transaksi' => "",
+                        'nama_transaksi' => "/panel/tanggapan/dinas-view?id_pengajuan_dinas",
                         'id_transaksi' => $model['id_pengajuan_dinas'],
                     ];
+                    // kirim notifikasi ke notifikasi dan atasan
                     $this->sendNotif($params, $model, $adminUsers, "Pengajuan Dinas Baru Dari " . $model->karyawan->nama);
 
                     Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
@@ -735,6 +777,10 @@ class PengajuanController extends \yii\web\Controller
         }
     }
 
+
+
+
+
     // ? ==========Pengajuan WFH=========
     public function actionWfh()
     {
@@ -770,16 +816,14 @@ class PengajuanController extends \yii\web\Controller
                 if ($model->save()) {
 
                     // ? KIRIM NOTIFIKASI
-                    $atasan = $this->getAtasanKaryawan($karyawan->id_karyawan);
-                    if ($atasan != null) {
-                        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['id' => $atasan['id_atasan']])->all();
-                    } else {
-                        $adminUsers = User::find()->select(['id', 'email', 'role_id',])->where(['role_id' => [1, 3]])->all();
-                    }
+                    $useMessage = new UseMessageHelper();
+                    $adminUsers = $useMessage->getUserAtasanReceiver($karyawan->id_karyawan);
+
+
                     $params = [
                         'judul' => 'Pengajuan WFH',
                         'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan WFH.',
-                        'nama_transaksi' => "wfh",
+                        'nama_transaksi' => "/panel/tanggapan/wfh-view?id_pengajuan_wfh",
                         'id_transaksi' => $model['id_pengajuan_wfh'],
                     ];
 
@@ -846,6 +890,10 @@ class PengajuanController extends \yii\web\Controller
         return $this->redirect(['/pengajuan/wfh']);
     }
 
+
+
+
+
     public function sendNotif($params, $model, $adminUsers, $subject = "Pengajuan Karyawan")
     {
         try {
@@ -858,9 +906,7 @@ class PengajuanController extends \yii\web\Controller
             Yii::error("Runtime error: " . $e->getMessage());
         }
 
-        // return $this->renderPartial('@backend/views/home/pengajuan/email', compact('model', 'adminUsers', 'subject'));
         $msgToCheck = $this->renderPartial('@backend/views/home/pengajuan/email_user', compact('model', 'params'));
-
 
         foreach ($adminUsers as $atasan) {
             $to = $atasan['email'];
@@ -870,11 +916,5 @@ class PengajuanController extends \yii\web\Controller
                 Yii::$app->session->setFlash('error', 'Email gagal dikirim ke ' . $to);
             }
         }
-    }
-
-    public function getAtasanKaryawan($id_karyawan)
-    {
-        $atasan = AtasanKaryawan::find()->where(['id_karyawan' => $id_karyawan])->asArray()->one();
-        return $atasan;
     }
 }

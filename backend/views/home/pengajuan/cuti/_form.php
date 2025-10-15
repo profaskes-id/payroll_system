@@ -41,19 +41,19 @@ $form = ActiveForm::begin(); ?>
     </div>
     <p class="mb-5 -mt-1 text-sm text-red-500 capitalize" id="error"></p>
     <div class="mb-5">
-        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">tanggal mulai</label>
-        <?= $form->field($model, 'tanggal_mulai')->textInput(['id' => 'tanggal_mulai', 'type' => 'date', 'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '])->label(false) ?>
+        <label for="tanggal" class="block mb-2 text-sm font-medium text-gray-900 capitalize">Tanggal</label>
+        <?= $form->field($model, 'tanggal')->textInput([
+            'id' => 'tanggal-multi',
+            'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5',
+        ])->label(false) ?>
     </div>
-    <div class="mb-5">
-        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">tanggal selesai</label>
-        <?= $form->field($model, 'tanggal_selesai')->textInput(['readonly' => true, 'id' => 'tanggal_selesai', 'type' => 'date', 'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '])->label(false) ?>
-    </div>
+
     <p class="hidden mb-5 -mt-1 text-sm text-red-500 capitalize" id="error-year"></p>
 
     <div class="mb-5">
         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">Jumlah Hari</label>
         <input type="text" disabled class="disabled:bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" id="jumlah_hari">
-        <p class="text-xs">Jika pengajuan cuti disetujui, hari cuti Anda tidak akan dihitung pada hari non-kerja . Sisa jatah cuti akan tetap terjaga.</p>
+        <!-- <p class="text-xs">Jika pengajuan cuti disetujui, hari cuti Anda tidak akan dihitung pada hari non-kerja . Sisa jatah cuti akan tetap terjaga.</p> -->
     </div>
     <div class="mb-5">
         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">alasan cuti</label>
@@ -70,6 +70,24 @@ $form = ActiveForm::begin(); ?>
 <?php ActiveForm::end(); ?>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+
+<script>
+    // contoh: maksimal tanggal dipilih = 12
+    flatpickr("#tanggal-multi", {
+        mode: "multiple",
+        dateFormat: "Y-m-d",
+        maxDate: new Date().fp_incr(365), // 1 tahun ke depan
+        onChange: function(selectedDates, dateStr, instance) {
+            let sisa = parseInt($('#sisa_hari').val()?.split(' ')[0]) || 0;
+            if (selectedDates.length > sisa) {
+                selectedDates.pop(); // hapus tanggal terakhir
+                instance.setDate(selectedDates); // update kembali
+                alert("Jumlah tanggal melebihi jatah cuti");
+            }
+        }
+    });
+</script>
 
 
 <?php
@@ -105,64 +123,44 @@ $rekapCutiJson = json_encode($rekapCutinew);
 
                     if (selectedData) {
                         //ambil jatah setajin
-                        JatahSetahun = selectedData.total_hari_pertahun;
+                        JatahSetahun = selectedData.jatah_hari_cuti - selectedData.total_hari_terpakai;
                         let newData = rekapCutiData.find(function(item) {
                             return item.id_master_cuti == selectedData.id_master_cuti;
                         })
-                        if (!newData) {
-                            $('#sisa_hari').val(JatahSetahun + " Hari");
-                            return
-                        }
-                        let sisaHari = parseInt(JatahSetahun) - parseInt(newData?.total_hari_terpakai);
+                        let sisaHari = parseInt(JatahSetahun);
                         $('#sisa_hari').val(sisaHari + " Hari");
 
                     }
                 });
 
-                $('#tanggal_mulai').change(function(e) {
-                    $('#tanggal_selesai').attr('readonly', false);
+                // Perhatikan: ini menggantikan cara hitung jumlah hari untuk flatpickr multiple
+                $('#tanggal-multi').change(function() {
+                    let selectedDates = $(this).val();
 
-                });
-
-                $('#tanggal_selesai').change(function(e) {
-
-                    let startDate = $('#tanggal_mulai').val();
-                    let endDate = this.value;
-                    let yearstart = Number(startDate.split('-')[0]);
-                    let yearEnd = Number(endDate.split('-')[0]);
-
-                    if (yearEnd != yearstart) {
-                        $('#error-year').html('Tidak Boleh Lebih Dari 1 Tahun');
-                        $('#error-year').show();
-                        $('.add-button').attr('disabled', true);
-                    } else {
-                        // $('#error-year').html('Tidak Boleh Lebih Dari 1 Tahun');
-                        $('#error-year').hide();
-                        $('.add-button').attr('disabled', true);
-
+                    if (!selectedDates) {
+                        $('#jumlah_hari').val('0 Hari');
+                        return;
                     }
-                    // Menghitung selisih hari
-                    let diffInMs = new Date(endDate) - new Date(startDate);
-                    let diffInDays = diffInMs / (1000 * 60 * 60 * 24) + 1;
 
-                    $('#jumlah_hari').val(diffInDays + " Hari");
+                    let datesArray = selectedDates.split(','); // pisahkan string jadi array
+                    let jumlahHari = datesArray.length;
+
+                    $('#jumlah_hari').val(jumlahHari + ' Hari');
+
+                    // validasi terhadap sisa cuti
                     let data = $('#sisa_hari').val();
-                    let dataSekarang = data.split(' ')[0];
-                    if (diffInDays > dataSekarang) {
+                    let dataSekarang = parseInt(data.split(' ')[0]);
+
+                    if (jumlahHari > dataSekarang) {
                         $('#error').show();
                         $('#error').text('Jatah Cuti Tidak Cukup');
                         $('.add-button').attr('disabled', true);
-                    } else if (diffInDays < 0) {
-                        $('#error-year').show();
-                        $('#error-year').text('Tanggal Selesai Lebih Kecil dari Tanggal Mulai');
-                        $('.add-button').attr('disabled', true);
                     } else {
-                        $('#error-year').hide();
                         $('#error').hide();
                         $('.add-button').attr('disabled', false);
                     }
-
                 });
+
 
             }
         });

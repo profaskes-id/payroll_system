@@ -1,136 +1,184 @@
 <?php
 
-use backend\models\helpers\KaryawanHelper;
-use backend\models\PeriodeGaji;
-use backend\models\Tanggal;
-
-$karyawan = new KaryawanHelper();
-$tanggal = new Tanggal();
-$periodeGaji = PeriodeGaji::findOne($periode_gajiID);
-
-$model = $dataProvider->models;
+use backend\models\Terbilang;
 ?>
 
-<table border="1">
-    <tr>
-        <th colspan="31" style="text-align: center;">REKAP TRANSAKSI GAJI</th>
+<h1 class="text-center fw-bold" style="font-weight: bold; font-size: 20px">PT Profaskes Softech Indonesia</h1>
+<p class="text-center fw-bold" style="font-size: 12px;">Ruko Plaza Menteng, Blok B No.17, Jalan Mh.Thamrin, Cibatu, Cikarang Selatan, Kab.Bekasi, Jawa Barat 17530.</p>
+<hr style="margin: -10px 0;">
+
+<p class="text-center " style="font-weight: bold; padding:0; margin-top:-20px;">Slip Gaji Karyawan</p>
+
+
+<table class="table border-0 w-100">
+    <tr style="border: 0px solid #dedede; padding: 0; margin: 0 ">
+        <td colspan="1">
+            <table class=" w-100">
+                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">nama</th>
+                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
+                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= $model['nama'] ?? '-' ?> </td>
+                </tr>
+                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">kode karyawan</th>
+                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
+                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= $model['id_karyawan'] ?? '-' ?> </td>
+                </tr>
+                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">gaji pokok</th>
+                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
+                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= 'Rp ' . number_format($model['nominal_gaji'] ?? 0, 0, ',', '.'); ?> </td>
+                </tr>
+                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">gaji per jam</th>
+                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
+                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= 'Rp ' . number_format($model['gaji_perjam'] ?? 0, 0, ',', '.'); ?> </td>
+                </tr>
+                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">metode perhitungan</th>
+                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
+                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= $model['metode_perhitungan_gaji'] ?? '-' ?> </td>
+                </tr>
+            </table>
+        </td>
+        <td colspan="1">
+            <table class=" w-100">
+                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">periode</th>
+                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
+                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'>
+                        <?= date('F Y', strtotime($model['tanggal_awal'])) ?>
+                    </td>
+                </tr>
+                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">tanggal awal</th>
+                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
+                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= $model['tanggal_awal'] ?? '-' ?></td>
+                </tr>
+                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">tanggal akhir</th>
+                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
+                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= $model['tanggal_akhir'] ?? '-' ?></td>
+                </tr>
+                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">status</th>
+                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
+                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'>
+                        <?= (isset($model['id_transaksi_gaji']) && $model['id_transaksi_gaji'] != null) ? 'Sudah Diproses' : 'Belum Diproses' ?>
+                    </td>
+                </tr>
+            </table>
+        </td>
     </tr>
+
     <tr>
-        <th colspan="6">Karyawan</th>
-        <th colspan="5">Absensi</th>
-        <th colspan="3">Lembur</th>
-        <th colspan="3">WFH</th>
-        <th colspan="3">Tidak Hadir</th>
-        <th colspan="2">Terlambat</th>
-        <th colspan="4">Tunjangan & Potongan lain</th>
-        <th colspan="5">Gaji Diterima </th>
-    </tr>
-    <tr>
-        <!-- =========== -->
-        <th>Karyawan</th>
-        <th>Kode Karyawan</th>
-        <th>Bagian</th>
-        <th>Jabatan</th>
-        <th>Jam Kerja</th>
-        <th>Status Karyawan</th>
-
-        <!-- \\======== -->
-        <th>Bulan - Tahun</th>
-        <th>Jumlah Hari kerja</th>
-        <th>Jumlah Hadir</th>
-        <th>Jumlah Sakit</th>
-        <th>Jumlah Cuti</th>
-
-        <!-- ========= -->
-        <th>Jumlah Jam Lembur</th>
-        <th>Lembur Perjam</th>
-        <th>Total Lembur</th>
-
-        <!-- ======= -->
-        <th>Jumlah WFH</th>
-        <th>Potongan WFH / Hari</th>
-        <th>Jumlah Potongan WFH</th>
-
-        <!-- ===== -->
-        <th>Jumlah tidak Hadir</th>
-        <th>Potongan Tidak Hadir / hari</th>
-        <th>Jumlah potongan tidak Hadir</th>
-
-        <!-- ============ -->
-        <th>Potongan Terlambat / Menit</th>
-        <th>Jumlah Potongan Terlambat</th>
-
-        <!-- =========== -->
-        <th>Keterangan Tunjangan Lainnya</th>
-        <th>Tunjangan Lainnya</th>
-        <th>Keterangan Potongan Lainnya</th>
-        <th>Potongan Lainnya</th>
-
-        <!-- =========== -->
-        <th>Jumlah Tunjangan</th>
-        <th>Jumlah Potongan</th>
-        <th>Gaji Pokok </th>
-        <th>Gaji Diterima</th>
-        <th>Terima Pada Tanggal</th>
+        <td colspan="2"><br></td>
     </tr>
 
+    <tr style="border: 0 solid #dedede; padding: 0; margin: 0 ">
+        <td class="pe-2">
+            <table class="w-100">
+                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="p-1 text-start text-capitalize" style="font-size: 12px; background-color: #e8f5e8;">PENDAPATAN</th>
+                    <th class="p-1 text-center" style="font-size: 12px; background-color: #e8f5e8;"></th>
+                    <td class="p-1 text-end" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px; background-color: #e8f5e8;'></td>
+                </tr>
+                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="p-1 text-start text-capitalize" style="font-size: 12px;">Gaji Pokok</th>
+                    <th class="p-1 text-center" style="font-size: 12px;">:</th>
+                    <td class="p-1 text-end" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= 'Rp ' . number_format($model['nominal_gaji'] ?? 0, 0, ',', '.'); ?> </td>
+                </tr>
+                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="p-1 text-start text-capitalize" style="font-size: 12px;">Tunjangan</th>
+                    <th class="p-1 text-center" style="font-size: 12px;">:</th>
+                    <td class="p-1 text-end" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= 'Rp ' . number_format($model['tunjangan_karyawan'] ?? 0, 0, ',', '.'); ?> </td>
+                </tr>
+                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="p-1 text-start text-capitalize" style="font-size: 12px; background-color: #f0f8ff;">Total Pendapatan</th>
+                    <th class="p-1 text-center" style="font-size: 12px; background-color: #f0f8ff;">:</th>
+                    <?php
+                    $totalPendapatan = ($model['nominal_gaji'] ?? 0) + ($model['tunjangan_karyawan'] ?? 0);
+                    ?>
+                    <td class="p-1 text-end" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px; background-color: #f0f8ff;'><strong><?= 'Rp ' . number_format($totalPendapatan, 0, ',', '.'); ?></strong></td>
+                </tr>
+            </table>
+        </td>
+        <td class="ps-2">
+            <table class="w-100">
+                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="p-1 text-start text-capitalize" style="font-size: 12px; background-color: #ffe8e8;">POTONGAN</th>
+                    <th class="p-1 text-center" style="font-size: 12px; background-color: #ffe8e8;"></th>
+                    <td class="p-1 text-end" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px; background-color: #ffe8e8;'></td>
+                </tr>
+                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="p-1 text-start text-capitalize" style="font-size: 12px;">Potongan</th>
+                    <th class="p-1 text-center" style="font-size: 12px;">:</th>
+                    <td class="p-1 text-end" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= 'Rp ' . number_format($model['potongan_karyawan'] ?? 0, 0, ',', '.'); ?> </td>
+                </tr>
+                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="p-1 text-start text-capitalize" style="font-size: 12px; background-color: #fff8f0;">Total Potongan</th>
+                    <th class="p-1 text-center" style="font-size: 12px; background-color: #fff8f0;">:</th>
+                    <td class="p-1 text-end" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px; background-color: #fff8f0;'><strong><?= 'Rp ' . number_format($model['potongan_karyawan'] ?? 0, 0, ',', '.'); ?></strong></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
 
-    <?php foreach ($model as $value) : ?>
+    <tr>
+        <td colspan="2"><br></td>
+    </tr>
 
-        <tr>
-            <!-- ========== -->
-            <td><?= $karyawan->getKaryawanById($value['id_karyawan'])[0]['nama'] ??  $value['id_karyawan'] ?? '-' ?></td>
-            <td><?= $value['kode_karyawan'] ?? '-' ?></td>
-            <td><?= $value['bagian'] ?? '-' ?></td>
-            <td><?= $value['jabatan'] ?? '-' ?></td>
-            <td><?= $value['jam_kerja'] ?? '-' ?></td>
-            <td><?= $value['status_karyawan'] ?? '-' ?></td>
+    <tr style="border: 0px solid #dedede;">
+        <td colspan="2">
+            <table class="w-100">
+                <tr style="border: 1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="text-start text-capitalize" style="font-size: 14px; background-color: #f0f0f0;">GAJI BERSIH</th>
+                    <th class="text-center" style="font-size: 14px; background-color: #f0f0f0;">:</th>
+                    <?php
+                    $gajiBersih = $totalPendapatan - ($model['potongan_karyawan'] ?? 0);
+                    ?>
+                    <td class="text-end" style='height: 20px; padding:10px; font-size:14px; margin:0; padding:0px; background-color: #f0f0f0;'>
+                        <strong><?= 'Rp ' . number_format($gajiBersih, 0, ',', '.'); ?></strong>
+                    </td>
+                </tr>
+                <tr style="border: 1px solid #dedede; padding: 0; margin: 0 ">
+                    <th class="text-start text-capitalize;" style="font-size:12px; margin:0; padding:0px; background-color: rgba(53, 53, 53, 0.08); color: #000">Terbilang</th>
+                    <th class="text-center" style="font-size:12px; margin:0; padding:0px; background-color: #fff; color: #000">:</th>
+                    <?php
+                    $terbilang = Terbilang::toTerbilang($gajiBersih) . ' Rupiah';
+                    ?>
+                    <td class="text-end " style='background-color: rgba(53, 53, 53, 0.08); color: #000; height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'>
+                        <strong style="font-weight: bold;"><?= $terbilang ?></strong>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
 
-            <!-- ====== -->
-            <td><?= ($tanggal->getBulan($value['bulan']) ?? '-') . '/' . $value['tahun'] ?></td>
-            <td><?= $value['jumlah_hari_kerja'] ?? '-' ?></td>
-            <td><?= $value['jumlah_hadir'] ?? '-' ?></td>
-            <td><?= $value['jumlah_sakit'] ?? '-' ?></td>
-            <td><?= $value['jumlah_cuti'] ?? '-' ?></td>
+    <tr>
+        <td colspan="2"><br></td>
+    </tr>
 
-            <!-- ========= -->
-            <td><?= $value['jumlah_jam_lembur'] ?? '-' ?></td>
-            <td><?= $value['lembur_perjam'] ?? '-' ?></td>
-            <td><?= $value['total_lembur'] ?? '-' ?></td>
-
-            <!-- ===== -->
-            <td><?= $value['jumlah_wfh'] ?? '-' ?></td>
-            <td><?= $value['potongan_wfh_hari'] ?? '-' ?></td>
-            <td><?= $value['jumlah_potongan_wfh'] ?? '-' ?></td>
-
-            <!-- ===== -->
-            <td><?= $value['jumlah_tidak_hadir'] ?? '-' ?></td>
-            <td><?= $value['potongan_tidak_hadir_hari'] ?? '-' ?></td>
-            <td><?= $value['jumlah_potongan_tidak_hadir'] ?? '-' ?></td>
-
-            <!-- ============= -->
-            <td><?= $value['potongan_terlambat_permenit'] ?? '-' ?></td>
-            <td><?= $value['jumlah_potongan_terlambat'] ?? '-' ?></td>
-            <!-- =============== -->
-            <td><?= $value['keterangan_tunjangan_lainnya'] ?? '-' ?></td>
-            <td><?= $value['tunjangan_lainnya'] ?? '-' ?></td>
-            <td><?= $value['keterangan_potongan_lainnya'] ?? '-' ?></td>
-            <td><?= $value['potongan_lainnya'] ?? '-' ?></td>
-
-            <!-- =========== -->
-            <td><?= $value['jumlah_tunjangan'] ?? '-' ?></td>
-            <td><?= $value['jumlah_potongan'] ?? '-' ?></td>
-            <td><?= $value['gaji_pokok'] ?? '-' ?></td>
-            <td><?= $value['gaji_diterima'] ?? '-' ?></td>
-            <td><?= $value['terima'] ?? '-' ?></td>
-
-        </tr>
-    <?php endforeach; ?>
+    <tr>
+        <td colspan="2">
+            <table class="w-100">
+                <tr>
+                    <td style="text-align: center; padding-top: 30px;">
+                        <p style="margin: 0; font-size: 12px;">Disetujui oleh,</p>
+                        <br><br><br>
+                        <p style="margin: 0; font-size: 12px; border-top: 1px solid #000; padding-top: 5px; width: 200px; margin: 0 auto;">
+                            _________________________
+                        </p>
+                    </td>
+                    <td style="text-align: center; padding-top: 30px;">
+                        <p style="margin: 0; font-size: 12px;">Diterima oleh,</p>
+                        <br><br><br>
+                        <p style="margin: 0; font-size: 12px; border-top: 1px solid #000; padding-top: 5px; width: 200px; margin: 0 auto;">
+                            <?= $model['nama'] ?? '_________________________' ?>
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
 </table>
-
-
-<?php
-header("Content-Type: application/vnd.ms-excel");
-header("Content-Disposition: attachment; Filename = Rekapan-Transaksi.xls");
-die;
-?>

@@ -32,7 +32,7 @@ class JamKerja extends \yii\db\ActiveRecord
     {
         return [
             [['nama_jam_kerja', 'jenis_shift'], 'required'],
-            [['jenis_shift'], 'integer'],
+            [['jenis_shift', 'jumlah_hari'], 'integer'],
             [['nama_jam_kerja'], 'string', 'max' => 255],
         ];
     }
@@ -46,6 +46,7 @@ class JamKerja extends \yii\db\ActiveRecord
             'id_jam_kerja' => 'Id Jam Kerja',
             'nama_jam_kerja' => 'Nama Jam Kerja',
             'jenis_shift' => 'Jenis Shift',
+            'jumlah_hari' => 'jumlah hari',
         ];
     }
 

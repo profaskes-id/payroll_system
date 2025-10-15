@@ -40,8 +40,16 @@ class TunjanganDetailSearch extends TunjanganDetail
      */
     public function search($params)
     {
-        $query = TunjanganDetail::find();
+        $query = TunjanganDetail::find()
+            ->select(['tunjangan_detail.*',  'karyawan.nama', 'tunjangan.nama_tunjangan',  'tunjangan_detail.id_tunjangan_detail', 'bagian.nama_bagian', 'master_kode.nama_kode'])
+            ->leftJoin('karyawan', 'karyawan.id_karyawan = tunjangan_detail.id_karyawan')
+            ->leftJoin('tunjangan', 'tunjangan.id_tunjangan = tunjangan_detail.id_tunjangan')
+            ->leftJoin('data_pekerjaan', 'data_pekerjaan.id_karyawan = karyawan.id_karyawan AND data_pekerjaan.is_aktif = 1')
+            ->leftJoin('bagian', 'bagian.id_bagian = data_pekerjaan.id_bagian ')
+            ->leftJoin('master_kode', 'data_pekerjaan.jabatan = master_kode.kode AND master_kode.nama_group = "jabatan"')
+            ->asArray();
 
+        // dd($query->all());
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([

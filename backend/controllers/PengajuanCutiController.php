@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use amnah\yii2\user\models\User;
+use backend\models\DetailCuti;
 use backend\models\helpers\EmailHelper;
 use backend\models\helpers\NotificationHelper;
 use backend\models\JamKerjaKaryawan;
@@ -47,9 +48,7 @@ class PengajuanCutiController extends Controller
      */
     public function actionIndex()
     {
-        // if (Yii::$app->request->get() != []) {
-        //     dd(Yii::$app->request->get()['PengajuanCutiSearch']);
-        // }
+
         $tanggalAwal = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one();
         $bulan = date('m');
         $tahun = date('Y');
@@ -57,15 +56,9 @@ class PengajuanCutiController extends Controller
         $lastdate = date('Y-m-d', mktime(0, 0, 0, $bulan + 1, intval($tanggalAwal->nama_kode), $tahun));
         $tgl_mulai =  Yii::$app->request->get() == [] ? $firstDayOfMonth :  Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_mulai'];
         $tgl_selesai =  Yii::$app->request->get() == [] ? $lastdate :  Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_selesai'];
-        // dd($tgl_mulai, $tgl_selesai);
         $searchModel = new PengajuanCutiSearch();
         $dataProvider = $searchModel->search($this->request->queryParams, $tgl_mulai, $tgl_selesai);
 
-        // if ($this->request->isPost) {
-        //     $tgl_mulai = $this->request->post('PengajuanCutiSearch')['tanggal_mulai'];
-        //     $tgl_selesai = $this->request->post('PengajuanCutiSearch')['tanggal_selesai'];
-        //     $dataProvider = $searchModel->search($searchModel, $tgl_mulai, $tgl_selesai);
-        // }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -131,40 +124,68 @@ class PengajuanCutiController extends Controller
         $model = $this->findModel($id_pengajuan_cuti);
 
         if ($this->request->isPost && $model->load($this->request->post())) {
+
+
             $model->sisa_hari = 0;
             $model->ditanggapi_pada = date('Y-m-d');
             $model->ditanggapi_oleh = Yii::$app->user->identity->id;
             if ($model->save()) {
 
-                $rekapAsensi = new RekapCuti();
-                $rekapAsensi->id_karyawan = $model->id_karyawan;
-                $rekapAsensi->id_master_cuti = $model->jenis_cuti;
 
-                $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $model->id_karyawan])->one();
-                $containsNumber = strpos($jamKerjaKaryawan->jamKerja->nama_jam_kerja, preg_match('/\d+/', "5", $matches) ? $matches[0] : '') !== false;
-                dd($containsNumber);
-                $hari_kerja = $this->hitungHariKerja($model->tanggal_mulai, $model->tanggal_selesai, $containsNumber);
-                // Menghitung selisih hari
-                // $selisih_detik = $timestamp_selesai - $timestamp_mulai;
-                // $selisih_hari = $selisih_detik / (60 * 60 * 24);
+
+                $existingDetails = DetailCuti::find()
+                    ->where(['id_pengajuan_cuti' => $model->id_pengajuan_cuti])
+                    ->indexBy('id_detail_cuti')
+                    ->all();
+
+                $postDetails = Yii::$app->request->post('DetailCuti', []); // ini seharusnya array data mentah dari form (bukan object)
+
+                $usedIds = [];
+                $approvedCount = 0;
+
+                // Loop data dari form POST
+                foreach ($postDetails as $key => $data) {
+                    if (!empty($data['id_detail_cuti']) && isset($existingDetails[$data['id_detail_cuti']])) {
+                        // Update
+                        $detail = $existingDetails[$data['id_detail_cuti']];
+                        $detail->load($data, ''); // Load data ke model tanpa form name
+                        $detail->save();
+                        $usedIds[] = $data['id_detail_cuti'];
+                    } else {
+                        // Insert baru
+                        $detail = new DetailCuti();
+                        $detail->id_pengajuan_cuti = $model->id_pengajuan_cuti;
+                        $detail->load($data, '');
+                        $detail->save();
+                    }
+
+                    if (isset($data['status']) && $data['status'] == 1) {
+                        $approvedCount++;
+                    }
+                }
+
+                // Delete yang tidak ada di POST
+                foreach ($existingDetails as $id => $detail) {
+                    if (!in_array($id, $usedIds)) {
+                        $detail->delete();
+                    }
+                }
+
+
 
 
 
                 if ($model->status == Yii::$app->params['disetujui']) {
-                    $rekapan = RekapCuti::find()->where(['id_karyawan' => $model->id_karyawan, 'id_master_cuti' => $model->jenis_cuti, 'tahun' => date('Y', strtotime($model->tanggal_mulai))])->one();
+                    $rekapan = RekapCuti::find()->where(['id_karyawan' => $model->id_karyawan, 'id_master_cuti' => $model->jenis_cuti, 'tahun' => date('Y')])->one();
                     if ($rekapan) {
-                        $rekapan->total_hari_terpakai += $hari_kerja;
+                        $rekapan->total_hari_terpakai += $approvedCount ?? 0;
                         $rekapan->save();
                     } else {
-                        $timestamp_mulai = strtotime($model->tanggal_mulai);
-                        $timestamp_selesai = strtotime($model->tanggal_selesai);
-                        $selisih_detik = $timestamp_selesai - $timestamp_mulai == 0 ? (1 * 60 * 60 * 24) : $timestamp_selesai - $timestamp_mulai;
-                        $selisih_hari = $selisih_detik / (60 * 60 * 24);
                         $NewrekapAsensi = new RekapCuti();
                         $NewrekapAsensi->id_karyawan = $model->id_karyawan;
                         $NewrekapAsensi->id_master_cuti = $model->jenis_cuti;
-                        $NewrekapAsensi->total_hari_terpakai = $selisih_hari;
-                        $NewrekapAsensi->tahun = date('Y', strtotime($model->tanggal_mulai));
+                        $NewrekapAsensi->total_hari_terpakai = $approvedCount ?? 0;
+                        $NewrekapAsensi->tahun = date('Y');
                         $NewrekapAsensi->save();
                     }
                 }
@@ -203,9 +224,31 @@ class PengajuanCutiController extends Controller
      */
     public function actionDelete($id_pengajuan_cuti)
     {
-        $this->findModel($id_pengajuan_cuti)->delete();
+        // Cari data utama
+        $model = $this->findModel($id_pengajuan_cuti);
 
+        // Cari semua detail yang terkait
+        $details = DetailCuti::find()->where(['id_pengajuan_cuti' => $id_pengajuan_cuti])->all();
+
+        // Hapus semua detail satu per satu
+        foreach ($details as $detail) {
+            $detail->delete();
+        }
+
+        // Hapus data utama
+        $model->delete();
+
+        // Redirect ke index
+        Yii::$app->session->setFlash('success', 'Pengajuan cuti dan detailnya berhasil dihapus.');
         return $this->redirect(['index']);
+    }
+
+    public function actionDeleteDetail($id, $id_pengajuan_cuti)
+    {
+        $model = DetailCuti::find()->where(['id_detail_cuti' => $id])->one();
+        $model->delete();
+        Yii::$app->session->setFlash('success', 'Berhasil Menghapus Pengajuan');
+        return $this->redirect('/panel/pengajuan-cuti/view?id_pengajuan_cuti=' . $id_pengajuan_cuti);
     }
 
 

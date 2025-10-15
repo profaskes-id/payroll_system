@@ -49,6 +49,32 @@ class TunjanganController extends Controller
         ]);
     }
 
+
+
+    public function actionCreateAjax()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $model = new Tunjangan();
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            return [
+                'success' => true,
+                'message' => 'Tunjangan berhasil disimpan.',
+                'id' => $model->id_tunjangan,
+                'text' => $model->nama_tunjangan
+            ];
+        }
+
+        return [
+            'success' => false,
+            'message' => 'Gagal menyimpan tunjangan.',
+            'errors' => $model->getErrors(),
+        ];
+    }
+
+
     /**
      * Displays a single Tunjangan model.
      * @param int $id_tunjangan Id Tunjangan
@@ -61,6 +87,9 @@ class TunjanganController extends Controller
             'model' => $this->findModel($id_tunjangan),
         ]);
     }
+
+
+
 
     /**
      * Creates a new Tunjangan model.
@@ -88,6 +117,23 @@ class TunjanganController extends Controller
         return $this->render('create', [
             'model' => $model,
         ]);
+    }
+
+
+    public function actionSelectedTunjangan($id_tunjangan)
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $model = Tunjangan::findOne($id_tunjangan);
+
+        if ($model) {
+            return [
+                'jumlah' => $model->jumlah,
+                'satuan' => $model->satuan, // asumsi ini "rupiah" atau "persen"
+            ];
+        }
+
+        return ['error' => 'Data tidak ditemukan'];
     }
 
     /**

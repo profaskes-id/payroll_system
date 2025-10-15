@@ -7,7 +7,7 @@ $form = ActiveForm::begin(); ?>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
-<div class="relative min-h-[85dvh]">
+<div class="relative min-h-[85dvh] z-40">
 
     <div class="mb-5">
         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">alasan work from home </label>
@@ -25,8 +25,8 @@ $form = ActiveForm::begin(); ?>
 
 
     <p class="block mb-2 text-sm font-medium text-gray-900 capitalize"> lokasi anda saat ini</p>
-    <div class="flex justify-between items-center space-x-2">
-        <div class=" mb-3">
+    <div class="flex items-center justify-between space-x-2">
+        <div class="mb-3 ">
             <label class="block mb-2 text-xs text-gray-900 capitalize">Longitude</label>
             <?= $form->field($model, 'longitude')->textInput(['required' => true, 'readonly' => true, 'class' => 'w-[42dvw] bg-gray-200 bg-gray-200 border-gray-300 h-[20px] text-xs rounded-md ', "id" => "lng"])->label(false) ?>
         </div>
@@ -39,7 +39,7 @@ $form = ActiveForm::begin(); ?>
     </div>
 
 
-    <div class="w-full flex justify-between items-center space-x-3">
+    <div class="flex items-center justify-between w-full space-x-3">
         <div class="">
             <button type="button" class=" text-xs text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded  p-2 text-center  w-full flex items-center dark:focus:ring-[#4285F4]/55 me-2 mb-2" data-drawer-target="drawer-bottom-example" data-drawer-show="drawer-bottom-example" data-drawer-placement="bottom" aria-controls="drawer-bottom-example">
                 Atur Secara Manual
@@ -54,7 +54,7 @@ $form = ActiveForm::begin(); ?>
 
 
 
-    <div class=" absolute bottom-0 left-0 right-0">
+    <div class="absolute bottom-0 left-0 right-0 ">
         <div class="">
             <?= $this->render('@backend/views/components/element/_submit-button', ['text' => 'Submit']); ?>
         </div>
@@ -66,7 +66,7 @@ $form = ActiveForm::begin(); ?>
 
 
 
-<div id="drawer-bottom-example" class="fixed bottom-0 left-0 right-0 z-40 w-full p-4 overflow-y-auto transition-transform bg-white dark:bg-gray-800 translate-y-full    " tabindex="-1" aria-labelledby="drawer-bottom-label" aria-hidden="true" aria-modal="false">
+<div id="drawer-bottom-example" class="fixed bottom-0 left-0 right-0 z-40 w-full p-4 overflow-y-auto transition-transform translate-y-full bg-white dark:bg-gray-800 " tabindex="-1" aria-labelledby="drawer-bottom-label" aria-hidden="true" aria-modal="false">
     <h5 id="drawer-bottom-label" class="inline-flex items-center mb-4 text-base font-semibold text-gray-500 dark:text-gray-400"><svg class="w-4 h-4 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
             <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
         </svg>Lokasi WFH</h5>
@@ -78,7 +78,7 @@ $form = ActiveForm::begin(); ?>
     </button>
 
     <div class="table-container table-responsive">
-        <p class="text-xs  mb-2 ">Pilih Lokasi WFH untuk mendapatkan koordinat</p>
+        <p class="mb-2 text-xs ">Pilih Lokasi WFH untuk mendapatkan koordinat</p>
         <?php
         echo '<div id="map" style="height: 70vh;"></div>';
         ?>

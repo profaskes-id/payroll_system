@@ -28,7 +28,7 @@ $tanggalFormater = new Tanggal();
 </style>
 
 
-<h1 class="p-5 text-2xl font-bold">Pengajuan WFH</h1>
+<h1 class="p-5 text-2xl font-bold">Pengajuan Shift</h1>
 
 
 

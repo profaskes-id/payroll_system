@@ -5,7 +5,6 @@ use yii\helpers\Url;
 ?>
 
 
-
 <div class="relative z-50 max-w-md p-6 mx-auto mt-10 bg-white rounded-lg shadow-md">
     <h2 class="mb-4 text-xl font-semibold text-indigo-600">Ubah Shift Kerja</h2>
 
@@ -29,17 +28,20 @@ use yii\helpers\Url;
         </div>
     <?php endif; ?>
 
+
+
     <form method="post" action="<?= Url::to(['change-shift', 'id_karyawan' => $id_karyawan]) ?>" class="space-y-4">
         <div>
             <label for="shift" class="block mb-1 text-gray-700">Pilih Shift Baru</label>
             <select name="shift_kerja" id="shift" class="w-full p-2 border rounded select2">
                 <?php foreach ($allDataShift as $shift): ?>
-                    <option value="<?= $shift['id_shift_kerja'] ?>"
-                        <?= ($shift['id_shift_kerja'] == $currentShift['id_shift_kerja']) ? 'selected' : '' ?>>
-                        <?= Html::encode($shift['nama_shift']) ?> (<?= $shift['jam_masuk'] ?> - <?= $shift['jam_keluar'] ?>)
+                    <option value="<?= Html::encode($shift['id_shift_kerja']) ?>"
+                        <?= isset($currentShift['id_shift_kerja']) && $shift['id_shift_kerja'] == $currentShift['id_shift_kerja'] ? 'selected' : '' ?>>
+                        <?= Html::encode($shift['nama_shift']) ?> (<?= Html::encode($shift['jam_masuk']) ?> - <?= Html::encode($shift['jam_keluar']) ?>)
                     </option>
                 <?php endforeach; ?>
             </select>
+
         </div>
 
 

@@ -24,7 +24,7 @@ use kartik\select2\Select2;
             <div class="col-12 col-md-4">
                 <label for="tanggal_akhir">Tanggal Akhir:</label>
                 <input type="date" name="tanggal_akhir" id="tanggal_akhir" class="form-control w-100"
-                    value="<?= $tanggal_akhir ?>" readonly>
+                    value="<?= $tanggal_akhir ?>" required>
             </div>
 
             <div class="col-12 col-md-4">

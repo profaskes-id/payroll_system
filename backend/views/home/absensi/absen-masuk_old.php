@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\JadwalKerja;
 use backend\models\JadwalShift;
 use backend\models\ShiftKerja;
 use yii\bootstrap5\ActiveForm;
@@ -13,7 +14,6 @@ $this->title = 'Absensis';
 $this->params['breadcrumbs'][] = $this->title;
 
 // CSS Variables
-
 $modals = [
     [
         'id' => 'popup-modal',
@@ -97,11 +97,18 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                     $manualShift = $manual_shift ?? null;
                     ?>
 
-                    <?php if ($jamKerjaToday || $manualShift == 1): ?>
-                        <?= $this->render('utils/_working_hours_info', [
-                            'jamKerjaToday' => $jamKerjaToday
-                        ]) ?>
-                    <?php elseif ($isShift == 1 && $manualShift == 0): ?>
+
+
+
+
+                    <?= $this->render('utils/_working_hours_info', [
+                        'jamKerjaToday' => $jamKerjaToday,
+                        'isShift' => $isShift
+                    ])
+                    ?>
+
+
+                    <?php if ($isShift == 1 && $dataJam['today']): ?>
                         <div class="w-full ">
                             <p class="mt-2 -mb-3 text-xs text-center capitalize ">Lokasi Anda</p>
                             <div class="bg-sky-500/10 rounded-full p-1 overflow-hidden max-w-[80dvw]  mt-3 mx-auto">
@@ -133,7 +140,7 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                     <br>
 
 
-                    <?php if ($dataJam['today'] || $manualShift == 0) : ?>
+                    <?php if ($dataJam['today']) : ?>
 
 
                         <?php if (count($absensiToday) > 0): ?>
@@ -194,7 +201,21 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                             <?php if ($dataJam['karyawan']['is_shift'] && $manual_shift == 0): ?>
                                 <?php
                                 // Ambil data shift dari database (pastikan ini sudah dijalankan sebelumnya)
-                                $dataShift = ShiftKerja::find()->asArray()->all();
+
+                                $jamKerjaKaryawan = $dataJam['karyawan']->jamKerja;
+
+                                $shiftHariIniSemua = JadwalKerja::find()->select(['id_shift_kerja'])->where(['id_jam_kerja' => $jamKerjaKaryawan['id_jam_kerja'], 'nama_hari' => date('w')])->asArray()->asArray()->all();
+
+                                // Ambil ID shift kerja dari hasil query pertama
+                                $ids = array_column($shiftHariIniSemua, 'id_shift_kerja');
+
+                                // Lalu ambil data lengkap ShiftKerja berdasarkan ID-ID tersebut
+                                $dataShift = ShiftKerja::find()
+                                    ->where(['id_shift_kerja' => $ids])
+                                    ->asArray()
+                                    ->all();
+
+
 
                                 // Format pilihan radioList
                                 $shiftOptions = [];
@@ -209,12 +230,12 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                                     <?= $formAbsen->field($model, 'id_shift')->radioList($shiftOptions, [
                                         'item' => function ($index, $label, $name, $checked, $value) {
                                             return "
-                <div class='inline-block w-1/2 px-1 mb-2'>
-                    <input type='radio' name='{$name}' id='shift-{$value}' value='{$value}' class='hidden peer' " . ($checked ? 'checked' : '') . ">
-                    <label for='shift-{$value}' class='block p-3 text-sm font-medium text-center text-gray-600 transition bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-400 hover:bg-blue-100'>
-                        {$label}
-                    </label>
-                </div>";
+                                  <div class='inline-block w-1/2 px-1 mb-2'>
+                                        <input type='radio' name='{$name}' id='shift-{$value}' value='{$value}' class='hidden peer' " . ($checked ? 'checked' : '') . ">
+                                        <label for='shift-{$value}' class='block p-3 text-sm font-medium text-center text-gray-600 transition bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-400 hover:bg-blue-100'>
+                                            {$label}
+                                        </label>
+                                   </div>";
                                         },
                                         'class' => 'flex flex-wrap -mx-1' // Container untuk radio items
                                     ])->label(false) ?>

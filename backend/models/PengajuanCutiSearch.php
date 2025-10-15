@@ -18,7 +18,7 @@ class PengajuanCutiSearch extends PengajuanCuti
     {
         return [
             [['id_pengajuan_cuti', 'id_karyawan', 'status', 'jenis_cuti'], 'integer'],
-            [['tanggal_pengajuan', 'tanggal_mulai', 'tanggal_selesai', 'alasan_cuti', 'catatan_admin'], 'safe'],
+            [['tanggal_pengajuan',   'alasan_cuti', 'catatan_admin'], 'safe'],
         ];
     }
 
@@ -40,9 +40,7 @@ class PengajuanCutiSearch extends PengajuanCuti
      */
     public function search($params, $tgl_mulai, $tgl_selesai)
     {
-        $query = PengajuanCuti::find()
-            ->where(['>=', 'tanggal_mulai', $tgl_mulai])
-            ->andWhere(['<=', 'tanggal_selesai', $tgl_selesai]);
+        $query = PengajuanCuti::find();
 
         // Add conditions that should always apply here
 
@@ -96,11 +94,11 @@ class PengajuanCutiSearch extends PengajuanCuti
         return $dataProvider;
     }
 
-    public function searchApi($params, $tgl_mulai, $tgl_selesai)
+    public function searchApi($params, )
     {
         $query = PengajuanCuti::find()
             ->select(['pengajuan_cuti.*', 'master_cuti.jenis_cuti as jenis_cuti', 'karyawan.nama'])
-            ->where(['>=', 'tanggal_mulai', $tgl_mulai])->andWhere(['<=', 'tanggal_selesai', $tgl_selesai])
+            // ->where(['>=', 'tanggal_mulai', $tgl_mulai])->andWhere(['<=', 'tanggal_selesai', $tgl_selesai])
             ->leftJoin('master_cuti', 'pengajuan_cuti.jenis_cuti = master_cuti.id_master_cuti')
             ->leftJoin('karyawan', 'pengajuan_cuti.id_karyawan = karyawan.id_karyawan')
             ->asArray();

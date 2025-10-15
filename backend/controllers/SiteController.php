@@ -15,8 +15,7 @@ use backend\models\PengajuanTugasLuar;
 use backend\models\PengajuanWfh;
 use backend\models\Pengumuman;
 use common\models\LoginForm;
-use common\models\User;
-use Symfony\Component\CssSelector\Parser\Shortcut\ElementParser;
+
 use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -136,7 +135,7 @@ class SiteController extends Controller
                 ->count();
 
 
-            return $this->render('index', compact('is_ada_notif', 'datesAsJson', 'TotalKaryawan', 'TotalData', 'TotalDataBelum', 'TotalIzin', 'totalPengumuman', 'pengajuanLembur', 'pengajuanCuti', 'pengajuanDinas', 'pengajuanPulangCepat', 'pengajuanWFH' , 'pengajuanAbsensi' , 'pengajuanTugasLuar'));
+            return $this->render('index', compact('is_ada_notif', 'datesAsJson', 'TotalKaryawan', 'TotalData', 'TotalDataBelum', 'TotalIzin', 'totalPengumuman', 'pengajuanLembur', 'pengajuanCuti', 'pengajuanDinas', 'pengajuanPulangCepat', 'pengajuanWFH', 'pengajuanAbsensi', 'pengajuanTugasLuar'));
         }
     }
 

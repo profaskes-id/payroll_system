@@ -12,10 +12,34 @@
             <p class="text-sm text-gray-500 capitalize">Alasan Cuti</p>
             <p><?= $model['alasan_cuti'] ?></p>
             <hr class="my-2">
-            <p class="text-sm text-gray-500 capitalize">tanggal mulai & selesai </p>
+            <p class="text-sm text-gray-500 capitalize">tanggal mulai  </p>
             <div class="flex space-x-3 text-sm text-gray-500">
-                <p><?= date('d-m-Y', strtotime($model['tanggal_mulai'])) ?></p>
-                <p><?= date('d-m-Y', strtotime($model['tanggal_selesai'])) ?></p>
+<div class="flex flex-col space-y-3 text-sm text-gray-700">
+    <?php foreach ($model->detailCuti as $detail): ?>
+        <?php
+            $status = $detail->status;
+            $colorClass = match ($status) {
+                0 => 'bg-yellow-400 text-yellow-900',
+                1 => 'bg-green-500 text-green-100',
+                2 => 'bg-red-500 text-red-100',
+                default => 'bg-gray-400 text-gray-100',
+            };
+        ?>
+        <div class="flex items-start space-x-3">
+            <div class="flex items-center justify-center w-8 h-8 rounded-full <?= $colorClass ?>">
+                <span class="text-xs font-bold">-</span>
+            </div>
+            <div>
+                <p class="font-medium"><?= Yii::$app->formatter->asDate($detail->tanggal, 'long') ?></p>
+                <p class="text-xs italic text-gray-500">
+                    Keterangan: <?= $detail->keterangan ?? '-' ?>
+                </p>
+            </div>
+        </div>
+    <?php endforeach; ?>
+</div>
+
+
 
             </div>
         </div>

@@ -81,7 +81,7 @@ $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:
                             <strong>Judul Pengajuan:</strong> <?= $params['judul'] ?><br />
                             <strong>Deskripsi:</strong> <?= $params['deskripsi'] ?><br />
                             <strong>Halaman untuk melihat pengajuan:</strong>
-                            <a href="<?= Yii::getAlias('@root') . '/panel/home/inbox' ?>">
+                            <a href="<?= Yii::getAlias('@root') . $params['nama_transaksi'] . '=' . $params['id_transaksi'] ?>">
                                 Lihat Pengajuan
                             </a>
                         </p>

@@ -13,7 +13,6 @@ $tanggalFormater = new Tanggal();
 
 <!-- Include jQuery (required for DataTables) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <!-- Include JS for DataTables -->
 <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
 
@@ -46,9 +45,7 @@ $tanggalFormater = new Tanggal();
                 <th scope="col" class="px-6 py-1">
                     Alasan
                 </th>
-                <th scope="col" class="px-6 py-1">
-                    Tanggal
-                </th>
+
                 <th scope="col" class="px-6 py-1">
                     Status
                 </th>
@@ -98,11 +95,7 @@ $tanggalFormater = new Tanggal();
                     <td class="px-6 py-2 text-xs">
                         <?= $item->alasan_cuti ?>
                     </td>
-                    <td class="px-6 py-2 text-xs">
-                        <?php echo "<p class='text-xs'>" . $tanggalFormater->getIndonesiaFormatTanggal($item->tanggal_mulai) . " - " . $tanggalFormater->getIndonesiaFormatTanggal($item->tanggal_selesai) . "</p>";
 
-                        ?>
-                    </td>
                     <td class="px-6 text-xs py-2 <?= $statusColor ?>">
                         <?= $statusText ?>
 

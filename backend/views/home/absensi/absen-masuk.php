@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\JadwalKerja;
 use backend\models\JadwalShift;
 use backend\models\ShiftKerja;
 use yii\bootstrap5\ActiveForm;
@@ -19,12 +20,7 @@ $modals = [
         'confirm_id' => 'submitButton',
         'face_input' => 'foto_masuk'
     ],
-    [
-        'id' => 'popup-modal-keluar',
-        'title' => 'Anda Akan Melakukan Aksi Absen Pulang ?',
-        'confirm_id' => 'submitButtonKeluar',
-        'face_input' => 'foto_pulang'
-    ]
+
 ];
 $buttonStyles = [
     'masuk' => 'bg-gradient-to-r from-[#EB5A2B] to-[#EA792B] shadow-[#EB5A2B]',
@@ -110,6 +106,31 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
         </div>
     <?php endforeach; ?>
 
+
+
+    <div id="popup-modal-keluar" tabindex="-1" class="<?= $modalStyles['container'] ?>">
+        <div class="relative w-full max-w-md max-h-full p-4">
+            <div class="<?= $modalStyles['content'] ?>">
+                <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal-keluar">
+                    <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+                <div class="p-4 text-center md:p-5">
+                    <svg class="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-gray-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Anda Akan Melakukan Absen pulang</h3>
+                    <button id="submitButtonKeluar" data-modal-hide="popup-modal-keluar" type="button" class="<?= $modalStyles['button']['confirm'] ?>">
+                        Ya, Yakin
+                    </button>
+                    <button data-modal-hide="<?= $modal['id'] ?>" type="button" class="<?= $modalStyles['button']['cancel'] ?>">Batalkan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Pulang Notification Modal -->
     <div id="modal-pulang" class="hidden w-[80vw] md:w-[40vw] p-5 absolute left-1/2 -translate-x-1/2 top-1/2 z-50 -translate-y-1/2 rounded-xl border-red-400 border bg-white h-[150px]">
         <div id="close-modal-pulang" class="absolute -top-2 px-2.5 py-1 text-white -translate-x-6 bg-red-500 rounded-full cursor-pointer -right-10">X</div>
@@ -132,11 +153,15 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                     $manualShift = $manual_shift ?? null;
                     ?>
 
-                    <?php if ($jamKerjaToday || $manualShift == 1): ?>
-                        <?= $this->render('utils/_working_hours_info', [
-                            'jamKerjaToday' => $jamKerjaToday
-                        ]) ?>
-                    <?php elseif ($isShift == 1 && $manualShift == 0): ?>
+
+                    <?= $this->render('utils/_working_hours_info', [
+                        'jamKerjaToday' => $jamKerjaToday,
+                        'isShift' => $isShift
+                    ])
+                    ?>
+
+
+                    <?php if ($isShift == 1 && $dataJam['today']): ?>
                         <div class="w-full ">
                             <p class="mt-2 -mb-3 text-xs text-center capitalize ">Lokasi Anda</p>
                             <div class="bg-sky-500/10 rounded-full p-1 overflow-hidden max-w-[80dvw]  mt-3 mx-auto">
@@ -150,17 +175,20 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                             </div>
                         </div>
 
+
                         <!-- Warning Box -->
                         <div id="warningBox" class="flex items-center justify-between p-2 mx-4 mt-4 text-sm text-black bg-yellow-200 rounded-lg">
                             Pastikan alamat Anda sudah muncul di bagian berwarna biru di atas sebagai tanda bahwa lokasi Anda telah terdeteksi.
                             Setelah itu, pilih shift yang sesuai, lalu klik Absen Masuk.
                             Jika absensi tidak terkirim, silakan scroll ke bawah untuk melihat apakah terlambat atau terlalu jauh <button id="closeWarning" class="px-2 font-bold text-black hover:text-gray-700">×</button>
                         </div>
+
+
                     <?php endif; ?>
 
                     <br>
 
-                    <?php if ($dataJam['today'] || $manualShift == 0) : ?>
+                    <?php if ($dataJam['today']) : ?>
                         <?php if (count($absensiToday) > 0): ?>
                             <?php if (empty($absensiToday[0]->jam_pulang)): ?>
                                 <?php $formAbsen = ActiveForm::begin([
@@ -215,9 +243,27 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                             <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'coordinate lat'])->label(false) ?>
                             <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'coordinate lon'])->label(false) ?>
                             <?= $formAbsen->field($model, 'foto_masuk')->hiddenInput(['id' => 'foto_masuk', 'class' => 'foto_fr'])->label(false) ?>
+
                             <?php if ($dataJam['karyawan']['is_shift'] && $manual_shift == 0): ?>
                                 <?php
-                                $dataShift = ShiftKerja::find()->asArray()->all();
+                                // Ambil data shift dari database (pastikan ini sudah dijalankan sebelumnya)
+
+                                $jamKerjaKaryawan = $dataJam['karyawan']->jamKerja;
+
+                                $shiftHariIniSemua = JadwalKerja::find()->select(['id_shift_kerja'])->where(['id_jam_kerja' => $jamKerjaKaryawan['id_jam_kerja'], 'nama_hari' => date('w')])->asArray()->asArray()->all();
+
+                                // Ambil ID shift kerja dari hasil query pertama
+                                $ids = array_column($shiftHariIniSemua, 'id_shift_kerja');
+
+                                // Lalu ambil data lengkap ShiftKerja berdasarkan ID-ID tersebut
+                                $dataShift = ShiftKerja::find()
+                                    ->where(['id_shift_kerja' => $ids])
+                                    ->asArray()
+                                    ->all();
+
+
+
+                                // Format pilihan radioList
                                 $shiftOptions = [];
                                 foreach ($dataShift as $shift) {
                                     $jamMasuk = substr($shift['jam_masuk'], 0, 5);
@@ -225,18 +271,19 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                                     $shiftOptions[$shift['id_shift_kerja']] = $shift['nama_shift'] . " ($jamMasuk - $jamKeluar)";
                                 }
                                 ?>
+
                                 <div class="max-w-md mx-auto">
                                     <?= $formAbsen->field($model, 'id_shift')->radioList($shiftOptions, [
                                         'item' => function ($index, $label, $name, $checked, $value) {
                                             return "
-                                            <div class='inline-block w-1/2 px-1 mb-2'>
-                                                <input type='radio' name='{$name}' id='shift-{$value}' value='{$value}' class='hidden peer' " . ($checked ? 'checked' : '') . ">
-                                                <label for='shift-{$value}' class='block p-3 text-sm font-medium text-center text-gray-600 transition bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-400 hover:bg-blue-100'>
-                                                    {$label}
-                                                </label>
-                                            </div>";
+                                  <div class='inline-block w-1/2 px-1 mb-2'>
+                                        <input type='radio' name='{$name}' id='shift-{$value}' value='{$value}' class='hidden peer' " . ($checked ? 'checked' : '') . ">
+                                        <label for='shift-{$value}' class='block p-3 text-sm font-medium text-center text-gray-600 transition bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-400 hover:bg-blue-100'>
+                                            {$label}
+                                        </label>
+                                   </div>";
                                         },
-                                        'class' => 'flex flex-wrap -mx-1'
+                                        'class' => 'flex flex-wrap -mx-1' // Container untuk radio items
                                     ])->label(false) ?>
                                 </div>
                             <?php endif; ?>
@@ -478,10 +525,10 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
                     // Lokasi berhasil diambil
                     globatLat = position.coords.latitude;
                     globatLong = position.coords.longitude;
-                    console.log('Location obtained:', globatLat, globatLong);
+                    // console.log('Location obtained:', globatLat, globatLong);
                 },
                 (error) => {
-                    console.error('Geolocation error:', error);
+                    // console.error('Geolocation error:', error);
                     Swal.fire({
                         confirmButtonColor: "#3085d6",
                         text: "Izinkan Browser Untuk Mengakses Lokasi Anda!"
@@ -529,7 +576,7 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
             .then(response => response.json())
 
             .then(data => {
-                console.log(data.display_name);
+                // console.log(data.display_name);
                 if (elemenAlamat) {
                     elemenAlamat.textContent = data.display_name;
                 }
@@ -551,6 +598,9 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
         const waktuPulang = new Date(sekarang);
         waktuPulang.setHours(jam, menit, detik, 0);
 
+        // console.info(sekarang)
+        // console.info(waktuPulang)
+
         if (sekarang >= waktuPulang) {
             const message = document.querySelector('#message');
             if (message) {
@@ -559,6 +609,10 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
             }
         }
     }
+
+    setInterval(cekWaktu, 1000);
+
+
 
     // Form Submission Handlers
     if (submitButtonKeluar) {
@@ -841,7 +895,7 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: 'Terjadi kesalahan: ' + error.message,
+                text: 'Terjadi kesalahan: Lokasi anda tidak terdeteksi',
                 confirmButtonColor: "#3085d6", // Warna biru biasa
                 confirmButtonText: 'OK',
                 footer: '<p>Pastikan izin lokasi diaktifkan</p>'

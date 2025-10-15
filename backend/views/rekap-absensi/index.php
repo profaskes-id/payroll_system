@@ -1,15 +1,7 @@
 <?php
 
-use backend\models\Absensi;
 use backend\models\Tanggal;
 use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\grid\ActionColumn;
-use yii\grid\GridView;
-
-/** @var yii\web\View $this */
-/** @var backend\models\AbsensiSearch $searchModel */
-/** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Rekap Absensi';
 $this->params['breadcrumbs'][] = $this->title;
@@ -50,6 +42,25 @@ function formatJamDesimal($decimalHours)
 
 
 ?>
+
+<style>
+    .sticky-col {
+        position: sticky;
+        background-color: white;
+        /* penting agar tidak transparan */
+        z-index: 2;
+        /* agar tidak tertutup kolom lain */
+    }
+
+    .first-col {
+        left: 0;
+    }
+
+    .second-col {
+        left: 100px;
+        /* sesuaikan dengan lebar kolom pertama */
+    }
+</style>
 <div class="absensi-index position-relative">
     <div class="row">
         <div class="col-12 col-md-8">
@@ -97,14 +108,14 @@ function formatJamDesimal($decimalHours)
 
 
 
-    <div class="table-container table-responsive">
+    <div class="overflow-x-auto table-container table-responsive">
         <p class="text-xs text-muted text-capitalize">jika data karyawan tidak ada, silahkan tambahkan data jam kerja karyawan</p>
         <table class="table table-bordered table-responsive">
             <thead>
 
                 <tr>
-                    <th rowspan="3" class="text-center ">Nama dan Kode Karyawan</th>
-                    <th rowspan="3" style="vertical-align: middle;" class="text-center ">Bagian & Jabatan</th>
+                    <th style="padding: 0; margin:0;" rowspan="3" class="text-center sticky-col first-col">Nama dan Kode Karyawan</th>
+                    <th style="padding: 0; margin:0;" rowspan="3" class="text-center sticky-col second-col">Bagian & Jabatan</th>
                 </tr>
                 <tr>
                     <th class="text-center" colspan="<?= count($tanggal_bulanan) + 6 - 1  ?>">
@@ -143,20 +154,21 @@ function formatJamDesimal($decimalHours)
                     <tr style="vertical-align: middle;">
                         <?php foreach ($karyawan as $key => $data) : ?>
 
+
                             <?php if ($key == 0) : ?>
-                                <td>
+                                <td class="sticky-col first-col ">
                                     <?php $text  = strtolower($data['nama']); ?>
                                     <div class=" d-flex flex-column">
-                                        <p style="margin: 0; padding:0;  text-transform: capitalize;  font-weight: bold"><?= $text ?></p>
+                                        <p style="margin: 0; padding:0;  text-transform: capitalize;  font-weight: bold; font-size: 12px; "><?= $text ?></p>
 
-                                        <p style="margin: 0; padding:0;  text-transform: capitalize;"><?= $data['kode_karyawan'] ?></p>
+                                        <p style="margin: 0; padding:0;  text-transform: capitalize; font-size:11px"><?= $data['kode_karyawan'] ?></p>
                                     </div>
                                 </td>
-                                <td>
+                                <td class="sticky-col second-col" style="background-color: <?= $data['color'] ?>;">
                                     <div class="">
-                                        <p style="font-size: 11px; margin: 0; padding:0;  text-transform: capitalize; "><?= $data['bagian'] ?></p>
+                                        <p style=" margin: 0; padding:0;  text-transform: capitalize; font-size:10px; "><?= $data['bagian'] ?></p>
                                         <hr style="margin:2px 0; padding:0;">
-                                        <p style="font-size: 11px; margin: 0; padding:0;  text-transform: capitalize;"><?= $data['jabatan'] ?></p>
+                                        <p style="margin: 0; padding:0;  text-transform: capitalize; font-size:10px;"><?= $data['jabatan'] ?></p>
                                     </div>
                                 </td>
 

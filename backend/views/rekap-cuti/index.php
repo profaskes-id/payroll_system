@@ -45,14 +45,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'class' => 'yii\grid\SerialColumn'
                 ],
-                // [
-                //     'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                //     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                //     'class' => ActionColumn::className(),
-                //     'urlCreator' => function ($action, RekapCuti $model, $key, $index, $column) {
-                //         return Url::toRoute([$action, 'id_rekap_cuti' => $model->id_rekap_cuti]);
-                //     }
-                // ],
 
                 [
                     'attribute' => 'Karyawan',
@@ -120,10 +112,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'label' => "Hak Cuti ",
                     'value' => function ($model) {
-                        if ($model['total_hari_pertahun'] == null) {
-                            return "";
-                        }
-                        return $model['total_hari_pertahun'] . ' Hari';
+                        return $model['jatah_hari_cuti'] ?? 'belum di set';
                     }
                 ],
 
@@ -152,16 +141,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
 
 
-                [
-                    'label' => "Jatah Cuti Tersisa",
-                    'value' => function ($model) {
-                        if ($model['total_hari_pertahun'] == null) {
-                            return "";
-                        }
-
-                        return ($model['total_hari_pertahun'] - $model['total_hari_terpakai']) . ' Hari';
-                    }
-                ]
             ],
         ]); ?>
 
@@ -186,7 +165,6 @@ Modal::end();
 
 <?php
 $viewUrl = \yii\helpers\Url::to(['rekap-cuti/view-pengajuan-cuti']);
-
 $js = <<<JS
 $('#cutiModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget); // Tombol yang memicu modal

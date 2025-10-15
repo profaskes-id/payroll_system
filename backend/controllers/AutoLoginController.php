@@ -65,9 +65,9 @@ class AutoLoginController extends Controller
             $user->newPassword = $password;
             $user->setRegisterAttributes(2, 1);
             $user->base_url = Yii::$app->params['base_url'];
-            
 
-            
+
+
             if ($user->save()) {
                 $items = ['Karyawan'];
                 $model = new Assignment($user->id);
@@ -95,14 +95,14 @@ class AutoLoginController extends Controller
                             $profileInduk->full_name = $profile->full_name;
 
                             if ($profileInduk->save()) {
-                                Yii::$app->session->setFlash('success', 'Login berhasil dan data disimpan ke db_induk.');
+                                Yii::$app->session->setFlash('success', 'Login berhasil .');
                                 return $this->redirect(['/']);
                             } else {
-                                Yii::$app->session->setFlash('error', 'Gagal menyimpan profil di db_induk.');
+                                // Yii::$app->session->setFlash('error', 'Gagal menyimpan profil di db_induk.');
                                 return $this->redirect(['/']);
                             }
                         } else {
-                            Yii::$app->session->setFlash('error', 'Gagal menyimpan user di db_induk.');
+                            // Yii::$app->session->setFlash('error', 'Gagal menyimpan user di db_induk.');
                             return $this->redirect(['/']);
                         }
                     } else {

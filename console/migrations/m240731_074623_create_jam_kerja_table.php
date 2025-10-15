@@ -16,6 +16,7 @@ class m240731_074623_create_jam_kerja_table extends Migration
             'id_jam_kerja' => $this->primaryKey(),
             'nama_jam_kerja' => $this->string()->notNull(),
             'jenis_shift' => $this->integer()->notNull(),
+            'jumlah_hari' => $this->integer()->notNull()->defaultValue(0),
         ]);
     }
 

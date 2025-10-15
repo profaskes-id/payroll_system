@@ -14,44 +14,54 @@ class m241030_064925_create_transaksi_gaji_table extends Migration
     {
         $this->createTable('{{%transaksi_gaji}}', [
             'id_transaksi_gaji' => $this->primaryKey(),
-            'kode_karyawan' => $this->string()->notNull(),
-            'nomer_identitas' => $this->string()->notNull(),
+
+            // Identitas karyawan
+            'id_karyawan' => $this->integer()->notNull(),
             'nama' => $this->string()->notNull(),
-            'bagian' => $this->string()->notNull(),
-            'jabatan' => $this->string()->notNull(),
-            'jam_kerja' => $this->integer()->notNull(),
-            'status_karyawan' => $this->string()->notNull(),
-            'periode_gaji' => $this->integer()->null(),
-            'jumlah_hari_kerja' => $this->integer()->notNull(),
-            'jumlah_hadir' => $this->integer()->notNull(),
-            'jumlah_sakit' => $this->integer()->notNull(),
-            'jumlah_wfh' => $this->integer()->notNull(),
-            'jumlah_cuti' => $this->integer()->notNull(),
-            'gaji_pokok' => $this->decimal(10, 2)->notNull(),
-            'jumlah_jam_lembur' => $this->time()->notNull(),
-            'lembur_perjam' => $this->decimal(10, 2)->notNull(),
-            'total_lembur' => $this->decimal(10, 2)->notNull(),
-            'jumlah_tunjangan' => $this->decimal(10, 2)->notNull(),
-            'jumlah_potongan' => $this->decimal(10, 2)->notNull(),
-            'potongan_wfh_hari' => $this->decimal(10, 2)->notNull(),
-            'jumlah_potongan_wfh' => $this->decimal(10, 2)->notNull(),
-            'jumlah_tidak_hadir' => $this->integer()->notNull()->defaultValue(0),
-            'potongan_tidak_hadir_hari' => $this->decimal(10, 2)->notNull()->defaultValue(0),
-            'jumlah_potongan_tidak_hadir' => $this->decimal(10, 2)->notNull()->defaultValue(0),
-            'jumlah_terlambat'  => $this->time()->notNull(),
-            'potongan_terlambat_permenit' => $this->decimal(10, 2)->notNull(),
-            'jumlah_potongan_terlambat' => $this->decimal(10, 2)->notNull(),
-            'gaji_diterima' => $this->decimal(10, 2)->defaultValue(0),
+            'id_bagian' => $this->integer()->null(),
+            'nama_bagian' => $this->string()->null(),
+            'jabatan' => $this->string()->null(),
+
+            // Periode gaji
+            'bulan' => $this->integer()->null(),
+            'tahun' => $this->integer()->null(),
+            'tanggal_awal' => $this->date()->null(),
+            'tanggal_akhir' => $this->date()->null(),
+
+            // Absensi dan keterlambatan
+            'total_absensi' => $this->integer()->null(),
+            'terlambat' => $this->time()->null(),
+            'total_alfa_range' => $this->integer()->null(),
+
+            // Gaji dan potongan
+            'nominal_gaji' => $this->decimal(25, 10)->null(),
+            'gaji_perhari' => $this->decimal(25, 10)->null(),
+            'tunjangan_karyawan' => $this->decimal(25, 10)->null(),
+            'potongan_karyawan' => $this->decimal(25, 10)->null(),
+            'potongan_terlambat' => $this->decimal(25, 10)->null(),
+            'potongan_absensi' => $this->decimal(25, 10)->null(),
+
+            // Lembur
+            'jam_lembur' => $this->integer()->null(),
+            'total_pendapatan_lembur' => $this->decimal(25, 10)->null(),
+
+            // Dinas luar
+            'dinas_luar_belum_terbayar' => $this->decimal(25, 10)->null(),
+
+            // Audit Trail
+            'created_at' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP'),
+            'updated_at' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP')->append('ON UPDATE CURRENT_TIMESTAMP'),
+            'created_by' => $this->integer()->null(),
+            'updated_by' => $this->integer()->null(),
         ]);
     }
+
 
     /**
      * {@inheritdoc}
      */
     public function safeDown()
     {
-        $this->dropForeignKey('fk-transaksi_gaji-periode_gaji', 'transaksi_gaji');
-
         $this->dropTable('{{%transaksi_gaji}}');
     }
 }

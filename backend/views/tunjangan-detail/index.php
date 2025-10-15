@@ -164,3 +164,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 </tr>
             </table>
         <?php endif; ?>
+
+    </div>
+</div>

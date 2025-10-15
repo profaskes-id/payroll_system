@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\helpers\KaryawanHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -10,62 +11,79 @@ use yii\widgets\ActiveForm;
 
 <div class="transaksi-gaji-search">
 
-    <?php $form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-    ]); ?>
+    <?php $form = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',   'action' => ['transaksi-gaji/index']]); ?>
+    <div class="table-container table-responsive">
+        <div class="mb-2 row">
 
-    <?= $form->field($model, 'id_transaksi_gaji') ?>
+            <div class="col-lg-3 col-12">
+                <?php
+                // Memastikan data yang digunakan untuk Select2 sesuai dengan kondisi $karyawanID
+                if ($karyawanID != null) {
+                    $nama_group = \yii\helpers\ArrayHelper::map(KaryawanHelper::getKaryawanById($karyawanID), 'id_karyawan', 'nama');
+                    $selectedValue = $karyawanID; // Jika $karyawanID ada, set nilai yang dipilih ke karyawanID
+                } else {
+                    $nama_group = \yii\helpers\ArrayHelper::map(KaryawanHelper::getKaryawanData(), 'id_karyawan', 'nama');
+                    $selectedValue = null; // Jika $karyawanID tidak ada, tidak ada nilai yang dipilih
+                }
 
-    <?= $form->field($model, 'nomer_identitas') ?>
+                echo $form->field($karyawan, 'id_karyawan')->widget(kartik\select2\Select2::classname(), [
+                    'data' => $nama_group,
+                    'language' => 'id',
+                    'options' => [
+                        'placeholder' => 'Cari karyawan ...',
+                        'value' => $selectedValue, // Menetapkan nilai yang dipilih sesuai dengan kondisi $karyawanID
+                    ],
+                    'pluginOptions' => [
+                        'tags' => true,
+                        'allowClear' => true
+                    ],
+                ])->label(false);
+                ?>
 
-    <?= $form->field($model, 'nama') ?>
+            </div>
+            <div class="col-lg-4 col-12">
+                <?php
 
-    <?= $form->field($model, 'bagian') ?>
+                $nama_group = \yii\helpers\ArrayHelper::map($model->getPeriodeGajidpw(), 'id_periode_gaji', 'tampilan');
+                if ($periode_gajiID != null) {
+                    $selectedValuePeriode = $periode_gajiID; // Jika $karyawanID ada, set nilai yang dipilih ke karyawanID
+                } else {
+                    $selectedValuePeriode = null; // Jika $karyawanID tidak ada, tidak ada nilai yang dipilih
+                }
+                echo $form->field($periode_gaji, 'id_periode_gaji')->widget(kartik\select2\Select2::classname(), [
+                    'data' => $nama_group,
+                    'language' => 'id',
+                    'options' => [
+                        'placeholder' => 'Cari Periode Gaji ...',
+                        'value' => $selectedValuePeriode, // Menetapkan nilai yang dipilih sesuai dengan kondisi $karyawanID
+                    ],
+                    'pluginOptions' => [
+                        // 'tags' => true,
+                        'allowClear' => true
+                    ],
+                ])->label(false);
+                ?>
+            </div>
 
-    <?= $form->field($model, 'jabatan') ?>
 
-    <?php // echo $form->field($model, 'jam_kerja') ?>
+            <div class="col-5 d-flex justify-content-start " style="gap: 10px;">
+                <div class="">
+                    <button class="add-button" type="submit">
+                        <i class="fas fa-search"></i>Search
+                    </button>
+                </div>
+                <div class="">
+                    <a href="/panel/transaksi-gaji">
+                        <button class="reset-button" type="button">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </a>
+                </div>
 
-    <?php // echo $form->field($model, 'status_karyawan') ?>
-
-    <?php // echo $form->field($model, 'periode_gaji_bulan') ?>
-
-    <?php // echo $form->field($model, 'periode_gaji_tahun') ?>
-
-    <?php // echo $form->field($model, 'jumlah_hari_kerja') ?>
-
-    <?php // echo $form->field($model, 'jumlah_hadir') ?>
-
-    <?php // echo $form->field($model, 'jumlah_sakit') ?>
-
-    <?php // echo $form->field($model, 'jumlah_wfh') ?>
-
-    <?php // echo $form->field($model, 'jumlah_cuti') ?>
-
-    <?php // echo $form->field($model, 'gaji_pokok') ?>
-
-    <?php // echo $form->field($model, 'jumlah_jam_lembur') ?>
-
-    <?php // echo $form->field($model, 'lembur_perjam') ?>
-
-    <?php // echo $form->field($model, 'total_lembur') ?>
-
-    <?php // echo $form->field($model, 'jumlah_tunjangan') ?>
-
-    <?php // echo $form->field($model, 'jumlah_potongan') ?>
-
-    <?php // echo $form->field($model, 'potongan_wfh_hari') ?>
-
-    <?php // echo $form->field($model, 'jumlah_potongan_wfh') ?>
-
-    <?php // echo $form->field($model, 'gaji_diterima') ?>
-
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-outline-secondary']) ?>
+            </div>
+        </div>
     </div>
-
     <?php ActiveForm::end(); ?>
+
 
 </div>

@@ -41,9 +41,10 @@ $pathInfo = Yii::$app->request->getPathInfo();
         <div class="col-md-6">
             <?= $form->field($model, 'jam_pulang')->textInput([
                 'type' => 'time',
-                'value' => $model->isNewRecord ? '17:00' : substr($model->jam_pulang, 0, 5),
+                'value' => !empty($model->jam_pulang) ? substr($model->jam_pulang, 0, 5) : null,
             ]) ?>
         </div>
+
 
 
 

@@ -20,6 +20,14 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
+
+    <?= $form->field($model, 'tanggal_awal')->hiddenInput([
+        'class' => 'w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500'
+    ])->label(false) ?>
+    <?= $form->field($model, 'tanggal_akhir')->hiddenInput([
+        'class' => 'w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500'
+    ])->label(false) ?>
+
     <div class="grid-cols-1 gap-6 row md:grid-cols-2">
 
         <div class="col-12">
@@ -50,6 +58,30 @@ use yii\widgets\ActiveForm;
                 ]
             )->label(false);
             ?>
+        </div>
+
+
+        <div class="pt-6 col-12">
+            <p class="block mb-2 text-sm font-medium text-gray-900 capitalize ">Tanggal</p>
+
+            <div class="text-sm text-gray-700 whitespace-nowrap">
+                <ul>
+                    <?php
+                    $tanggalAwal = new DateTime($model['tanggal_awal']);
+                    $tanggalAkhir = new DateTime($model['tanggal_akhir']);
+
+                    // Tambahkan 1 hari ke akhir untuk menyertakan tanggal akhir dalam loop
+                    $tanggalAkhir->modify('+1 day');
+
+                    $interval = new DateInterval('P1D'); // Per 1 hari
+                    $periode = new DatePeriod($tanggalAwal, $interval, $tanggalAkhir);
+
+                    foreach ($periode as $tanggal) {
+                        echo '<li>' . $tanggal->format('d F Y') . '</li>';
+                    }
+                    ?>
+                </ul>
+            </div>
         </div>
 
         <div class="mt-4 col-12">

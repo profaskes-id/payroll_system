@@ -1,4 +1,4 @@
-<div class="w-full mx-auto px-5 lg:px-8">
+<div class="relative z-40 w-full px-5 mx-auto lg:px-8">
 
 
 
@@ -8,12 +8,12 @@
             window.location.href = '/panel/home/pulang-cepat-create';
         </script>
     <?php else: ?>
-        <section class="grid grid-cols-1 justify-center mt-2 ">
+        <section class="grid justify-center grid-cols-1 mt-2 ">
 
-            <p class="text-sm py-2 text-gray-600">Alasan Pulang Cepat</p>
+            <p class="py-2 text-sm text-gray-600">Alasan Pulang Cepat</p>
             <p class="p-2 bg-gray-100 rounded-md"><?= $model->alasan ?? '-' ?></p>
             <hr class="my-3">
-            <p class="text-sm py-2 text-gray-600">Tanggapan Admin</p>
+            <p class="py-2 text-sm text-gray-600">Tanggapan Admin</p>
             <p class="p-2 bg-gray-100 rounded-md"><?= $model->catatan_admin ?? '-' ?></p>
             <hr class="my-3">
             <?php if ($model->statusPengajuan->nama_kode) : ?>

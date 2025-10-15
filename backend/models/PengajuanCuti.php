@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use amnah\yii2\user\models\User;
+
 use Yii;
 
 /**
@@ -11,8 +12,6 @@ use Yii;
  * @property int $id_pengajuan_cuti
  * @property int $id_karyawan
  * @property string $tanggal_pengajuan
- * @property string $tanggal_mulai
- * @property string $tanggal_selesai
  * @property string|null $alasan_cuti
  * @property int|null $status
  * @property string|null $catatan_admin
@@ -29,16 +28,16 @@ class PengajuanCuti extends \yii\db\ActiveRecord
         return 'pengajuan_cuti';
     }
     public $sisa_hari;
-
+    public $tanggal;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id_karyawan', 'tanggal_pengajuan', 'tanggal_mulai', 'tanggal_selesai', 'jenis_cuti', 'sisa_hari'], 'required'],
-            [['id_karyawan', 'status', 'jenis_cuti', 'sisa_hari', 'ditanggapi_oleh'], 'integer'],
-            [['tanggal_pengajuan', 'tanggal_mulai', 'tanggal_selesai', 'ditanggapi_pada', 'ditanggapi_oleh'], 'safe'],
+            [['id_karyawan', 'tanggal_pengajuan',  'jenis_cuti', 'sisa_hari'], 'required'],
+            [['id_karyawan', 'status',  'sisa_hari', 'ditanggapi_oleh'], 'integer'],
+            [['tanggal_pengajuan', 'tanggal', 'ditanggapi_pada', 'ditanggapi_oleh'], 'safe'],
             [['alasan_cuti', 'catatan_admin', 'ditanggapi_pada'], 'string'],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
         ];
@@ -53,8 +52,6 @@ class PengajuanCuti extends \yii\db\ActiveRecord
             'id_pengajuan_cuti' => 'Id Pengajuan Cuti',
             'id_karyawan' => 'Id Karyawan',
             'tanggal_pengajuan' => 'Tanggal Pengajuan',
-            'tanggal_mulai' => 'Tanggal Mulai',
-            'tanggal_selesai' => 'Tanggal Selesai',
             'alasan_cuti' => 'Alasan Cuti',
             'status' => 'Status',
             'jenis_cuti' => 'Jenis Cuti',
@@ -81,8 +78,13 @@ class PengajuanCuti extends \yii\db\ActiveRecord
     {
         return $this->hasOne(MasterCuti::class, ['id_master_cuti' => 'jenis_cuti'])->onCondition(['status' => '1']);
     }
-        public function getDisetujuiOleh()
+    public function getDisetujuiOleh()
     {
         return $this->hasOne(User::class, ['id' => 'ditanggapi_oleh']);
+    }
+
+    public function getDetailCuti()
+    {
+        return $this->hasMany(DetailCuti::class, ['id_pengajuan_cuti' => 'id_pengajuan_cuti']);
     }
 }

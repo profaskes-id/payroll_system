@@ -47,7 +47,7 @@ class Absensi extends \yii\db\ActiveRecord
     {
         return [
             [['id_karyawan', 'tanggal', 'kode_status_hadir'], 'required'],
-            [['id_karyawan', 'is_lembur', 'is_wfh', 'is_terlambat', 'is_24jam', 'id_shift_kerja' , 'similarity'], 'integer'],
+            [['id_karyawan', 'is_lembur', 'is_wfh', 'is_terlambat', 'is_24jam', 'id_shift_kerja', 'similarity'], 'integer'],
             [['tanggal', 'jam_masuk', 'jam_pulang', 'lama_terlambat', 'tanggal_pulang', 'id_shift', 'kelebihan_jam_pulang', 'id_shift_kerja', 'created_at', 'updated_at', 'created_by', 'updated_by', 'similarity'], 'safe'],
             [['keterangan', 'alasan_terlambat', 'alasan_terlalu_jauh', 'foto_masuk', 'foto_pulang'], 'string'],
             [['latitude', 'longitude'], 'number'],
@@ -136,7 +136,8 @@ class Absensi extends \yii\db\ActiveRecord
             ->leftJoin('jadwal_kerja jdk', 'jkk.id_jam_kerja = jdk.id_jam_kerja AND jdk.nama_hari = DAYOFWEEK(absensi.tanggal) - 1')
             ->andWhere(['>=', 'absensi.tanggal', $firstDayOfMonth])
             ->andWhere(['<=', 'absensi.tanggal', $lastDayOfMonth])
-            ->groupBy('absensi.id_karyawan, absensi.tanggal, absensi.is_lembur, absensi.is_24jam, absensi.is_wfh, absensi.kode_status_hadir, absensi.is_terlambat,absensi.lama_terlambat,  jkk.id_jam_kerja, jdk.nama_hari')
+            ->groupBy('absensi.id_karyawan, absensi.tanggal, absensi.is_lembur, absensi.is_24jam, absensi.is_wfh, absensi.kode_status_hadir, absensi.is_terlambat,absensi.lama_terlambat,  jkk.id_jam_kerja, jdk.nama_hari, sk.nama_shift')
+
             ->all();
 
         return $absensi;
@@ -163,7 +164,7 @@ class Absensi extends \yii\db\ActiveRecord
 
     static function getAllDetailDataKaryawan($karyawan)
     {
-        $data =  $karyawan::find()
+        $data = $karyawan::find()
             ->select([
                 'karyawan.id_karyawan',
                 'karyawan.nama',
@@ -184,8 +185,39 @@ class Absensi extends \yii\db\ActiveRecord
             ->leftJoin('{{%data_pekerjaan}} dp', 'karyawan.id_karyawan = dp.id_karyawan')
             ->leftJoin('{{%bagian}} bg', 'dp.id_bagian = bg.id_bagian')
             ->leftJoin('{{%master_kode}} mk', 'mk.nama_group = "jabatan" and dp.jabatan = mk.kode')
-            ->orderBy(['nama' => SORT_ASC])
+            ->orderBy(['bg.id_bagian' => SORT_DESC, 'karyawan.nama' => SORT_ASC])
             ->all();
+
+        // Definisikan warna untuk masing-masing id_bagian
+        $colorList = [
+            '#A5D6A7', // hijau pastel
+            '#FFF59D', // kuning pastel
+            '#90CAF9', // biru pastel
+            '#FFCC80', // oranye pastel
+            '#CE93D8', // ungu pastel
+            '#B0BEC5', // abu pastel
+            '#F48FB1', // pink pastel
+            '#AED581', // lime pastel
+            '#80DEEA', // cyan pastel
+        ];
+
+        $usedColors = [];    // mapping id_bagian => color
+        $colorIndex = 0;     // urutan warna yang sedang digunakan
+
+        foreach ($data as &$item) {
+            $idBagian = $item['id_bagian'] ?? 'null'; // gunakan string agar null juga bisa dipetakan
+
+            if (!isset($usedColors[$idBagian])) {
+                // Ambil warna dari daftar, atau fallback ke warna default
+                $usedColors[$idBagian] = $colorList[$colorIndex] ?? '#F0F0F0';
+                $colorIndex++;
+            }
+
+            $item['color'] = $usedColors[$idBagian];
+        }
+        unset($item); // clean up reference 
+
+
         return $data;
     }
 
@@ -287,6 +319,7 @@ class Absensi extends \yii\db\ActiveRecord
                         "id_bagian" => $karyawan["id_bagian"],
                         "bagian" => $karyawan["nama_bagian"],
                         "jabatan" => $karyawan["jabatan"],
+                        'color' => $karyawan['color'],
                     ],
                 ];
 
@@ -322,8 +355,8 @@ class Absensi extends \yii\db\ActiveRecord
                         $jamMasukKantor = $record['jam_masuk_kerja'] ?? null;
                         $jam_pulang = $record['jam_pulang'] ?? null;
                         $id_shift = $record['id_shift'] ?? null;
-                        
-                        
+
+
                         if ($statusHadir == 'H') {
 
                             if ($record['is_terlambat'] == 1 && $record['is_lembur'] == 0 && $record['is_wfh'] == 0) {
@@ -357,10 +390,9 @@ class Absensi extends \yii\db\ActiveRecord
                         'lama_terlambat' => $lama_terlambat,
                         'total_terlambat_hari_ini' => $keterlambatanPerTanggal[$i] ?? 0, // Tambahkan info keterlambatan per tanggal
                     ];
-
                 }
 
-              
+
 
 
 
