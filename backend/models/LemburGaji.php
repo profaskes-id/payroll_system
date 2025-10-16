@@ -35,7 +35,7 @@ class LemburGaji extends \yii\db\ActiveRecord
         return [
             [['bulan', 'tahun'], 'default', 'value' => null],
             [['nama', 'id_karyawan', 'tanggal', 'hitungan_jam'], 'required'],
-            [['bulan', 'tahun', 'id_karyawan', 'hitungan_jam'], 'integer'],
+            [['bulan', 'tahun', 'id_karyawan'], 'integer'],
             [['tanggal'], 'safe'],
             [['nama'], 'string', 'max' => 255],
         ];
@@ -56,5 +56,4 @@ class LemburGaji extends \yii\db\ActiveRecord
             'hitungan_jam' => 'Hitungan Jam',
         ];
     }
-
 }

@@ -114,15 +114,16 @@ use yii\helpers\Url;
             success: function(response) {
                 $('#loadingPotonganTerlambat').addClass('d-none');
 
-                if (response.success) {
-                    displayPotonganTerlambatData(response);
-                } else {
-                    showError(response.error || 'Terjadi kesalahan saat memuat data');
-                }
+                // Perbaikan: Langsung proses response tanpa cek response.success
+                // karena format response langsung berisi data, bukan {success: true, data: ...}
+                displayPotonganTerlambatData(response);
             },
             error: function(xhr, status, error) {
                 $('#loadingPotonganTerlambat').addClass('d-none');
                 showError('Terjadi kesalahan: ' + error);
+                console.error('AJAX Error:', error);
+                console.error('Status:', status);
+                console.error('Response:', xhr.responseText);
             }
         });
     }
@@ -152,6 +153,14 @@ use yii\helpers\Url;
         const tbody = $('#tabelPotonganTerlambatBody');
         tbody.empty();
 
+        console.log('Data received:', data); // Debug log
+
+        // Periksa apakah data ada dan memiliki struktur yang benar
+        if (!data || typeof data !== 'object') {
+            showError('Data yang diterima tidak valid');
+            return;
+        }
+
         // Tampilkan info potongan
         $('#potonganPerMenit').text(formatRupiah(data.potonganPerMenit || 0));
         $('#totalLamaTerlambat').text(data.lama_terlambat || '0 menit');
@@ -180,25 +189,26 @@ use yii\helpers\Url;
             });
 
             const row = `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>
-                        <strong>${tanggal}</strong>
-                        <br><small class="text-muted">${item.tanggal}</small>
-                    </td>
-                    <td class="text-center">
-                        <span class="badge bg-warning text-dark fs-6">${item.terlambat}</span>
-                        <br><small class="text-muted">${lamaMenit} menit</small>
-                    </td>
-                    <td class="text-center">${formatRupiah(data.potonganPerMenit)}</td>
-                    <td class="text-end fw-bold text-danger">${formatRupiah(subtotal)}</td>
-                </tr>
-            `;
+            <tr>
+                <td>${index + 1}</td>
+                <td>
+                    <strong>${tanggal}</strong>
+                    <br><small class="text-muted">${item.tanggal}</small>
+                </td>
+                <td class="text-center">
+                    <span class="badge bg-warning text-dark fs-6">${item.terlambat}</span>
+                    <br><small class="text-muted">${lamaMenit} menit</small>
+                </td>
+                <td class="text-center">${formatRupiah(data.potonganPerMenit)}</td>
+                <td class="text-end fw-bold text-danger">${formatRupiah(subtotal)}</td>
+            </tr>
+        `;
             tbody.append(row);
         });
 
-        // Tampilkan total
-        $('#totalPotonganTerlambat').text(formatRupiah(totalPotongan));
+        // Tampilkan total - gunakan total dari response atau hitungan manual
+        const finalTotal = data.potonganSemuaTerlambat || totalPotongan;
+        $('#totalPotonganTerlambat').text(formatRupiah(finalTotal));
 
         // Tampilkan konten
         $('#contentPotonganTerlambat').removeClass('d-none');

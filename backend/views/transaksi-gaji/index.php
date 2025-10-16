@@ -257,7 +257,7 @@
                             data-bs-toggle="modal" 
                             data-bs-target="#confirmModal"
                             data-action="regenerate"
-                            data-url="' . Url::to(['regenerate', 'id_transaksi_gaji' => $model['id_transaksi_gaji']]) . '"
+                            data-url="' . Url::to(['generate-gaji-one', 'id_karyawan' => $model['id_karyawan']]) . '"
                             data-karyawan="' . Html::encode($model['nama'] ?? 'Karyawan') . '"
                             title="Regenerate">
                         <i class="fas fa-sync-alt"></i>
