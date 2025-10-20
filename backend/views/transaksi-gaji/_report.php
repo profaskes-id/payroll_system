@@ -2,7 +2,30 @@
 
 use yii\helpers\Html;
 
-$periodeText = $periode_gaji ? "Periode: {$bulan}/{$tahun}" : "Periode: Bulan Ini";
+$namaBulan = [
+    '01' => 'Januari',
+    '02' => 'Februari',
+    '03' => 'Maret',
+    '04' => 'April',
+    '05' => 'Mei',
+    '06' => 'Juni',
+    '07' => 'Juli',
+    '08' => 'Agustus',
+    '09' => 'September',
+    '10' => 'Oktober',
+    '11' => 'November',
+    '12' => 'Desember',
+];
+
+// Pastikan $bulan punya leading zero (misalnya '01' bukan 1)
+$bulanFormatted = str_pad($bulan, 2, '0', STR_PAD_LEFT);
+
+// Ambil nama bulan dari array
+$bulanNama = $namaBulan[$bulanFormatted] ?? $bulan;
+
+// Format akhir
+$periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bulan Ini";
+
 ?>
 
 <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px;">
@@ -62,9 +85,7 @@ $periodeText = $periode_gaji ? "Periode: {$bulan}/{$tahun}" : "Periode: Bulan In
         ?>
             <tr>
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: center;"><?= $no++ ?></td>
-                <td style="padding: 6px 4px; border: 1px solid #ddd;"><?= Html::encode($data['nama'] ?? '') ?><br>
-                    <small style="color: #666;">ID: <?= Html::encode($data['id_karyawan'] ?? '') ?></small>
-                </td>
+                <td style="padding: 6px 4px; border: 1px solid #ddd;"><?= Html::encode($data['nama'] ?? '') ?></td>
                 <td style="padding: 6px 4px; border: 1px solid #ddd;">
                     <div><strong><?= Html::encode($data['nama_bagian'] ?? '') ?></strong></div>
                     <div style="color: #666;"><?= Html::encode($data['jabatan'] ?? '') ?></div>
@@ -83,7 +104,7 @@ $periodeText = $periode_gaji ? "Periode: {$bulan}/{$tahun}" : "Periode: Bulan In
                     <span style="padding: 2px 6px; border-radius: 3px; font-size: 7px; font-weight: bold; 
                     background-color: <?= ($data['status'] ?? 0) == 1 ? '#d4edda' : '#f8d7da' ?>; 
                     color: <?= ($data['status'] ?? 0) == 1 ? '#155724' : '#721c24' ?>;">
-                        <?= ($data['status'] ?? 0) == 1 ? 'AKTIF' : 'NON-AKTIF' ?>
+                        <?= ($data['status'] ?? 0) == 1 ? 'SUCCESS' : 'PENDING' ?>
                     </span>
                 </td>
             </tr>
@@ -115,10 +136,14 @@ $periodeText = $periode_gaji ? "Periode: {$bulan}/{$tahun}" : "Periode: Bulan In
 
 <div style="margin-top: 20px; font-size: 9px; color: #666;">
     <p><strong>Keterangan:</strong></p>
-    <ul style="margin: 0; padding-left: 15px;">
+    <ul style="margin: 0; padding-left: 15px; text-transform: capitalize;">
+        <li>Tunjangan : Tunjangan yang diberikan prusahaan ke karyawan</li>
+        <li>potongan : potongan yang diberikan prusahaan ke karyawan</li>
         <li>Total Hadir: Jumlah hari karyawan hadir bekerja</li>
         <li>Total Tidak Hadir: Jumlah hari karyawan tidak hadir (alfa)</li>
-        <li>Potongan: Total semua potongan (karyawan + absensi + terlambat)</li>
-        <li>Gaji Diterima: Gaji bersih setelah semua penambahan dan pengurangan</li>
+        <li>Potongan Abesnsi: Potongan alfa & Potongan WFH sesuai potongan dari perusahaan</li>
+        <li>total lembur : biaya lembur yang dibayarkan perusahaan kepada karyawan</li>
+        <li>Dinas Luar Belum Terbayar : biaya dinas luar yang belum sempat perusahaan bayarkan</li>
+        <li>Gaji Bersih: Gaji bersih setelah semua penambahan dan pengurangan</li>
     </ul>
 </div>

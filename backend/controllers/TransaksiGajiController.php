@@ -177,11 +177,11 @@ class TransaksiGajiController extends Controller
         ]);
     }
 
-    public function actionReport()
+    public function actionReport($bulan = null, $tahun = null)
     {
         $model = new TransaksiGaji();
-        $bulan = date('m');
-        $tahun = date('Y');
+        $bulan =  $bulan ?? date('m');
+        $tahun = $tahun ?? date('Y');
         $searchModel = new TransaksiGajiSearch();
 
         $periode_gaji = new PeriodeGaji();

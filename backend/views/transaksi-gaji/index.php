@@ -1,16 +1,10 @@
     <?php
 
     use backend\models\helpers\KaryawanHelper;
-    use backend\models\helpers\PeriodeGajiHelper;
-    use backend\models\Karyawan;
-    use backend\models\PeriodeGaji;
-    use backend\models\Tanggal;
-    use backend\models\TransaksiGaji;
     use yii\helpers\Html;
     use yii\helpers\Url;
-    use yii\grid\ActionColumn;
     use yii\grid\GridView;
-    use yii\widgets\ActiveForm;
+
 
     $karyawan = new KaryawanHelper();
 
@@ -185,22 +179,6 @@
     ?>
 
 
-    <!-- <div class="col-12 col-md-9">
-        <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
-            <i class="fas fa-search"></i>
-            <span>
-                Search
-            </span>
-        </button>
-    </div> -->
-    <!-- <div style="margin-top: 10px;"> -->
-    <!-- <div class="collapse width" id="collapseWidthExample"> -->
-    <!-- <div style="width: 100%;"> -->
-    <?php // $this->render('_search', ['model' => $model]) 
-    ?>
-    <!-- </div> -->
-    <!-- </div> -->
-    <!-- </div> -->
     <div style="width: 100%;">
         <?= $this->render('_search', ['model' => $model]) ?>
     </div>
@@ -222,7 +200,7 @@
                         <?= Html::endForm(); ?>
 
 
-                        <a href="/panel/transaksi-gaji/report" class="mx-2 reset-button bg-warning">
+                        <a target="_blank" href="/panel/transaksi-gaji/report?bulan=<?= Yii::$app->request->get('TransaksiGaji')['bulan'] ?? null ?>&tahun=<?= Yii::$app->request->get('TransaksiGaji')['tahun'] ?? null ?>" class="mx-2 reset-button bg-warning">
                             <i class="fas fa-print me-1"></i> Cetak Transaksi
                         </a>
                     </div>

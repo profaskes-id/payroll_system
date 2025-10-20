@@ -20,7 +20,7 @@ class TransaksiGajiSearch extends TransaksiGaji
 
     private $_settingGajiPerJam = null;
     private $_masterWfhPotongan = null;
-    private $_JamKerjaKaryawanSehari = 8;
+
 
     /**
      * {@inheritdoc}
