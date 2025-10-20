@@ -18,6 +18,9 @@ class m251014_050831_create_tunjangan_potongan_rekap_gaji_tables extends Migrati
             'id_tunjangan' => $this->integer()->notNull(),
             'nama_tunjangan' => $this->string()->notNull(),
             'jumlah' => $this->decimal(12, 2)->notNull(),
+            'satuan' => $this->string()->notNull(),
+            'nominal_final' => $this->decimal(12, 2)->notNull(),
+
         ]);
 
 
@@ -30,6 +33,8 @@ class m251014_050831_create_tunjangan_potongan_rekap_gaji_tables extends Migrati
             'id_potongan' => $this->integer()->notNull(),
             'nama_potongan' => $this->string()->notNull(),
             'jumlah' => $this->decimal(12, 2)->notNull(),
+            'satuan' => $this->string()->notNull(),
+            'nominal_final' => $this->decimal(12, 2)->notNull(),
         ]);
 
         // Optional: Tambahkan index untuk pencarian yang lebih cepat

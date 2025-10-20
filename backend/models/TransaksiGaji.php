@@ -53,7 +53,7 @@ class TransaksiGaji extends \yii\db\ActiveRecord
     {
         return [
             [['created_by', 'updated_by'], 'default', 'value' => null],
-            [['id_karyawan', 'nama', 'id_bagian', 'nama_bagian', 'jabatan', 'bulan', 'tahun', 'tanggal_awal', 'tanggal_akhir', 'total_absensi', 'terlambat', 'total_alfa_range', 'nominal_gaji', 'gaji_perhari', 'tunjangan_karyawan', 'potongan_karyawan', 'potongan_terlambat', 'potongan_absensi', 'jam_lembur', 'total_pendapatan_lembur', 'dinas_luar_belum_terbayar'], 'required'],
+            [['nama', 'id_bagian', 'nama_bagian', 'jabatan', 'bulan', 'tahun', 'tanggal_awal', 'tanggal_akhir', 'total_absensi', 'terlambat', 'total_alfa_range', 'nominal_gaji', 'gaji_perhari', 'tunjangan_karyawan', 'potongan_karyawan', 'potongan_terlambat', 'potongan_absensi', 'jam_lembur', 'total_pendapatan_lembur', 'dinas_luar_belum_terbayar'], 'required'],
             [['id_karyawan', 'id_bagian', 'bulan', 'tahun', 'total_absensi', 'total_alfa_range', 'jam_lembur', 'created_by', 'updated_by', 'status'], 'integer'],
             [['tanggal_awal', 'tanggal_akhir', 'terlambat', 'created_at', 'updated_at'], 'safe'],
             [['nominal_gaji', 'gaji_perhari', 'tunjangan_karyawan', 'potongan_karyawan', 'potongan_terlambat', 'potongan_absensi', 'total_pendapatan_lembur', 'dinas_luar_belum_terbayar'], 'number'],

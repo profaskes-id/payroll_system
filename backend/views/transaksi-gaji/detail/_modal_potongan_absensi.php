@@ -200,11 +200,14 @@ use yii\helpers\Url;
         const jumlahWFH = data.jumlah_wfh || 0;
 
         // Hitung nominal potongan
-        const potonganAlfaPerHari = gajiPerHari;
-        const totalPotonganAlfa = potonganAlfaPerHari * jumlahAlfa;
 
-        const potonganWFHPerHari = (gajiPerHari * potonganWFHPersen) / 100;
-        const totalPotonganWFH = potonganWFHPerHari * jumlahWFH;
+        const potonganAlfaPerHari = gajiPerHari;
+
+        const totalPotonganAlfa = data.total_potongan_absensi;
+
+        const potonganWFHPerHari = (data?.potonganwfhsehari / 100) * gajiPerHari;
+
+        const totalPotonganWFH = jumlahWFH * potonganWFHPerHari;
 
         const totalSemuaPotongan = totalPotonganAlfa + totalPotonganWFH;
 

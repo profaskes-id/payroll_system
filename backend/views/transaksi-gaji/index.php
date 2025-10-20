@@ -113,15 +113,6 @@
     JS
     );
     ?>
-    <?php
-    // Include semua modal
-    echo $this->render('detail/_modal_potongan');
-    echo $this->render('detail/_modal_tunjangan');
-    echo $this->render('detail/_modal_potongan_absensi');
-    echo $this->render('detail/_modal_potongan_terlambat');
-    echo $this->render('detail/_modal_dinas');
-    echo $this->render('detail/_modal_lembur');
-    ?>
 
     <?php
     $this->registerCss(
@@ -183,6 +174,36 @@
     <!-- Bootstrap 5 (Bundle = termasuk Popper.js) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+    <?php
+    // Include semua modal
+    echo $this->render('detail/_modal_potongan');
+    echo $this->render('detail/_modal_tunjangan');
+    echo $this->render('detail/_modal_potongan_absensi');
+    echo $this->render('detail/_modal_potongan_terlambat');
+    echo $this->render('detail/_modal_dinas');
+    echo $this->render('detail/_modal_lembur');
+    ?>
+
+
+    <!-- <div class="col-12 col-md-9">
+        <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+            <i class="fas fa-search"></i>
+            <span>
+                Search
+            </span>
+        </button>
+    </div> -->
+    <!-- <div style="margin-top: 10px;"> -->
+    <!-- <div class="collapse width" id="collapseWidthExample"> -->
+    <!-- <div style="width: 100%;"> -->
+    <?php // $this->render('_search', ['model' => $model]) 
+    ?>
+    <!-- </div> -->
+    <!-- </div> -->
+    <!-- </div> -->
+    <div style="width: 100%;">
+        <?= $this->render('_search', ['model' => $model]) ?>
+    </div>
     <div class="transaksi-gaji-index">
         <div class="card">
             <div class="bg-white card-header">
@@ -191,7 +212,7 @@
                         <i class="fas fa-money-bill-wave me-2"></i>
                         <?= Html::encode($this->title) ?>
                     </h5>
-                    <div class="btn-group">
+                    <div class="flex-wrap btn-group">
                         <?= Html::beginForm(['transaksi-gaji/generate-gaji'], 'post', ['id' => 'generate-gaji-form']); ?>
                         <?= Html::hiddenInput('karyawanID', $karyawanID) ?>
                         <?= Html::submitButton('Generate Gaji', [
@@ -200,7 +221,8 @@
                         ]) ?>
                         <?= Html::endForm(); ?>
 
-                        <a href="/panel/transaksi-gaji/report" class="btn btn-primary btn-sm">
+
+                        <a href="/panel/transaksi-gaji/report" class="mx-2 reset-button bg-warning">
                             <i class="fas fa-print me-1"></i> Cetak Transaksi
                         </a>
                     </div>
@@ -241,14 +263,14 @@
                 <div class="action-buttons">
                     <!-- Tombol Detail -->
                     <button type="button" 
-                            class="btn btn-info btn-sm btn-detail"
+                            class="btn btn-danger btn-sm btn-detail"
                             data-bs-toggle="modal" 
                             data-bs-target="#confirmModal"
                             data-action="detail"
-                            data-url="' . Url::to(['view', 'id_transaksi_gaji' => $model['id_transaksi_gaji']]) . '"
+                            data-url="' . Url::to(['deleterow', 'id_karyawan' => $model['id_karyawan'], 'bulan' => $model['bulan'], 'tahun' => $model['tahun']]) . '"
                             data-karyawan="' . Html::encode($model['nama'] ?? 'Karyawan') . '"
                             title="Lihat Detail">
-                        <i class="fas fa-eye"></i>
+                        <i class="fas fa-trash"></i>
                     </button>
                     
                     <!-- Tombol Regenerate -->

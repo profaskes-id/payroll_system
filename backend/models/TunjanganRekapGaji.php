@@ -36,8 +36,8 @@ class TunjanganRekapGaji extends \yii\db\ActiveRecord
             [['bulan', 'tahun'], 'default', 'value' => null],
             [['id_karyawan', 'id_tunjangan', 'nama_tunjangan', 'jumlah'], 'required'],
             [['id_karyawan', 'bulan', 'tahun', 'id_tunjangan'], 'integer'],
-            [['jumlah'], 'number'],
-            [['nama_tunjangan'], 'string', 'max' => 255],
+            [['jumlah', 'nominal_final'], 'number'],
+            [['nama_tunjangan', 'satuan'], 'string', 'max' => 255],
         ];
     }
 
@@ -54,6 +54,8 @@ class TunjanganRekapGaji extends \yii\db\ActiveRecord
             'id_tunjangan' => 'Tunjangan',
             'nama_tunjangan' => 'Nama Tunjangan',
             'jumlah' => 'Jumlah',
+            'satuan' => 'Satuan',
+            'nominal_final' => 'Nominal Final',
         ];
     }
 }

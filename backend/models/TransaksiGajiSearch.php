@@ -86,8 +86,14 @@ class TransaksiGajiSearch extends TransaksiGaji
         return $periode_gaji;
     }
 
-    public function search($params, $id_karyawan)
+    public function search($params, $id_karyawan, $bulan = null, $tahun = null)
     {
+
+        $bulan = $bulan ?? date('m');   // default ke bulan sekarang
+        $tahun = $tahun ?? date('Y');   // default ke tahun sekarang (4 digit)
+
+
+
         $periodeGajiObject = $this->getPerioderGajiSekarang();
         $id_periode_penggajian = $periodeGajiObject->id_periode_gaji;
         $getToleranceTerlambat = MasterKode::findOne(['nama_group' => Yii::$app->params['teleransi-keterlambatan']])['nama_kode'];;
@@ -132,6 +138,7 @@ class TransaksiGajiSearch extends TransaksiGaji
         if ($id_karyawan) {
             $query->andWhere(['karyawan.id_karyawan' => $id_karyawan]);
         }
+
 
         $dataKaryawan = $query->all();
 

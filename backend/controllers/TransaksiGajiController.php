@@ -2,16 +2,15 @@
 
 namespace backend\controllers;
 
-use backend\models\Absensi;
+
 use backend\models\DinasDetailGaji;
-use backend\models\GajiPotongan;
-use backend\models\GajiTunjangan;
 use backend\models\helpers\PeriodeGajiHelper;
 use backend\models\LemburGaji;
 use backend\models\MasterGaji;
 use backend\models\MasterKode;
 use backend\models\PengajuanDinas;
 use backend\models\PeriodeGaji;
+use backend\models\PotonganAlfaAndWfhPenggajian;
 use backend\models\PotonganDetail;
 use backend\models\PotonganRekapGaji;
 use backend\models\RekapGajiKaryawanPertransaksi;
@@ -21,6 +20,7 @@ use backend\models\TransaksiGaji;
 use backend\models\TransaksiGajiSearch;
 use backend\models\TunjanganDetail;
 use backend\models\TunjanganRekapGaji;
+use kartik\mpdf\Pdf;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\web\Controller;
@@ -68,9 +68,17 @@ class TransaksiGajiController extends Controller
      */
     public function actionIndex()
     {
-        $model = new TransaksiGaji();
-        $bulan = 1;
+
+
+        $id_karyawan = null;
+        $bulan = date('m');
         $tahun = date('Y');
+        if ($this->request->get('TransaksiGaji')) {
+            $id_karyawan = $this->request->get('TransaksiGaji')['id_karyawan'] ?? null;
+            $bulan = $this->request->get('TransaksiGaji')['bulan'] ?? date('m');
+            $tahun = $this->request->get('TransaksiGaji')['tahun'] ?? date('Y');
+        }
+        $model = new TransaksiGaji();
         $searchModel = new TransaksiGajiSearch();
 
         $periode_gaji = new PeriodeGaji();
@@ -78,7 +86,7 @@ class TransaksiGajiController extends Controller
         $periode_gajiID = PeriodeGajiHelper::getPeriodeGajiBulanIni();
 
         // Ambil semua dari search (data lengkap dengan gaji_bersih)
-        $allDataFromSearch = $searchModel->search($this->request->queryParams, null)->getModels();
+        $allDataFromSearch = $searchModel->search($this->request->queryParams, $id_karyawan, $bulan, $tahun)->getModels();
 
         // Indexing data search berdasarkan ID karyawan
         $searchIndexed = [];
@@ -122,11 +130,11 @@ class TransaksiGajiController extends Controller
 
                     'id_karyawan',
                     'nama',
-                    // 'nama_bagian' => [
-                    //     'asc' => ['nama_bagian' => SORT_ASC, 'jabatan' => SORT_ASC],
-                    //     'desc' => ['nama_bagian' => SORT_DESC, 'jabatan' => SORT_DESC],
-                    //     'default' => SORT_DESC,
-                    // ],
+                    'nama_bagian' => [
+                        'asc' => ['nama_bagian' => SORT_ASC, 'jabatan' => SORT_ASC],
+                        'desc' => ['nama_bagian' => SORT_DESC, 'jabatan' => SORT_DESC],
+                        'default' => SORT_DESC,
+                    ],
                     'nominal_gaji',
                     'total_alfa_range',
                     'total_absensi',
@@ -155,6 +163,8 @@ class TransaksiGajiController extends Controller
             $bulan = $periode_gaji->bulan;
             $tahun = $periode_gaji->tahun;
         }
+
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -167,6 +177,118 @@ class TransaksiGajiController extends Controller
         ]);
     }
 
+    public function actionReport()
+    {
+        $model = new TransaksiGaji();
+        $bulan = 1;
+        $tahun = date('Y');
+        $searchModel = new TransaksiGajiSearch();
+
+        $periode_gaji = new PeriodeGaji();
+        $karyawanID = null;
+        $periode_gajiID = PeriodeGajiHelper::getPeriodeGajiBulanIni();
+
+        // Ambil semua dari search (data lengkap dengan gaji_bersih)
+        $allDataFromSearch = $searchModel->search($this->request->queryParams, null)->getModels();
+
+        // Indexing data search berdasarkan ID karyawan
+        $searchIndexed = [];
+        foreach ($allDataFromSearch as $item) {
+            $searchIndexed[$item['id_karyawan']] = $item;
+        }
+
+        // Ambil data dari tabel transaksi_gaji
+        $existsDataTransaksi = TransaksiGaji::find()
+            ->where(['bulan' => $bulan, 'tahun' => $tahun])
+            ->asArray()
+            ->all();
+
+        // Proses data yang sudah ada di DB
+        $finalData = [];
+
+        foreach ($existsDataTransaksi as $transaksi) {
+            $idKaryawan = $transaksi['id_karyawan'];
+
+            // Ambil data dari search jika ada (untuk data tambahan), tetapi prioritas ke data transaksi
+            $dataSearch = $searchIndexed[$idKaryawan] ?? [];
+
+            // Gabungkan, dengan prioritas data transaksi
+            $merged = array_merge($dataSearch, $transaksi);
+
+            $finalData[] = $merged;
+
+            // Hapus dari search agar tidak dimasukkan dua kali
+            unset($searchIndexed[$idKaryawan]);
+        }
+
+        foreach ($searchIndexed as $sisa) {
+            $finalData[] = $sisa;
+        }
+
+        // Handle POST request untuk filter
+        if ($this->request->isPost) {
+            $karyawanID = Yii::$app->request->post('Karyawan')['id_karyawan'];
+            $periode_gajiID = intval(Yii::$app->request->post('PeriodeGaji')['id_periode_gaji']);
+
+            if (!$karyawanID) $karyawanID = null;
+            if (!$periode_gajiID) $periode_gajiID = null;
+
+            $periode_gaji = PeriodeGaji::findOne($periode_gajiID);
+            $bulan = $periode_gaji->bulan;
+            $tahun = $periode_gaji->tahun;
+        }
+
+        // Render partial view untuk content PDF
+        $content = $this->renderPartial('_report', [
+            'finalData' => $finalData,
+            'searchModel' => $searchModel,
+            'periode_gaji' => $periode_gaji,
+            'bulan' => $bulan,
+            'tahun' => $tahun,
+            'model' => $model,
+            'karyawanID' => $karyawanID,
+            'periode_gajiID' => $periode_gajiID
+        ]);
+
+        // Setup kartik\mpdf\Pdf component
+        $pdf = new Pdf([
+            // set to use core fonts only
+            'mode' => Pdf::MODE_CORE,
+            // A4 paper format
+            'format' => Pdf::FORMAT_A4,
+            // portrait orientation
+            'orientation' => Pdf::ORIENT_LANDSCAPE, // landscape untuk tabel yang lebar
+            // stream to browser inline
+            'destination' => Pdf::DEST_BROWSER,
+            // your html content input
+            'content' => $content,
+            // format content from your own css file if needed or use the
+            // enhanced bootstrap css built by Krajee for mPDF formatting 
+            'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
+            // any css to be embedded if required
+            'cssInline' => '
+            .kv-heading-1{font-size:18px}
+            table {width: 100%; border-collapse: collapse; font-size: 10px;}
+            th, td {border: 1px solid #ddd; padding: 6px; text-align: left;}
+            th {background-color: #f2f2f2; font-weight: bold;}
+            .text-right {text-align: right;}
+            .text-center {text-align: center;}
+            .header {text-align: center; margin-bottom: 20px;}
+            .title {font-size: 16px; font-weight: bold;}
+            .subtitle {font-size: 14px;}
+        ',
+            // set mPDF properties on the fly
+            'options' => ['title' => 'Laporan Transaksi Gaji'],
+            // call mPDF methods on the fly
+            'methods' => [
+                'SetHeader' => ['Laporan Transaksi Gaji'],
+                'SetFooter' => ['{PAGENO}'],
+            ]
+        ]);
+
+        // Return the pdf object as response
+        return $pdf->render();
+    }
 
 
 
@@ -188,7 +310,8 @@ class TransaksiGajiController extends Controller
         $dinasDetailRows = [];
         $lemburGajiRows = [];
         $rekapGajiRows = [];
-        $rekapTerlambatRows = []; // Tambahkan array untuk rekap terlambat
+        $rekapTerlambatRows = [];
+        $potonganAlfaWfhRows = [];
 
         if (!empty($models)) {
             foreach ($models as $modelData) {
@@ -200,6 +323,10 @@ class TransaksiGajiController extends Controller
                 $tanggal_awal_periode = $periode_gaji->tanggal_awal;
                 $tanggal_akhir_periode = $periode_gaji->tanggal_akhir;
 
+                // Ambil data terlambat
+                $terlambatData = $this->actionGetPotonganTerlambatKaryawan($idKaryawan);
+                $filteredTerlambat = $terlambatData['filteredTerlambat'];
+                $potonganPerMenit = $terlambatData['potonganPerMenit'];
                 // Ambil data lembur
                 $lemburData = $this->getLemburData($idKaryawan, $bulan, $tahun, $tanggal_awal_periode, $tanggal_akhir_periode);
                 $jam_lembur = $lemburData['jam_lembur'];
@@ -212,6 +339,44 @@ class TransaksiGajiController extends Controller
                     ->andWhere(['between', 'tanggal_mulai', $tanggal_awal_periode, $tanggal_akhir_periode])
                     ->asArray()
                     ->all();
+
+                // Ambil data potongan absensi (alfa & WFH)
+                $potonganAbsensiData = $this->actionGetPotonganAbsensiKaryawan(
+                    $idKaryawan,
+                    $modelData['total_alfa_range'],
+                    $modelData['gaji_perhari'],
+                    $modelData['jumlah_wfh'] ?? 0
+                );
+
+                // Simpan data potongan alfa & WFH
+                if ($potonganAbsensiData['success']) {
+                    $potonganAlfaWfhRows[] = [
+                        'id_karyawan' => $idKaryawan,
+                        'nama' => $modelData['nama'],
+                        'bulan' => $bulan,
+                        'tahun' => $tahun,
+                        'jumlah_alfa' => $potonganAbsensiData['total_alfa_range'],
+                        'total_potongan_alfa' => $potonganAbsensiData['total_alfa_range']  * $potonganAbsensiData['gaji_perhari'],
+                        'jumlah_wfh' => $potonganAbsensiData['jumlah_wfh'],
+                        'persen_potongan_wfh' => $potonganAbsensiData['potonganwfhsehari'],
+                        'total_potongan_wfh' => $potonganAbsensiData['jumlah_wfh'] * ($potonganAbsensiData['potonganwfhsehari'] / 100) * $potonganAbsensiData['gaji_perhari'],
+                        'gaji_perhari' => $potonganAbsensiData['gaji_perhari'],
+                    ];
+                }
+
+                // Simpan data terlambat ke array untuk batch insert
+                foreach ($filteredTerlambat as $terlambat) {
+                    $rekapTerlambatRows[] = [
+                        'id_karyawan' => $idKaryawan,
+                        'bulan' => $bulan,
+                        'tahun' => $tahun,
+                        'nama' => $modelData['nama'],
+                        'tanggal' => $terlambat['tanggal'],
+                        'lama_terlambat' => $terlambat['terlambat'],
+                        'potongan_permenit' => $potonganPerMenit,
+                    ];
+                }
+
 
                 // Ambil data terlambat
                 $terlambatData = $this->actionGetPotonganTerlambatKaryawan($idKaryawan);
@@ -231,7 +396,7 @@ class TransaksiGajiController extends Controller
                     ];
                 }
 
-                // Simpan data ke transaksi_gaji
+                // Simpan data ke transaksi_gaji    
                 $rows[] = [
                     'id_karyawan' => $modelData['id_karyawan'],
                     'nama' => $modelData['nama'],
@@ -282,7 +447,9 @@ class TransaksiGajiController extends Controller
                         'tahun' => $tahun,
                         'id_tunjangan' => $tunjangan['id_tunjangan'],
                         'nama_tunjangan' => $tunjangan['nama_tunjangan'],
-                        'jumlah' => $tunjangan['nominal_final'],
+                        'jumlah' => $tunjangan['jumlah'],
+                        'satuan' => $tunjangan['satuan'],
+                        'nominal_final' => $tunjangan['nominal_final'],
                     ];
                 }
 
@@ -294,7 +461,9 @@ class TransaksiGajiController extends Controller
                         'tahun' => $tahun,
                         'id_potongan' => $potongan['id_potongan'],
                         'nama_potongan' => $potongan['nama_potongan'],
-                        'jumlah' => $potongan['nominal_final'],
+                        'jumlah' => $potongan['jumlah'],
+                        'satuan' => $potongan['satuan'],
+                        'nominal_final' => $potongan['nominal_final'],
                     ];
                 }
 
@@ -418,6 +587,8 @@ class TransaksiGajiController extends Controller
                         'id_tunjangan',
                         'nama_tunjangan',
                         'jumlah',
+                        'satuan',
+                        'nominal_final'
                     ], $tunjanganRekapRows)->execute();
             }
 
@@ -435,6 +606,8 @@ class TransaksiGajiController extends Controller
                         'id_potongan',
                         'nama_potongan',
                         'jumlah',
+                        'satuan',
+                        'nominal_final'
                     ], $potonganRekapRows)->execute();
             }
 
@@ -473,6 +646,26 @@ class TransaksiGajiController extends Controller
                     ], $lemburGajiRows)->execute();
             }
 
+            if (!empty($potonganAlfaWfhRows)) {
+                Yii::$app->db->createCommand()
+                    ->delete('{{%potongan_alfa_and_wfh_penggajian}}', ['in', 'id_karyawan', array_column($models, 'id_karyawan')])
+                    ->execute();
+
+                Yii::$app->db->createCommand()
+                    ->batchInsert('{{%potongan_alfa_and_wfh_penggajian}}', [
+                        'id_karyawan',
+                        'nama',
+                        'bulan',
+                        'tahun',
+                        'jumlah_alfa',
+                        'total_potongan_alfa',
+                        'jumlah_wfh',
+                        'persen_potongan_wfh',
+                        'total_potongan_wfh',
+                        'gaji_perhari',
+                    ], $potonganAlfaWfhRows)->execute();
+            }
+
             Yii::$app->session->setFlash('success', "Generate gaji berhasil untuk " . count($rows) . " karyawan.");
         } else {
             Yii::$app->session->setFlash('info', "Tidak ada data untuk digenerate.");
@@ -503,7 +696,7 @@ class TransaksiGajiController extends Controller
         $now = date('Y-m-d H:i:s');
         $userId = Yii::$app->user->id;
 
-        // 2. AMBIL DATA KOMPONEN LAINNYA (seperti di actionGenerateGaji)
+        // 2. AMBIL DATA KOMPONEN LAINNYA
         $nominalGaji = $modelData['nominal_gaji'];
         $tunjanganList = TunjanganDetail::getTunjanganKaryawan($id_karyawan, $nominalGaji);
         $potonganList = PotonganDetail::getPotonganKaryawan($id_karyawan, $nominalGaji);
@@ -526,6 +719,14 @@ class TransaksiGajiController extends Controller
 
         // Ambil data terlambat
         $terlambatData = $this->actionGetPotonganTerlambatKaryawan($id_karyawan);
+
+        // Ambil data potongan absensi (alfa & WFH)
+        $potonganAbsensiData = $this->actionGetPotonganAbsensiKaryawan(
+            $id_karyawan,
+            $modelData['total_alfa_range'],
+            $modelData['gaji_perhari'],
+            $modelData['jumlah_wfh'] ?? 0
+        );
 
         // 3. SIMPAN KE TRANSAKSI_GAJI
         $new = new TransaksiGaji();
@@ -573,6 +774,24 @@ class TransaksiGajiController extends Controller
             $rekapGaji->gaji_perjam = $modelData['nominal_gaji'] / 173;
             if (!$rekapGaji->save()) {
                 $errorMessages[] = "Rekap Gaji: " . json_encode($rekapGaji->errors);
+            }
+
+            // Simpan potongan alfa & WFH
+            if ($potonganAbsensiData['success']) {
+                $potonganAlfaWfh = new PotonganAlfaAndWfhPenggajian();
+                $potonganAlfaWfh->id_karyawan = $id_karyawan;
+                $potonganAlfaWfh->nama = $modelData['nama'];
+                $potonganAlfaWfh->bulan = $bulan;
+                $potonganAlfaWfh->tahun = $tahun;
+                $potonganAlfaWfh->jumlah_alfa = $potonganAbsensiData['total_alfa_range'];
+                $potonganAlfaWfh->total_potongan_alfa = $potonganAbsensiData['total_potongan_absensi'];
+                $potonganAlfaWfh->jumlah_wfh = $potonganAbsensiData['jumlah_wfh'];
+                $potonganAlfaWfh->persen_potongan_wfh = $potonganAbsensiData['potonganwfhsehari'];
+                $potonganAlfaWfh->total_potongan_wfh = $potonganAbsensiData['jumlah_wfh'] * $potonganAbsensiData['potonganwfhsehari'];
+                $potonganAlfaWfh->gaji_perhari = $potonganAbsensiData['gaji_perhari'];
+                if (!$potonganAlfaWfh->save()) {
+                    $errorMessages[] = "Potongan Alfa & WFH: " . json_encode($potonganAlfaWfh->errors);
+                }
             }
 
             // Simpan tunjangan
@@ -634,7 +853,7 @@ class TransaksiGajiController extends Controller
                 $lemburGaji->bulan = $bulan;
                 $lemburGaji->tahun = $tahun;
                 $lemburGaji->tanggal = $lembur['tanggal'];
-                $lemburGaji->hitungan_jam = $lembur['hitungan_jam'] ?? 0; // Perbaikan: gunakan data asli, bukan 1
+                $lemburGaji->hitungan_jam = $lembur['hitungan_jam'] ?? 0;
                 if (!$lemburGaji->save()) {
                     $errorMessages[] = "Lembur {$lembur['tanggal']}: " . json_encode($lemburGaji->errors);
                 }
@@ -698,17 +917,38 @@ class TransaksiGajiController extends Controller
         LemburGaji::deleteAll(['bulan' => $bulan, 'tahun' => $tahun]);
         DinasDetailGaji::deleteAll(['bulan' => $bulan, 'tahun' => $tahun]);
         RekapGajiKaryawanPertransaksi::deleteAll(['bulan' => $bulan, 'tahun' => $tahun]);
+        PotonganAlfaAndWfhPenggajian::deleteAll(['bulan' => $bulan, 'tahun' => $tahun]);
         return;
     }
     public function actionDeleteOne($id_karyawan, $bulan, $tahun)
     {
+        $this->deleteGajiData($id_karyawan, $bulan, $tahun);
+    }
+
+    public function actionDeleterow($id_karyawan, $bulan, $tahun)
+    {
+        $this->deleteGajiData($id_karyawan, $bulan, $tahun);
+        return $this->redirect(['index']);
+    }
+
+    private function deleteGajiData($id_karyawan, $bulan, $tahun)
+    {
+        // Delete TransaksiGaji dengan findOne (karena mungkin ada relasi)
         TransaksiGaji::findOne(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun])?->delete();
-        TunjanganRekapGaji::deleteAll(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun]);
-        PotonganRekapGaji::deleteAll(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun]);
-        LemburGaji::deleteAll(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun]);
-        DinasDetailGaji::deleteAll(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun]);
-        RekapGajiKaryawanPertransaksi::deleteAll(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun]);
-        return;
+
+        // Delete semua data dari tabel lainnya
+        $tables = [
+            TunjanganRekapGaji::class,
+            PotonganRekapGaji::class,
+            LemburGaji::class,
+            DinasDetailGaji::class,
+            RekapGajiKaryawanPertransaksi::class,
+            PotonganAlfaAndWfhPenggajian::class
+        ];
+
+        foreach ($tables as $table) {
+            $table::deleteAll(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun]);
+        }
     }
 
     /**
@@ -779,6 +1019,8 @@ class TransaksiGajiController extends Controller
 
         $nominalGaji = $gajiKaryawan ? $gajiKaryawan->nominal_gaji : 0;
 
+
+
         try {
 
             if (isset($oldPotongan) && $oldPotongan) {
@@ -816,6 +1058,7 @@ class TransaksiGajiController extends Controller
                 ->asArray()
                 ->all();
         }
+
 
         // Jika ada data oldPotongan, langsung return dengan format yang diinginkan
         if (!empty($oldPotongan)) {
@@ -859,6 +1102,7 @@ class TransaksiGajiController extends Controller
             }
 
             $lamaTerlambatFormatted = $totalJam . ":" . str_pad($totalMenitBulat, 2, '0', STR_PAD_LEFT);
+
 
             return [
                 'filteredTerlambat' => $filteredTerlambat,
@@ -907,25 +1151,51 @@ class TransaksiGajiController extends Controller
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         try {
+            $oldTransaksi = TransaksiGaji::find()->where(['id_karyawan' => $id_karyawan])->one();
             $gajiKaryawan = MasterGaji::find()->where(['id_karyawan' => $id_karyawan])->one();
 
             if (!$gajiKaryawan) {
                 throw new \Exception('Data gaji karyawan tidak ditemukan');
             }
+
+
+            if ($oldTransaksi) {
+                $oldPotongan = PotonganAlfaAndWfhPenggajian::find()
+                    ->where(['id_karyawan' => $id_karyawan, 'bulan' => $oldTransaksi->bulan, 'tahun' => $oldTransaksi->tahun])
+                    ->asArray()
+                    ->one(); // gunakan one() karena cuma 1 data
+
+
+
+                if ($oldPotongan) {
+                    return [
+                        'success' => true,
+                        'nominal_gaji' => $gajiKaryawan['nominal_gaji'], // konversi dari gaji_perhari ke nominal_gaji
+                        'total_alfa_range' => (int)$oldPotongan['jumlah_alfa'],
+                        'potongan_per_alfa' =>  $oldPotongan['gaji_perhari'],
+                        'total_potongan_absensi' =>  $oldPotongan['total_potongan_alfa'],
+                        'jumlah_wfh' => $oldPotongan['jumlah_wfh'],
+                        'potonganwfhsehari' => $oldPotongan['persen_potongan_wfh'],
+                        'gaji_perhari' => $oldPotongan['gaji_perhari']
+                    ];
+                }
+            }
+
+
             $nominalGaji = $gajiKaryawan->nominal_gaji;
             $potonganwfhsehari = MasterKode::findOne(['nama_group' => Yii::$app->params['potongan-persen-wfh']])['nama_kode'];
-            $potonganPerAlfa = $nominalGaji * 0.01;
-            $totalPotonganAbsensi = $potonganPerAlfa * $total_alfa_range;
+            $totalPotonganAbsensi = $gaji_perhari * $total_alfa_range;
+
 
             return [
                 'success' => true,
                 'nominal_gaji' => $nominalGaji,
                 'total_alfa_range' => (int)$total_alfa_range,
-                'potongan_per_alfa' => $potonganPerAlfa,
+                'potongan_per_alfa' => $gaji_perhari,
                 'total_potongan_absensi' => $totalPotonganAbsensi,
-                'gaji_perhari' => $gaji_perhari,
                 'jumlah_wfh' => $jumlah_wfh,
-                'potonganwfhsehari' => $potonganwfhsehari
+                'potonganwfhsehari' => (int)$potonganwfhsehari,
+                'gaji_perhari' => $gaji_perhari,
             ];
         } catch (\Exception $e) {
             return [

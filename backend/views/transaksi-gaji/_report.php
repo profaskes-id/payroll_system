@@ -1,186 +1,124 @@
 <?php
 
-use backend\models\Terbilang;
+use yii\helpers\Html;
+
+$periodeText = $periode_gaji ? "Periode: {$bulan}/{$tahun}" : "Periode: Bulan Ini";
 ?>
 
-<h1 class="text-center fw-bold" style="font-weight: bold; font-size: 20px">PT Profaskes Softech Indonesia</h1>
-<p class="text-center fw-bold" style="font-size: 12px;">Ruko Plaza Menteng, Blok B No.17, Jalan Mh.Thamrin, Cibatu, Cikarang Selatan, Kab.Bekasi, Jawa Barat 17530.</p>
-<hr style="margin: -10px 0;">
+<div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px;">
+    <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">LAPORAN TRANSAKSI GAJI KARYAWAN</div>
+    <div style="font-size: 14px; margin-bottom: 5px;"><?= $periodeText ?></div>
+    <div>Tanggal Cetak: <?= date('d/m/Y H:i:s') ?></div>
+</div>
 
-<p class="text-center " style="font-weight: bold; padding:0; margin-top:-20px;">Slip Gaji Karyawan</p>
-<p class="text-center fw-bold" style="padding:0; margin-bottom:5px; font-size: 12px;">
-    Periode : <?= date('d F Y', strtotime($model['tanggal_awal'])) ?> s/d <?= date('d F Y', strtotime($model['tanggal_akhir'])) ?>
-</p>
+<table style="width: 100%; border-collapse: collapse; font-size: 8px; margin-bottom: 10px;">
+    <thead>
+        <tr>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center; width: 30px;">#</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Nama Karyawan</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Bagian & Jabatan</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Gaji Pokok</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Tunjangan</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Potongan</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Total Hadir</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Total Tidak Hadir</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Potongan Absensi</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Potongan Terlambat</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Total Lembur</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Dinas Luar Belum Terbayar</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Gaji Diterima</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $no = 1;
+        $totalGajiBersih = 0;
+        $totalGajiPokok = 0;
+        $totalTunjangan = 0;
+        $totalPotongan = 0;
+        $totalLembur = 0;
+        $totalDinasLuar = 0;
 
-<table class="table border-0 w-100">
-    <tr style="border: 0px solid #dedede; padding: 0; margin: 0 ">
-        <td colspan="1">
-            <table class=" w-100">
-                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">nama</th>
-                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
-                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= $model['nama'] ?? '-' ?> </td>
-                </tr>
-                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">kode karyawan</th>
-                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
-                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= $model['id_karyawan'] ?? '-' ?> </td>
-                </tr>
-                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">gaji pokok</th>
-                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
-                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= 'Rp ' . number_format($model['nominal_gaji'] ?? 0, 0, ',', '.'); ?> </td>
-                </tr>
-                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">gaji per jam</th>
-                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
-                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= 'Rp ' . number_format($model['gaji_perjam'] ?? 0, 0, ',', '.'); ?> </td>
-                </tr>
-                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">metode perhitungan</th>
-                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
-                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= $model['metode_perhitungan_gaji'] ?? '-' ?> </td>
-                </tr>
-            </table>
-        </td>
-        <td colspan="1">
-            <table class=" w-100">
-                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">periode</th>
-                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
-                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'>
-                        <?= date('F Y', strtotime($model['tanggal_awal'])) ?>
-                    </td>
-                </tr>
-                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">tanggal awal</th>
-                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
-                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= $model['tanggal_awal'] ?? '-' ?></td>
-                </tr>
-                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">tanggal akhir</th>
-                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
-                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= $model['tanggal_akhir'] ?? '-' ?></td>
-                </tr>
-                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="text-start text-capitalize" style="font-size:12px; margin:0; padding:0px;">status</th>
-                    <th class="text-start" style="font-size:12px; margin:0; padding:0px;">:</th>
-                    <td class="text-start" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'>
-                        <?= (isset($model['id_transaksi_gaji']) && $model['id_transaksi_gaji'] != null) ? 'Sudah Diproses' : 'Belum Diproses' ?>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
+        foreach ($finalData as $data):
+            $gajiBersih = $data['gaji_bersih'] ?? 0;
+            $gajiPokok = $data['nominal_gaji'] ?? 0;
+            $tunjangan = $data['tunjangan_karyawan'] ?? 0;
+            $potonganKaryawan = $data['potongan_karyawan'] ?? 0;
+            $potonganAbsensi = $data['potongan_absensi'] ?? 0;
+            $potonganTerlambat = $data['potongan_terlambat'] ?? 0;
+            $totalPotonganKaryawan = $potonganKaryawan + $potonganAbsensi + $potonganTerlambat;
+            $lembur = $data['total_pendapatan_lembur'] ?? 0;
+            $dinasLuar = $data['dinas_luar_belum_terbayar'] ?? 0;
+            $totalHadir = $data['total_absensi'] ?? 0;
+            $totalTidakHadir = $data['total_alfa_range'] ?? 0;
 
-    <tr>
-        <td colspan="2"><br></td>
-    </tr>
+            $totalGajiBersih += $gajiBersih;
+            $totalGajiPokok += $gajiPokok;
+            $totalTunjangan += $tunjangan;
+            $totalPotongan += $totalPotonganKaryawan;
+            $totalLembur += $lembur;
+            $totalDinasLuar += $dinasLuar;
+        ?>
+            <tr>
+                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: center;"><?= $no++ ?></td>
+                <td style="padding: 6px 4px; border: 1px solid #ddd;"><?= Html::encode($data['nama'] ?? '') ?><br>
+                    <small style="color: #666;">ID: <?= Html::encode($data['id_karyawan'] ?? '') ?></small>
+                </td>
+                <td style="padding: 6px 4px; border: 1px solid #ddd;">
+                    <div><strong><?= Html::encode($data['nama_bagian'] ?? '') ?></strong></div>
+                    <div style="color: #666;"><?= Html::encode($data['jabatan'] ?? '') ?></div>
+                </td>
+                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($gajiPokok, 0, ',', '.') ?></td>
+                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($tunjangan, 0, ',', '.') ?></td>
+                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($totalPotonganKaryawan, 0, ',', '.') ?></td>
+                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: center;"><?= $totalHadir ?> hari</td>
+                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: center;"><?= $totalTidakHadir ?> hari</td>
+                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($potonganAbsensi, 0, ',', '.') ?></td>
+                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($potonganTerlambat, 0, ',', '.') ?></td>
+                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($lembur, 0, ',', '.') ?></td>
+                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($dinasLuar, 0, ',', '.') ?></td>
+                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right; font-weight: bold;"><?= number_format($gajiBersih, 0, ',', '.') ?></td>
+                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: center;">
+                    <span style="padding: 2px 6px; border-radius: 3px; font-size: 7px; font-weight: bold; 
+                    background-color: <?= ($data['status'] ?? 0) == 1 ? '#d4edda' : '#f8d7da' ?>; 
+                    color: <?= ($data['status'] ?? 0) == 1 ? '#155724' : '#721c24' ?>;">
+                        <?= ($data['status'] ?? 0) == 1 ? 'AKTIF' : 'NON-AKTIF' ?>
+                    </span>
+                </td>
+            </tr>
+        <?php endforeach; ?>
 
-    <tr style="border: 0 solid #dedede; padding: 0; margin: 0 ">
-        <td class="pe-2">
-            <table class="w-100">
-                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="p-1 text-start text-capitalize" style="font-size: 12px; background-color: #e8f5e8;">PENDAPATAN</th>
-                    <th class="p-1 text-center" style="font-size: 12px; background-color: #e8f5e8;"></th>
-                    <td class="p-1 text-end" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px; background-color: #e8f5e8;'></td>
-                </tr>
-                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="p-1 text-start text-capitalize" style="font-size: 12px;">Gaji Pokok</th>
-                    <th class="p-1 text-center" style="font-size: 12px;">:</th>
-                    <td class="p-1 text-end" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= 'Rp ' . number_format($model['nominal_gaji'] ?? 0, 0, ',', '.'); ?> </td>
-                </tr>
-                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="p-1 text-start text-capitalize" style="font-size: 12px;">Tunjangan</th>
-                    <th class="p-1 text-center" style="font-size: 12px;">:</th>
-                    <td class="p-1 text-end" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= 'Rp ' . number_format($model['tunjangan_karyawan'] ?? 0, 0, ',', '.'); ?> </td>
-                </tr>
-                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="p-1 text-start text-capitalize" style="font-size: 12px; background-color: #f0f8ff;">Total Pendapatan</th>
-                    <th class="p-1 text-center" style="font-size: 12px; background-color: #f0f8ff;">:</th>
-                    <?php
-                    $totalPendapatan = ($model['nominal_gaji'] ?? 0) + ($model['tunjangan_karyawan'] ?? 0);
-                    ?>
-                    <td class="p-1 text-end" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px; background-color: #f0f8ff;'><strong><?= 'Rp ' . number_format($totalPendapatan, 0, ',', '.'); ?></strong></td>
-                </tr>
-            </table>
-        </td>
-        <td class="ps-2">
-            <table class="w-100">
-                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="p-1 text-start text-capitalize" style="font-size: 12px; background-color: #ffe8e8;">POTONGAN</th>
-                    <th class="p-1 text-center" style="font-size: 12px; background-color: #ffe8e8;"></th>
-                    <td class="p-1 text-end" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px; background-color: #ffe8e8;'></td>
-                </tr>
-                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="p-1 text-start text-capitalize" style="font-size: 12px;">Potongan</th>
-                    <th class="p-1 text-center" style="font-size: 12px;">:</th>
-                    <td class="p-1 text-end" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'><?= 'Rp ' . number_format($model['potongan_karyawan'] ?? 0, 0, ',', '.'); ?> </td>
-                </tr>
-                <tr style="border: 0.1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="p-1 text-start text-capitalize" style="font-size: 12px; background-color: #fff8f0;">Total Potongan</th>
-                    <th class="p-1 text-center" style="font-size: 12px; background-color: #fff8f0;">:</th>
-                    <td class="p-1 text-end" style='height: 20px; padding:10px; font-size:12px; margin:0; padding:0px; background-color: #fff8f0;'><strong><?= 'Rp ' . number_format($model['potongan_karyawan'] ?? 0, 0, ',', '.'); ?></strong></td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-
-    <tr>
-        <td colspan="2"><br></td>
-    </tr>
-
-    <tr style="border: 0px solid #dedede;">
-        <td colspan="2">
-            <table class="w-100">
-                <tr style="border: 1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="text-start text-capitalize" style="font-size: 14px; background-color: #f0f0f0;">GAJI BERSIH</th>
-                    <th class="text-center" style="font-size: 14px; background-color: #f0f0f0;">:</th>
-                    <?php
-                    $gajiBersih = $totalPendapatan - ($model['potongan_karyawan'] ?? 0);
-                    ?>
-                    <td class="text-end" style='height: 20px; padding:10px; font-size:14px; margin:0; padding:0px; background-color: #f0f0f0;'>
-                        <strong><?= 'Rp ' . number_format($gajiBersih, 0, ',', '.'); ?></strong>
-                    </td>
-                </tr>
-                <tr style="border: 1px solid #dedede; padding: 0; margin: 0 ">
-                    <th class="text-start text-capitalize;" style="font-size:12px; margin:0; padding:0px; background-color: rgba(53, 53, 53, 0.08); color: #000">Terbilang</th>
-                    <th class="text-center" style="font-size:12px; margin:0; padding:0px; background-color: #fff; color: #000">:</th>
-                    <?php
-                    $terbilang = Terbilang::toTerbilang($gajiBersih) . ' Rupiah';
-                    ?>
-                    <td class="text-end " style='background-color: rgba(53, 53, 53, 0.08); color: #000; height: 20px; padding:10px; font-size:12px; margin:0; padding:0px;'>
-                        <strong style="font-weight: bold;"><?= $terbilang ?></strong>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-
-    <tr>
-        <td colspan="2"><br></td>
-    </tr>
-
-    <tr>
-        <td colspan="2">
-            <table class="w-100">
-                <tr>
-                    <td style="text-align: center; padding-top: 30px;">
-                        <p style="margin: 0; font-size: 12px;">Disetujui oleh,</p>
-                        <br><br><br>
-                        <p style="margin: 0; font-size: 12px; border-top: 1px solid #000; padding-top: 5px; width: 200px; margin: 0 auto;">
-                            _________________________
-                        </p>
-                    </td>
-                    <td style="text-align: center; padding-top: 30px;">
-                        <p style="margin: 0; font-size: 12px;">Diterima oleh,</p>
-                        <br><br><br>
-                        <p style="margin: 0; font-size: 12px; border-top: 1px solid #000; padding-top: 5px; width: 200px; margin: 0 auto;">
-                            <?= $model['nama'] ?? '_________________________' ?>
-                        </p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
+        <!-- TOTAL ROW -->
+        <tr style="background-color: #f8f9fa; font-weight: bold;">
+            <td colspan="3" style="padding: 8px 4px; border: 1px solid #333; text-align: right;">TOTAL KESELURUHAN:</td>
+            <td style="padding: 8px 4px; border: 1px solid #333; text-align: right;"><?= number_format($totalGajiPokok, 0, ',', '.') ?></td>
+            <td style="padding: 8px 4px; border: 1px solid #333; text-align: right;"><?= number_format($totalTunjangan, 0, ',', '.') ?></td>
+            <td style="padding: 8px 4px; border: 1px solid #333; text-align: right;"><?= number_format($totalPotongan, 0, ',', '.') ?></td>
+            <td style="padding: 8px 4px; border: 1px solid #333; text-align: center;">-</td>
+            <td style="padding: 8px 4px; border: 1px solid #333; text-align: center;">-</td>
+            <td style="padding: 8px 4px; border: 1px solid #333; text-align: right;">-</td>
+            <td style="padding: 8px 4px; border: 1px solid #333; text-align: right;">-</td>
+            <td style="padding: 8px 4px; border: 1px solid #333; text-align: right;"><?= number_format($totalLembur, 0, ',', '.') ?></td>
+            <td style="padding: 8px 4px; border: 1px solid #333; text-align: right;"><?= number_format($totalDinasLuar, 0, ',', '.') ?></td>
+            <td style="padding: 8px 4px; border: 1px solid #333; text-align: right; background-color: #e7f3ff;"><?= number_format($totalGajiBersih, 0, ',', '.') ?></td>
+            <td style="padding: 8px 4px; border: 1px solid #333; text-align: center;">-</td>
+        </tr>
+    </tbody>
 </table>
+
+<?php if (empty($finalData)): ?>
+    <div style="text-align: center; padding: 40px; font-style: italic; color: #666;">
+        Tidak ada data transaksi gaji untuk periode ini.
+    </div>
+<?php endif; ?>
+
+<div style="margin-top: 20px; font-size: 9px; color: #666;">
+    <p><strong>Keterangan:</strong></p>
+    <ul style="margin: 0; padding-left: 15px;">
+        <li>Total Hadir: Jumlah hari karyawan hadir bekerja</li>
+        <li>Total Tidak Hadir: Jumlah hari karyawan tidak hadir (alfa)</li>
+        <li>Potongan: Total semua potongan (karyawan + absensi + terlambat)</li>
+        <li>Gaji Diterima: Gaji bersih setelah semua penambahan dan pengurangan</li>
+    </ul>
+</div>

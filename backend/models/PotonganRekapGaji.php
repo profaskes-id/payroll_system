@@ -36,8 +36,8 @@ class PotonganRekapGaji extends \yii\db\ActiveRecord
             [['bulan', 'tahun'], 'default', 'value' => null],
             [['id_karyawan', 'id_potongan', 'nama_potongan', 'jumlah'], 'required'],
             [['id_karyawan', 'bulan', 'tahun', 'id_potongan'], 'integer'],
-            [['jumlah'], 'number'],
-            [['nama_potongan'], 'string', 'max' => 255],
+            [['jumlah', 'nominal_final'], 'number'],
+            [['nama_tunjangan', 'satuan'], 'string', 'max' => 255],
         ];
     }
 
@@ -54,7 +54,8 @@ class PotonganRekapGaji extends \yii\db\ActiveRecord
             'id_potongan' => 'Id Potongan',
             'nama_potongan' => 'Nama Potongan',
             'jumlah' => 'Jumlah',
+            'satuan' => 'Satuan',
+            'nominal_final' => 'Nominal Final',
         ];
     }
-
 }
