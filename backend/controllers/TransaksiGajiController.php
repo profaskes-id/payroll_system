@@ -180,7 +180,7 @@ class TransaksiGajiController extends Controller
     public function actionReport()
     {
         $model = new TransaksiGaji();
-        $bulan = 1;
+        $bulan = date('m');
         $tahun = date('Y');
         $searchModel = new TransaksiGajiSearch();
 
@@ -294,7 +294,7 @@ class TransaksiGajiController extends Controller
 
     public function actionGenerateGaji()
     {
-        $bulan = 1;
+        $bulan = date('m');
         $tahun = date('Y');
         $this->actionDeleteAll($bulan, $tahun);
 
@@ -677,7 +677,7 @@ class TransaksiGajiController extends Controller
 
     public function actionGenerateGajiOne($id_karyawan)
     {
-        $bulan = 1;
+        $bulan = date('m');
         $tahun = date('Y');
 
         // 1. DELETE data lama dulu
