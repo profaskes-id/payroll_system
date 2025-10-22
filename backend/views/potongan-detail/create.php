@@ -1,11 +1,18 @@
 <?php
 
+use backend\models\helpers\KaryawanHelper;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var backend\models\PotonganDetail $model */
 
-$this->title = Yii::t('app', 'Tambah Potongan Karyawan');
+
+$id_karyawan = Yii::$app->request->get('id_karyawan');
+$nama = KaryawanHelper::getKaryawanById($id_karyawan)[0]['nama'];
+
+
+
+$this->title = Yii::t('app', "Potongan -- {$nama}  ");
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Potongan Detail'), 'url' => ['/tunjangan-potongan/index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -18,6 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <?= $this->render('_form', [
         'model' => $model,
+        'id_karyawan' => $id_karyawan
     ]) ?>
 
 </div>

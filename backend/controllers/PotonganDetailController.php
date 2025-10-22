@@ -164,4 +164,22 @@ class PotonganDetailController extends Controller
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
+
+    public function actionGetDetail($id_karyawan)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $data = PotonganDetail::find()
+            ->alias('pd') // alias untuk tabel potongan_detail
+            ->select(['pd.*', 'p.*']) // ambil semua kolom dari potongan_detail dan potongan
+            ->leftJoin('potongan p', 'p.id_potongan = pd.id_potongan') // join ke potongan
+            ->where(['pd.id_karyawan' => $id_karyawan, 'pd.status' => 1])
+            ->asArray()
+            ->all();
+
+        return [
+            'success' => true,
+            'data' => $data
+        ];
+    }
 }

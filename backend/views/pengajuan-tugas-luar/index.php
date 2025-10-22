@@ -11,7 +11,7 @@ use yii\grid\GridView;
 /** @var backend\models\PengajuanTugasLuarSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Pengajuan Tugas Luars');
+$this->title = Yii::t('app', 'Pengajuan Tugas Luar');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pengajuan-tugas-luar-index">

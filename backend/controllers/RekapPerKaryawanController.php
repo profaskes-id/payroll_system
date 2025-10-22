@@ -10,7 +10,6 @@ use DateInterval;
 use DatePeriod;
 use Yii;
 use DateTime;
-
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Border;
@@ -36,8 +35,6 @@ class RekapPerKaryawanController extends \yii\web\Controller
         $lastdate = date('Y-m-d', mktime(0, 0, 0, $bulan + 1, intval($tanggalAwal->nama_kode), $tahun));
         $tanggal_awal =  Yii::$app->request->get() == [] ? $firstDayOfMonth :  Yii::$app->request->get()['tanggal_awal'];
         $tanggal_akhir =  Yii::$app->request->get() == [] ? $lastdate :  Yii::$app->request->get()['tanggal_akhir'];
-
-
 
 
 
@@ -84,7 +81,7 @@ class RekapPerKaryawanController extends \yii\web\Controller
             }
         }
 
-        return $this->render('index', [
+        return $this->render('/index', [
             'tanggal_awal' => $tanggal_awal,
             'tanggal_akhir' => $tanggal_akhir,
             'karyawan' => $karyawan,

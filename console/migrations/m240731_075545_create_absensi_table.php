@@ -28,7 +28,7 @@ class m240731_075545_create_absensi_table extends Migration
             'is_wfh' => $this->smallInteger()->defaultValue(0), // Status description (nullable)
             "id_shift" => $this->integer()->defaultValue(null),
             "kelebihan_jam_pulang" => $this->time()->defaultValue(null),
-                        'similarity' => $this->int()->defaultValue(0),
+            'similarity' => $this->int()->defaultValue(0),
 
         ]);
 

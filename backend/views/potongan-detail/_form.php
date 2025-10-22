@@ -16,23 +16,30 @@ use yii\helpers\ArrayHelper;
 
 <div class="potongan-detail-form table-container">
 
+
+
     <?php $form = ActiveForm::begin(); ?>
 
     <div class="row">
-        <div class="col-md-6 col-12">
-            <?php $nama_kode = ArrayHelper::map(KaryawanHelper::getKaryawanData(), 'id_karyawan', 'nama');
-            echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
-                'data' => $nama_kode,
-                'language' => 'id',
-                'options' => ['placeholder' => 'Cari nama karyawan'],
-                'pluginOptions' => [
-                    'tags' => true,
-                    'allowClear' => true
-                ],
-            ])->label("Nama Karyawan");
-            ?>
-        </div>
-        <div class="col-md-6 col-12">
+
+        <?php if ($id_karyawan) : ?>
+            <?= $form->field($model, 'id_karyawan')->hiddenInput(['value' => $id_karyawan,  'maxlength' => true])->label(false) ?>
+        <?php else: ?>
+            <div class="col-12">
+                <?php
+                $data = \yii\helpers\ArrayHelper::map(KaryawanHelper::getKaryawanData(), 'id_karyawan', 'nama');
+                echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
+                    'data' => $data,
+                    'language' => 'id',
+                    'options' => ['placeholder' => 'Pilih karyawan ...'],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                ])->label(' Karyawan');
+                ?>
+            </div>
+        <?php endif ?>
+        <div class="col-12">
             <?php $nama_kode = ArrayHelper::map(Potongan::find()->asArray()->all(), 'id_potongan', 'nama_potongan');
             echo $form->field($model, 'id_potongan')->widget(Select2::classname(), [
                 'data' => $nama_kode,
@@ -50,7 +57,7 @@ use yii\helpers\ArrayHelper;
             </button>
         </div>
 
-        <div class="col-4 ">
+        <div class="col-12- col-md-6 ">
             <?= $form->field($model, 'tipe_jumlah')->dropDownList(
                 ['rupiah' => 'Rupiah (Rp)', 'persen' => 'Persen (%)'],
                 ['id' => 'tipe-jumlah', 'prompt' => '-- Pilih Tipe Jumlah --']
@@ -58,7 +65,7 @@ use yii\helpers\ArrayHelper;
         </div>
 
 
-        <div class="col-8">
+        <div class="col-12 col-md-6">
             <?= $form->field($model, 'jumlah')->textInput([
                 'maxlength' => true,
                 'type' => 'number',

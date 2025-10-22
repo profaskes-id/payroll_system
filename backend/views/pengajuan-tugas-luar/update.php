@@ -5,8 +5,8 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\PengajuanTugasLuar $model */
 
-$this->title = Yii::t('app', 'Update Pengajuan Tugas Luar');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Pengajuan Tugas Luars'), 'url' => ['index']];
+$this->title = Yii::t('app', ' Pengajuan Tugas Luar');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Pengajuan Tugas Luar'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->karyawan->nama, 'url' => ['view', 'id_tugas_luar' => $model->id_tugas_luar]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>

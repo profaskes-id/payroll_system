@@ -161,4 +161,24 @@ class TunjanganDetailController extends Controller
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
+
+
+    public function actionGetDetail($id_karyawan)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $data = TunjanganDetail::find()
+            ->alias('td') // beri alias pada tabel utama
+            ->select(['td.*', 't.*']) // ambil semua kolom dari kedua tabel
+            ->leftJoin('tunjangan t', 't.id_tunjangan = td.id_tunjangan') // join dengan alias
+            ->where(['td.id_karyawan' => $id_karyawan, 'td.status' => 1]) // tambahkan alias di kondisi
+            ->asArray()
+            ->all();
+
+
+        return [
+            'success' => true,
+            'data' => $data
+        ];
+    }
 }

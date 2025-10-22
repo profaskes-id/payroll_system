@@ -54,34 +54,32 @@ class TransaksiGajiSearch extends TransaksiGaji
      * @return ActiveDataProvider
      */
 
-    public function getPerioderGajiSekarang()
+    public function getPerioderGajiSekarang($bulan = null, $tahun = null)
     {
         $tanggal_cut_off = MasterKode::findOne(['nama_group' => 'tanggal-cut-of']);
         $tanggal_cut_off_value = (int)$tanggal_cut_off['nama_kode'];
 
-        $sekarang = new DateTime();
-        $tanggal_sekarang = (int)$sekarang->format('d');
+        // Gunakan bulan dan tahun yang dikirim, atau default ke sekarang
+        if ($bulan !== null && $tahun !== null) {
+            $tanggal = DateTime::createFromFormat('Y-m-d', sprintf('%04d-%02d-01', $tahun, $bulan));
+        } else {
+            $tanggal = new DateTime();
+        }
+
+        $tanggal_sekarang = (int)$tanggal->format('d');
 
         if ($tanggal_sekarang < $tanggal_cut_off_value) {
-            // Kurangi 1 bulan
-            $sekarang->modify('-1 month');
+            $tanggal->modify('-1 month');
         }
 
         $hasil = sprintf(
             '%d-%02d-%02d',
-            $sekarang->format('Y'),
-            $sekarang->format('m'),
+            $tanggal->format('Y'),
+            $tanggal->format('m'),
             $tanggal_cut_off_value
         );
 
         $periode_gaji = PeriodeGaji::find()->where(['tanggal_awal' => $hasil])->one();
-
-        // Example assignments (should use '=' instead of '=>')
-        $periode_gaji['id_periode_gaji'] = 79;
-        $periode_gaji['bulan'] = 1;
-        $periode_gaji['tahun'] = 2025;
-        $periode_gaji['tanggal_awal'] = "2024-12-20";
-        $periode_gaji['tanggal_akhir'] = "2025-01-19";
 
         return $periode_gaji;
     }
@@ -94,7 +92,7 @@ class TransaksiGajiSearch extends TransaksiGaji
 
 
 
-        $periodeGajiObject = $this->getPerioderGajiSekarang();
+        $periodeGajiObject = $this->getPerioderGajiSekarang($bulan, $tahun);
         $id_periode_penggajian = $periodeGajiObject->id_periode_gaji;
         $getToleranceTerlambat = MasterKode::findOne(['nama_group' => Yii::$app->params['teleransi-keterlambatan']])['nama_kode'];;
 

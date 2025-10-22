@@ -95,7 +95,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <?= Html::a(
                             '<i class="fas fa-edit"></i>',
-                            ['/your-controller/edit', 'id' => $tanggal_cut_of['kode']], // Update with your actual route
+                            ['/your-controller/edit', 'id' => $tanggal_cut_of['kode'] ?? ''], // Update with your actual route
                             [
                                 'class' => 'btn btn-sm btn-primary btn-edit', // Added btn-edit class
                                 'title' => 'Edit',
@@ -119,7 +119,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <?= Html::a(
                             '<i class="fas fa-edit"></i>',
-                            ['/your-controller/edit', 'id' => $potongan_persenan_wfh['kode']], // Update with your actual route
+                            ['/your-controller/edit', 'id' => $potongan_persenan_wfh['kode'] ?? ''], // Update with your actual route
                             [
                                 'class' => 'btn btn-sm btn-primary btn-edit b', // Added btn-edit class
                                 'title' => 'Edit',
