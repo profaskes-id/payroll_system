@@ -48,15 +48,45 @@ class KaryawanSearch extends Karyawan
     {
         $query = Karyawan::find();
 
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            //order sesuai anama asc
             'sort' => [
-                'defaultOrder' => [
-                    'is_aktif' => SORT_DESC,
-                    'nama' => SORT_ASC,
-                ]
+                'attributes' => [
+                    'nama',
+                    'kode_karyawan',
+                    'kode_jenis_kelamin',
+                    'bagian' => [
+                        'asc' => [
+                            new \yii\db\Expression('(SELECT GROUP_CONCAT(b.nama_bagian) FROM data_pekerjaan dp JOIN bagian b ON dp.id_bagian = b.id_bagian WHERE dp.id_karyawan = karyawan.id_karyawan AND dp.is_aktif = 1) ASC')
+                        ],
+                        'desc' => [
+                            new \yii\db\Expression('(SELECT GROUP_CONCAT(b.nama_bagian) FROM data_pekerjaan dp JOIN bagian b ON dp.id_bagian = b.id_bagian WHERE dp.id_karyawan = karyawan.id_karyawan AND dp.is_aktif = 1) DESC')
+                        ],
+                        'label' => 'Bagian',
+                        'default' => SORT_ASC
+                    ],
+
+                    'tanggal_masuk' => [
+                        'asc' => [
+                            new \yii\db\Expression('(SELECT MAX(dp.dari) FROM data_pekerjaan dp WHERE dp.id_karyawan = karyawan.id_karyawan AND dp.is_aktif = 1) ASC')
+                        ],
+                        'desc' => [
+                            new \yii\db\Expression('(SELECT MAX(dp.dari) FROM data_pekerjaan dp WHERE dp.id_karyawan = karyawan.id_karyawan AND dp.is_aktif = 1) DESC')
+                        ],
+                        'label' => 'Tanggal Masuk',
+                        'default' => SORT_ASC
+                    ],
+                    'masa_kerja' => [
+                        'asc' => [
+                            new \yii\db\Expression('(SELECT MIN(dp.dari) FROM data_pekerjaan dp WHERE dp.id_karyawan = karyawan.id_karyawan AND dp.is_aktif = 1) ASC')
+                        ],
+                        'desc' => [
+                            new \yii\db\Expression('(SELECT MIN(dp.dari) FROM data_pekerjaan dp WHERE dp.id_karyawan = karyawan.id_karyawan AND dp.is_aktif = 1) DESC')
+                        ],
+                        'label' => 'Masa Kerja',
+                        'default' => SORT_ASC
+                    ],
+                ],
             ]
         ]);
 

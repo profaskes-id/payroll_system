@@ -46,8 +46,8 @@ class PengajuanTugasLuar extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_tugas_luar' => 'Id Tugas Luar',
-            'id_karyawan' => 'Id Karyawan',
+            'id_tugas_luar' => 'Tugas Luar',
+            'id_karyawan' => 'Karyawan',
             'status_pengajuan' => 'Status Pengajuan',
             'tanggal' => 'tanggal',
             'created_at' => 'Created At',

@@ -53,8 +53,8 @@ class PengajuanDinas extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_pengajuan_dinas' => 'Id Pengajuan Dinas',
-            'id_karyawan' => 'Id Karyawan',
+            'id_pengajuan_dinas' => 'Pengajuan Dinas',
+            'id_karyawan' => 'Karyawan',
             'keterangan_perjalanan' => 'Keterangan Perjalanan',
             'tanggal_mulai' => 'Tanggal Mulai',
             'tanggal_selesai' => 'Tanggal Selesai',

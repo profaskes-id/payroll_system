@@ -81,7 +81,7 @@ class RekapPerKaryawanController extends \yii\web\Controller
             }
         }
 
-        return $this->render('/index', [
+        return $this->render('index', [
             'tanggal_awal' => $tanggal_awal,
             'tanggal_akhir' => $tanggal_akhir,
             'karyawan' => $karyawan,

@@ -52,9 +52,9 @@ class PengajuanShift extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_pengajuan_shift' => 'Id Pengajuan Shift',
-            'id_karyawan' => 'Id Karyawan',
-            'id_shift_kerja' => 'Id Shift Kerja',
+            'id_pengajuan_shift' => 'Pengajuan Shift',
+            'id_karyawan' => 'Karyawan',
+            'id_shift_kerja' => 'Shift Kerja',
             'diajukan_pada' => 'Diajukan Pada',
             'tanggal_awal' => 'Tanggal Awal',
             'tanggal_akhir' => 'Tanggal Akhir',

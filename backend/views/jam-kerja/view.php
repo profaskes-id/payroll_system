@@ -34,8 +34,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
 
             <p class="d-flex justify-content-end " style="gap: 10px;">
-                <?= Html::a('tambah total hari kerja', ['total-hari-kerja/view', 'id_jam_kerja' => $model->id_jam_kerja, 'jenis_shift' => $model->jenis_shift], ['class' => 'tambah-button']) ?>
-
+                <?php // Html::a('tambah total hari kerja', ['total-hari-kerja/view', 'id_jam_kerja' => $model->id_jam_kerja, 'jenis_shift' => $model->jenis_shift], ['class' => 'tambah-button']) 
+                ?>
                 <?= Html::a('Update', ['update', 'id_jam_kerja' => $model->id_jam_kerja], ['class' => 'add-button']) ?>
                 <?= Html::a('Delete', ['delete', 'id_jam_kerja' => $model->id_jam_kerja], [
                     'class' => 'reset-button',

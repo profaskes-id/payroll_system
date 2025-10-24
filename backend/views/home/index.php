@@ -7,27 +7,20 @@ $this->title = 'Dashboard';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<div class="min-h-screen bg-gray-50 ">
+<div class="relative z-40 min-h-screen bg-gray-50">
     <!-- Header Section -->
-    <header class="relative z-50 text-white shadow-lg bg-gradient-to-r from-blue-600 to-blue-800">
+    <header class="relative z-50 text-black ">
         <div class="container px-4 py-4 mx-auto md:px-6">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                 <!-- User Profile Section -->
                 <div class="flex items-center justify-between md:justify-start">
                     <div class="flex items-center">
-                        <!-- User Avatar -->
-                        <div class="relative w-12 h-12 overflow-hidden bg-white rounded-full shadow-md">
-                            <div class="absolute inset-0 flex items-center justify-center bg-blue-100">
-                                <span class="text-xl font-bold text-blue-600 uppercase">
-                                    <?= substr($karyawan->nama, 0, 1) ?>
-                                </span>
-                            </div>
-                        </div>
+
 
                         <!-- User Info -->
                         <div class="ml-4">
                             <h1 class="text-xl font-bold md:text-2xl"><?= Html::encode($karyawan->nama) ?></h1>
-                            <p class="text-sm text-blue-100"><?= Html::encode($karyawan->kode_karyawan) ?></p>
+                            <p class="text-sm text-black/60"><?= Html::encode($karyawan->kode_karyawan) ?></p>
                         </div>
                     </div>
 
@@ -36,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <!-- Right Side Controls -->
                 <div class="flex items-center justify-between mt-4 md:mt-0">
                     <!-- Time Display -->
-                    <div class="flex items-center px-4 py-2 bg-blue-700 rounded-lg shadow-md">
+                    <div class="flex items-center px-4 py-2 rounded-lg ">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -55,11 +48,24 @@ $this->params['breadcrumbs'][] = $this->title;
                         <!-- Notification Button -->
                         <div class="relative">
                             <?= Html::a(
-                                '<div class="p-2 transition-colors duration-200 rounded-full hover:bg-blue-700">' .
-                                    '<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">' .
-                                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />' .
+                                '<div class="p-2 transition-colors duration-200 rounded-full hover:bg-white">' .
+                                    '<svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">' .
+                                    '<g fill="none">' .
+                                    '<path fill="url(#SVG6va8FeeJ)" d="M15 18a3 3 0 1 1-6 0a3 3 0 0 1 6 0"/>' .
+                                    '<path fill="url(#SVG739fbesO)" d="M12 2.004a7.5 7.5 0 0 1 7.5 7.5v3.998l1.418 3.16a.95.95 0 0 1-.866 1.34h-16.1a.95.95 0 0 1-.867-1.339l1.415-3.16V9.49l.005-.25A7.5 7.5 0 0 1 12 2.004"/>' .
+                                    '<defs>' .
+                                    '<linearGradient id="SVG6va8FeeJ" x1="12" x2="12.019" y1="17.5" y2="20.999" gradientUnits="userSpaceOnUse">' .
+                                    '<stop stop-color="#eb4824"/>' .
+                                    '<stop offset="1" stop-color="#ffcd0f" stop-opacity="0.988"/>' .
+                                    '</linearGradient>' .
+                                    '<linearGradient id="SVG739fbesO" x1="21.027" x2="5.578" y1="17.995" y2="3.776" gradientUnits="userSpaceOnUse">' .
+                                    '<stop stop-color="#ff6f47"/>' .
+                                    '<stop offset="1" stop-color="#ffcd0f"/>' .
+                                    '</linearGradient>' .
+                                    '</defs>' .
+                                    '</g>' .
                                     '</svg>' .
-                                    ($is_ada_notif > 0 ? '<span class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full"></span>' : '') .
+                                    ($is_ada_notif > 0 ? '<span class="absolute w-2 h-2 bg-red-500 rounded-full top-2 right-2"></span>' : '') .
                                     '</div>',
                                 ['/home/inbox', 'id_user' => Yii::$app->user->identity->id]
                             ) ?>
@@ -67,9 +73,22 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <!-- Refresh Button -->
                         <?= Html::a(
-                            '<div class="p-2 transition-colors duration-200 rounded-full hover:bg-blue-700">' .
-                                '<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">' .
-                                '<path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.95 8.95 0 0 0 13 21a9 9 0 0 0 0-18m-1 5v5l4.25 2.52.77-1.28-3.52-2.09V8z" />' .
+                            '<div class="p-2 transition-colors duration-200 rounded-full hover:bg-white">' .
+                                '<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 20 20" fill="none">' .
+                                '<g>' .
+                                '<path fill="url(#SVGhPVQMdww)" d="M10 5.5a1 1 0 0 1 1 1V9h1.5a1 1 0 1 1 0 2H10a1 1 0 0 1-1-1V6.5a1 1 0 0 1 1-1"/>' .
+                                '<path fill="url(#SVGoKFQYQSV)" d="M6.031 5.5A6 6 0 1 1 4 10a1 1 0 0 0-2 0a8 8 0 1 0 2.5-5.81V3a1 1 0 0 0-2 0v3A1.5 1.5 0 0 0 4 7.5h3a1 1 0 0 0 0-2z"/>' .
+                                '<defs>' .
+                                '<linearGradient id="SVGhPVQMdww" x1="8.156" x2="20.094" y1="16.45" y2="11.414" gradientUnits="userSpaceOnUse">' .
+                                '<stop stop-color="#d373fc"/>' .
+                                '<stop offset="1" stop-color="#6d37cd"/>' .
+                                '</linearGradient>' .
+                                '<linearGradient id="SVGoKFQYQSV" x1="2" x2="6.295" y1="2.941" y2="20.923" gradientUnits="userSpaceOnUse">' .
+                                '<stop stop-color="#0fafff"/>' .
+                                '<stop offset="1" stop-color="#0067bf"/>' .
+                                '</linearGradient>' .
+                                '</defs>' .
+                                '</g>' .
                                 '</svg>' .
                                 '</div>',
                             ['/home/view', 'id_user' => Yii::$app->user->identity->id]
@@ -82,87 +101,59 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
         <!-- Decorative Bottom Border -->
-        <div class="absolute bottom-0 left-0 right-0 h-1 opacity-50 bg-gradient-to-r from-blue-400 to-blue-600"></div>
     </header>
 
     <!-- Enhanced Announcement Banner -->
-    <div class="container relative z-50 px-4 mx-auto mt-6 md:px-6 ">
-        <div class="relative overflow-hidden transition-all duration-300 bg-white shadow-lg rounded-xl hover:shadow-xl group">
-            <!-- Decorative gradient background -->
-            <div class="absolute inset-0 z-0 opacity-10 bg-gradient-to-r from-blue-500 via-purple-500 to-red-500"></div>
-
-            <!-- Animated wave pattern -->
-            <div class="absolute bottom-0 left-0 w-full h-8 overflow-hidden transform translate-y-1">
-                <svg class="absolute bottom-0 left-0 w-full text-white" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                    <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"
-                        class="fill-current opacity-20"
-                        style="color: #3b82f6;"></path>
-                    <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z"
-                        class="opacity-50 fill-current"
-                        style="color: #3b82f6;"></path>
-                    <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z"
-                        class="fill-current"
-                        style="color: #3b82f6;"></path>
-                </svg>
-            </div>
+    <div class="container relative z-50 px-1 mx-auto mt-2 md:px-6 ">
+        <div class="relative overflow-hidden bg-blue-500 rounded-lg shadow-lg ">
 
             <a href="/panel/home/pengumuman" class="relative z-50 flex flex-col md:flex-row ">
-                <!-- Image with gradient overlay -->
-                <div class="relative md:w-2/5">
-                    <!-- Gradient overlay -->
-                    <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-l-xl"></div>
-
-                    <!-- SVG Speaker/Announcement Icon -->
-                    <div class="flex items-center justify-center w-full h-48 bg-gray-100 md:h-full rounded-l-xl">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 8a3 3 0 0 1 0 6M18 8a3 3 0 0 0 0-6H5.75A1.75 1.75 0 0 0 4 3.75v8.5c0 .966.784 1.75 1.75 1.75H18z" />
-                            <path d="M8 15v2a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-2" />
-                            <path d="M12 15V9" />
-                            <path d="M9 12h6" />
-                        </svg>
-                    </div>
-
-                    <!-- Decorative badge -->
-                    <span class="absolute z-50 px-3 py-1 text-xs font-bold text-white uppercase transform rounded-full shadow-lg bg-gradient-to-r from-red-500 to-pink-500 -rotate-6 -top-0 -right-3">
-                        New!
-                    </span>
-
-                    <!-- Decorative pulse animation -->
-                    <div class="absolute top-0 left-0 flex items-center justify-center w-full h-full">
-                        <div class="absolute w-16 h-16 bg-blue-400 rounded-full opacity-0 animate-ping-slow"></div>
-                    </div>
-                </div>
-                <!-- Content with improved typography -->
-                <div class="p-6 md:w-3/5">
+                <div class="p-4">
                     <div class="flex items-center mb-2">
-                        <h2 class="text-2xl font-bold text-gray-800">Informasi Pengumuman</h2>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 ml-2 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clip-rule="evenodd" />
+                        <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 20 20">
+                            <g fill="none">
+                                <path fill="url(#SVG5pbk5biH)" fill-rule="evenodd" d="M6 15.5a3.5 3.5 0 1 1 7 0a3.5 3.5 0 0 1-7 0m3.5-2a2 2 0 1 0 0 4a2 2 0 0 0 0-4" clip-rule="evenodd" />
+                                <path fill="url(#SVGaO6vgcbc)" fill-opacity="0.8" fill-rule="evenodd" d="M6 15.5a3.5 3.5 0 1 1 7 0a3.5 3.5 0 0 1-7 0m3.5-2a2 2 0 1 0 0 4a2 2 0 0 0 0-4" clip-rule="evenodd" />
+                                <path fill="url(#SVGoFT8beef)" d="M7.607 3.145a2 2 0 0 1 3.261-.514l6.587 6.98a2 2 0 0 1-.648 3.203L5.325 17.872a1.5 1.5 0 0 1-1.661-.307l-1.222-1.211a1.5 1.5 0 0 1-.299-1.71z" />
+                                <path fill="url(#SVGlda54dKu)" fill-opacity="0.8" d="M7.607 3.145a2 2 0 0 1 3.261-.514l6.587 6.98a2 2 0 0 1-.648 3.203L5.325 17.872a1.5 1.5 0 0 1-1.661-.307l-1.222-1.211a1.5 1.5 0 0 1-.299-1.71z" />
+                                <path fill="url(#SVGWjXjrBKh)" d="M14.712 1.737a.75.75 0 0 0-1.423-.474l-.5 1.5a.75.75 0 1 0 1.423.474z" />
+                                <path fill="url(#SVGWjXjrBKh)" d="M18.03 3.03a.75.75 0 0 0-1.06-1.06l-2 2a.75.75 0 0 0 1.06 1.06z" />
+                                <path fill="url(#SVGWjXjrBKh)" d="M17 5.75a.75.75 0 0 0 0 1.5h1.5a.75.75 0 0 0 0-1.5z" />
+                                <defs>
+                                    <linearGradient id="SVG5pbk5biH" x1="14.5" x2="11.487" y1="23.5" y2="16.098" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#43e5ca" />
+                                        <stop offset="1" stop-color="#0c74a1" />
+                                    </linearGradient>
+                                    <linearGradient id="SVGaO6vgcbc" x1="8" x2="11.003" y1="13" y2="20.499" gradientUnits="userSpaceOnUse">
+                                        <stop offset=".08" stop-color="#e362f8" />
+                                        <stop offset=".656" stop-color="#96f" stop-opacity="0" />
+                                    </linearGradient>
+                                    <linearGradient id="SVGoFT8beef" x1="2.57" x2="13.609" y1="5.003" y2="16.477" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#43e5ca" />
+                                        <stop offset="1" stop-color="#1384b1" />
+                                    </linearGradient>
+                                    <linearGradient id="SVGlda54dKu" x1="10" x2="17" y1="11" y2="22.5" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#96f" stop-opacity="0" />
+                                        <stop offset=".63" stop-color="#e362f8" />
+                                    </linearGradient>
+                                    <radialGradient id="SVGWjXjrBKh" cx="0" cy="0" r="1" gradientTransform="matrix(14 -14 14.00977 14.00977 6 14)" gradientUnits="userSpaceOnUse">
+                                        <stop offset=".623" stop-color="#fb5937" />
+                                        <stop offset=".935" stop-color="#ffa43d" />
+                                    </radialGradient>
+                                </defs>
+                            </g>
                         </svg>
+                        <h2 class="pl-5 text-xl font-bold text-white">Informasi Pengumuman</h2>
                     </div>
 
-                    <p class="mb-4 text-gray-600">Update terbaru dari manajemen untuk seluruh karyawan</p>
+                    <p class="mb-4 text-sm text-white">Update terbaru dari manajemen untuk seluruh karyawan</p>
 
-                    <!-- Improved CTA button -->
-                    <div class="inline-flex items-center px-4 py-2 mt-2 space-x-2 text-sm font-medium text-white transition-all duration-200 transform bg-blue-600 rounded-lg group-hover:bg-blue-700 group-hover:scale-105">
-                        <span>Lihat selengkapnya</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                    </div>
-
-                    <!-- Decorative dots -->
-                    <div class="absolute bottom-0 right-0 hidden mb-6 mr-6 space-x-1 md:flex">
-                        <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
-                        <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
-                        <div class="w-2 h-2 bg-red-400 rounded-full"></div>
-                    </div>
                 </div>
             </a>
 
             <!-- Animated corner accent -->
-            <div class="absolute top-0 right-0 w-16 h-16 overflow-hidden">
-                <div class="absolute w-32 h-8 transform rotate-45 bg-blue-500 -right-8 top-4"></div>
+            <div class="absolute top-0 left-0 w-16 h-16 overflow-hidden">
+                <div class="absolute w-32 h-8 transform rotate-180 bg-white -left-8 top-4"></div>
             </div>
         </div>
     </div>
@@ -211,91 +202,238 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     <?php endif; ?>
 
-    <!-- Quick Actions Grid -->
-    <div class="container relative z-40 px-4 py-8 mx-auto md:px-6">
-        <h2 class="mb-6 text-xl font-bold text-gray-800">Pengajuan</h2>
-        <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+
+
+    <div class="container mx-auto md:px-6">
+        <!-- Header -->
+        <div class="mb-6">
+            <h2 class="text-lg font-bold text-gray-800">Pengajuan</h2>
+        </div>
+
+        <!-- Grid Ikon Kecil -->
+        <div class="grid grid-cols-4 gap-3">
             <!-- Lembur -->
-            <a href="/panel/pengajuan/lembur" class="transition transform hover:scale-105">
-                <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
-                    <div class="p-3 mb-4 bg-blue-100 rounded-full">
-                        <!-- Icon Lembur -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <h3 class="font-medium text-center text-gray-700">Lembur</h3>
+            <a href="/panel/pengajuan/lembur" class="flex flex-col items-center p-3 transition-all duration-200 bg-white shadow-sm rounded-xl hover:shadow-md hover:-translate-y-1">
+                <div class="flex items-center justify-center w-12 h-12 mb-2 rounded-full bg-blue-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 20 20">
+                        <g fill="none">
+                            <path fill="url(#SVGy8IE7TVy)" d="M10 2a8 8 0 1 1 0 16a8 8 0 0 1 0-16" />
+                            <path fill="url(#SVGLYEppcwr)" d="M9.5 5a.5.5 0 0 1 .492.41L10 5.5V10h2.5a.5.5 0 0 1 .09.992L12.5 11h-3a.5.5 0 0 1-.492-.41L9 10.5v-5a.5.5 0 0 1 .5-.5" />
+                            <defs>
+                                <linearGradient id="SVGy8IE7TVy" x1="4.667" x2="12.667" y1="1.111" y2="18.889" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#1ec8b0" />
+                                    <stop offset="1" stop-color="#2764e7" />
+                                </linearGradient>
+                                <linearGradient id="SVGLYEppcwr" x1="9.35" x2="7.65" y1="5.918" y2="10.578" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#fdfdfd" />
+                                    <stop offset="1" stop-color="#d1d1ff" />
+                                </linearGradient>
+                            </defs>
+                        </g>
+                    </svg>
                 </div>
+                <span class="text-xs font-medium leading-tight text-center text-gray-700">Lembur</span>
             </a>
 
             <!-- Dinas Luar -->
-            <a href="/panel/pengajuan/dinas" class="transition transform hover:scale-105">
-                <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
-                    <div class="p-3 mb-4 bg-blue-100 rounded-full">
-                        <!-- Icon Dinas -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7l4-4m0 0l4 4m-4-4v18m-7-4h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                        </svg>
-                    </div>
-                    <h3 class="font-medium text-center text-gray-700">Dinas Luar</h3>
+            <a href="/panel/pengajuan/dinas" class="flex flex-col items-center p-3 transition-all duration-200 bg-white shadow-sm rounded-xl hover:shadow-md hover:-translate-y-1">
+                <div class="flex items-center justify-center w-12 h-12 mb-2 rounded-full bg-blue-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 28 28">
+                        <g fill="none">
+                            <path fill="url(#SVGVUYNtcSt)" fill-rule="evenodd" d="M16.746 2.5a2.25 2.25 0 0 1 2.25 2.25V7H19l-5 3l-5-3l-.004-.002V4.75a2.25 2.25 0 0 1 2.25-2.25zm-5.5 1.5a.75.75 0 0 0-.75.75V7h7V4.75a.75.75 0 0 0-.75-.75z" clip-rule="evenodd" />
+                            <path fill="url(#SVGFKpk7bdQ)" d="M3 13h22v7.25A3.75 3.75 0 0 1 21.25 24H6.75A3.75 3.75 0 0 1 3 20.25z" />
+                            <path fill="url(#SVGLIzhtbdh)" d="M3 13h22v7.25A3.75 3.75 0 0 1 21.25 24H6.75A3.75 3.75 0 0 1 3 20.25z" />
+                            <path fill="url(#SVGpbVsBd9l)" d="M3 10.75A3.75 3.75 0 0 1 6.75 7h14.5A3.75 3.75 0 0 1 25 10.75v4A2.25 2.25 0 0 1 22.75 17H5.25A2.25 2.25 0 0 1 3 14.75z" />
+                            <path fill="url(#SVGVIiPIbzQ)" d="M15.246 13.516h-2.508a1.25 1.25 0 0 0-1.254 1.246v2.492a1.25 1.25 0 0 0 1.254 1.246h2.508a1.25 1.25 0 0 0 1.254-1.246v-2.492a1.25 1.25 0 0 0-1.254-1.246" />
+                            <defs>
+                                <linearGradient id="SVGVUYNtcSt" x1="8.542" x2="11.184" y1="3.25" y2="11.204" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#0094f0" />
+                                    <stop offset="1" stop-color="#163697" />
+                                </linearGradient>
+                                <linearGradient id="SVGFKpk7bdQ" x1="3.786" x2="9.728" y1="15.063" y2="35.325" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#0fafff" />
+                                    <stop offset="1" stop-color="#cc23d1" />
+                                </linearGradient>
+                                <linearGradient id="SVGpbVsBd9l" x1="5.2" x2="16.258" y1="7.415" y2="19.722" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#80f1e6" />
+                                    <stop offset=".552" stop-color="#40c4f5" />
+                                    <stop offset="1" stop-color="#00a2fa" />
+                                </linearGradient>
+                                <linearGradient id="SVGVIiPIbzQ" x1="13.992" x2="13.992" y1="13.516" y2="18.5" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#b8f5ff" />
+                                    <stop offset=".844" stop-color="#7cecff" />
+                                </linearGradient>
+                                <radialGradient id="SVGLIzhtbdh" cx="0" cy="0" r="1" gradientTransform="matrix(0 11 -24.5223 0 14 13)" gradientUnits="userSpaceOnUse">
+                                    <stop offset=".337" stop-color="#194694" />
+                                    <stop offset=".747" stop-color="#367af2" stop-opacity="0" />
+                                </radialGradient>
+                            </defs>
+                        </g>
+                    </svg>
                 </div>
+                <span class="text-xs font-medium leading-tight text-center text-gray-700">Dinas Luar</span>
             </a>
 
             <!-- WFH -->
-            <a href="/panel/pengajuan/wfh" class="transition transform hover:scale-105">
-                <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
-                    <div class="p-3 mb-4 bg-blue-100 rounded-full">
-                        <!-- Icon WFH -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                        </svg>
-                    </div>
-                    <h3 class="font-medium text-center text-gray-700">WFH</h3>
+            <a href="/panel/pengajuan/wfh" class="flex flex-col items-center p-3 transition-all duration-200 bg-white shadow-sm rounded-xl hover:shadow-md hover:-translate-y-1">
+                <div class="flex items-center justify-center w-12 h-12 mb-2 rounded-full bg-blue-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 32 32">
+                        <g fill="none">
+                            <path fill="url(#SVGjZzzecUj)" d="M27 30a1 1 0 0 0 1-1V16.25A3.25 3.25 0 0 0 24.75 13H22V5.25A3.25 3.25 0 0 0 18.75 2H7a3 3 0 0 0-3 3v24a1 1 0 0 0 1 1z" />
+                            <path fill="url(#SVGhF2yjerc)" d="M27 30a1 1 0 0 0 1-1V16.25A3.25 3.25 0 0 0 24.75 13H22V5.25A3.25 3.25 0 0 0 18.75 2H7a3 3 0 0 0-3 3v24a1 1 0 0 0 1 1z" />
+                            <path fill="url(#SVGklOfuc5J)" d="M27 30a1 1 0 0 0 1-1V16.25A3.25 3.25 0 0 0 24.75 13H22V5.25A3.25 3.25 0 0 0 18.75 2H7a3 3 0 0 0-3 3v24a1 1 0 0 0 1 1z" />
+                            <path fill="url(#SVGoZGTCYVN)" d="M10.5 10a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m0 5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m1.5 3.5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0m3.5-8.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m1.5 3.5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0" />
+                            <path fill="url(#SVGLh73CcMl)" d="M21 25h5v6h-5z" />
+                            <path fill="url(#SVG7iQlScPv)" d="M22.448 17.888a1.625 1.625 0 0 1 2.105 0l4.875 4.144c.363.309.573.761.573 1.238v6.48c0 .69-.56 1.25-1.25 1.25h-3.25v-4.5a1 1 0 0 0-.996-1h-2.009a1 1 0 0 0-.996 1V31h-3.25c-.69 0-1.25-.56-1.25-1.25v-6.48c0-.477.209-.929.573-1.238z" />
+                            <path fill="url(#SVGUsD2veXK)" fill-rule="evenodd" d="M22.687 16.05a1.25 1.25 0 0 1 1.627 0l7 6a1.25 1.25 0 1 1-1.628 1.9L23.5 18.645l-6.186 5.303a1.25 1.25 0 0 1-1.627-1.898z" clip-rule="evenodd" />
+                            <defs>
+                                <linearGradient id="SVGjZzzecUj" x1="4" x2="30.607" y1="2.875" y2="32.072" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#29c3ff" />
+                                    <stop offset="1" stop-color="#2764e7" />
+                                </linearGradient>
+                                <linearGradient id="SVGoZGTCYVN" x1="12.9" x2="17.649" y1="5.556" y2="22.653" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#fdfdfd" />
+                                    <stop offset="1" stop-color="#b3e0ff" />
+                                </linearGradient>
+                                <linearGradient id="SVGLh73CcMl" x1="23.5" x2="19.738" y1="25" y2="31.969" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#944600" />
+                                    <stop offset="1" stop-color="#cd8e02" />
+                                </linearGradient>
+                                <linearGradient id="SVG7iQlScPv" x1="5.577" x2="14.981" y1="18.998" y2="37.035" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#ffd394" />
+                                    <stop offset="1" stop-color="#ffb357" />
+                                </linearGradient>
+                                <linearGradient id="SVGUsD2veXK" x1="24.286" x2="22.86" y1="13.334" y2="23.508" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#ff921f" />
+                                    <stop offset="1" stop-color="#eb4824" />
+                                </linearGradient>
+                                <radialGradient id="SVGhF2yjerc" cx="0" cy="0" r="1" gradientTransform="matrix(-5.50004 4.49996 -1.81836 -2.22248 20 22)" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#4a43cb" />
+                                    <stop offset=".914" stop-color="#4a43cb" stop-opacity="0" />
+                                </radialGradient>
+                                <radialGradient id="SVGklOfuc5J" cx="0" cy="0" r="1" gradientTransform="matrix(0 10 -7.25 0 22 28)" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#4a43cb" />
+                                    <stop offset=".914" stop-color="#4a43cb" stop-opacity="0" />
+                                </radialGradient>
+                            </defs>
+                        </g>
+                    </svg>
                 </div>
+                <span class="text-xs font-medium leading-tight text-center text-gray-700">WFH</span>
             </a>
 
             <!-- Cuti -->
-            <a href="/panel/pengajuan/cuti" class="transition transform hover:scale-105">
-                <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
-                    <div class="p-3 mb-4 bg-blue-100 rounded-full">
-                        <!-- Icon Cuti -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                    </div>
-                    <h3 class="font-medium text-center text-gray-700">Cuti</h3>
+            <a href="/panel/pengajuan/cuti" class="flex flex-col items-center p-3 transition-all duration-200 bg-white shadow-sm rounded-xl hover:shadow-md hover:-translate-y-1">
+                <div class="flex items-center justify-center w-12 h-12 mb-2 rounded-full bg-blue-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 16 16">
+                        <g fill="none">
+                            <path fill="url(#SVG31HzRcTh)" d="m10.119 5.545l-.87-.495l-2.188 3.87l.869.495z" />
+                            <path fill="url(#SVGxrLjmeqQ)" d="M3.88 12.508L6 13.55l1.71-1.196L9.5 13.55l2-.696h.8a4.52 4.52 0 0 0-2.279-3.866a4.5 4.5 0 0 0-6.718 4.073l.578-.762z" />
+                            <path fill="url(#SVGDo2AebfB)" d="M4.12 11.75a.5.5 0 0 1 .495.343c.464 1.401 2.268 1.377 2.72.06a.5.5 0 0 1 .946 0c.453 1.317 2.257 1.341 2.722-.06a.5.5 0 0 1 .95.005c.235.733.948 1.201 1.664 1.201a.5.5 0 1 1 0 1a2.8 2.8 0 0 1-2.142-1.022c-.95 1.14-2.715 1.154-3.666.041c-.935 1.093-2.654 1.1-3.615.02a2.2 2.2 0 0 1-.636.584c-.492.297-1.054.377-1.558.377a.5.5 0 0 1 0-1c.413 0 .768-.068 1.04-.233c.256-.154.49-.423.614-.935a.5.5 0 0 1 .466-.38" />
+                            <path fill="url(#SVGXWItoehT)" d="M12.66 7.793a.5.5 0 0 0 .688-.188l.095-.17c1.141-2.068.479-4.668-1.54-5.85c-2.02-1.18-4.59-.459-5.731 1.608l-.105.187a.5.5 0 0 0 .185.676z" />
+                            <path fill="url(#SVGfk55ZcWt)" d="M12.013 1.653c.22.99.057 3.266-1.038 5.15L8.25 5.215c1.008-1.933 2.82-3.248 3.76-3.564l.002-.002v.002h.002z" />
+                            <defs>
+                                <linearGradient id="SVG31HzRcTh" x1="7.685" x2="10.429" y1="8.264" y2="4.899" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#cd3e1d" />
+                                    <stop offset="1" stop-color="#592a00" />
+                                </linearGradient>
+                                <linearGradient id="SVGxrLjmeqQ" x1="7.267" x2="7.267" y1="12.75" y2="8.73" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#ffc7a3" />
+                                    <stop offset="1" stop-color="#ffa43d" />
+                                </linearGradient>
+                                <linearGradient id="SVGDo2AebfB" x1="7.817" x2="7.817" y1="13.875" y2="11.755" gradientUnits="userSpaceOnUse">
+                                    <stop offset=".061" stop-color="#0fafff" />
+                                    <stop offset="1" stop-color="#0078d4" />
+                                </linearGradient>
+                                <linearGradient id="SVGXWItoehT" x1="13.164" x2="6.966" y1="9.198" y2="1.158" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#aa1d2d" />
+                                    <stop offset="1" stop-color="#fb6f7b" />
+                                </linearGradient>
+                                <linearGradient id="SVGfk55ZcWt" x1="11.933" x2="8.541" y1="4.782" y2="3.684" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#fecbe6" />
+                                    <stop offset="1" stop-color="#fdafd9" />
+                                </linearGradient>
+                            </defs>
+                        </g>
+                    </svg>
                 </div>
+                <span class="text-xs font-medium leading-tight text-center text-gray-700">Cuti</span>
             </a>
 
-            <!-- Absensi Tertinggal -->
+            <!-- Deviasi Absensi (Kondisional) -->
             <?php if ($deviasiAbsensi && $deviasiAbsensi['nilai_setting'] == 1) : ?>
-                <a href="/panel/absensi-tertinggal" class="transition transform hover:scale-105">
-                    <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
-                        <div class="p-3 mb-4 bg-blue-100 rounded-full">
-                            <!-- Icon Absensi -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                            </svg>
-                        </div>
-                        <h3 class="font-medium text-center text-gray-700">Deviasi Absensi</h3>
+                <a href="/panel/absensi-tertinggal" class="flex flex-col items-center p-3 transition-all duration-200 bg-white shadow-sm rounded-xl hover:shadow-md hover:-translate-y-1">
+                    <div class="flex items-center justify-center w-12 h-12 mb-2 rounded-full bg-blue-50">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 16 16">
+                            <g fill="none">
+                                <path fill="url(#SVGdDovv0Vh)" d="M14 11.5v-6l-6-1l-6 1v6A2.5 2.5 0 0 0 4.5 14h7a2.5 2.5 0 0 0 2.5-2.5" />
+                                <path fill="url(#SVGNDdPseIb)" d="M14 11.5v-6l-6-1l-6 1v6A2.5 2.5 0 0 0 4.5 14h7a2.5 2.5 0 0 0 2.5-2.5" />
+                                <path fill="url(#SVG5Oql7dko)" fill-opacity="0.3" d="M14 11.5v-6l-6-1l-6 1v6A2.5 2.5 0 0 0 4.5 14h7a2.5 2.5 0 0 0 2.5-2.5" />
+                                <path fill="url(#SVGz0QaCcwg)" d="M14 4.5A2.5 2.5 0 0 0 11.5 2h-7A2.5 2.5 0 0 0 2 4.5V6h12z" />
+                                <path fill="url(#SVGCl7ljW8O)" d="M16 11.5a4.5 4.5 0 1 1-9 0a4.5 4.5 0 0 1 9 0" />
+                                <path fill="url(#SVGHfvqMc8a)" fill-rule="evenodd" d="M9.646 9.646a.5.5 0 0 1 .708 0l1.146 1.147l1.146-1.147a.5.5 0 0 1 .708.708L12.207 11.5l1.147 1.146a.5.5 0 0 1-.708.708L11.5 12.207l-1.146 1.147a.5.5 0 0 1-.708-.708l1.147-1.146l-1.147-1.146a.5.5 0 0 1 0-.708" clip-rule="evenodd" />
+                                <defs>
+                                    <linearGradient id="SVGdDovv0Vh" x1="6.286" x2="9.327" y1="4.5" y2="13.987" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#b3e0ff" />
+                                        <stop offset="1" stop-color="#8cd0ff" />
+                                    </linearGradient>
+                                    <linearGradient id="SVGNDdPseIb" x1="9.286" x2="11.025" y1="8.386" y2="16.154" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#dcf8ff" stop-opacity="0" />
+                                        <stop offset="1" stop-color="#ff6ce8" stop-opacity="0.7" />
+                                    </linearGradient>
+                                    <linearGradient id="SVGz0QaCcwg" x1="2.482" x2="4.026" y1="2" y2="8.725" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#0094f0" />
+                                        <stop offset="1" stop-color="#2764e7" />
+                                    </linearGradient>
+                                    <linearGradient id="SVGCl7ljW8O" x1="8.406" x2="14.313" y1="7.563" y2="16.281" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#f83f54" />
+                                        <stop offset="1" stop-color="#ca2134" />
+                                    </linearGradient>
+                                    <linearGradient id="SVGHfvqMc8a" x1="9.977" x2="11.771" y1="11.652" y2="13.518" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#fdfdfd" />
+                                        <stop offset="1" stop-color="#fecbe6" />
+                                    </linearGradient>
+                                    <radialGradient id="SVG5Oql7dko" cx="0" cy="0" r="1" gradientTransform="matrix(.14285 6.79546 -6.61306 .13902 11.857 12.704)" gradientUnits="userSpaceOnUse">
+                                        <stop offset=".497" stop-color="#4a43cb" />
+                                        <stop offset="1" stop-color="#4a43cb" stop-opacity="0" />
+                                    </radialGradient>
+                                </defs>
+                            </g>
+                        </svg>
                     </div>
+                    <span class="text-xs font-medium leading-tight text-center text-gray-700">Deviasi Absensi</span>
                 </a>
             <?php endif; ?>
 
             <!-- Tugas Luar -->
-            <a href="/panel/pengajuan/tugas-luar" class="transition transform hover:scale-105">
-                <div class="flex flex-col items-center p-6 bg-white shadow-md rounded-xl hover:shadow-lg">
-                    <div class="p-3 mb-4 bg-blue-100 rounded-full">
-                        <!-- Icon Tugas -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                    </div>
-                    <h3 class="font-medium text-center text-gray-700">Tugas Luar</h3>
+            <a href="/panel/pengajuan/tugas-luar" class="flex flex-col items-center p-3 transition-all duration-200 bg-white shadow-sm rounded-xl hover:shadow-md hover:-translate-y-1">
+                <div class="flex items-center justify-center w-12 h-12 mb-2 rounded-full bg-blue-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 32 32">
+                        <g fill="none">
+                            <path fill="url(#SVG1qpqVdBJ)" d="M15 6a1 1 0 1 0 0 2h14a1 1 0 1 0 0-2z" />
+                            <path fill="url(#SVG1qpqVdBJ)" d="M15 19a1 1 0 1 0 0 2h14a1 1 0 1 0 0-2z" />
+                            <path fill="url(#SVG1qpqVdBJ)" d="M14 11a1 1 0 0 1 1-1h9a1 1 0 1 1 0 2h-9a1 1 0 0 1-1-1" />
+                            <path fill="url(#SVG1qpqVdBJ)" d="M15 23a1 1 0 1 0 0 2h9a1 1 0 1 0 0-2z" />
+                            <path fill="url(#SVG0gOLOycZ)" d="M2 8a3 3 0 0 1 3-3h3a3 3 0 0 1 3 3v3a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3z" />
+                            <path fill="url(#SVG0gOLOycZ)" d="M5 18a3 3 0 0 0-3 3v3a3 3 0 0 0 3 3h3a3 3 0 0 0 3-3v-3a3 3 0 0 0-3-3z" />
+                            <defs>
+                                <linearGradient id="SVG1qpqVdBJ" x1="11.6" x2="26.904" y1="3.286" y2="26.008" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#36dff1" />
+                                    <stop offset="1" stop-color="#0094f0" />
+                                </linearGradient>
+                                <linearGradient id="SVG0gOLOycZ" x1="4.14" x2="9.334" y1="7.925" y2="25.65" gradientUnits="userSpaceOnUse">
+                                    <stop offset=".125" stop-color="#9c6cfe" />
+                                    <stop offset="1" stop-color="#7a41dc" />
+                                </linearGradient>
+                            </defs>
+                        </g>
+                    </svg>
                 </div>
+                <span class="text-xs font-medium leading-tight text-center text-gray-700">Tugas Luar</span>
             </a>
         </div>
     </div>
+
 
 
     <!-- For Supervisors -->

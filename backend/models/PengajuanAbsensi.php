@@ -55,7 +55,7 @@ class PengajuanAbsensi extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'id_karyawan' => 'Id Karyawan',
+            'id_karyawan' => 'Karyawan',
             'tanggal_absen' => 'Tanggal Absen',
             'jam_masuk' => 'Jam Masuk',
             'jam_keluar' => 'Jam Keluar',

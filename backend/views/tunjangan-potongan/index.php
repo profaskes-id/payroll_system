@@ -11,9 +11,23 @@ $this->title = 'Tunjangan & Potongan';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Bootstrap 5 (Bundle = termasuk Popper.js) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<div>
+    <button style="width: 100%;" class="add-button" type="button" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+        <i class="fas fa-search"></i>
+        <span>Search</span>
+    </button>
+    <div style="margin-top: 10px;">
+        <div class="collapse width" id="collapseWidthExample">
+            <div class="" style="width: 100%;">
+                <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="jam-kerja-index">
 
     <div class="w-100">
@@ -52,10 +66,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'format' => 'raw',
                                         'value' => function ($model) {
                                             return Html::a(
-                                                '
-            <button style="border-radius: 6px !important; background: #488aec50 !important; color:#252525; all:unset; display: block;">
-                <span style="margin: 3px 3px !important; display: block; background: #488aec !important; padding: 2px 4px !important; border-radius: 6px !important;">
-                    <i class="fas fa-plus fa-sm" style="color: #fff;"></i>
+                                                '<button style="border-radius: 6px !important; background: #E9EC4850 !important; color:#252525; all:unset; display: block;">
+                <span style="margin: 3px 3px !important; display: block; background: #E9EC48 !important; padding: 2px 4px !important; border-radius: 6px !important;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24">
+                        <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="m14.304 4.844l2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565l6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+                    </svg>
                 </span>
             </button>',
                                                 ['/tunjangan-detail/create', 'id_karyawan' => $model['id_karyawan']]
@@ -126,13 +142,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'format' => 'raw',
                                         'value' => function ($model) {
                                             return Html::a(
-                                                '
-            <button style="border-radius: 6px !important; background: #488aec50 !important; color:#252525; all:unset; display: block;">
-                <span style="margin: 3px 3px !important; display: block; background: #488aec !important; padding: 2px 4px !important; border-radius: 6px !important;">
-                    <i class="fas fa-plus fa-sm" style="color: #fff;"></i>
+                                                '<button style="border-radius: 6px !important; background: #E9EC4850 !important; color:#252525; all:unset; display: block;">
+                <span style="margin: 3px 3px !important; display: block; background: #E9EC48 !important; padding: 2px 4px !important; border-radius: 6px !important;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24">
+                        <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="m14.304 4.844l2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565l6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+                    </svg>
                 </span>
             </button>',
-                                                ['/potongan-detail/create', 'id_karyawan' => $model['id_karyawan']]
+                                                ['/tunjangan-detail/create', 'id_karyawan' => $model['id_karyawan']]
                                             );
                                         }
                                     ],
@@ -184,10 +202,5 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 </div>
-
-
-
-
-
 <?= $this->render('_modal_tunjangan_detail'); ?>
 <?= $this->render('_modal_potongan_detail'); ?>

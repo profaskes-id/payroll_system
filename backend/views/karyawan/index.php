@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\DataPekerjaan;
 use backend\models\Karyawan;
 use backend\models\Tanggal;
 use common\models\User;
@@ -71,14 +72,17 @@ $tanggalFormater = new Tanggal();
                         return Url::toRoute([$action, 'id_karyawan' => $model['id_karyawan']]);
                     }
                 ],
+
                 'nama',
                 [
                     'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 10%; text-align: center;'],
                     'label' => 'KODE',
+                    'attribute' => 'kode_karyawan',
                     'value' => 'kode_karyawan',
                 ],
                 [
+                    'attribute' => 'kode_jenis_kelamin',
                     'label' => 'Jenis Kelamin',
                     'value' => function ($model) {
 
@@ -86,6 +90,7 @@ $tanggalFormater = new Tanggal();
                     }
                 ],
                 [
+                    'attribute' => 'bagian',
                     'label' => 'Bagian',
                     'value' => function ($model) {
                         $divisiAktif = [];
@@ -101,6 +106,7 @@ $tanggalFormater = new Tanggal();
                     }
                 ],
                 [
+
                     'label' => 'Status',
                     'format' => 'raw',
                     'contentOptions' => ['style' => 'width: 10%; text-align: center;'],
@@ -147,6 +153,7 @@ $tanggalFormater = new Tanggal();
 
                 ],
                 [
+                    'attribute' => 'tanggal_masuk',
                     'label' => 'Tanggal Masuk',
                     'format' => 'raw',
                     'value' => function ($model) use ($tanggalFormater, $statusKontrak) {
@@ -174,33 +181,27 @@ $tanggalFormater = new Tanggal();
                 ],
                 [
                     'label' => 'Masa Kerja',
-                    'format' => 'raw',
-                    'value' => function ($model) use ($statusKontrak) {
-                        if (!$model->is_aktif == 1) {
-                            return '<span class=""></span>';
-                        }
-                        if (empty($model->dataPekerjaans)) {
+                    'attribute' => 'masa_kerja',
+                    'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
+                    'value' => function ($model) {
+                        $statusdataPekerjaan = DataPekerjaan::findAll(['id_karyawan' => $model['id_karyawan'], 'is_aktif' => 1]);
+                        if ($statusdataPekerjaan == null) {
                             return "";
                         }
+                        $dataPekerjaan = DataPekerjaan::findAll(['status' => $statusdataPekerjaan, 'id_karyawan' => $model['id_karyawan']]);
 
-                        // Ambil data pekerjaan yang relevan dengan status kontrak
-                        $filteredDataPekerjaans = array_filter($model->dataPekerjaans, function ($dataPekerjaan) use ($statusKontrak) {
-                            return $dataPekerjaan->status == $statusKontrak;  // Sesuaikan dengan status kontrak yang relevan
-                        });
-                        $filteredDataPekerjaans = array_values($filteredDataPekerjaans);
 
-                        if (empty($filteredDataPekerjaans)) {
-                            return "";
-                        }
-
-                        // Ambil tanggal 'dari' yang paling awal
                         $dates = array_map(function ($dataPekerjaan) {
                             return $dataPekerjaan->dari;
-                        }, $filteredDataPekerjaans);
+                        }, $dataPekerjaan);
 
-                        $earliestDate = max($dates);
 
-                        // Hitung selisih antara tanggal masuk dengan tanggal sekarang
+
+
+
+                        $earliestDate = min($dates);
+
+
                         $startDate = new DateTime($earliestDate);
                         $endDate = new DateTime(); // Tanggal hari ini
 
@@ -228,6 +229,7 @@ $tanggalFormater = new Tanggal();
 
 
                 [
+
                     'header' => 'Aktif',
                     'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 5%; text-align: center;'],

@@ -50,8 +50,8 @@ class PengajuanLembur extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_pengajuan_lembur' => 'Id Pengajuan Lembur',
-            'id_karyawan' => 'Id Karyawan',
+            'id_pengajuan_lembur' => 'Pengajuan Lembur',
+            'id_karyawan' => 'Karyawan',
             'pekerjaan' => 'Pekerjaan',
             'status' => 'Status',
             'jam_mulai' => 'Jam Mulai',

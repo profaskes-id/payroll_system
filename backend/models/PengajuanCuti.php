@@ -49,8 +49,8 @@ class PengajuanCuti extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_pengajuan_cuti' => 'Id Pengajuan Cuti',
-            'id_karyawan' => 'Id Karyawan',
+            'id_pengajuan_cuti' => 'Pengajuan Cuti',
+            'id_karyawan' => ' Karyawan',
             'tanggal_pengajuan' => 'Tanggal Pengajuan',
             'alasan_cuti' => 'Alasan Cuti',
             'status' => 'Status',

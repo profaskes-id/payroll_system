@@ -196,13 +196,14 @@ class MenuHelper
         $order = [];
         foreach ($assigned as $id) {
             $menu = $menus[$id];
+            // dd($menu);
             if ($menu['parent'] == $parent) {
                 $menu['children'] = static::normalizeMenu($assigned, $menus, $callback, $id);
                 if ($callback !== null) {
                     $item = call_user_func($callback, $menu);
                 } else {
                     $item = [
-                        'label' => $menu['name'],
+                        'label' => '<p>' .  $menu['icon'] . ' ' . $menu['name'] . '</p>',
                         'url' => static::parseRoute($menu['route']),
                     ];
                     if ($menu['children'] != []) {

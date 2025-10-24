@@ -50,8 +50,8 @@ class IzinPulangCepat extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_izin_pulang_cepat' => 'Id Izin Pulang Cepat',
-            'id_karyawan' => 'Id Karyawan',
+            'id_izin_pulang_cepat' => 'Izin Pulang Cepat',
+            'id_karyawan' => 'Karyawan',
             'alasan' => 'Alasan',
             'tanggal' => 'Tanggal',
             'status' => 'Status',
