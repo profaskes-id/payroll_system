@@ -32,6 +32,7 @@ class TotalSearch extends Model
                 'bagian.nama_bagian',
                 'master_kode.nama_kode'
             ])
+            ->where(['karyawan.is_aktif' => 1])
             ->leftJoin(['t' => $subQuery], 't.id_karyawan = karyawan.id_karyawan')
             ->leftJoin('data_pekerjaan', 'data_pekerjaan.id_karyawan = karyawan.id_karyawan AND data_pekerjaan.is_aktif = 1')
             ->leftJoin('bagian', 'bagian.id_bagian = data_pekerjaan.id_bagian')
@@ -66,6 +67,7 @@ class TotalSearch extends Model
                 'bagian.nama_bagian',
                 'master_kode.nama_kode'
             ])
+            ->where(['karyawan.is_aktif' => 1])
             ->leftJoin(['p' => $subQuery], 'p.id_karyawan = karyawan.id_karyawan')
             ->leftJoin('data_pekerjaan', 'data_pekerjaan.id_karyawan = karyawan.id_karyawan AND data_pekerjaan.is_aktif = 1')
             ->leftJoin('bagian', 'bagian.id_bagian = data_pekerjaan.id_bagian')
