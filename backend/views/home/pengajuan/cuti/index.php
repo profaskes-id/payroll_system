@@ -17,7 +17,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
 ?>
 
-<div class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5 relative z-50">
+<div class="w-full mx-auto md:px-5 lg:px-8 min-h-[90dvh] relative z-50">
     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home', 'title' => 'Pengajuan Cuti']); ?>
 
 
@@ -54,7 +54,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
     <div id="default-tab-content">
 
         <a href="/panel/pengajuan/cuti-create" class="flex items-center justify-center w-full px-4 py-1 my-3 text-sm font-medium text-white bg-blue-400 border border-transparent rounded-lg gap-x-2 hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
-        <div class="hidden p-4 mb-20 rounded-lg bg-gray-50 dark:bg-gray-800" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <div class="hidden mb-20 rounded-lg bg-gray-50 dark:bg-gray-800" id="profile" role="tabpanel" aria-labelledby="profile-tab">
             <?php if (!empty($pengajuanCuti)) : ?>
                 <div class="grid w-full grid-cols-1 gap-y-4 ">
                     <?php foreach ($pengajuanCuti as $key => $value) : ?>
@@ -73,7 +73,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                                     <p><?= $teksTerbatas ?>...</p>
 
 
-                                 
+
                                     <hr class="my-2">
                                     <div class="flex items-center justify-between py-2 ">
 
@@ -103,7 +103,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
         </div>
     </div>
 
-    <div class="hidden p-4 mb-20 rounded-lg bg-gray-50 dark:bg-gray-800" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+    <div class="hidden mb-20 rounded-lg bg-gray-50 dark:bg-gray-800" id="settings" role="tabpanel" aria-labelledby="settings-tab">
         <div class="grid w-full grid-cols-1 gap-y-4 ">
             <?php if (!empty($pengajuanCuti)) : ?>
                 <?php foreach ($pengajuanCuti as $key => $value) : ?>
@@ -123,62 +123,60 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                                     <p><?= $teksTerbatas ?>...</p>
 
 
-                                    <hr class="w-1/3 my-2">
-                                
-                                    </div>
+
                                     <hr class="my-2">
                                     <p class="py-1 text-[12px] capitalize text-end text-gray-500">diajukan pada : <?= date('d M Y', strtotime($value['tanggal_pengajuan'])) ?></p>
-
                                 </div>
+
                             </div>
-                        </a>
-                    <?php endif ?>
-                <?php endforeach; ?>
-            <?php else : ?>
-                <div class="w-full p-2 text-sm bg-white rounded-md">
-                    <p class="text-center">Tidak ada data</p>
-                </div>
-            <?php endif ?>
         </div>
+        </a>
+    <?php endif ?>
+<?php endforeach; ?>
+<?php else : ?>
+    <div class="w-full p-2 text-sm bg-white rounded-md">
+        <p class="text-center">Tidak ada data</p>
     </div>
-    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
-        <div class="grid w-full grid-cols-1 gap-y-4 ">
-            <?php if (!empty($pengajuanCuti)) : ?>
-                <?php foreach ($pengajuanCuti as $key => $value) : ?>
-                    <?php if ($value['status'] == '2') : ?>
+<?php endif ?>
+    </div>
+</div>
+<div class="hidden rounded-lg bg-gray-50 dark:bg-gray-800" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
+    <div class="grid w-full grid-cols-1 gap-y-4 ">
+        <?php if (!empty($pengajuanCuti)) : ?>
+            <?php foreach ($pengajuanCuti as $key => $value) : ?>
+                <?php if ($value['status'] == '2') : ?>
 
-                        <a href="<?php echo \yii\helpers\Url::to(['/pengajuan/cuti-detail/', 'id' => $value['id_pengajuan_cuti']]) ?>">
-                            <div class="grid grid-cols-12 gap-5 ">
-                                <div class="w-full col-span-12 p-2 text-sm bg-white rounded-md">
+                    <a href="<?php echo \yii\helpers\Url::to(['/pengajuan/cuti-detail/', 'id' => $value['id_pengajuan_cuti']]) ?>">
+                        <div class="grid grid-cols-12 gap-5 ">
+                            <div class="w-full col-span-12 p-2 text-sm bg-white rounded-md">
 
-                                    <?php
-                                    $teks = $value['alasan_cuti'];
-                                    $kata = explode(' ', $teks);
-                                    $kataTerbatas = array_slice($kata, 0, 10); // Ubah 10 menjadi jumlah kata yang diinginkan
-                                    $teksTerbatas = implode(' ', $kataTerbatas);
-                                    ?>
-                                    <p class="font-bold capitalize"><?= $value->jenisCuti->jenis_cuti ?> </p>
-                                    <p><?= $teksTerbatas ?>...</p>
+                                <?php
+                                $teks = $value['alasan_cuti'];
+                                $kata = explode(' ', $teks);
+                                $kataTerbatas = array_slice($kata, 0, 10); // Ubah 10 menjadi jumlah kata yang diinginkan
+                                $teksTerbatas = implode(' ', $kataTerbatas);
+                                ?>
+                                <p class="font-bold capitalize"><?= $value->jenisCuti->jenis_cuti ?> </p>
+                                <p><?= $teksTerbatas ?>...</p>
 
 
-                                    <hr class="w-1/3 my-2">
-                                    <div class="flex space-x-3 text-gray-500">
-                                    </div>
+                                <div class="flex space-x-3 text-gray-500">
                                     <hr class="my-2">
                                     <p class="py-1 text-[12px] capitalize text-end text-gray-500">diajukan pada : <?= date('d M Y', strtotime($value['tanggal_pengajuan'])) ?></p>
-
                                 </div>
+
                             </div>
-                        </a>
-                    <?php endif ?>
-                <?php endforeach; ?>
-            <?php else : ?>
-                <div class="w-full p-2 text-sm bg-white rounded-md">
-                    <p class="text-center">Tidak ada data</p>
-                </div>
-            <?php endif ?>
-        </div>
+                        </div>
+                    </a>
+                <?php endif ?>
+            <?php endforeach; ?>
+        <?php else : ?>
+            <div class="w-full p-2 text-sm bg-white rounded-md">
+                <p class="text-center">Tidak ada data</p>
+            </div>
+        <?php endif ?>
     </div>
+</div>
 </div>
 
 </div>

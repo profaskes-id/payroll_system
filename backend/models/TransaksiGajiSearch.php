@@ -90,12 +90,9 @@ class TransaksiGajiSearch extends TransaksiGaji
         $bulan = $bulan ?? date('m');   // default ke bulan sekarang
         $tahun = $tahun ?? date('Y');   // default ke tahun sekarang (4 digit)
 
-
-
         $periodeGajiObject = $this->getPerioderGajiSekarang($bulan, $tahun);
         $id_periode_penggajian = $periodeGajiObject->id_periode_gaji;
         $getToleranceTerlambat = MasterKode::findOne(['nama_group' => Yii::$app->params['teleransi-keterlambatan']])['nama_kode'];;
-
 
         // Buat query
         $query = (new \yii\db\Query())
@@ -204,6 +201,9 @@ class TransaksiGajiSearch extends TransaksiGaji
             $karyawan['nominal_gaji'] = $this->getNominalGajiKaryawan($id);
             $karyawan['potongan_karyawan'] = $this->getPotonganKaryawan($id, $karyawan['nominal_gaji']);
             $karyawan['tunjangan_karyawan'] = $this->getTunjanganKaryawan($id, $karyawan['nominal_gaji']);
+
+            $kasbon = $this->getKasbonKaryawan($id, $karyawan['nominal_gaji']);
+            $karyawan['kasbon_karyawan'] =  $kasbon['total_angsuran_terakhir'] ?? 0;
             $karyawan['gaji_perhari'] = $this->getGajiKaryawanPerHari($karyawan['nominal_gaji'], $id, $periodeGajiObject);
             $lemburData = $this->getLemburKaryawan($id, $karyawan['nominal_gaji'], $periodeGajiObject);
             $karyawan['jam_lembur'] = $lemburData['jam_lembur'];
@@ -224,8 +224,6 @@ class TransaksiGajiSearch extends TransaksiGaji
                 - $karyawan['potongan_karyawan']
                 - $karyawan['potongan_absensi']
                 - $karyawan['potongan_terlambat'];
-
-            $karyawan['status'] = 0;
         }
         unset($karyawan);
 
@@ -251,6 +249,7 @@ class TransaksiGajiSearch extends TransaksiGaji
                     'potongan_karyawan',
                     'tunjangan_karyawan',
                     'jam_lembur',
+                    'kasbon_karyawan',
                     'total_pendapatan_lembur',
                     'gaji_bersih',
                     'dinas_luar_belum_terbayar',
@@ -347,6 +346,7 @@ class TransaksiGajiSearch extends TransaksiGaji
         $rows = $query->all();
         $total = 0;
 
+
         foreach ($rows as $row) {
             if (($row['satuan'] == '%' || $row['jumlah'] < 100) && $gajiPokok > 0) {
                 $total += ($gajiPokok * $row['jumlah']) / 100;
@@ -384,8 +384,60 @@ class TransaksiGajiSearch extends TransaksiGaji
                 $total += $row['jumlah'];
             }
         }
+
+
+
+
         return $total ?: 0;
     }
+
+    public function getKasbonKaryawan($id_karyawan)
+    {
+        // Ambil semua data kasbon aktif untuk karyawan tertentu
+        $dataPengajuanKasbon = PembayaranKasbon::find()
+            ->where(['id_karyawan' => $id_karyawan])
+            ->andWhere(['autodebt' => 1])
+            ->asArray()
+            ->orderBy('created_at DESC')
+            ->one();
+
+
+
+        // Jika data kosong, langsung return nilai default
+        if (empty($dataPengajuanKasbon)) {
+            return [
+                'data_terakhir' => null,
+                'total_angsuran_terakhir' => 0,
+            ];
+        }
+
+
+        if ($dataPengajuanKasbon && $dataPengajuanKasbon['status_potongan'] == 1 || $dataPengajuanKasbon['sisa_kasbon'] == 0) {
+            return [
+                'data_terakhir' => null,
+                'total_angsuran_terakhir' => 0,
+            ];
+        }
+
+
+
+        $dataTerakhir = $dataPengajuanKasbon;
+
+        // Total angsuran dari data terakhir
+        $totalAngsuran = isset($dataTerakhir['angsuran'])
+            ? (float)$dataTerakhir['angsuran']
+            : 0;
+
+        // Hasil akhir
+        return [
+            'data_terakhir' => $dataTerakhir,
+            'total_angsuran_terakhir' => $totalAngsuran,
+        ];
+    }
+
+
+
+
 
     public function getLemburKaryawan($id_karyawan, $gajiKaryawan, $periodeGajiObject)
     {
@@ -539,6 +591,7 @@ class TransaksiGajiSearch extends TransaksiGaji
 
         // Hitung libur menggunakan fungsi terpisah
         $liburCount = $this->countLiburInRange($id_karyawan, $periode_gaji['tanggal_awal'], $periode_gaji['tanggal_akhir']);
+
 
         return $countRangeTanggal - $absen - $liburCount;
     }

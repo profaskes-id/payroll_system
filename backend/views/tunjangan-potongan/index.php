@@ -47,9 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <!-- TAB TUNJANGAN -->
                     <div class="tab-pane fade active show" id="custom-tabs-one-tunjangan" role="tabpanel" aria-labelledby="custom-tabs-one-tunjangan-tab">
-                        <p class="d-flex justify-content-end" style="gap: 10px;">
-                            <?= Html::a('Add new', ['/tunjangan-detail/create'], ['class' => 'tambah-button']) ?>
-                        </p>
+
                         <div class="table-container table-responsive">
                             <?= GridView::widget([
                                 'dataProvider' => $dataTunjanganProvider,
@@ -123,9 +121,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <!-- TAB POTONGAN -->
                     <div class="tab-pane fade" id="custom-tabs-one-potongan" role="tabpanel" aria-labelledby="custom-tabs-one-potongan-tab">
-                        <p class="d-flex justify-content-end" style="gap: 10px;">
-                            <?= Html::a('Add new', ['/potongan-detail/create'], ['class' => 'tambah-button']) ?>
-                        </p>
+
                         <div class="table-container table-responsive">
                             <?= GridView::widget([
                                 'dataProvider' => $dataPotonganProvider,

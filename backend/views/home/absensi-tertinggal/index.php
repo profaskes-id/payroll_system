@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 ?>
 
-<div class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5 relative z-50">
+<div class="w-full mx-auto md:px-5 lg:px-8 min-h-[90dvh] relative z-50">
     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home', 'title' => 'Deviasi  Absensi']); ?>
 
     <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <a href="/panel/absensi-tertinggal/create" class="flex items-center justify-center w-full px-4 py-1 my-3 text-sm font-medium text-white bg-blue-400 border border-transparent rounded-lg gap-x-2 hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
 
         <!-- All Tab -->
-        <div class="hidden p-4 mb-20 rounded-lg bg-gray-50 dark:bg-gray-800" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <div class="hidden mb-20 rounded-lg bg-gray-50 dark:bg-gray-800" id="profile" role="tabpanel" aria-labelledby="profile-tab">
             <?php if (!empty($data)) : ?>
                 <div class="grid w-full grid-cols-1 gap-y-4">
                     <?php foreach ($data as $key => $value) : ?>
@@ -82,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
         <!-- Approved Tab -->
-        <div class="hidden p-4 mb-20 rounded-lg bg-gray-50 dark:bg-gray-800" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+        <div class="hidden mb-20 rounded-lg bg-gray-50 dark:bg-gray-800" id="settings" role="tabpanel" aria-labelledby="settings-tab">
             <div class="grid w-full grid-cols-1 gap-y-4">
                 <?php if (!empty($data)) : ?>
                     <?php foreach ($data as $key => $value) : ?>
@@ -115,7 +115,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
         <!-- Rejected Tab -->
-        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
+        <div class="hidden rounded-lg bg-gray-50 dark:bg-gray-800" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
             <div class="grid w-full grid-cols-1 gap-y-4">
                 <?php if (!empty($data)) : ?>
                     <?php foreach ($data as $key => $value) : ?>

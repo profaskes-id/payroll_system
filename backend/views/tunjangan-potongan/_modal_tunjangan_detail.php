@@ -100,28 +100,37 @@ function renderTunjanganData(data) {
     tableBody.closest('.table-responsive').show();
     
     // Populate table with data
-$.each(data, function(index, item) {
-    console.info(item)
-    var row = '<tr>' +
-        '<td>' + (index + 1) + '</td>' +
-        '<td>' + 
-            '<a href="/panel/tunjangan-detail/update?id_tunjangan_detail=' + item.id_tunjangan_detail + '&id_karyawan=' + item.id_karyawan + '" class="flex px-2 py-2 justify-content-center add-button">' +
-                '<i class="fas fa-edit"></i> ' +
-            '</a>' +
-        '</td>' +
-        '<td>' + item.nama_tunjangan + '</td>' +
-        '<td>' + formatJumlah(item.jumlah, item.satuan) + '</td>' +
-        '<td>' + item.satuan + '</td>' +
-        '<td>' + getStatusBadge(item.status) + '</td>' +
-        '</tr>';
-    tableBody.append(row);
-});
+    $.each(data, function(index, item) {
+        var jumlahDisplay;
+
+        // Jika satuan %, tampilkan jumlah asli → jumlah final
+        if(item.satuan === '%') {
+            jumlahDisplay = item.jumlah + ' → Rp ' + formatRupiah(item.jumlah_final);
+        } else {
+            jumlahDisplay = formatRupiah(item.jumlah); // Rp langsung
+        }
+
+        var row = '<tr>' +
+            '<td>' + (index + 1) + '</td>' +
+            '<td>' + 
+                '<a href="/panel/tunjangan-detail/update?id_tunjangan_detail=' + item.id_tunjangan_detail + '&id_karyawan=' + item.id_karyawan + '" class="flex px-2 py-2 justify-content-center add-button">' +
+                    '<i class="fas fa-edit"></i> ' +
+                '</a>' +
+            '</td>' +
+            '<td>' + item.nama_tunjangan + '</td>' +
+            '<td>' + jumlahDisplay + '</td>' +
+            '<td>' + item.satuan + '</td>' +
+            '<td>' + getStatusBadge(item.status) + '</td>' +
+            '</tr>';
+        tableBody.append(row);
+    });
 }
+
 
 // Function to format jumlah based on satuan
 function formatJumlah(jumlah, satuan) {
     if (satuan === '%') {
-        return jumlah + '%';
+        return 'Rp ' + formatRupiah(jumlah);
     } else if (satuan === 'Rp') {
         return 'Rp ' + formatRupiah(jumlah);
     } else {
@@ -129,23 +138,19 @@ function formatJumlah(jumlah, satuan) {
     }
 }
 
-// Function to format number as Rupiah
+
 function formatRupiah(angka) {
-    var number_string = angka.toString().replace(/[^,\d]/g, ''),
-        split = number_string.split(','),
-        sisa = split[0].length % 3,
-        rupiah = split[0].substr(0, sisa),
-        ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-
-    if (ribuan) {
-        var separator = sisa ? '.' : '';
-        rupiah += separator + ribuan.join('.');
-    }
-
-    rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-    return rupiah;
+    // Convert to number first
+    var number = parseFloat(angka);
+    
+    // Format dengan Intl.NumberFormat
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2
+    }).format(number).replace(/,00$/, ''); // Hapus ,00 di akhir
 }
-
 // Function to get status badge
 function getStatusBadge(status) {
     if (status == 1) {
@@ -154,7 +159,6 @@ function getStatusBadge(status) {
         return '<span class="badge bg-danger">Non-Aktif</span>';
     }
 }
-
 // Function to show empty state
 function showEmptyState() {
     $('#tunjanganTableBody').empty();

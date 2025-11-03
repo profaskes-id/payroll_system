@@ -171,6 +171,7 @@
     <?php
     // Include semua modal
     echo $this->render('detail/_modal_potongan');
+    echo $this->render('detail/_modal_kasbon');
     echo $this->render('detail/_modal_tunjangan');
     echo $this->render('detail/_modal_potongan_absensi');
     echo $this->render('detail/_modal_potongan_terlambat');
@@ -190,9 +191,13 @@
                         <i class="fas fa-money-bill-wave me-2"></i>
                         <?= Html::encode($this->title) ?>
                     </h5>
+
+
                     <div class="flex-wrap btn-group">
                         <?= Html::beginForm(['transaksi-gaji/generate-gaji'], 'post', ['id' => 'generate-gaji-form']); ?>
                         <?= Html::hiddenInput('karyawanID', $karyawanID) ?>
+                        <?= Html::hiddenInput('bulan', Yii::$app->request->get('TransaksiGaji') ? Yii::$app->request->get('TransaksiGaji')['bulan'] : date('m'));  ?>
+                        <?= Html::hiddenInput('tahun', Yii::$app->request->get('TransaksiGaji') ? Yii::$app->request->get('TransaksiGaji')['tahun'] : date('Y'));  ?>
                         <?= Html::submitButton('Generate Gaji', [
                             'class' => 'add-button',
                             'id' => 'generate-gaji-button'
@@ -200,7 +205,7 @@
                         <?= Html::endForm(); ?>
 
 
-                        <a target="_blank" href="/panel/transaksi-gaji/report?bulan=<?= Yii::$app->request->get('TransaksiGaji')['bulan'] ?? null ?>&tahun=<?= Yii::$app->request->get('TransaksiGaji')['tahun'] ?? null ?>" class="mx-2 reset-button bg-warning">
+                        <a target="_blank" href="/panel/transaksi-gaji/report?bulan=<?= Yii::$app->request->get('TransaksiGaji')['bulan'] ?? date('m') ?>&tahun=<?= Yii::$app->request->get('TransaksiGaji')['tahun'] ?? date('Y') ?>" class="mx-2 reset-button bg-warning">
                             <i class="fas fa-print me-1"></i> Cetak Transaksi
                         </a>
                     </div>
@@ -208,7 +213,7 @@
             </div>
 
             <div class="p-0 card-body">
-                <div class="table-responsive" style="max-height: 70vh;">
+                <div class="table-responsive" style="max-height: 85vh;">
                     <?= GridView::widget([
                         'dataProvider' => $dataProvider,
                         'tableOptions' => ['class' => 'table table-bordered table-hover mb-0'],
@@ -228,7 +233,7 @@
                                 'header' => '<i class="fas fa-cogs"></i>',
                                 'headerOptions' => [
                                     'class' => 'text-center align-middle',
-                                    'style' => 'width: 100px;'
+                                    'style' => 'width: 120px;'
                                 ],
                                 'contentOptions' => ['class' => 'text-center align-middle'],
                                 'format' => 'raw',
@@ -238,52 +243,62 @@
 
                                     if (isset($model['id_transaksi_gaji']) && $model['id_transaksi_gaji'] != null) {
                                         $actions = '
-                <div class="action-buttons">
-                    <!-- Tombol Detail -->
-                    <button type="button" 
-                            class="btn btn-danger btn-sm btn-detail"
-                            data-bs-toggle="modal" 
-                            data-bs-target="#confirmModal"
-                            data-action="detail"
-                            data-url="' . Url::to(['deleterow', 'id_karyawan' => $model['id_karyawan'], 'bulan' => $model['bulan'], 'tahun' => $model['tahun']]) . '"
-                            data-karyawan="' . Html::encode($model['nama'] ?? 'Karyawan') . '"
-                            title="Lihat Detail">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    
-                    <!-- Tombol Regenerate -->
-                    <button type="button" 
-                            class="btn btn-warning btn-sm btn-regenerate"
-                            data-bs-toggle="modal" 
-                            data-bs-target="#confirmModal"
-                            data-action="regenerate"
-                            data-url="' . Url::to(['generate-gaji-one', 'id_karyawan' => $model['id_karyawan']]) . '"
-                            data-karyawan="' . Html::encode($model['nama'] ?? 'Karyawan') . '"
-                            title="Regenerate">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
-                </div>
+            <div class="gap-1 action-buttons d-flex justify-content-center">
+                <!-- Link Detail -->
+                <a href="' . Url::to(['deleterow', 'id_karyawan' => $model['id_karyawan'], 'bulan' => $model['bulan'], 'tahun' => $model['tahun']]) . '" 
+                   class="btn btn-danger btn-sm"
+                   data-bs-toggle="modal" 
+                   data-bs-target="#confirmModal"
+                   data-action="detail"
+                   data-karyawan="' . Html::encode($model['nama'] ?? 'Karyawan') . '"
+                   title="Detail">
+                    <i class="fas fa-trash"></i>
+                </a>
+
+                <!-- Link Regenerate -->
+                <a href="' . Url::to(['generate-gaji-one', 'id_karyawan' => $model['id_karyawan']]) . '" 
+                   class="btn btn-warning btn-sm"
+                   data-bs-toggle="modal" 
+                   data-bs-target="#confirmModal"
+                   data-action="regenerate"
+                   data-karyawan="' . Html::encode($model['nama'] ?? 'Karyawan') . '"
+                   title="Regenerate">
+                    <i class="fas fa-sync-alt"></i>
+                </a>
+
+                <!-- Link Cetak -->
+                <a href="' . Url::to(['slip-gaji-pdf',  'id_transaksi_gaji' => $model['id_transaksi_gaji'], 'id_karyawan' => $model['id_karyawan']]) . '" 
+                   class="btn btn-primary btn-sm">
+                    <i class="fas fa-print"></i>
+                </a>
+
+                <!-- Link Email -->
+                <a href="' . Url::to(['email-gaji', 'id_transaksi_gaji' => $model['id_transaksi_gaji'], 'id_karyawan' => $model['id_karyawan']]) . '" 
+                   class="btn btn-info btn-sm">
+                    <i class="fas fa-envelope"></i>
+                </a>
+            </div>
             ';
                                     } else {
                                         $actions = '
-                <div class="action-buttons">
-                    <button type="button" 
-                            class="btn btn-success btn-sm btn-process"
-                            data-bs-toggle="modal" 
-                            data-bs-target="#confirmModal"
-                            data-action="process"
-                            data-url="' . Url::to(['generate-gaji-one', 'id_karyawan' => $model['id_karyawan']]) . '"
-                            data-karyawan="' . Html::encode($model['nama'] ?? 'Karyawan') . '"
-                            title="Proses Gaji">
-                        <i class="fas fa-lock"></i>
-                    </button>
-                </div>
+            <div class="gap-1 action-buttons d-flex justify-content-center">
+                <a href="' . Url::to(['generate-gaji-one', 'id_karyawan' => $model['id_karyawan']]) . '" 
+                   class="btn btn-success btn-sm"
+                   data-bs-toggle="modal" 
+                   data-bs-target="#confirmModal"
+                   data-action="process"
+                   data-karyawan="' . Html::encode($model['nama'] ?? 'Karyawan') . '"
+                   title="Proses Gaji">
+                    <i class="fas fa-lock"></i>
+                </a>
+            </div>
             ';
                                     }
 
                                     return $actions;
                                 }
                             ],
+
 
                             // Kolom untuk Nama Karyawan
                             [
@@ -367,6 +382,7 @@
                                 'headerOptions' => ['class' => 'text-end align-middle'],
                                 'contentOptions' => ['class' => 'text-end align-middle'],
                                 'value' => function ($model) {
+
                                     $potongan = $model['potongan_karyawan'] ?? 0;
                                     $karyawanNama = $model['nama'] ?? 'Karyawan';
                                     $karyawanBagian = $model['nama_bagian'] ?? '-';
@@ -378,6 +394,29 @@
                     data-bs-target="#modalPotongan"
                     onclick="loadPotonganData(' . $model['id_karyawan'] . ', \'' . addslashes($karyawanNama) . '\', \'' . addslashes($karyawanBagian) . '\')"
                     title="Lihat Detail Potongan">
+                <span class="fw-semibold">Rp ' . number_format($potongan, 0, ',', '.') . '</span>
+            </button>
+        ';
+                                }
+                            ],
+                            [
+                                'attribute' => 'kasbon_karyawan',
+                                'label' => "Bayar Kasbon",
+                                'format' => 'raw',
+                                'headerOptions' => ['class' => 'text-end align-middle'],
+                                'contentOptions' => ['class' => 'text-end align-middle'],
+                                'value' => function ($model) {
+                                    $potongan = $model['kasbon_karyawan'] ?? 0;
+                                    $karyawanNama = $model['nama'] ?? 'Karyawan';
+                                    $karyawanBagian = $model['nama_bagian'] ?? '-';
+
+                                    return '
+            <button type="button" 
+                    class="p-0 btn btn-link text-danger text-decoration-none btn-potongan-modal"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#modalKasbon"
+                    onclick="loadKasbonData(' . $model['id_karyawan'] . ', \'' . addslashes($karyawanNama) . '\', \'' . addslashes($karyawanBagian) . '\')"
+                    title="Lihat Detail Kasbon">
                 <span class="fw-semibold">Rp ' . number_format($potongan, 0, ',', '.') . '</span>
             </button>
         ';
@@ -458,8 +497,6 @@
                             ],
 
 
-
-
                             [
                                 'attribute' => 'jam_lembur',
                                 'label' => "Total Lembur",
@@ -533,14 +570,17 @@
                                 'headerOptions' => ['class' => 'text-center align-middle'],
                                 'contentOptions' => ['class' => 'text-center align-middle'],
                                 'value' => function ($model) {
+                                    // Pastikan status selalu punya nilai default (misal null dianggap belum diproses)
+                                    $status = isset($model['status']) ? $model['status'] : null;
 
-                                    if ($model['status'] == 1) {
+                                    if ($status == 1) {
                                         return '<span class="badge bg-success"><i class="fas fa-check me-1"></i> Sudah Diproses</span>';
                                     } else {
                                         return '<span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i> Belum Diproses</span>';
                                     }
                                 }
                             ],
+
                         ],
                     ]); ?>
                 </div>

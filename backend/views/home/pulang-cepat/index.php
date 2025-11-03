@@ -1,4 +1,4 @@
-<div class="relative z-40 w-full px-5 mx-auto lg:px-8">
+<div class="relative z-40 w-full mx-auto md:px-5">
 
 
 

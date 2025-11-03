@@ -3,13 +3,13 @@
 use amnah\yii2\user\models\User;
 ?>
 
-<section class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5 relative z-50">
+<section class="w-full mx-auto md:px-5 lg:px-8 min-h-[90dvh]  relative z-50">
     <?= $this->render('@backend/views/components/_header', [
         'link' => '/panel/absensi-tertinggal',
         'title' => 'Detail Deviasi  Absensi'
     ]); ?>
 
-    <div class="bg-gray-100/50 w-full h-[80dvh] rounded-md p-2">
+    <div class="bg-gray-100/50 w-full h-[80dvh] rounded-md ">
         <div class="flex items-start justify-between w-full p-3 bg-white rounded-md">
             <div>
                 <p class="text-sm">Tanggal Absen: <?= date('d-m-Y', strtotime($model->tanggal_absen)) ?></p>

@@ -43,6 +43,7 @@ $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bula
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Gaji Pokok</th>
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Tunjangan</th>
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Potongan</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Kasbon</th>
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Total Hadir</th>
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Total Tidak Hadir</th>
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Potongan Absensi</th>
@@ -50,7 +51,7 @@ $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bula
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Total Lembur</th>
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Dinas Luar Belum Terbayar</th>
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Gaji Diterima</th>
-            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Status</th>
+            <!-- <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Status</th> -->
         </tr>
     </thead>
     <tbody>
@@ -60,14 +61,17 @@ $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bula
         $totalGajiPokok = 0;
         $totalTunjangan = 0;
         $totalPotongan = 0;
+        $totalkasbon = 0;
         $totalLembur = 0;
         $totalDinasLuar = 0;
 
         foreach ($finalData as $data):
+
             $gajiBersih = $data['gaji_bersih'] ?? 0;
             $gajiPokok = $data['nominal_gaji'] ?? 0;
             $tunjangan = $data['tunjangan_karyawan'] ?? 0;
             $potonganKaryawan = $data['potongan_karyawan'] ?? 0;
+            $kasbonKaryawan = $data['kasbon_karyawan'] ?? 0;
             $potonganAbsensi = $data['potongan_absensi'] ?? 0;
             $potonganTerlambat = $data['potongan_terlambat'] ?? 0;
             $totalPotonganKaryawan = $potonganKaryawan + $potonganAbsensi + $potonganTerlambat;
@@ -80,6 +84,7 @@ $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bula
             $totalGajiPokok += $gajiPokok;
             $totalTunjangan += $tunjangan;
             $totalPotongan += $totalPotonganKaryawan;
+            $totalkasbon += $kasbonKaryawan;
             $totalLembur += $lembur;
             $totalDinasLuar += $dinasLuar;
         ?>
@@ -93,6 +98,7 @@ $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bula
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($gajiPokok, 0, ',', '.') ?></td>
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($tunjangan, 0, ',', '.') ?></td>
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($totalPotonganKaryawan, 0, ',', '.') ?></td>
+                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($kasbonKaryawan, 0, ',', '.') ?></td>
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: center;"><?= $totalHadir ?> hari</td>
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: center;"><?= $totalTidakHadir ?> hari</td>
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($potonganAbsensi, 0, ',', '.') ?></td>
@@ -100,13 +106,7 @@ $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bula
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($lembur, 0, ',', '.') ?></td>
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($dinasLuar, 0, ',', '.') ?></td>
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right; font-weight: bold;"><?= number_format($gajiBersih, 0, ',', '.') ?></td>
-                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: center;">
-                    <span style="padding: 2px 6px; border-radius: 3px; font-size: 7px; font-weight: bold; 
-                    background-color: <?= ($data['status'] ?? 0) == 1 ? '#d4edda' : '#f8d7da' ?>; 
-                    color: <?= ($data['status'] ?? 0) == 1 ? '#155724' : '#721c24' ?>;">
-                        <?= ($data['status'] ?? 0) == 1 ? 'SUCCESS' : 'PENDING' ?>
-                    </span>
-                </td>
+
             </tr>
         <?php endforeach; ?>
 
@@ -116,6 +116,7 @@ $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bula
             <td style="padding: 8px 4px; border: 1px solid #333; text-align: right;"><?= number_format($totalGajiPokok, 0, ',', '.') ?></td>
             <td style="padding: 8px 4px; border: 1px solid #333; text-align: right;"><?= number_format($totalTunjangan, 0, ',', '.') ?></td>
             <td style="padding: 8px 4px; border: 1px solid #333; text-align: right;"><?= number_format($totalPotongan, 0, ',', '.') ?></td>
+            <td style="padding: 8px 4px; border: 1px solid #333; text-align: right;"><?= number_format($totalkasbon, 0, ',', '.') ?></td>
             <td style="padding: 8px 4px; border: 1px solid #333; text-align: center;">-</td>
             <td style="padding: 8px 4px; border: 1px solid #333; text-align: center;">-</td>
             <td style="padding: 8px 4px; border: 1px solid #333; text-align: right;">-</td>
@@ -123,7 +124,7 @@ $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bula
             <td style="padding: 8px 4px; border: 1px solid #333; text-align: right;"><?= number_format($totalLembur, 0, ',', '.') ?></td>
             <td style="padding: 8px 4px; border: 1px solid #333; text-align: right;"><?= number_format($totalDinasLuar, 0, ',', '.') ?></td>
             <td style="padding: 8px 4px; border: 1px solid #333; text-align: right; background-color: #e7f3ff;"><?= number_format($totalGajiBersih, 0, ',', '.') ?></td>
-            <td style="padding: 8px 4px; border: 1px solid #333; text-align: center;">-</td>
+
         </tr>
     </tbody>
 </table>

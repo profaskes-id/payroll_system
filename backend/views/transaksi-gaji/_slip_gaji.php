@@ -1,0 +1,104 @@
+<?php // Slip Gaji Ringkas A5 
+?>
+
+<div style="font-family:'Segoe UI',Tahoma,sans-serif;max-width:600px;margin:0 auto;border:1px solid #ccc;font-size:11px;line-height:1.4;">
+
+
+    <!-- Header Slip Gaji dengan Logo di Kiri -->
+    <div style="background:#2d5a7b;color:#fff;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;">
+
+        <!-- Logo Kiri -->
+        <div style="flex:0 0 60px;">
+            <h6 style="margin: 0; padding: 0; color: #fff;">Payroll Profaskes</h6>
+        </div>
+
+        <!-- Info Slip di Kanan -->
+        <div style="text-align:right;flex:1;">
+            <div style="font-weight:bold;font-size:13px;">Slip Gaji</div>
+            <div style="font-size:11px;opacity:0.9;">
+                Periode <?= ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'][$transaksiData["bulan"]] . ' ' . $transaksiData["tahun"]; ?><br>
+                No: <?= str_pad($transaksiData["id_transaksi_gaji"], 6, '0', STR_PAD_LEFT); ?> |
+                Tgl: <?= date('d/m/Y', strtotime($transaksiData["created_at"])); ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Karyawan -->
+    <div style="padding:5px 10px;border-bottom:1px solid #ddd;">
+        <strong><?= $transaksiData["nama"]; ?></strong><br>
+        <small><?= $transaksiData["nama_bagian"]; ?> - <?= $transaksiData["jabatan"]; ?></small>
+    </div>
+
+
+    <!-- Pendapatan -->
+    <div style="padding:4px 8px;border-bottom:1px solid #ddd;">
+        <strong style="color:#2d5a7b;">Pendapatan</strong>
+        <div style="margin-top:3px;font-size:11px;line-height:1.4;">
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:1px 0;">
+                <span>Gaji Pokok</span>
+                <span>Rp <?= number_format($transaksiData["nominal_gaji"], 0, ',', '.'); ?></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:1px 0;">
+                <span>Tunjangan</span>
+                <span>Rp <?= number_format($transaksiData["tunjangan_karyawan"], 0, ',', '.'); ?></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:1px 0;">
+                <span>Lembur (<?= $transaksiData["jam_lembur"] ?? 0 ?>j)</span>
+                <span>Rp <?= number_format($transaksiData["total_pendapatan_lembur"] ?? 0, 0, ',', '.'); ?></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:1px 0;">
+                <span>Dinas Luar</span>
+                <span>Rp <?= number_format($transaksiData["dinas_luar_belum_terbayar"], 0, ',', '.'); ?></span>
+            </div>
+            <?php $totalPendapatan = $transaksiData["nominal_gaji"] + $transaksiData["tunjangan_karyawan"] + $transaksiData["total_pendapatan_lembur"] + $transaksiData["dinas_luar_belum_terbayar"]; ?>
+            <div style="display:flex;justify-content:space-between;padding:2px 0;font-weight:bold;color:#2d5a7b;">
+                <span>Total Pendapatan</span>
+                <span>Rp <?= number_format($totalPendapatan, 0, ',', '.'); ?></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Potongan -->
+    <div style="padding:4px 8px;border-bottom:1px solid #ddd;">
+        <strong style="color:#a02020;">Potongan</strong>
+        <div style="margin-top:3px;font-size:11px;line-height:1.4;">
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:1px 0;">
+                <span>Standar</span>
+                <span>Rp <?= number_format($transaksiData["potongan_karyawan"], 0, ',', '.'); ?></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:1px 0;">
+                <span>Terlambat</span>
+                <span>Rp <?= number_format($transaksiData["potongan_terlambat"], 0, ',', '.'); ?></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:1px 0;">
+                <span>Absensi</span>
+                <span>Rp <?= number_format($transaksiData["potongan_absensi"], 0, ',', '.'); ?></span>
+            </div>
+            <?php if ($transaksiData["potongan_kasbon"]): ?>
+                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:1px 0;">
+                    <span>Kasbon</span>
+                    <span>Rp <?= number_format($transaksiData["potongan_kasbon"], 0, ',', '.'); ?></span>
+                </div>
+            <?php endif; ?>
+
+            <?php
+            $totalPotongan = $transaksiData["potongan_karyawan"]
+                + $transaksiData["potongan_terlambat"]
+                + $transaksiData["potongan_absensi"]
+                + ($transaksiData["potongan_kasbon"] ?: 0);
+            ?>
+            <div style="display:flex;justify-content:space-between;padding:2px 0;font-weight:bold;color:#a02020;">
+                <span>Total Potongan</span>
+                <span>Rp <?= number_format($totalPotongan, 0, ',', '.'); ?></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gaji Bersih -->
+    <div style="padding:6px 10px;background:#f3f6f8;text-align:right;">
+        <?php $gajiBersih = $totalPendapatan - $totalPotongan; ?>
+        <div style="font-size:11px;color:#333;">Gaji Bersih:</div>
+        <div style="font-size:16px;font-weight:bold;color:#2d5a7b;">Rp <?= number_format($gajiBersih, 0, ',', '.'); ?></div>
+        <!-- <div style="font-size:10px;color:#888;">Dibayar: <?= date('d/m/Y'); ?></div> -->
+    </div>
+</div>

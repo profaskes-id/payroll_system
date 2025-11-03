@@ -3,11 +3,11 @@
 use amnah\yii2\user\models\User;
 ?>
 
-<section class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5 relative z-50">
+<section class="w-full mx-auto  lg:px-8 min-h-[90dvh]  md:px-5 relative z-50">
     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/pengajuan/lembur', 'title' => 'Pengajuan Lembur']); ?>
 
 
-    <div class="bg-gray-100/50 w-full h-[80dvh] rounded-md p-2">
+    <div class="bg-gray-100/50 w-full h-[80dvh] rounded-md ">
 
         <div class="flex items-start justify-between w-full p-3 bg-white rounded-md">
             <div>

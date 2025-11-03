@@ -3,11 +3,11 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 ?>
-<section class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5 relative z-50">
+<section class="w-full mx-auto md:px-x lg:px-8 min-h-[90dvh]  relative z-50">
     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/pengajuan/dinas', 'title' => 'Pengajuan Dinas Luar']); ?>
 
 
-    <div class="bg-gray-100/50 w-full h-[80dvh] rounded-md p-2  relative ">
+    <div class="bg-gray-100/50 w-full h-[80dvh] rounded-md   relative ">
 
         <div class="w-full p-3 bg-white rounded-md">
             <p class="text-sm">Diajukan Untuk Tanggal : <?= date('d-m-Y', strtotime($model['tanggal_mulai'])) ?></p>

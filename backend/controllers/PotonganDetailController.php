@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\MasterGaji;
 use backend\models\Potongan;
 use backend\models\PotonganDetail;
 use backend\models\PotonganDetailSearch;
@@ -169,16 +170,31 @@ class PotonganDetailController extends Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
+        // Ambil gaji karyawan
+        $gajiKaryawan = MasterGaji::find()->where(['id_karyawan' => $id_karyawan])->one();
+        $nominalGaji = $gajiKaryawan ? $gajiKaryawan->nominal_gaji : 0;
+
+        // Ambil data potongan beserta nama & satuan dari tabel potongan
         $data = PotonganDetail::find()
-            ->alias('pd') // alias untuk tabel potongan_detail
-            ->select(['pd.*', 'p.*']) // ambil semua kolom dari potongan_detail dan potongan
-            ->leftJoin('potongan p', 'p.id_potongan = pd.id_potongan') // join ke potongan
+            ->alias('pd')
+            ->select(['pd.*', 'p.nama_potongan', 'p.satuan'])
+            ->leftJoin('potongan p', 'p.id_potongan = pd.id_potongan')
             ->where(['pd.id_karyawan' => $id_karyawan, 'pd.status' => 1])
             ->asArray()
             ->all();
 
+        // Kalkulasi jumlah_final berdasarkan satuan
+        foreach ($data as &$row) {
+            if ($row['satuan'] === '%') {
+                $row['jumlah_final'] = ($row['jumlah'] / 100) * $nominalGaji;
+            } else {
+                $row['jumlah_final'] = $row['jumlah'];
+            }
+        }
+
         return [
             'success' => true,
+            'nominal_gaji' => $nominalGaji,
             'data' => $data
         ];
     }

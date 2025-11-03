@@ -2,7 +2,7 @@
 
 use yii\helpers\Html; ?>
 
-<section class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-4 relative z-50">
+<section class="w-full mx-auto md:px-5 lg:px-8 min-h-[90dvh] relative z-50">
     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/pengajuan/tugas-luar', 'title' => 'Pengajuan Tugas Luar']); ?>
 
     <div class="p-4 mt-4 bg-white rounded-lg shadow-lg sm:p-6 sm:rounded-xl">
@@ -13,7 +13,7 @@ use yii\helpers\Html; ?>
                     <div class="flex items-start justify-between">
                         <h2 class="text-xl font-bold text-gray-800 sm:text-2xl">Detail Tugas Luar</h2>
                         <?php if ($model->status_pengajuan == 0): ?>
-                        <a href="<?= \yii\helpers\Url::to(['/pengajuan/tugas-luar-update', 'id' => $model->id_tugas_luar]) ?>" class="text-sm text-gray-600 hover:underline">Edit</a>
+                            <a href="<?= \yii\helpers\Url::to(['/pengajuan/tugas-luar-update', 'id' => $model->id_tugas_luar]) ?>" class="text-sm text-gray-600 hover:underline">Edit</a>
                         <?php endif; ?>
                     </div>
                     <div class="flex flex-col mt-2 space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4 sm:mt-3">

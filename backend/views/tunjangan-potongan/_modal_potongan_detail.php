@@ -87,6 +87,7 @@ $('#modalPotonganDetail').on('show.bs.modal', function (event) {
     });
 });
 
+
 // Function to render potongan data
 function renderPotonganData(data) {
     var tableBody = $('#potonganTableBody');
@@ -100,26 +101,56 @@ function renderPotonganData(data) {
     tableBody.closest('.table-responsive').show();
     
     // Populate table with data
-$.each(data, function(index, item) {
-    console.info(item)
-    var row = '<tr>' +
-        '<td>' + (index + 1) + '</td>' +
-        '<td>' + 
-            '<a href="/panel/potongan-detail/update?id_potongan_detail=' + item.id_potongan_detail + '&id_karyawan=' + item.id_karyawan + '" class="flex px-2 py-2 justify-content-center add-button">' +
-                '<i class="fas fa-edit"></i> ' +
-            '</a>' +
-        '</td>' +
-        '<td>' + item.nama_potongan + '</td>' +
-        '<td>' + formatJumlah(item.jumlah, item.satuan) + '</td>' +
-        '<td>' + item.satuan + '</td>' +
-        '<td>' + getStatusBadge(item.status) + '</td>' +
-        '</tr>';
-    tableBody.append(row);
-});
+    $.each(data, function(index, item) {
+        var jumlahDisplay;
+
+        // Jika satuan %, tampilkan jumlah asli → jumlah final
+        if(item.satuan === '%') {
+            jumlahDisplay = item.jumlah + ' → Rp ' + formatRupiah(item.jumlah_final);
+        } else {
+            jumlahDisplay = formatRupiah(item.jumlah); // Rp langsung
+        }
+
+        var row = '<tr>' +
+            '<td>' + (index + 1) + '</td>' +
+            '<td>' + 
+                '<a href="/panel/potongan-detail/update?id_potongan_detail=' + item.id_potongan_detail + '&id_karyawan=' + item.id_karyawan + '" class="flex px-2 py-2 justify-content-center add-button">' +
+                    '<i class="fas fa-edit"></i> ' +
+                '</a>' +
+            '</td>' +
+            '<td>' + item.nama_potongan + '</td>' +
+            '<td>' + jumlahDisplay + '</td>' +
+            '<td>' + item.satuan + '</td>' +
+            '<td>' + getStatusBadge(item.status) + '</td>' +
+            '</tr>';
+        tableBody.append(row);
+    });
 }
 
 
 
+
+// Function to format number as Rupiah - tanpa nol di belakang koma
+function formatRupiah(angka) {
+    // Convert to number first
+    var number = parseFloat(angka);
+    
+    // Format dengan Intl.NumberFormat
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2
+    }).format(number).replace(/,00$/, ''); // Hapus ,00 di akhir
+}
+// Function to get status badge
+function getStatusBadge(status) {
+    if (status == 1) {
+        return '<span class="badge bg-success">Aktif</span>';
+    } else {
+        return '<span class="badge bg-danger">Non-Aktif</span>';
+    }
+}
 // Function to show empty state
 function showEmptyState() {
     $('#potonganTableBody').empty();

@@ -3,11 +3,25 @@
 /** @var yii\web\View $this */
 /** @var array $model */ // Assuming $model is passed to the view
 
+
+use backend\models\JatahCutiKaryawan;
+use backend\models\RekapCuti;
 use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
 $tanggalFormater = new Tanggal();
+
+
+$jatahCuti = JatahCutiKaryawan::find()->where(['id_karyawan' => $model['id_karyawan']])->one();
+$detailCuti = RekapCuti::find()->where(['id_karyawan' => $model['id_karyawan']])->one();
+
+
+$sisa_cuti = ((int) ($jatahCuti['jatah_hari_cuti'] ?? 0)) - ((int) ($detailCuti['total_hari_terpakai'] ?? 0));
+
+
+
+?>
 ?>
 
 <?php if (empty($model) || empty($model['id_pengajuan_cuti'])) : ?>
@@ -53,7 +67,7 @@ $tanggalFormater = new Tanggal();
     </div>
 <?php else: ?>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <div class="container relative z-50 p-6 mx-auto">
+    <div class="container relative z-50 p-2 mx-auto md:p-6">
         <div class="flex items-center justify-between">
 
             <h1 class="mb-4 text-2xl font-bold">Detail Pengajuan cuti</h1>
@@ -80,7 +94,7 @@ $tanggalFormater = new Tanggal();
 
 
 
-        <div class="overflow-hidden bg-white rounded-lg shadow-md">
+        <div class="overflow-x-auto bg-white rounded-lg shadow-md md:overflow-hidden">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
@@ -104,22 +118,7 @@ $tanggalFormater = new Tanggal();
                     </tr>
 
 
-                    <tr>
-                        <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Status</td>
-                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
 
-                            <?php
-                            if ($model['status'] == 0) {
-                                echo '<span class="text-yellow-500">Menuggu Tanggapan</span>';
-                            } elseif ($model['status'] == 1) {
-                                echo '<span class="text-green-500">Pengajuan Telah Disetujui</span>';
-                            } elseif ($model['status'] == 2) {
-                                echo '<span class="text-danger">Pengajuan  Ditolak</span>';
-                            } else {
-                                echo "<span class='text-rose-500'>master kode tidak aktif</span>";
-                            } ?>
-                        </td>
-                    </tr>
                     <tr>
                         <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Ditanggapi Pada</td>
                         <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['ditanggapi_pada'] ?? 'Belum ditanggapi') ?></td>
@@ -134,15 +133,34 @@ $tanggalFormater = new Tanggal();
                         <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Catatan Admin</td>
                         <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['catatan_admin'] ?? 'Tidak ada catatan') ?></td>
                     </tr>
+                    <tr>
+                        <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Status</td>
+                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
 
+                            <?php
+                            if ($model['status'] == 0) {
+                                echo '<span class="text-yellow-500">Pending</span>';
+                            } elseif ($model['status'] == 1) {
+                                echo '<span class="text-green-500">Disetujui</span>';
+                            } elseif ($model['status'] == 2) {
+                                echo '<span class="text-danger"> Ditolak</span>';
+                            } else {
+                                echo "<span class='text-rose-500'>master kode tidak aktif</span>";
+                            } ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Sisa Cuti</td>
+                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= $sisa_cuti ?></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
 
-    <h1>detail cuti</h1>
-    <div class="relative z-40">
+    <h1 class="mt-2 font-bold">Detail cuti</h1>
+    <div class="relative z-40 overflow-x-auto">
 
         <table class="relative min-w-full text-sm border border-gray-300 divide-y divide-gray-200 rounded-md shadow-sm z">
             <thead class="bg-gray-100">

@@ -10,8 +10,10 @@ use backend\models\helpers\NotificationHelper;
 use backend\models\helpers\UseMessageHelper;
 use backend\models\Karyawan;
 use backend\models\MasterCuti;
+use backend\models\MasterGaji;
 use backend\models\PengajuanCuti;
 use backend\models\PengajuanDinas;
+use backend\models\PengajuanKasbon;
 use backend\models\PengajuanLembur;
 use backend\models\PengajuanTugasLuar;
 use backend\models\PengajuanWfh;
@@ -889,6 +891,129 @@ class PengajuanController extends \yii\web\Controller
         Yii::$app->session->setFlash('error', 'Gagal Menghapus Pengajuan');
         return $this->redirect(['/pengajuan/wfh']);
     }
+
+
+
+    // Pengajuan Kasbon
+
+    //?==============pengajuan kasbon
+    public function actionKasbon()
+    {
+        $this->layout = 'mobile-main';
+        $karyawan = Karyawan::find()
+            ->select('id_karyawan')
+            ->where(['email' => Yii::$app->user->identity->email])
+            ->one();
+
+        $pengajuanKasbon = PengajuanKasbon::find()
+            ->where(['id_karyawan' => $karyawan->id_karyawan])
+            ->orderBy(['tanggal_pengajuan' => SORT_DESC])
+            ->all();
+
+        return $this->render('/home/pengajuan/kasbon/index', compact('pengajuanKasbon'));
+    }
+
+
+    public function actionKasbonCreate()
+    {
+        $this->layout = 'mobile-main';
+
+        // Dapatkan data karyawan berdasarkan user login
+        $karyawan = Karyawan::find()
+            ->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan])
+            ->one();
+
+        if (!$karyawan) {
+            Yii::$app->session->setFlash('error', 'Data karyawan tidak ditemukan.');
+            return $this->redirect(['/home/index']);
+        }
+
+        // Dapatkan gaji karyawan
+        $gaji = MasterGaji::find()
+            ->select('nominal_gaji')
+            ->where(['id_karyawan' => $karyawan->id_karyawan])
+            ->scalar(); // ambil langsung nilainya
+
+        $gajiPokok = $gaji ? $gaji : 0;
+
+        // Buat model baru
+        $model = new PengajuanKasbon();
+        $model->gaji_pokok = $gajiPokok;
+        $model->jumlah_kasbon = $gajiPokok * 3; // default 3x gaji
+        $model->lama_cicilan = 0;
+        $model->angsuran_perbulan = 0;
+        $model->tanggal_pengajuan = date('Y-m-d');
+        $model->status = 0;
+        $model->created_at = time();
+        $model->created_by = Yii::$app->user->id;
+
+        // Jika form disubmit
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+
+                // Set data tambahan yang tidak diinput user
+                $model->id_karyawan = $karyawan->id_karyawan;
+                $model->gaji_pokok = $gajiPokok;
+                $model->tanggal_pengajuan = date('Y-m-d');
+                $model->status = 0;
+                $model->created_at = time();
+                $model->created_by = Yii::$app->user->id;
+
+                // Hitung otomatis angsuran perbulan (jika belum diisi)
+                if (empty($model->angsuran_perbulan) && $model->lama_cicilan > 0) {
+                    $model->angsuran_perbulan = $model->jumlah_kasbon / $model->lama_cicilan;
+                }
+
+                // Simpan data
+                if ($model->save(false)) {
+                    // Kirim notifikasi ke atasan
+                    $useMessage = new UseMessageHelper();
+                    $adminUsers = $useMessage->getUserAtasanReceiver($karyawan->id_karyawan);
+
+                    $params = [
+                        'judul' => 'Pengajuan Kasbon',
+                        'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan kasbon baru.',
+                        'nama_transaksi' => '/panel/tanggapan/kasbon-view?id_pengajuan_kasbon=',
+                        'id_transaksi' => $model->id_pengajuan_kasbon,
+                    ];
+
+                    $this->sendNotif($params, $model, $adminUsers, "Pengajuan Kasbon Baru Dari " . $model->karyawan->nama);
+
+                    Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan Kasbon.');
+                    return $this->redirect(['/pengajuan/kasbon']);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal Membuat Pengajuan Kasbon.');
+                    return $this->redirect(['/pengajuan/kasbon']);
+                }
+            }
+        }
+
+        // Kirim data ke form
+        return $this->render('/home/pengajuan/kasbon/create', [
+            'model' => $model,
+            'gajiPokok' => $gajiPokok,
+        ]);
+    }
+    public function actionKasbonDetail($id)
+    {
+
+        $this->layout = 'mobile-main';
+        // Cari data kasbon berdasarkan ID
+        $model = \backend\models\PengajuanKasbon::find()
+            ->where(['id_pengajuan_kasbon' => $id])
+            ->one();
+
+        // Jika data tidak ditemukan
+        if (!$model) {
+            throw new \yii\web\NotFoundHttpException('Data pengajuan kasbon tidak ditemukan.');
+        }
+
+        // Render view detail
+        return $this->render('/home/pengajuan/kasbon/detail', [
+            'model' => $model,
+        ]);
+    }
+
 
 
 

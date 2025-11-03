@@ -5,9 +5,11 @@ namespace backend\controllers;
 
 use backend\models\DinasDetailGaji;
 use backend\models\helpers\PeriodeGajiHelper;
+use backend\models\Karyawan;
 use backend\models\LemburGaji;
 use backend\models\MasterGaji;
 use backend\models\MasterKode;
+use backend\models\PembayaranKasbon;
 use backend\models\PengajuanDinas;
 use backend\models\PeriodeGaji;
 use backend\models\PotonganAlfaAndWfhPenggajian;
@@ -68,8 +70,6 @@ class TransaksiGajiController extends Controller
      */
     public function actionIndex()
     {
-
-
         $id_karyawan = null;
         $bulan = date('m');
         $tahun = date('Y');
@@ -87,7 +87,6 @@ class TransaksiGajiController extends Controller
 
         // Ambil semua dari search (data lengkap dengan gaji_bersih)
         $allDataFromSearch = $searchModel->search($this->request->queryParams, $id_karyawan, $bulan, $tahun)->getModels();
-
         // Indexing data search berdasarkan ID karyawan
         $searchIndexed = [];
         foreach ($allDataFromSearch as $item) {
@@ -99,6 +98,8 @@ class TransaksiGajiController extends Controller
             ->where(['bulan' => $bulan, 'tahun' => $tahun])
             ->asArray()
             ->all();
+
+
 
         // Proses data yang sudah ada di DB
         $finalData = [];
@@ -163,6 +164,7 @@ class TransaksiGajiController extends Controller
             $bulan = $periode_gaji->bulan;
             $tahun = $periode_gaji->tahun;
         }
+
 
 
         return $this->render('index', [
@@ -291,11 +293,11 @@ class TransaksiGajiController extends Controller
     }
 
 
-
     public function actionGenerateGaji()
     {
-        $bulan = date('m');
-        $tahun = date('Y');
+        $params  = Yii::$app->request->post();
+        $bulan = $params['bulan'] ??  date('m');
+        $tahun = $params['tahun'] ?? date('Y');
         $this->actionDeleteAll($bulan, $tahun);
 
         $searchModel = new TransaksiGajiSearch();
@@ -312,6 +314,7 @@ class TransaksiGajiController extends Controller
         $rekapGajiRows = [];
         $rekapTerlambatRows = [];
         $potonganAlfaWfhRows = [];
+        $kasbonRekapRows = [];
 
         if (!empty($models)) {
             foreach ($models as $modelData) {
@@ -319,6 +322,9 @@ class TransaksiGajiController extends Controller
                 $nominalGaji = $modelData['nominal_gaji'];
                 $tunjanganList = TunjanganDetail::getTunjanganKaryawan($idKaryawan, $nominalGaji);
                 $potonganList = PotonganDetail::getPotonganKaryawan($idKaryawan, $nominalGaji);
+                $kasbonList = $searchModel->getKasbonKaryawan($idKaryawan);
+
+
                 $periode_gaji = PeriodeGaji::findOne(['bulan' => $bulan, 'tahun' => $tahun]);
                 $tanggal_awal_periode = $periode_gaji->tanggal_awal;
                 $tanggal_akhir_periode = $periode_gaji->tanggal_akhir;
@@ -467,6 +473,39 @@ class TransaksiGajiController extends Controller
                     ];
                 }
 
+
+
+                if (isset($kasbonList['data_terakhir']) && is_array($kasbonList['data_terakhir'])) {
+                    // Konversi ke float untuk perhitungan
+
+
+                    $angsuran = isset($kasbonList['data_terakhir']['angsuran']) ? floatval($kasbonList['data_terakhir']['angsuran']) : 0;
+
+                    $sisaKasbon = isset($kasbonList['data_terakhir']['sisa_kasbon']) ? floatval($kasbonList['data_terakhir']['sisa_kasbon']) : 0;
+                    // Pastikan sisa kasbon tidak minus
+                    $sisaKasbonBaru = max(0, $sisaKasbon - $angsuran);
+
+                    $row = [
+                        'id_karyawan' =>  $idKaryawan,
+                        'id_kasbon' => $kasbonList['data_terakhir']['id_kasbon'] ?? null,
+                        'bulan' => $bulan,
+                        'tahun' => $tahun,
+                        'jumlah_kasbon' => $kasbonList['data_terakhir']['jumlah_kasbon'] ?? 0,
+                        'jumlah_potong' => $angsuran,
+                        'tanggal_potong' => date('Y-m-d'),
+                        'angsuran' => $angsuran,
+                        'status_potongan' => $kasbonList['data_terakhir']['status_potongan'] ?? 0,
+                        'sisa_kasbon' => $sisaKasbonBaru,
+                        'created_at' => time(),
+                        'autodebt' => 1,
+                        'deskripsi' => 'Pembayaran Kasbon',
+                    ];
+
+
+
+                    $kasbonRekapRows[] = $row;
+                }
+
                 // Simpan detail dinas
                 foreach ($dinasList as $dinas) {
                     $tanggalMulai = new \DateTime($dinas['tanggal_mulai']);
@@ -611,6 +650,73 @@ class TransaksiGajiController extends Controller
                     ], $potonganRekapRows)->execute();
             }
 
+
+            if (!empty($kasbonRekapRows)) {
+
+                // Pastikan urutan kolom sama dengan yang akan diinsert
+                $rowsToInsert = [];
+                foreach ($kasbonRekapRows as $row) {
+                    $rowsToInsert[] = [
+                        $row['id_karyawan'],
+                        $row['id_kasbon'],
+                        $row['bulan'],
+                        $row['tahun'],
+                        $row['jumlah_potong'],
+                        $row['tanggal_potong'],
+                        $row['angsuran'],
+                        $row['status_potongan'],
+                        $row['sisa_kasbon'],
+                        $row['created_at'],
+                        $row['autodebt'],
+                        $row['deskripsi'],
+                        $row['jumlah_kasbon'],
+                    ];
+                }
+
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    Yii::$app->db->createCommand()
+                        ->batchInsert('{{%pembayaran_kasbon}}', [
+                            'id_karyawan',
+                            'id_kasbon',
+                            'bulan',
+                            'tahun',
+                            'jumlah_potong',
+                            'tanggal_potong',
+                            'angsuran',
+                            'status_potongan',
+                            'sisa_kasbon',
+                            'created_at',
+                            'autodebt',
+                            'deskripsi',
+                            'jumlah_kasbon',
+                        ], $rowsToInsert)
+                        ->execute();
+
+                    // Update status kasbon jika lunas
+                    $updatedKasbon = [];
+                    foreach ($kasbonRekapRows as $row) {
+                        if ($row['sisa_kasbon'] <= 0 && !in_array($row['id_kasbon'], $updatedKasbon)) {
+                            Yii::$app->db->createCommand()
+                                ->update(
+                                    '{{%pembayaran_kasbon}}',
+                                    ['status_potongan' => 1],
+                                    ['id_kasbon' => $row['id_kasbon']]
+                                )->execute();
+                            $updatedKasbon[] = $row['id_kasbon'];
+                        }
+                    }
+
+                    $transaction->commit();
+                    Yii::info('Berhasil menambahkan ' . count($kasbonRekapRows) . ' pembayaran kasbon baru untuk karyawan ID: ' . $idKaryawan, 'kasbon');
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    Yii::error('Gagal menambahkan pembayaran kasbon untuk karyawan ID: ' . $idKaryawan . ' - Error: ' . $e->getMessage(), 'kasbon');
+                    throw $e;
+                }
+            }
+
+
             // Simpan dinas
             if (!empty($dinasDetailRows)) {
                 Yii::$app->db->createCommand()
@@ -704,6 +810,7 @@ class TransaksiGajiController extends Controller
         $periode_gaji = PeriodeGaji::findOne(['bulan' => $bulan, 'tahun' => $tahun]);
         $tanggal_awal_periode = $periode_gaji->tanggal_awal;
         $tanggal_akhir_periode = $periode_gaji->tanggal_akhir;
+        $kasbonList = $searchModel->getKasbonKaryawan($id_karyawan); // <-- Tambahan kasbon
 
         // Ambil data lembur
         $lemburData = $this->getLemburData($id_karyawan, $bulan, $tahun, $tanggal_awal_periode, $tanggal_akhir_periode);
@@ -760,6 +867,39 @@ class TransaksiGajiController extends Controller
 
         if ($new->save()) {
             $errorMessages = [];
+
+
+            if (isset($kasbonList['data_terakhir']) && is_array($kasbonList['data_terakhir'])) {
+                $angsuran = floatval($kasbonList['data_terakhir']['angsuran'] ?? 0);
+                $sisaKasbon = floatval($kasbonList['data_terakhir']['sisa_kasbon'] ?? 0);
+                $sisaKasbonBaru = max(0, $sisaKasbon - $angsuran);
+
+                $kasbonRekap = new PembayaranKasbon();
+                $kasbonRekap->id_karyawan = $id_karyawan;
+                $kasbonRekap->id_kasbon = $kasbonList['data_terakhir']['id_kasbon'] ?? null;
+                $kasbonRekap->bulan = $bulan;
+                $kasbonRekap->tahun = $tahun;
+                $kasbonRekap->jumlah_potong = $angsuran;
+                $kasbonRekap->tanggal_potong = date('Y-m-d');
+                $kasbonRekap->angsuran = $angsuran;
+                $kasbonRekap->status_potongan = $kasbonList['data_terakhir']['status_potongan'] ?? 0;
+                $kasbonRekap->sisa_kasbon = $sisaKasbonBaru;
+                $kasbonRekap->created_at = time();
+                $kasbonRekap->autodebt = 1;
+                $kasbonRekap->deskripsi = 'Pembayaran Kasbon';
+                $kasbonRekap->jumlah_kasbon = $kasbonList['data_terakhir']['jumlah_kasbon'] ?? 0;
+
+                if (!$kasbonRekap->save()) {
+                    $errorMessages[] = "Kasbon: " . json_encode($kasbonRekap->errors);
+                } else {
+                    // Update status kasbon kalau lunas
+                    if ($sisaKasbonBaru <= 0) {
+                        Yii::$app->db->createCommand()
+                            ->update('{{%pembayaran_kasbon}}', ['status_potongan' => 1], ['id_kasbon' => $kasbonRekap->id_kasbon])
+                            ->execute();
+                    }
+                }
+            }
 
             // Simpan rekap gaji
             $rekapGaji = new RekapGajiKaryawanPertransaksi();
@@ -893,11 +1033,6 @@ class TransaksiGajiController extends Controller
     }
 
 
-
-
-
-
-
     public function actionView($id_transaksi_gaji)
     {
         $model = TransaksiGaji::find()->where(['id_transaksi_gaji' => $id_transaksi_gaji])->one();
@@ -918,6 +1053,7 @@ class TransaksiGajiController extends Controller
         DinasDetailGaji::deleteAll(['bulan' => $bulan, 'tahun' => $tahun]);
         RekapGajiKaryawanPertransaksi::deleteAll(['bulan' => $bulan, 'tahun' => $tahun]);
         PotonganAlfaAndWfhPenggajian::deleteAll(['bulan' => $bulan, 'tahun' => $tahun]);
+        PembayaranKasbon::deleteAll(['bulan' => $bulan, 'tahun' => $tahun, 'deskripsi' => 'Pembayaran Kasbon']);
         return;
     }
     public function actionDeleteOne($id_karyawan, $bulan, $tahun)
@@ -949,15 +1085,10 @@ class TransaksiGajiController extends Controller
         foreach ($tables as $table) {
             $table::deleteAll(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun]);
         }
+        PembayaranKasbon::deleteAll(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun, 'deskripsi' => 'Pembayaran Kasbon']);
     }
 
-    /**
-     * Finds the TransaksiGaji model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id_transaksi_gaji Id Transaksi Gaji
-     * @return TransaksiGaji the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+
     protected function findModel($id_transaksi_gaji)
     {
         if (($model = TransaksiGaji::findOne(['id_transaksi_gaji' => $id_transaksi_gaji])) !== null) {
@@ -968,6 +1099,136 @@ class TransaksiGajiController extends Controller
     }
 
 
+
+    public function actionEmailGaji($id_transaksi_gaji, $id_karyawan)
+    {
+        $karyawan = Karyawan::find()
+            ->select(['id_karyawan', 'email', 'nama'])
+            ->where(['id_karyawan' => $id_karyawan])
+            ->asArray()
+            ->one();
+
+        if (!$karyawan) {
+            throw new \yii\web\NotFoundHttpException("Data karyawan tidak ditemukan.");
+        }
+
+
+
+
+        $transaksiData = TransaksiGaji::find()
+            ->where(['id_transaksi_gaji' => $id_transaksi_gaji, 'id_karyawan' => $id_karyawan])
+            ->asArray()
+            ->one();
+
+        if (!$transaksiData) {
+            throw new \yii\web\NotFoundHttpException("Data slip gaji tidak ditemukan.");
+        }
+
+        // === 1. Render PDF content ===
+        $content = $this->renderPartial('_slip_gaji', [
+            'transaksiData' => $transaksiData,
+        ]);
+
+        // === 2. Generate PDF ke file sementara ===
+        $pdf = new \kartik\mpdf\Pdf([
+            'mode' => \kartik\mpdf\Pdf::MODE_CORE,
+            'format' => \kartik\mpdf\Pdf::FORMAT_A4,
+            'orientation' => \kartik\mpdf\Pdf::ORIENT_PORTRAIT,
+            'destination' => \kartik\mpdf\Pdf::DEST_FILE,
+            'filename' => Yii::getAlias('@runtime') . '/Slip_Gaji_' . $karyawan['nama'] . '.pdf',
+            'content' => $content,
+            'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
+            'cssInline' => '
+            table {width: 100%; border-collapse: collapse; font-size: 12px;}
+            th, td {border: 1px solid #ddd; padding: 0px; text-align: left;}
+            th {background-color: #f2f2f2; font-weight: bold;}
+            .text-right {text-align: right;}
+            .header {text-align: center; margin-bottom: 20px;}
+            .title {font-size: 16px; font-weight: bold;}
+        ',
+        ]);
+
+        $pdf->render(); // Generate dan simpan file PDF
+
+        $filePath = Yii::getAlias('@runtime') . '/Slip_Gaji_' . $karyawan['nama'] . '.pdf';
+
+        // === 3. Kirim Email ===
+        $bodyMessage = $this->renderPartial('@backend/views/transaksi-gaji/email', [
+            'karyawan' => $karyawan,
+            'transaksiData' => $transaksiData,
+        ]);
+
+
+        $mail = Yii::$app->mailer->compose()
+            ->setTo($karyawan['email'])
+            // ->setFrom(['no-reply@profaskes.com' => 'Payroll Profaskes'])
+            ->setSubject('Slip Gaji Bulan ' . date('F Y'))
+            ->setHtmlBody($bodyMessage)
+            ->attach($filePath); // Lampirkan PDF
+
+
+
+
+        if ($mail->send()) {
+            Yii::$app->session->setFlash('success', 'Slip gaji berhasil dikirim ke ' . $karyawan['email']);
+        } else {
+            Yii::$app->session->setFlash('error', 'Gagal mengirim slip gaji ke ' . $karyawan['email']);
+        }
+
+        // === 4. (Opsional) Hapus file PDF setelah terkirim ===
+        if (file_exists($filePath)) {
+            @unlink($filePath);
+        }
+
+        return $this->redirect(['index']);
+    }
+
+
+
+
+    public function actionSlipGajiPdf($id_transaksi_gaji, $id_karyawan)
+    {
+        // Ambil data transaksi gaji
+        $transaksiData = TransaksiGaji::find()
+            ->where(['id_transaksi_gaji' => $id_transaksi_gaji, 'id_karyawan' => $id_karyawan])
+            ->asArray()
+            ->one();
+
+        if (!$transaksiData) {
+            throw new \yii\web\NotFoundHttpException("Data slip gaji tidak ditemukan.");
+        }
+
+        // Render partial view untuk content PDF
+        $content = $this->renderPartial('_slip_gaji', [
+            'transaksiData' => $transaksiData
+        ]);
+
+        // Setup kartik\mpdf\Pdf component
+        $pdf = new \kartik\mpdf\Pdf([
+            'mode' => \kartik\mpdf\Pdf::MODE_CORE,
+            'format' => \kartik\mpdf\Pdf::FORMAT_A4, // lebih kecil untuk slip gaji
+            'orientation' => \kartik\mpdf\Pdf::ORIENT_PORTRAIT,
+            'destination' => \kartik\mpdf\Pdf::DEST_BROWSER,
+            'content' => $content,
+            'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
+            'cssInline' => '
+            table {width: 100%; border-collapse: collapse; font-size: 12px;}
+            th, td {border: 1px solid #ddd; padding: 0px; text-align: left;}
+            th {background-color: #f2f2f2; font-weight: bold;}
+            .text-right {text-align: right;}
+            .header {text-align: center; margin-bottom: 20px;}
+            .title {font-size: 16px; font-weight: bold;}
+        ',
+            'options' => ['title' => 'Slip Gaji ' . $transaksiData['nama']],
+            'methods' => [
+                // 'SetHeader' => ['Slip Gaji'],
+                // 'SetFooter' => ['{PAGENO}'],
+            ]
+        ]);
+
+        // Render PDF
+        return $pdf->render();
+    }
 
 
 
@@ -1206,7 +1467,6 @@ class TransaksiGajiController extends Controller
     }
 
 
-
     public function actionGetDinasKaryawan($id_karyawan, $bulan, $tahun)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -1271,9 +1531,24 @@ class TransaksiGajiController extends Controller
         }
     }
 
-    /**
-     * Mendapatkan data lembur untuk perhitungan gaji
-     */
+    public function actionGetKasbonKaryawan($id_karyawan)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $data = PembayaranKasbon::find()
+            ->where(['id_karyawan' => $id_karyawan])
+            ->andWhere(['status_potongan' => 0, 'autodebt' => 1])
+            ->asArray()
+            ->orderBy(['id_pembayaran_kasbon' => SORT_DESC])
+            ->one();
+
+        return [
+            'success' => true,
+            "data" => $data
+        ];
+    }
+
+
     private function getLemburData($id_karyawan, $bulan, $tahun, $tanggal_awal, $tanggal_akhir)
     {
         try {

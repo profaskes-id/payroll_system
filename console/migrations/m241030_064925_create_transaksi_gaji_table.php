@@ -14,7 +14,6 @@ class m241030_064925_create_transaksi_gaji_table extends Migration
     {
         $this->createTable('{{%transaksi_gaji}}', [
             'id_transaksi_gaji' => $this->primaryKey(),
-
             // Identitas karyawan
             'id_karyawan' => $this->integer()->notNull(),
             'nama' => $this->string()->notNull(),
@@ -38,6 +37,7 @@ class m241030_064925_create_transaksi_gaji_table extends Migration
             'gaji_perhari' => $this->decimal(25, 10)->null(),
             'tunjangan_karyawan' => $this->decimal(25, 10)->null(),
             'potongan_karyawan' => $this->decimal(25, 10)->null(),
+            'potongan_kasbon' => $this->decimal(25, 10)->null(),
             'potongan_terlambat' => $this->decimal(25, 10)->null(),
             'potongan_absensi' => $this->decimal(25, 10)->null(),
 

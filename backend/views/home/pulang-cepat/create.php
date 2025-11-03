@@ -7,23 +7,16 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var backend\models\Absensi $model */
 
-$this->title = 'Create Absensi';
+$this->title = 'Izin Pulang Cepat';
 $this->params['breadcrumbs'][] = ['label' => 'Absensi', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
 
-
-
-<div class="relative z-40 w-full px-5 mx-auto lg:px-8">
-
-
+<div class="relative z-40 w-full mx-auto md:px-5">
 
     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home/absen-masuk', 'title' => 'Izin Pulang Cepat']); ?>
     <section class="grid justify-center grid-cols-12 mt-2 gap-y-10">
-
-
-
         <div class="col-span-12 relative h-[90dvh] pt-2">
 
             <?php $form = ActiveForm::begin([

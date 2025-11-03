@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\MasterGaji;
 use backend\models\Tunjangan;
 use backend\models\TunjanganDetail;
 use backend\models\TunjanganDetailSearch;
@@ -167,18 +168,30 @@ class TunjanganDetailController extends Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
+        $gajiKaryawan = MasterGaji::find()->where(['id_karyawan' => $id_karyawan])->one();
+        $nominalGaji = $gajiKaryawan ? $gajiKaryawan->nominal_gaji : 0;
+
         $data = TunjanganDetail::find()
-            ->alias('td') // beri alias pada tabel utama
-            ->select(['td.*', 't.*']) // ambil semua kolom dari kedua tabel
-            ->leftJoin('tunjangan t', 't.id_tunjangan = td.id_tunjangan') // join dengan alias
-            ->where(['td.id_karyawan' => $id_karyawan, 'td.status' => 1]) // tambahkan alias di kondisi
+            ->alias('td')
+            ->select(['td.*', 't.nama_tunjangan', 't.satuan'])
+            ->leftJoin('tunjangan t', 't.id_tunjangan = td.id_tunjangan')
+            ->where(['td.id_karyawan' => $id_karyawan, 'td.status' => 1])
             ->asArray()
             ->all();
 
+        // Proses perhitungan jika satuannya persen
+        foreach ($data as &$row) {
+            if ($row['satuan'] === '%') {
+                $row['jumlah_final'] = ($row['jumlah'] / 100) * $nominalGaji;
+            } else {
+                $row['jumlah_final'] = $row['jumlah'];
+            }
+        }
 
         return [
             'success' => true,
-            'data' => $data
+            'data' => $data,
+            'nominal_gaji' => $nominalGaji
         ];
     }
 }

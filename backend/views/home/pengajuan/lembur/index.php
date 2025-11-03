@@ -8,8 +8,8 @@ use yii\helpers\Html;
 /** @var yii\web\/pengajuan/lembur-detail/ $this */
 /** @var backend\models\Absensi $model */
 
-$this->title = 'Create Penajuan Lembur';
-$this->params['breadcrumbs'][] = ['label' => 'Penajuan Lembur', 'url' => ['index']];
+$this->title = 'Create Pengajuan Lembur';
+$this->params['breadcrumbs'][] = ['label' => 'Pengajuan Lembur', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 
@@ -17,7 +17,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
 ?>
 
-<div class="w-full mx-auto sm:px-6 lg:px-8 min-h-[90dvh] px-5 relative z-50">
+<div class="w-full mx-auto sm:px-2 lg:px-8 min-h-[90dvh] px-2 relative z-50">
     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home', 'title' => 'Pengajuan Lembur']); ?>
 
 
@@ -53,8 +53,8 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
     </div>
     <div id="default-tab-content">
 
-        <a href="/panel/pengajuan/lembur-create" class="flex items-center justify-center w-full px-4 py-1 my-3 text-sm font-medium text-white bg-blue-400 border border-transparent rounded-lg  gap-x-2 hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
-        <div class="hidden p-4 mb-20 rounded-lg bg-gray-50 dark:bg-gray-800" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <a href="/panel/pengajuan/lembur-create" class="flex items-center justify-center w-full px-4 py-1 my-3 text-sm font-medium text-white bg-blue-400 border border-transparent rounded-lg gap-x-2 hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
+        <div class="hidden mb-20 rounded-lg bg-gray-50 md:p-2 dark:bg-gray-800" id="profile" role="tabpanel" aria-labelledby="profile-tab">
             <?php if (!empty($pengajuanLembur)) : ?>
                 <div class="grid w-full grid-cols-1 gap-y-4 ">
                     <?php foreach ($pengajuanLembur as $key => $value) : ?>
@@ -99,7 +99,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
         </div>
     </div>
 
-    <div class="hidden p-4 mb-20 rounded-lg bg-gray-50 dark:bg-gray-800" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+    <div class="hidden mb-20 rounded-lg bg-gray-50 dark:bg-gray-800" id="settings" role="tabpanel" aria-labelledby="settings-tab">
         <div class="grid w-full grid-cols-1 gap-y-4 ">
             <?php if (!empty($pengajuanLembur)) : ?>
                 <?php foreach ($pengajuanLembur as $key => $value) : ?>
@@ -127,7 +127,7 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
             <?php endif ?>
         </div>
     </div>
-    <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
+    <div class="hidden rounded-lg bg-gray-50 dark:bg-gray-800" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
         <div class="grid w-full grid-cols-1 gap-y-4 ">
             <?php if (!empty($pengajuanLembur)) : ?>
                 <?php foreach ($pengajuanLembur as $key => $value) : ?>
