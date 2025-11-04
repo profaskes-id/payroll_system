@@ -1,6 +1,8 @@
 <?php
 
 use yii\helpers\Url;
+use yii\helpers\Html;
+
 ?>
 
 <div class="modal fade" id="modalKasbon" tabindex="-1" aria-labelledby="modalKasbonLabel" aria-hidden="true">
@@ -76,6 +78,36 @@ use yii\helpers\Url;
                                 </tr>
                             </tfoot>
                         </table>
+
+                        <?php
+                        $params = Yii::$app->request->get('TransaksiGaji', []);
+                        $bulan = isset($params['bulan']) && $params['bulan'] != '' ? $params['bulan'] : date('m');
+                        $tahun = isset($params['tahun']) && $params['tahun'] != '' ? $params['tahun'] : date('Y');
+                        ?>
+
+                        <?= Html::beginForm(['transaksi-gaji/pending-pembayaran'], 'post', ['id' => 'formPendingPembayaran']) ?>
+                        <?= Html::hiddenInput('bulan', $bulan, ['id' => 'bulanInput']) ?>
+                        <?= Html::hiddenInput('tahun', $tahun, ['id' => 'tahunInput']) ?>
+                        <?= Html::hiddenInput('id_karyawan', '', ['id' => 'idKaryawanInput']) ?>
+                        <?= Html::hiddenInput('id_kasbon', '', ['id' => 'idKasbonInput']) ?>
+
+                        <button type="submit" class="mx-auto mb-2 btn btn-warning d-block">
+                            Pending Pembayaran Bulan <?= $bulan ?> / <?= $tahun ?>
+                        </button>
+                        <?= Html::endForm() ?>
+
+                        <?= Html::beginForm(['transaksi-gaji/batal-pending'], 'post', ['id' => 'formBatalPending']) ?>
+                        <?= Html::hiddenInput('bulan', $bulan, ['id' => 'bulanBatalInput']) ?>
+                        <?= Html::hiddenInput('tahun', $tahun, ['id' => 'tahunBatalInput']) ?>
+                        <?= Html::hiddenInput('id_karyawan', '', ['id' => 'idKaryawanBatalInput']) ?>
+                        <?= Html::hiddenInput('id_kasbon', '', ['id' => 'idKasbonBatalInput']) ?>
+
+                        <button type="submit" class="mx-auto btn btn-danger d-block">
+                            Batal Pending Bulan <?= $bulan ?> / <?= $tahun ?>
+                        </button>
+                        <?= Html::endForm() ?>
+
+
                     </div>
 
                     <!-- Empty State -->
@@ -94,6 +126,9 @@ use yii\helpers\Url;
         </div>
     </div>
 </div>
+
+
+
 
 <script>
     // Variabel untuk menyimpan data current
@@ -116,7 +151,7 @@ use yii\helpers\Url;
         // Set info karyawan
         $('#karyawanNamaKasbon').text(karyawanNama);
         $('#karyawanBagianKasbon').text(karyawanBagian);
-
+        $('#idKaryawanInput').val(karyawanId);
         // AJAX request
         $.ajax({
             url: '<?= Url::to(['transaksi-gaji/get-kasbon-karyawan']) ?>',
@@ -128,9 +163,14 @@ use yii\helpers\Url;
                 $('#loadingKasbon').addClass('d-none');
 
                 if (response.success) {
-
-
                     displayKasbonData(response);
+                    if (response.data && response.data.id_kasbon) {
+                        $('#idKasbonInput').val(response.data.id_kasbon);
+                        $('#idKasbonBatalInput').val(response.data.id_kasbon);
+                    }
+                    $('#idKaryawanInput').val(currentKaryawanId);
+                    $('#idKaryawanBatalInput').val(currentKaryawanId);
+
                 } else {
                     showError(response.error || 'Terjadi kesalahan saat memuat data');
                 }

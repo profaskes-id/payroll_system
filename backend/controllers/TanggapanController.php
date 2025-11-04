@@ -17,6 +17,7 @@ use backend\models\MasterKode;
 use backend\models\PengajuanAbsensi;
 use backend\models\PengajuanCuti;
 use backend\models\PengajuanDinas;
+use backend\models\PengajuanKasbon;
 use backend\models\PengajuanLembur;
 use backend\models\PengajuanShift;
 use backend\models\PengajuanTugasLuar;
@@ -748,6 +749,286 @@ class TanggapanController extends Controller
         Yii::$app->session->setFlash('error', 'Gagal Menghapus Pengajuan');
         return $this->redirect(['/tanggapan/dinas']);
     }
+
+
+
+
+
+
+
+
+
+    // kasbon   
+    public function actionKasbon()
+    {
+        $id_admin = Yii::$app->user->identity->id_karyawan;
+
+        $karyawanBawahanAdmin = AtasanKaryawan::find()
+            ->where(['id_atasan' => $id_admin])
+            ->asArray()
+            ->all();
+
+        $idKaryawanList = array_column($karyawanBawahanAdmin, 'id_karyawan');
+        $pengajuanKasbonList = PengajuanKasbon::find()
+            ->where(['id_karyawan' => $idKaryawanList])
+            ->orderBy(['status' => SORT_DESC])
+            ->all();
+
+        $this->layout = 'mobile-main';
+
+        $model = new PengajuanKasbon();
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->disetujui_oleh = Yii::$app->user->identity->id;
+            $model->tanggal_disetujui = date('Y-m-d');
+            $model->status = 1; // contoh status disetujui
+            $model->save();
+
+            $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+            $sender = Yii::$app->user->identity->id;
+
+            $params = [
+                'judul' => 'Pengajuan Kasbon',
+                'deskripsi' => 'Pengajuan kasbon Anda telah ditanggapi oleh atasan.',
+                'nama_transaksi' => "/panel/pengajuan/kasbon-detail?id",
+                'id_transaksi' => $model['id_pengajuan_kasbon'],
+            ];
+            $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan kasbon");
+
+            return $this->redirect(['kasbon-view', 'id_pengajuan_kasbon' => $model->id_pengajuan_kasbon]);
+        }
+
+        return $this->render('/home/tanggapan/kasbon/index', compact('pengajuanKasbonList', 'model'));
+    }
+
+    // ========================================
+    // CREATE KASBON
+    // ========================================
+    public function actionKasbonCreate()
+    {
+        $this->layout = 'mobile-main';
+        $id_admin = Yii::$app->user->identity->id_karyawan;
+
+        $karyawanBawahanAdmin = AtasanKaryawan::find()
+            ->where(['id_atasan' => $id_admin])
+            ->asArray()
+            ->all();
+
+        $model = new PengajuanKasbon();
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            // Set default values
+            $model->tanggal_pengajuan = date('Y-m-d');
+            $model->status = 0; // pending
+            $model->created_at = time();
+            $model->created_by = Yii::$app->user->identity->id;
+            $model->updated_at = time();
+            $model->updated_by = Yii::$app->user->identity->id;
+
+            // 🔹 Ambil gaji pokok dari master_gaji
+            $gaji = \backend\models\MasterGaji::find()
+                ->where(['id_karyawan' => $model->id_karyawan])
+                ->orderBy(['id_gaji' => SORT_DESC])
+                ->one();
+            $model->gaji_pokok = $gaji ? $gaji->nominal_gaji : 0;
+
+            if ($model->save()) {
+
+                // 🔹 Setelah Save → Buat atau update data PembayaranKasbon
+                // if ($model->status == 1) {
+                //     $idKasbonBaru = $model->id_pengajuan_kasbon;
+                //     $dataOld = \backend\models\PembayaranKasbon::find()
+                //         ->where([
+                //             'id_karyawan' => $model->id_karyawan,
+                //             'status_potongan' => 0,
+                //             'autodebt' => $model->tipe_potongan
+                //         ])
+                //         ->orderBy(['created_at' => SORT_DESC])
+                //         ->one();
+
+                //     if ($dataOld) {
+                //         // Jika ada data lama
+                //         $dataOld->id_kasbon = $idKasbonBaru;
+                //         $dataOld->jumlah_kasbon += $model->jumlah_kasbon;
+                //         $dataOld->jumlah_potong = 0;
+                //         $dataOld->tanggal_potong = $model->tanggal_mulai_potong;
+                //         $dataOld->angsuran = $model->angsuran_perbulan;
+                //         $dataOld->status_potongan = 0;
+                //         $dataOld->autodebt = $model->tipe_potongan;
+                //         $dataOld->sisa_kasbon += $model->jumlah_kasbon;
+                //         $dataOld->created_at = time();
+                //         $dataOld->deskripsi = 'Top-up Kasbon';
+
+                //         $dataOld->save(false);
+                //     } else {
+                //         // Jika belum ada, buat baru
+                //         $pembayaran = new \backend\models\PembayaranKasbon();
+                //         $pembayaran->id_karyawan = $model->id_karyawan;
+                //         $pembayaran->id_kasbon = $idKasbonBaru;
+                //         $pembayaran->jumlah_kasbon = $model->jumlah_kasbon;
+                //         $pembayaran->jumlah_potong = 0;
+                //         $pembayaran->tanggal_potong = $model->tanggal_mulai_potong;
+                //         $pembayaran->angsuran = $model->angsuran_perbulan;
+                //         $pembayaran->status_potongan = 0;
+                //         $pembayaran->autodebt = $model->tipe_potongan;
+                //         $pembayaran->sisa_kasbon = $model->jumlah_kasbon;
+                //         $pembayaran->created_at = time();
+                //         $pembayaran->deskripsi = 'Kasbon Baru';
+                //         $pembayaran->save(false);
+                //     }
+                // }
+
+                Yii::$app->session->setFlash('success', 'Berhasil membuat pengajuan kasbon.');
+                return $this->redirect(['/tanggapan/kasbon']);
+            } else {
+                Yii::$app->session->setFlash('error', 'Gagal membuat pengajuan kasbon.');
+                return $this->redirect(['/tanggapan/kasbon']);
+            }
+        }
+
+        return $this->render('/home/tanggapan/kasbon/create', compact('model', 'karyawanBawahanAdmin'));
+    }
+
+
+
+    // ========================================
+    // UPDATE KASBON
+    // ========================================
+    public function actionKasbonUpdate($id)
+    {
+        $id_admin = Yii::$app->user->identity->id_karyawan;
+
+        $karyawanBawahanAdmin = AtasanKaryawan::find()
+            ->where(['id_atasan' => $id_admin])
+            ->asArray()
+            ->all();
+
+        $pengajuanKasbon = PengajuanKasbon::findOne($id);
+
+        if ($this->request->isPost && $pengajuanKasbon->load($this->request->post())) {
+            $pengajuanKasbon->disetujui_oleh = Yii::$app->user->identity->id;
+            $pengajuanKasbon->tanggal_disetujui = date('Y-m-d');
+            $pengajuanKasbon->status = 1; // disetujui
+            $pengajuanKasbon->updated_at = time();
+            $pengajuanKasbon->updated_by = Yii::$app->user->identity->id;
+
+            if ($pengajuanKasbon->save()) {
+
+                // 🔹 Setelah Save → update PembayaranKasbon
+                if ($pengajuanKasbon->status == 1) {
+                    $idKasbonBaru = $pengajuanKasbon->id_pengajuan_kasbon;
+                    $dataOld = \backend\models\PembayaranKasbon::find()
+                        ->where([
+                            'id_karyawan' => $pengajuanKasbon->id_karyawan,
+                            'status_potongan' => 0,
+                        ])
+                        ->orderBy(['created_at' => SORT_DESC])
+                        ->one();
+
+                    if ($dataOld) {
+                        // Jika sudah ada kasbon aktif (belum lunas)
+                        if ($dataOld->id_kasbon == $idKasbonBaru) {
+                            // Update data lama (top-up pada kasbon yang sama)
+                            $dataOld->jumlah_kasbon = $pengajuanKasbon->jumlah_kasbon;
+                            $dataOld->sisa_kasbon = $pengajuanKasbon->jumlah_kasbon;
+                        } else {
+                            // Jika kasbon baru tapi masih ada sisa lama → tambahkan
+                            $dataOld->id_kasbon = $idKasbonBaru;
+                            $dataOld->jumlah_kasbon = $dataOld->jumlah_kasbon + $pengajuanKasbon->jumlah_kasbon;
+                            $dataOld->sisa_kasbon = $dataOld->sisa_kasbon + $pengajuanKasbon->jumlah_kasbon;
+                        }
+
+                        $dataOld->tanggal_potong = $pengajuanKasbon->tanggal_mulai_potong;
+                        $dataOld->angsuran = $pengajuanKasbon->angsuran_perbulan;
+                        $dataOld->autodebt = $pengajuanKasbon->tipe_potongan;
+                        $dataOld->created_at = time();
+                        $dataOld->deskripsi = 'Top-up Kasbon';
+
+                        if ($dataOld->save(false)) {
+                            Yii::$app->session->setFlash('success', 'Data kasbon berhasil diperbarui (Top-up Kasbon).');
+                        } else {
+                            Yii::$app->session->setFlash('error', 'Gagal memperbarui data kasbon lama.');
+                        }
+                    } else {
+                        // Jika belum ada kasbon aktif, buat baru
+                        $pembayaran = new \backend\models\PembayaranKasbon();
+                        $pembayaran->id_karyawan = $pengajuanKasbon->id_karyawan;
+                        $pembayaran->id_kasbon = $idKasbonBaru;
+                        $pembayaran->jumlah_kasbon = $pengajuanKasbon->jumlah_kasbon;
+                        $pembayaran->jumlah_potong = 0;
+                        $pembayaran->tanggal_potong = $pengajuanKasbon->tanggal_mulai_potong;
+                        $pembayaran->angsuran = $pengajuanKasbon->angsuran_perbulan;
+                        $pembayaran->status_potongan = 0;
+                        $pembayaran->autodebt = $pengajuanKasbon->tipe_potongan;
+                        $pembayaran->sisa_kasbon = $pengajuanKasbon->jumlah_kasbon;
+                        $pembayaran->created_at = time();
+                        $pembayaran->deskripsi = 'Kasbon Baru';
+
+                        if ($pembayaran->save(false)) {
+                            Yii::$app->session->setFlash('success', 'Kasbon baru berhasil ditambahkan.');
+                        } else {
+                            Yii::$app->session->setFlash('error', 'Gagal menambahkan kasbon baru.');
+                        }
+                    }
+                }
+
+                // 🔔 Kirim notifikasi
+                $adminUsers = User::find()->where(['id_karyawan' => $pengajuanKasbon->id_karyawan])->all();
+                $sender = Yii::$app->user->identity->id;
+                $params = [
+                    'judul' => 'Pengajuan Kasbon',
+                    'deskripsi' => 'Pengajuan kasbon Anda telah ditanggapi oleh atasan.',
+                    'nama_transaksi' => "/panel/pengajuan/kasbon-detail?id",
+                    'id_transaksi' => $pengajuanKasbon['id_pengajuan_kasbon'],
+                ];
+                $this->sendNotif($params, $sender, $pengajuanKasbon, $adminUsers, "Pengajuan kasbon");
+
+                Yii::$app->session->setFlash('success', 'Pengajuan kasbon berhasil diperbarui.');
+                return $this->redirect(['/tanggapan/kasbon-view', 'id_pengajuan_kasbon' => $pengajuanKasbon->id_pengajuan_kasbon]);
+            }
+
+            Yii::$app->session->setFlash('error', 'Gagal mengupdate pengajuan kasbon.');
+        }
+
+        $this->layout = 'mobile-main';
+        return $this->render('/home/tanggapan/kasbon/update', [
+            'model' => $pengajuanKasbon,
+            'karyawanBawahanAdmin' => $karyawanBawahanAdmin,
+        ]);
+    }
+
+
+    // ========================================
+    // VIEW KASBON
+    // ========================================
+    public function actionKasbonView($id_pengajuan_kasbon)
+    {
+        $this->layout = 'mobile-main';
+        $model = PengajuanKasbon::find()->where(['id_pengajuan_kasbon' => $id_pengajuan_kasbon])->one();
+        return $this->render('/home/tanggapan/kasbon/view', compact('model'));
+    }
+
+    // ========================================
+    // DELETE KASBON
+    // ========================================
+    public function actionKasbonDelete($id_pengajuan_kasbon)
+    {
+        $model = PengajuanKasbon::findOne($id_pengajuan_kasbon);
+        if ($model && $model->delete()) {
+            Yii::$app->session->setFlash('success', 'Berhasil menghapus pengajuan kasbon.');
+        } else {
+            Yii::$app->session->setFlash('error', 'Gagal menghapus pengajuan kasbon.');
+        }
+
+        return $this->redirect(['/tanggapan/kasbon']);
+    }
+    // end kasbon
+
+
+
+
+
+
 
 
 

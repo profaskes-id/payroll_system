@@ -16,7 +16,8 @@ class m251028_031114_create_pending_kasbon_table extends Migration
             'id_pending_kasbon' => $this->primaryKey(),
             'id_karyawan' => $this->integer()->notNull(),
             'id_kasbon' => $this->integer()->notNull(),
-            'id_periode_gaji' => $this->integer()->notNull(),
+            'bulan' => $this->integer()->notNull(),
+            'tahun' => $this->integer()->notNull(),
         ]);
 
         // 🔗 Relasi ke tabel karyawan
@@ -36,16 +37,6 @@ class m251028_031114_create_pending_kasbon_table extends Migration
             'id_kasbon',
             '{{%pengajuan_kasbon}}',
             'id_pengajuan_kasbon',
-            'CASCADE'
-        );
-
-        // 🔗 Relasi ke tabel periode_gaji
-        $this->addForeignKey(
-            'fk_pending_kasbon_periode_gaji',
-            '{{%pending_kasbon}}',
-            'id_periode_gaji',
-            '{{%periode_gaji}}',
-            'id_periode_gaji',
             'CASCADE'
         );
     }

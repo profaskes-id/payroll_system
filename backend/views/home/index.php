@@ -617,6 +617,26 @@ $this->params['breadcrumbs'][] = $this->title;
                             </div> -->
                         </div>
                     </a>
+                    <a href="/panel/tanggapan/kasbon" class="block transition-all duration-200 group hover:bg-blue-50">
+                        <div class="flex items-center justify-between p-4">
+                            <div class="flex items-center">
+                                <div class="p-3 transition-colors duration-200 bg-purple-100 rounded-lg group-hover:bg-purple-200">
+                                    <i class="text-xl text-purple-600 fas fa-cloud"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="font-medium text-gray-800">Pengajuan Kasbon</h3>
+                                    <p class="text-sm text-gray-500">Pinjaman Karyawan</p>
+                                </div>
+                            </div>
+                            <!-- <div class="flex items-center">
+                            <span class="mr-3 text-sm text-gray-500">12 pending</span>
+                            <div class="px-2 py-1 text-xs font-bold text-purple-700 transition-colors duration-200 bg-purple-100 rounded-full group-hover:bg-purple-200">
+                                12
+                            </div>
+                            <i class="ml-2 text-gray-400 transition-colors duration-200 fas fa-chevron-right group-hover:text-purple-600"></i>
+                        </div> -->
+                        </div>
+                    </a>
                 </div>
 
                 <!-- <div class="p-4 text-sm text-center text-gray-500 bg-gray-50">

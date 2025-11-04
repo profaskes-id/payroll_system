@@ -82,6 +82,8 @@
             <?php endif; ?>
 
             <?php
+
+            // dd($transaksiData);
             $totalPotongan = $transaksiData["potongan_karyawan"]
                 + $transaksiData["potongan_terlambat"]
                 + $transaksiData["potongan_absensi"]

@@ -249,7 +249,7 @@
 
         <!-- Desktop Sidebar -->
         <div class="col-span-11 xl:col-span-2 z-[20]  hidden md:block ">
-            <div class="fixed bottom-0 left-0 right-0 hidden w-full h-screen xl:block">
+            <div class="fixed bottom-0 left-0 right-0 hidden w-full h-screen overflow-y-scroll xl:block">
                 <?= $this->render('@backend/views/components/_sidebar-desktop'); ?>
             </div>
         </div>

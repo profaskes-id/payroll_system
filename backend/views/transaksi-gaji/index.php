@@ -244,27 +244,29 @@
                                     if (isset($model['id_transaksi_gaji']) && $model['id_transaksi_gaji'] != null) {
                                         $actions = '
             <div class="gap-1 action-buttons d-flex justify-content-center">
-                <!-- Link Detail -->
-                <a href="' . Url::to(['deleterow', 'id_karyawan' => $model['id_karyawan'], 'bulan' => $model['bulan'], 'tahun' => $model['tahun']]) . '" 
-                   class="btn btn-danger btn-sm"
-                   data-bs-toggle="modal" 
-                   data-bs-target="#confirmModal"
-                   data-action="detail"
-                   data-karyawan="' . Html::encode($model['nama'] ?? 'Karyawan') . '"
-                   title="Detail">
-                    <i class="fas fa-trash"></i>
-                </a>
+               <a href="' . Url::to(['deleterow', 'id_karyawan' => $model['id_karyawan'], 'bulan' => $model['bulan'], 'tahun' => $model['tahun']]) . '" 
+   class="btn btn-danger btn-sm"
+   data-bs-toggle="modal" 
+   data-bs-target="#confirmModal"
+   data-action="delete"
+   data-url="' . Url::to(['deleterow', 'id_karyawan' => $model['id_karyawan'], 'bulan' => $model['bulan'], 'tahun' => $model['tahun']]) . '"
+   data-karyawan="' . Html::encode($model['nama'] ?? 'Karyawan') . '"
+   title="Delete">
+    <i class="fas fa-trash"></i>
+</a>
 
-                <!-- Link Regenerate -->
+
                 <a href="' . Url::to(['generate-gaji-one', 'id_karyawan' => $model['id_karyawan']]) . '" 
-                   class="btn btn-warning btn-sm"
-                   data-bs-toggle="modal" 
-                   data-bs-target="#confirmModal"
-                   data-action="regenerate"
-                   data-karyawan="' . Html::encode($model['nama'] ?? 'Karyawan') . '"
-                   title="Regenerate">
-                    <i class="fas fa-sync-alt"></i>
-                </a>
+   class="btn btn-warning btn-sm"
+   data-bs-toggle="modal" 
+   data-bs-target="#confirmModal"
+   data-action="regenerate"
+   data-url="' . Url::to(['generate-gaji-one', 'id_karyawan' => $model['id_karyawan']]) . '"
+   data-karyawan="' . Html::encode($model['nama'] ?? 'Karyawan') . '"
+   title="Regenerate">
+    <i class="fas fa-sync-alt"></i>
+</a>
+
 
                 <!-- Link Cetak -->
                 <a href="' . Url::to(['slip-gaji-pdf',  'id_transaksi_gaji' => $model['id_transaksi_gaji'], 'id_karyawan' => $model['id_karyawan']]) . '" 
@@ -678,9 +680,9 @@
                         message = 'Apakah Anda yakin ingin memproses gaji untuk karyawan ini?';
                         break;
 
-                    case 'detail':
+                    case 'delete':
                         modalTitle = 'Lihat Detail Gaji';
-                        message = 'Apakah Anda yakin ingin melihat detail transaksi gaji ini?';
+                        message = 'Apakah Anda yakin ingin menghapus detail transaksi gaji ini?';
                         break;
 
                     case 'regenerate':

@@ -10,6 +10,7 @@ use backend\models\LemburGaji;
 use backend\models\MasterGaji;
 use backend\models\MasterKode;
 use backend\models\PembayaranKasbon;
+use backend\models\PendingKasbon;
 use backend\models\PengajuanDinas;
 use backend\models\PeriodeGaji;
 use backend\models\PotonganAlfaAndWfhPenggajian;
@@ -70,6 +71,8 @@ class TransaksiGajiController extends Controller
      */
     public function actionIndex()
     {
+        $params = Yii::$app->request->get();
+
         $id_karyawan = null;
         $bulan = date('m');
         $tahun = date('Y');
@@ -301,9 +304,10 @@ class TransaksiGajiController extends Controller
         $this->actionDeleteAll($bulan, $tahun);
 
         $searchModel = new TransaksiGajiSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams, null);
+        $dataProvider = $searchModel->search($this->request->queryParams, null, $bulan, $tahun);
 
         $models = $dataProvider->getModels();
+
         $rows = [];
         $now = date('Y-m-d H:i:s');
         $userId = Yii::$app->user->id;
@@ -339,6 +343,21 @@ class TransaksiGajiController extends Controller
                 $gaji_perjam = $lemburData['gaji_perjam'];
                 $total_hitungan_jam = $lemburData['total_hitungan_jam'];
                 $total_pendapatan_lembur = $lemburData['total_pendapatan_lembur'];
+
+                $pendingKasbon = null;
+
+                if (isset($kasbonList['data_terakhir']['id_kasbon'])) {
+                    $pendingKasbon = PendingKasbon::find()
+                        ->where([
+                            'id_karyawan' => $idKaryawan,
+                            'id_kasbon' => $kasbonList['data_terakhir']['id_kasbon'],
+                            'bulan' => $bulan,
+                            'tahun' => $tahun,
+                        ])
+                        ->one();
+                }
+
+
 
                 $dinasList = PengajuanDinas::find()
                     ->where(['id_karyawan' => $idKaryawan, 'status' => 1, 'status_dibayar' => 0])
@@ -417,6 +436,7 @@ class TransaksiGajiController extends Controller
                     'terlambat' => $modelData['terlambat'],
                     'nominal_gaji' => $modelData['nominal_gaji'],
                     'potongan_karyawan' => $modelData['potongan_karyawan'],
+                    'potongan_kasbon' => $pendingKasbon ? 0 : $modelData['kasbon_karyawan'],
                     'tunjangan_karyawan' => $modelData['tunjangan_karyawan'],
                     'gaji_perhari' => $modelData['gaji_perhari'],
                     'jam_lembur' => $total_hitungan_jam,
@@ -474,16 +494,27 @@ class TransaksiGajiController extends Controller
                 }
 
 
-
                 if (isset($kasbonList['data_terakhir']) && is_array($kasbonList['data_terakhir'])) {
-                    // Konversi ke float untuk perhitungan
 
 
-                    $angsuran = isset($kasbonList['data_terakhir']['angsuran']) ? floatval($kasbonList['data_terakhir']['angsuran']) : 0;
+                    $sisaKasbon = isset($kasbonList['data_terakhir']['sisa_kasbon'])
+                        ? floatval($kasbonList['data_terakhir']['sisa_kasbon'])
+                        : 0;
 
-                    $sisaKasbon = isset($kasbonList['data_terakhir']['sisa_kasbon']) ? floatval($kasbonList['data_terakhir']['sisa_kasbon']) : 0;
-                    // Pastikan sisa kasbon tidak minus
-                    $sisaKasbonBaru = max(0, $sisaKasbon - $angsuran);
+                    // 🟢 Logika utama
+                    if ($pendingKasbon) {
+                        // Jika pending ada, tidak potong angsuran
+                        $angsuran = 0;
+                        $sisaKasbonBaru = $sisaKasbon;
+                    } else {
+                        // Konversi nilai
+                        $angsuran = isset($kasbonList['data_terakhir']['angsuran'])
+                            ? floatval($kasbonList['data_terakhir']['angsuran'])
+                            : 0;
+                        // Jika tidak ada pending, baru dikurangi angsuran
+                        $sisaKasbonBaru = max(0, $sisaKasbon - $angsuran);
+                    }
+
 
                     $row = [
                         'id_karyawan' =>  $idKaryawan,
@@ -540,6 +571,7 @@ class TransaksiGajiController extends Controller
                 }
             }
 
+
             // Setelah loop, simpan ke semua tabel
             if (!empty($rows)) {
                 Yii::$app->db->createCommand()
@@ -557,6 +589,7 @@ class TransaksiGajiController extends Controller
                         'terlambat',
                         'nominal_gaji',
                         'potongan_karyawan',
+                        'potongan_kasbon',
                         'tunjangan_karyawan',
                         'gaji_perhari',
                         'jam_lembur',
@@ -783,6 +816,7 @@ class TransaksiGajiController extends Controller
 
     public function actionGenerateGajiOne($id_karyawan)
     {
+
         $bulan = date('m');
         $tahun = date('Y');
 
@@ -790,7 +824,7 @@ class TransaksiGajiController extends Controller
         $this->actionDeleteOne($id_karyawan, $bulan, $tahun);
 
         $searchModel = new TransaksiGajiSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams, $id_karyawan);
+        $dataProvider = $searchModel->search($this->request->queryParams, $id_karyawan, $bulan, $tahun);
         $models = $dataProvider->getModels();
 
         if (empty($models)) {
@@ -1096,6 +1130,96 @@ class TransaksiGajiController extends Controller
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+
+
+    public function actionPendingPembayaran()
+    {
+        $request = Yii::$app->request;
+
+        $bulan = $request->post('bulan');
+        $tahun = $request->post('tahun');
+        $idKaryawan = $request->post('id_karyawan');
+        $idKasbon = $request->post('id_kasbon');
+
+        // Validasi data dasar
+        if (empty($idKaryawan)) {
+            Yii::$app->session->setFlash('error', 'Karyawan belum dipilih.');
+            return $this->redirect(['index']);
+        }
+
+        // Cek apakah sudah ada pending kasbon di bulan & tahun tersebut (opsional)
+        $existing = PendingKasbon::find()
+            ->where([
+                'id_karyawan' => $idKaryawan,
+                'bulan' => $bulan,
+                'tahun' => $tahun
+            ])
+            ->one();
+
+        if ($existing) {
+            Yii::$app->session->setFlash('warning', "Data pending sudah ada untuk karyawan ID $idKaryawan bulan $bulan/$tahun.");
+            return $this->redirect(['index']);
+        }
+
+        // Simpan data baru
+        $model = new PendingKasbon();
+        $model->id_karyawan = $idKaryawan;
+        $model->bulan = $bulan;
+        $model->tahun = $tahun;
+        // isi id_kasbon kalau kamu punya logika untuk itu, contoh:
+        $model->id_kasbon = $idKasbon;
+
+        if ($model->save()) {
+            Yii::$app->session->setFlash('success', "Berhasil menandai pending pembayaran untuk karyawan ID $idKaryawan bulan $bulan/$tahun.");
+        } else {
+            Yii::$app->session->setFlash('error', 'Gagal menyimpan data pending pembayaran.');
+            Yii::error($model->errors, __METHOD__);
+        }
+
+        return $this->redirect(['index']);
+    }
+
+
+
+    public function actionBatalPending()
+    {
+        $request = Yii::$app->request;
+
+        $bulan = $request->post('bulan');
+        $tahun = $request->post('tahun');
+        $idKaryawan = $request->post('id_karyawan');
+        $idKasbon = $request->post('id_kasbon');
+
+        if (empty($idKaryawan) || empty($idKasbon)) {
+            Yii::$app->session->setFlash('error', 'Data karyawan atau kasbon tidak lengkap.');
+            return $this->redirect(['index']);
+        }
+
+        // Cek apakah data pending ada
+        $model = PendingKasbon::find()
+            ->where([
+                'id_karyawan' => $idKaryawan,
+                'id_kasbon' => $idKasbon,
+                'bulan' => $bulan,
+                'tahun' => $tahun,
+            ])
+            ->one();
+
+        if ($model) {
+            // Jika ditemukan, hapus
+            if ($model->delete()) {
+                Yii::$app->session->setFlash('success', "Pending pembayaran untuk karyawan ID $idKaryawan bulan $bulan/$tahun telah dibatalkan.");
+            } else {
+                Yii::$app->session->setFlash('error', 'Gagal menghapus data pending.');
+            }
+        } else {
+            // Jika tidak ada data, tetap lanjut tanpa error
+            Yii::$app->session->setFlash('info', 'Tidak ada data pending yang ditemukan, tidak ada perubahan.');
+        }
+
+        return $this->redirect(['index']);
     }
 
 

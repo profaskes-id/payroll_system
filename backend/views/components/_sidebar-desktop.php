@@ -7,7 +7,7 @@ $result = AtasanKaryawan::findOne(['id_atasan' => Yii::$app->user->identity->id_
 ?>
 
 
-<div class="flex flex-col justify-between w-64 h-screen border-r shadow-xl bg-gradient-to-b from-slate-800 to-slate-900 border-slate-700">
+<div class="flex flex-col justify-between w-64 h-screen overflow-y-auto border-r shadow-xl bg-gradient-to-b from-slate-800 to-slate-900 border-slate-700">
     <div class="px-4 py-6">
 
         <!-- Navigation Menu -->
@@ -46,7 +46,7 @@ $result = AtasanKaryawan::findOne(['id_atasan' => Yii::$app->user->identity->id_
                 <?= Html::endForm() ?>
             </div>
         </div>
-        <ul class="space-y-2">
+        <ul class="space-y-2 overflow-y-auto ">
             <li>
                 <a href="/panel/home" class="flex items-center px-4 py-3 text-sm font-medium text-white transition-all duration-200 rounded-lg hover:bg-slate-700 hover:shadow-md group">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-3 text-slate-400 group-hover:text-white" viewBox="0 0 20 20" fill="currentColor">
@@ -153,9 +153,20 @@ $result = AtasanKaryawan::findOne(['id_atasan' => Yii::$app->user->identity->id_
                                 </a>
                             </li>
                             <li>
+                                <a href="/panel/tanggapan/kasbon" class="flex items-center px-3 py-2 text-sm font-medium transition-all duration-200 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white group">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M8.4 21q-2.275 0-3.838-1.562T3 15.6q0-.95.325-1.85t.925-1.625L7.8 7.85L5.375 3h13.25L16.2 7.85l3.55 4.275q.6.725.925 1.625T21 15.6q0 2.275-1.575 3.838T15.6 21zm3.6-5q-.825 0-1.412-.587T10 14t.588-1.412T12 12t1.413.588T14 14t-.587 1.413T12 16M9.625 7h4.75l1-2h-6.75zM8.4 19h7.2q1.425 0 2.413-.987T19 15.6q0-.6-.213-1.162t-.587-1.013L14.525 9H9.5l-3.7 4.4q-.375.45-.587 1.025T5 15.6q0 1.425.988 2.413T8.4 19" />
+                                    </svg>
+                                    Kasbon
+                                </a>
+                            </li>
+                            <li>
                                 <a href="/panel/tanggapan/shift" class="flex items-center px-3 py-2 text-sm font-medium transition-all duration-200 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white group">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24">
-                                        <path fill="currentColor" d="M13.5 5.5c1.09 0 2-.92 2-2a2 2 0 0 0-2-2c-1.11 0-2 .88-2 2c0 1.08.89 2 2 2M9.89 19.38l1-4.38L13 17v6h2v-7.5l-2.11-2l.61-3A7.3 7.3 0 0 0 19 13v-2c-1.91 0-3.5-1-4.31-2.42l-1-1.58c-.4-.62-1-1-1.69-1c-.31 0-.5.08-.81.08L6 8.28V13h2V9.58l1.79-.7L8.19 17l-4.9-1l-.4 2z" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                            <path d="M4 18a2 2 0 1 0 4 0a2 2 0 1 0-4 0m12 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0M6 12v-2a6 6 0 1 1 12 0v2" />
+                                            <path d="m15 9l3 3l3-3" />
+                                        </g>
                                     </svg>
                                     Shift
                                 </a>

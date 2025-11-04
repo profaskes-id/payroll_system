@@ -196,6 +196,7 @@ class PengajuanKasbonController extends Controller
 
         if ($this->request->isPost && $model->load($this->request->post())) {
 
+
             if ($model->save()) {
 
                 if ($model->status == 1) {
@@ -205,17 +206,20 @@ class PengajuanKasbonController extends Controller
                         ->where([
                             'id_karyawan' => $model->id_karyawan,
                             'status_potongan' => 0,
-                            'autodebt' => $model->tipe_potongan
                         ])
                         ->orderBy(['created_at' => SORT_DESC])
                         ->one();
 
 
 
+                    if ($dataOld) { //jika ada
 
-                    if ($dataOld) {
+                        $idModel = $model->id_pengajuan_kasbon;
+                        $idDataOld = $dataOld->id_kasbon;
 
-                        if ($dataOld['id_kasbon'] == $model['id_pengajuan_kasbon']) {
+
+                        //
+                        if ($idModel == $idDataOld) { // kalau id mereka sama berati update saja
                             $dataOld->bulan = date('m');
                             $dataOld->tahun = date('Y');
                             $dataOld->jumlah_potong = 0;
@@ -224,41 +228,39 @@ class PengajuanKasbonController extends Controller
                             $dataOld->angsuran = $model->angsuran_perbulan;
                             $dataOld->status_potongan = 0;
                             $dataOld->autodebt = $model->tipe_potongan;
-                            $dataOld->sisa_kasbon = $model->jumlah_kasbon; // Tambahkan ke sisa lama
+                            $dataOld->sisa_kasbon = $model->jumlah_kasbon;
 
                             $dataOld->created_at = time();
                             $dataOld->deskripsi = 'Top-up Kasbon';
 
                             if ($dataOld->save(false)) {
-                                Yii::$app->session->setFlash('success', 'Data kasbon lama berhasil diperbarui .');
+                                Yii::$app->session->setFlash('success', 'Data kasbon lama berhasil diperbarui.');
                             } else {
                                 Yii::$app->session->setFlash('error', 'Gagal memperbarui data kasbon lama.');
                             }
-                        } else {
+                        } else { //kalau id mereka tidak sama
 
-                            $pembayaran->id_kasbon = $idKasbonBaru;
-                            $pembayaran->id_karyawan = $model->id_karyawan;
-                            $pembayaran->bulan = date('m');
-                            $pembayaran->tahun = date('Y');
-                            $pembayaran->jumlah_potong = 0;
-                            $pembayaran->jumlah_kasbon = $dataOld->jumlah_kasbon +  $model->jumlah_kasbon;
-                            $pembayaran->tanggal_potong = $model->tanggal_mulai_potong;
-                            $pembayaran->angsuran = $model->angsuran_perbulan;
-                            $pembayaran->status_potongan = 0;
-                            $pembayaran->autodebt = $model->tipe_potongan;
-                            $pembayaran->sisa_kasbon = $dataOld->sisa_kasbon + $model->jumlah_kasbon; // Tambahkan ke sisa lama
+                            $dataOld->id_kasbon = $idKasbonBaru;
+                            $dataOld->id_karyawan = $model->id_karyawan;
+                            $dataOld->bulan = date('m');
+                            $dataOld->tahun = date('Y');
+                            $dataOld->jumlah_potong = 0;
+                            $dataOld->jumlah_kasbon = $dataOld->jumlah_kasbon +  $model->jumlah_kasbon;
+                            $dataOld->tanggal_potong = $model->tanggal_mulai_potong;
+                            $dataOld->angsuran = $model->angsuran_perbulan;
+                            $dataOld->status_potongan = 0;
+                            $dataOld->autodebt = $model->tipe_potongan;
+                            $dataOld->sisa_kasbon = $dataOld->sisa_kasbon + $model->jumlah_kasbon; // Tambahkan ke sisa lama
 
-                            $pembayaran->created_at = time();
-                            $pembayaran->deskripsi = 'Top-up Kasbon';
-                            if ($pembayaran->save(false)) {
+                            $dataOld->created_at = time();
+                            $dataOld->deskripsi = 'Top-up Kasbon';
+                            if ($dataOld->save(false)) {
                                 Yii::$app->session->setFlash('success', 'Data kasbon lama berhasil diperbarui (sisa kasbon ditambahkan).');
                             } else {
                                 Yii::$app->session->setFlash('error', 'Gagal memperbarui data kasbon lama.');
                             }
                         }
-                    }
-                    // Jika tidak ada data lama → buat baru
-                    else {
+                    } else { //jika tidak ada langsung tambahkan
 
                         $pembayaran = new PembayaranKasbon();
                         $pembayaran->id_karyawan = (int) $model['id_karyawan'];

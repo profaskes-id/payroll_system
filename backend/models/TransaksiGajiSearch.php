@@ -87,6 +87,8 @@ class TransaksiGajiSearch extends TransaksiGaji
     public function search($params, $id_karyawan, $bulan = null, $tahun = null)
     {
 
+
+        // dd($bulan, $tahun);
         $bulan = $bulan ?? date('m');   // default ke bulan sekarang
         $tahun = $tahun ?? date('Y');   // default ke tahun sekarang (4 digit)
 
@@ -222,6 +224,7 @@ class TransaksiGajiSearch extends TransaksiGaji
                 + $karyawan['dinas_luar_belum_terbayar']
                 + $karyawan['total_pendapatan_lembur']
                 - $karyawan['potongan_karyawan']
+                - $karyawan['kasbon_karyawan']
                 - $karyawan['potongan_absensi']
                 - $karyawan['potongan_terlambat'];
         }
@@ -508,7 +511,7 @@ class TransaksiGajiSearch extends TransaksiGaji
 
         $totalHari = cal_days_in_month(CAL_GREGORIAN, $bulan, $tahun);
         // Ambil dari cache
-        $setting = $this->_settingGajiPerJam;;
+        $setting = $this->_settingGajiPerJam;
 
         $liburCount = $this->countLiburInRange($id_karyawan, $periode_gaji['tanggal_awal'], $periode_gaji['tanggal_akhir']);
 
@@ -526,28 +529,28 @@ class TransaksiGajiSearch extends TransaksiGaji
             ->count();
 
 
-        if (
-            $setting['penggajian_hari_kalender'] == 1 &&
-            $setting['potongan_hari_kerja_efektif'] == 0 &&
-            $setting['penggajian_berbasis_jam_kerja'] == 0
-        ) {
-            //
-            return ($gajiPokok / $totalHari) * 1;
-        } elseif (
-            $setting['penggajian_hari_kalender'] == 0 &&
-            $setting['potongan_hari_kerja_efektif'] == 1 &&
-            $setting['penggajian_berbasis_jam_kerja'] == 0
-        ) {
-            return ($gajiPokok / ($countRangeTanggal - $liburCount   - $masterHariLibur)) * 1;
-        } elseif (
-            $setting['penggajian_hari_kalender'] == 0 &&
-            $setting['potongan_hari_kerja_efektif'] == 0 &&
-            $setting['penggajian_berbasis_jam_kerja'] == 1
-        ) {
-            return ($gajiPokok / 173);
-        } else {
-            throw new \Exception('Hanya satu jenis perhitungan gaji per jam yang boleh aktif.');
-        }
+        // if (
+        //     $setting['penggajian_hari_kalender'] == 1 &&
+        //     $setting['potongan_hari_kerja_efektif'] == 0 &&
+        //     $setting['penggajian_berbasis_jam_kerja'] == 0
+        // ) {
+        //     //
+        //     return ($gajiPokok / $totalHari) * 1;
+        // } elseif (
+        //     $setting['penggajian_hari_kalender'] == 0 &&
+        //     $setting['potongan_hari_kerja_efektif'] == 1 &&
+        //     $setting['penggajian_berbasis_jam_kerja'] == 0
+        // ) {
+        //     return ($gajiPokok / ($countRangeTanggal - $liburCount   - $masterHariLibur)) * 1;
+        // } elseif (
+        //     $setting['penggajian_hari_kalender'] == 0 &&
+        //     $setting['potongan_hari_kerja_efektif'] == 0 &&
+        //     $setting['penggajian_berbasis_jam_kerja'] == 1
+        // ) {
+        return ($gajiPokok / 173 * 8);
+        // } else {
+        //     throw new \Exception('Hanya satu jenis perhitungan gaji per jam yang boleh aktif.');
+        // }
     }
 
     protected function getDinasLuarBelumTerbayar($id_karyawan, $periodeGajiObject)
@@ -690,6 +693,7 @@ class TransaksiGajiSearch extends TransaksiGaji
 
         $potongan = $dataPotonganPersenWfh > 0 ?
             $dataPotonganPersenWfh / 100 : 0;
+
 
 
         $data =  ($gajiPerhari * ($pengajuanWfhCount * $potongan)) + ($gajiPerhari * $total_alfa);

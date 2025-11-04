@@ -165,12 +165,6 @@ if (!empty($model->tanggal_mulai_potong)) {
     <?php ActiveForm::end(); ?>
 </div>
 
-<!-- ========================================= -->
-<!-- Tambahkan CDN dan script terbilang -->
-<!-- ========================================= -->
-<!-- ========================================= -->
-<!-- Tambahkan CDN dan script terbilang -->
-<!-- ========================================= -->
 
 <script src="https://unpkg.com/@develoka/angka-terbilang-js/index.min.js"></script>
 <script>
