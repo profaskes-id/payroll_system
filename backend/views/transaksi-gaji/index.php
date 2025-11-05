@@ -1,24 +1,20 @@
     <?php
 
     use backend\models\helpers\KaryawanHelper;
+    use backend\models\PendingKasbon;
     use yii\helpers\Html;
-    use yii\helpers\Url;
+
     use yii\grid\GridView;
 
 
     $karyawan = new KaryawanHelper();
 
 
-    /** @var yii\web\View $this */
-    /** @var backend\models\TransaksiGajiSearch $searchModel */
-    /** @var yii\data\ActiveDataProvider $dataProvider */
-
     $this->title = Yii::t('app', 'Transaksi Gaji');
     $this->params['breadcrumbs'][] = $this->title;
 
-    // Register CSS dan JS
-    $this->registerCss(
-        <<<CSS
+    ?>
+    <style>
         /* Sticky header dan kolom */
         .table thead th {
             position: sticky;
@@ -26,7 +22,7 @@
             z-index: 10;
             background-color: #f8f9fa;
         }
-        
+
         .table td.sticky-col,
         .table th.sticky-col {
             position: sticky;
@@ -34,135 +30,57 @@
             z-index: 9;
             background-color: white;
         }
-        
+
         .table thead th.sticky-col {
             z-index: 11;
             background-color: #f8f9fa;
         }
-        
+
         /* Action buttons styling */
         .action-buttons {
             display: flex;
             gap: 4px;
             justify-content: center;
         }
-        
+
+        /* Karyawan info */
         .karyawan-info {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-        
+
+        /* Position badge */
         .position-badge {
             min-width: 140px;
-            /* border: 1px solid ; */
         }
-    CSS
-    );
 
-    $this->registerJs(
-        <<<JS
-        // Fungsi untuk konfirmasi aksi
-        function confirmAction(message, url) {
-            if (confirm(message)) {
-                window.location.href = url;
-            }
+        /* Button small styling */
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
         }
-        
-        // Event handlers untuk tombol aksi
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tombol Lock/Process
-            document.querySelectorAll('.btn-lock-action').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const url = this.getAttribute('data-url');
-                    const isProcessed = this.getAttribute('data-processed') === 'true';
-                    
-                    if (isProcessed) {
-                        confirmAction(
-                            'Apakah Anda yakin ingin melihat detail transaksi gaji ini?',
-                            url
-                        );
-                    } else {
-                        confirmAction(
-                            'Apakah Anda yakin ingin memproses gaji untuk karyawan ini?',
-                            url
-                        );
-                    }
-                });
-            });
-            
-            // Tombol Regenerate
-            document.querySelectorAll('.btn-regenerate').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const url = this.getAttribute('data-url');
-                    confirmAction(
-                        'Apakah Anda yakin ingin meregenerasi transaksi gaji ini? Tindakan ini akan menghapus data yang sudah ada dan membuat yang baru.',
-                        url
-                    );
-                });
-            });
-        });
-    JS
-    );
-    ?>
 
-    <?php
-    $this->registerCss(
-        <<<CSS
-    .action-buttons {
-        display: flex;
-        gap: 4px;
-        justify-content: center;
-    }
+        /* Hover effects */
+        .btn-detail:hover {
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
+            transform: translateY(-1px);
+        }
 
-    .btn-sm {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.75rem;
-    }
+        .btn-regenerate:hover {
+            background-color: #ffca2c;
+            border-color: #ffc720;
+            transform: translateY(-1px);
+        }
 
-    /* Hover effects */
-    .btn-detail:hover {
-        background-color: #0b5ed7;
-        border-color: #0a58ca;
-        transform: translateY(-1px);
-    }
+        .btn-process:hover {
+            background-color: #198754;
+            border-color: #157347;
+            transform: translateY(-1px);
+        }
+    </style>
 
-    .btn-regenerate:hover {
-        background-color: #ffca2c;
-        border-color: #ffc720;
-        transform: translateY(-1px);
-    }
-
-    .btn-process:hover {
-        background-color: #198754;
-        border-color: #157347;
-        transform: translateY(-1px);
-    }
-
-    /* Modal styling */
-    .modal-content {
-        border-radius: 10px;
-        border: none;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-
-    .modal-header {
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #dee2e6;
-        border-radius: 10px 10px 0 0;
-    }
-
-    .modal-title {
-        font-weight: 600;
-        color: #495057;
-    }
-    CSS
-    );
-    ?>
-
-    <!-- jQuery (required for some Yii widgets) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Bootstrap 5 (Bundle = termasuk Popper.js) -->
@@ -187,10 +105,6 @@
         <div class="card">
             <div class="bg-white card-header">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 card-title">
-                        <i class="fas fa-money-bill-wave me-2"></i>
-                        <?= Html::encode($this->title) ?>
-                    </h5>
 
 
                     <div class="flex-wrap btn-group">
@@ -208,7 +122,29 @@
                         <a target="_blank" href="/panel/transaksi-gaji/report?bulan=<?= Yii::$app->request->get('TransaksiGaji')['bulan'] ?? date('m') ?>&tahun=<?= Yii::$app->request->get('TransaksiGaji')['tahun'] ?? date('Y') ?>" class="mx-2 reset-button bg-warning">
                             <i class="fas fa-print me-1"></i> Cetak Transaksi
                         </a>
+
+
+                        <?= Html::beginForm(['transaksi-gaji/delete-all-data'], 'post', ['id' => 'delete-all-gaji-form']); ?>
+                        <?= Html::hiddenInput('karyawanID', $karyawanID) ?>
+                        <?= Html::hiddenInput('bulan', Yii::$app->request->get('TransaksiGaji') ? Yii::$app->request->get('TransaksiGaji')['bulan'] : date('m')); ?>
+                        <?= Html::hiddenInput('tahun', Yii::$app->request->get('TransaksiGaji') ? Yii::$app->request->get('TransaksiGaji')['tahun'] : date('Y')); ?>
+
+                        <?= Html::submitButton('Delete All', [
+                            'class' => 'reset-button bg-danger',
+                            'id' => 'delete-all-gaji-button',
+                            'data' => [
+                                'confirm' => 'Are you sure you want to delete all salaries for this period?',
+                                'method' => 'post',
+                            ],
+                        ]) ?>
+                        <?= Html::endForm(); ?>
                     </div>
+
+                    <h5 class="mb-0 card-title">
+                        <i class="fas fa-money-bill-wave me-2"></i>
+                        <?= Html::encode($this->title) ?>
+                    </h5>
+
                 </div>
             </div>
 
@@ -238,71 +174,89 @@
                                 'contentOptions' => ['class' => 'text-center align-middle'],
                                 'format' => 'raw',
                                 'value' => function ($model) {
+                                    $bulan = Yii::$app->request->get('TransaksiGaji') ? Yii::$app->request->get('TransaksiGaji')['bulan'] : date('m');
+                                    $tahun = Yii::$app->request->get('TransaksiGaji') ? Yii::$app->request->get('TransaksiGaji')['tahun'] : date('Y');
 
-                                    $actions = '';
-
+                                    $buttons = '<div class="gap-1 d-flex justify-content-center">';
                                     if (isset($model['id_transaksi_gaji']) && $model['id_transaksi_gaji'] != null) {
-                                        $actions = '
-            <div class="gap-1 action-buttons d-flex justify-content-center">
-               <a href="' . Url::to(['deleterow', 'id_karyawan' => $model['id_karyawan'], 'bulan' => $model['bulan'], 'tahun' => $model['tahun']]) . '" 
-   class="btn btn-danger btn-sm"
-   data-bs-toggle="modal" 
-   data-bs-target="#confirmModal"
-   data-action="delete"
-   data-url="' . Url::to(['deleterow', 'id_karyawan' => $model['id_karyawan'], 'bulan' => $model['bulan'], 'tahun' => $model['tahun']]) . '"
-   data-karyawan="' . Html::encode($model['nama'] ?? 'Karyawan') . '"
-   title="Delete">
-    <i class="fas fa-trash"></i>
-</a>
+                                        // Tombol Delete
+                                        $buttons .= Html::a(
+                                            '<i class="fas fa-trash"></i>',
+                                            ['deleterow', 'id_karyawan' => $model['id_karyawan'], 'bulan' => $model['bulan'], 'tahun' => $model['tahun']],
+                                            [
+                                                'class' => 'btn btn-danger btn-sm sweet-confirm',
+                                                'data-title' => 'Konfirmasi Hapus Gaji',
+                                                'data-text' => 'Apakah Anda yakin ingin menghapus gaji untuk ' . Html::encode($model['nama'] ?? 'Karyawan') . '?',
+                                                'data-confirm-button' => 'Ya, Hapus!',
+                                                'data-cancel-button' => 'Batal',
+                                                'title' => 'Delete Gaji',
+                                                'data-bs-toggle' => 'tooltip',
+                                                'data-bs-placement' => 'top'
+                                            ]
+                                        );
 
+                                        // Tombol Regenerate
+                                        $buttons .= Html::a(
+                                            '<i class="fas fa-sync-alt"></i>',
+                                            ['generate-gaji-one', 'id_karyawan' => $model['id_karyawan'], 'bulan' => $model['bulan'], 'tahun' => $model['tahun']],
+                                            [
+                                                'class' => 'btn btn-warning btn-sm sweet-confirm',
+                                                'data-title' => 'Konfirmasi Regenerate Gaji',
+                                                'data-text' => 'Apakah Anda yakin ingin regenerate gaji untuk ' . Html::encode($model['nama'] ?? 'Karyawan') . '?',
+                                                'data-confirm-button' => 'Ya, Regenerate!',
+                                                'data-cancel-button' => 'Batal',
+                                                'title' => 'Regenerate Gaji',
+                                                'data-bs-toggle' => 'tooltip',
+                                                'data-bs-placement' => 'top'
+                                            ]
+                                        );
 
-                <a href="' . Url::to(['generate-gaji-one', 'id_karyawan' => $model['id_karyawan']]) . '" 
-   class="btn btn-warning btn-sm"
-   data-bs-toggle="modal" 
-   data-bs-target="#confirmModal"
-   data-action="regenerate"
-   data-url="' . Url::to(['generate-gaji-one', 'id_karyawan' => $model['id_karyawan']]) . '"
-   data-karyawan="' . Html::encode($model['nama'] ?? 'Karyawan') . '"
-   title="Regenerate">
-    <i class="fas fa-sync-alt"></i>
-</a>
+                                        // Tombol Cetak
+                                        $buttons .= Html::a(
+                                            '<i class="fas fa-print"></i>',
+                                            ['slip-gaji-pdf', 'id_transaksi_gaji' => $model['id_transaksi_gaji'], 'id_karyawan' => $model['id_karyawan']],
+                                            [
+                                                'class' => 'btn btn-primary btn-sm',
+                                                'title' => 'Cetak Slip Gaji',
+                                                'data-bs-toggle' => 'tooltip',
+                                                'data-bs-placement' => 'top'
+                                            ]
+                                        );
 
-
-                <!-- Link Cetak -->
-                <a href="' . Url::to(['slip-gaji-pdf',  'id_transaksi_gaji' => $model['id_transaksi_gaji'], 'id_karyawan' => $model['id_karyawan']]) . '" 
-                   class="btn btn-primary btn-sm">
-                    <i class="fas fa-print"></i>
-                </a>
-
-                <!-- Link Email -->
-                <a href="' . Url::to(['email-gaji', 'id_transaksi_gaji' => $model['id_transaksi_gaji'], 'id_karyawan' => $model['id_karyawan']]) . '" 
-                   class="btn btn-info btn-sm">
-                    <i class="fas fa-envelope"></i>
-                </a>
-            </div>
-            ';
+                                        // Tombol Email
+                                        $buttons .= Html::a(
+                                            '<i class="fas fa-envelope"></i>',
+                                            ['email-gaji', 'id_transaksi_gaji' => $model['id_transaksi_gaji'], 'id_karyawan' => $model['id_karyawan']],
+                                            [
+                                                'class' => 'btn btn-info btn-sm',
+                                                'title' => 'Kirim Email Gaji',
+                                                'data-bs-toggle' => 'tooltip',
+                                                'data-bs-placement' => 'top'
+                                            ]
+                                        );
                                     } else {
-                                        $actions = '
-            <div class="gap-1 action-buttons d-flex justify-content-center">
-                <a href="' . Url::to(['generate-gaji-one', 'id_karyawan' => $model['id_karyawan']]) . '" 
-                   class="btn btn-success btn-sm"
-                   data-bs-toggle="modal" 
-                   data-bs-target="#confirmModal"
-                   data-action="process"
-                   data-karyawan="' . Html::encode($model['nama'] ?? 'Karyawan') . '"
-                   title="Proses Gaji">
-                    <i class="fas fa-lock"></i>
-                </a>
-            </div>
-            ';
+                                        // Tombol Proses Gaji
+                                        $buttons .= Html::a(
+                                            '<i class="fas fa-lock"></i>',
+                                            ['generate-gaji-one', 'id_karyawan' => $model['id_karyawan'], 'bulan' => $bulan, 'tahun' => $tahun],
+                                            [
+                                                'class' => 'btn btn-success btn-sm sweet-confirm',
+                                                'data-title' => 'Konfirmasi Proses Gaji',
+                                                'data-text' => 'Apakah Anda yakin ingin memproses gaji untuk ' . Html::encode($model['nama'] ?? 'Karyawan') . '?',
+                                                'data-confirm-button' => 'Ya, Proses!',
+                                                'data-cancel-button' => 'Batal',
+                                                'title' => 'Proses Gaji',
+                                                'data-bs-toggle' => 'tooltip',
+                                                'data-bs-placement' => 'top'
+                                            ]
+                                        );
                                     }
 
-                                    return $actions;
+                                    $buttons .= '</div>';
+                                    return $buttons;
                                 }
                             ],
 
-
-                            // Kolom untuk Nama Karyawan
                             [
                                 'attribute' => 'nama',
                                 'label' => "Nama Karyawan",
@@ -403,25 +357,34 @@
                             ],
                             [
                                 'attribute' => 'kasbon_karyawan',
-                                'label' => "Bayar Kasbon",
+                                'label' => 'Bayar Kasbon',
                                 'format' => 'raw',
                                 'headerOptions' => ['class' => 'text-end align-middle'],
                                 'contentOptions' => ['class' => 'text-end align-middle'],
                                 'value' => function ($model) {
+                                    $akasbonKarywanini = PendingKasbon::find()->where([
+                                        'id_karyawan' => $model['id_karyawan'],
+                                        'bulan' => Yii::$app->request->get('TransaksiGaji')['bulan'] ?? date('m'),
+                                        'tahun' => Yii::$app->request->get('TransaksiGaji')['tahun'] ?? date('Y')
+                                    ])->exists();
+
                                     $potongan = $model['kasbon_karyawan'] ?? 0;
                                     $karyawanNama = $model['nama'] ?? 'Karyawan';
                                     $karyawanBagian = $model['nama_bagian'] ?? '-';
 
-                                    return '
-            <button type="button" 
-                    class="p-0 btn btn-link text-danger text-decoration-none btn-potongan-modal"
-                    data-bs-toggle="modal" 
-                    data-bs-target="#modalKasbon"
-                    onclick="loadKasbonData(' . $model['id_karyawan'] . ', \'' . addslashes($karyawanNama) . '\', \'' . addslashes($karyawanBagian) . '\')"
-                    title="Lihat Detail Kasbon">
-                <span class="fw-semibold">Rp ' . number_format($potongan, 0, ',', '.') . '</span>
-            </button>
-        ';
+                                    return Html::button(
+                                        $akasbonKarywanini
+                                            ? '<span class="fw-semibold" style="background-color: transparent; padding: 2px 8px; border-radius: 4px;">Pending</span>'
+                                            : '<span class="fw-semibold text-danger">Rp ' . number_format($potongan, 0, ',', '.') . '</span>',
+                                        [
+                                            'class' => $akasbonKarywanini ? 'p-0 btn btn-link text-decoration-none' : 'p-0 btn btn-link text-danger text-decoration-none',
+                                            'data-bs-toggle' => 'modal',
+                                            'data-bs-target' => '#modalKasbon',
+                                            'onclick' => "loadKasbonData({$model['id_karyawan']}, '" . addslashes($karyawanNama) . "', '" . addslashes($karyawanBagian) . "')",
+                                            'title' => 'Lihat Detail Kasbon',
+                                            'data-bs-placement' => 'top'
+                                        ]
+                                    );
                                 }
                             ],
 
@@ -591,46 +554,42 @@
     </div>
 
 
-    <!-- Di bagian bawah file index.php, sebelum script -->
 
-
-    <!-- Modal Konfirmasi -->
-    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmModalLabel">Konfirmasi Aksi</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3 text-center">
-                        <i class="fas fa-exclamation-triangle text-warning fa-3x"></i>
-                    </div>
-                    <p id="confirmMessage" class="text-center"></p>
-                    <div class="mt-3 alert alert-primary">
-                        <small>
-                            <i class="fas fa-info-circle me-1"></i>
-                            <strong>Karyawan:</strong> <span id="karyawanName"></span>
-                        </small>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="reset-button" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-1"></i>Batal
-                    </button>
-                    <button type="button" class="add-button" id="confirmAction">
-                        <i class="fas fa-check me-1"></i>Ya, Lanjutkan
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Inisialisasi tooltip Bootstrap
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(function(tooltipTriggerEl) {
+                new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Tangani SweetAlert untuk tombol dengan class sweet-confirm
+            document.querySelectorAll('.sweet-confirm').forEach(function(button) {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var url = this.getAttribute('href');
+                    var title = this.getAttribute('data-title');
+                    var text = this.getAttribute('data-text');
+                    var confirmButton = this.getAttribute('data-confirm-button');
+                    var cancelButton = this.getAttribute('data-cancel-button');
+
+                    Swal.fire({
+                        title: title,
+                        text: text,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: confirmButton,
+                        cancelButtonText: cancelButton
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = url;
+                        }
+                    });
+                });
+            });
             // Ambil elemen input dengan ID tanggal-input
             var tanggalInput = document.getElementById('tanggal-input');
             var bagian = document.getElementById('bagian-input');
@@ -648,74 +607,16 @@
                 }
             }
 
-        });
+            // Variabel untuk menyimpan URL aksi
+            let currentActionUrl = '';
 
-        // Variabel untuk menyimpan URL aksi
-        let currentActionUrl = '';
+            // Event listener untuk tombol aksi
 
-        // Event listener untuk tombol aksi
-        document.addEventListener('DOMContentLoaded', function() {
-            const confirmModal = document.getElementById('confirmModal');
-
-            // Event ketika modal ditampilkan
-            confirmModal.addEventListener('show.bs.modal', function(event) {
-                const button = event.relatedTarget;
-                const action = button.getAttribute('data-action');
-                const url = button.getAttribute('data-url');
-                const karyawan = button.getAttribute('data-karyawan');
-
-                // Simpan URL untuk digunakan nanti
-                currentActionUrl = url;
-
-                // Set nama karyawan
-                document.getElementById('karyawanName').textContent = karyawan;
-
-                // Set pesan konfirmasi berdasarkan aksi
-                let message = '';
-                let modalTitle = '';
-
-                switch (action) {
-                    case 'process':
-                        modalTitle = 'Proses Gaji';
-                        message = 'Apakah Anda yakin ingin memproses gaji untuk karyawan ini?';
-                        break;
-
-                    case 'delete':
-                        modalTitle = 'Lihat Detail Gaji';
-                        message = 'Apakah Anda yakin ingin menghapus detail transaksi gaji ini?';
-                        break;
-
-                    case 'regenerate':
-                        modalTitle = 'Regenerate Gaji';
-                        message = 'Apakah Anda yakin ingin meregenerasi transaksi gaji ini?<br><small class=\"text-danger\">Tindakan ini akan menghapus data yang sudah ada dan membuat yang baru.</small>';
-                        break;
-                }
-
-                document.getElementById('confirmModalLabel').textContent = modalTitle;
-                document.getElementById('confirmMessage').innerHTML = message;
-            });
-
-            // Event untuk tombol konfirmasi
-            document.getElementById('confirmAction').addEventListener('click', function() {
-                if (currentActionUrl) {
-                    window.location.href = currentActionUrl;
+            document.getElementById('generate-gaji-form').addEventListener('submit', function(e) {
+                let confirmGenerate = confirm("Anda yakin akan lock data ini?");
+                if (!confirmGenerate) {
+                    e.preventDefault();
                 }
             });
-
-            // Reset ketika modal ditutup
-            confirmModal.addEventListener('hidden.bs.modal', function() {
-                currentActionUrl = '';
-            });
-        });
-
-
-
-
-
-        document.getElementById('generate-gaji-form').addEventListener('submit', function(e) {
-            let confirmGenerate = confirm("Anda yakin akan lock data ini?");
-            if (!confirmGenerate) {
-                e.preventDefault();
-            }
         });
     </script>

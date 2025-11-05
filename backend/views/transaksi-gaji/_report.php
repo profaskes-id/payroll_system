@@ -17,7 +17,7 @@ $namaBulan = [
     '12' => 'Desember',
 ];
 
-// Pastikan $bulan punya leading zero (misalnya '01' bukan 1)
+// Pastikan $bulan punya leading zero
 $bulanFormatted = str_pad($bulan, 2, '0', STR_PAD_LEFT);
 
 // Ambil nama bulan dari array
@@ -25,7 +25,6 @@ $bulanNama = $namaBulan[$bulanFormatted] ?? $bulan;
 
 // Format akhir
 $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bulan Ini";
-
 ?>
 
 <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px;">
@@ -51,7 +50,6 @@ $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bula
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Total Lembur</th>
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Dinas Luar Belum Terbayar</th>
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Gaji Diterima</th>
-            <!-- <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Status</th> -->
         </tr>
     </thead>
     <tbody>
@@ -66,19 +64,20 @@ $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bula
         $totalDinasLuar = 0;
 
         foreach ($finalData as $data):
-
-            $gajiBersih = $data['gaji_bersih'] ?? 0;
-            $gajiPokok = $data['nominal_gaji'] ?? 0;
-            $tunjangan = $data['tunjangan_karyawan'] ?? 0;
-            $potonganKaryawan = $data['potongan_karyawan'] ?? 0;
-            $kasbonKaryawan = $data['kasbon_karyawan'] ?? 0;
-            $potonganAbsensi = $data['potongan_absensi'] ?? 0;
-            $potonganTerlambat = $data['potongan_terlambat'] ?? 0;
+            $gajiPokok = floatval($data['nominal_gaji'] ?? 0);
+            $tunjangan = floatval($data['tunjangan_karyawan'] ?? 0);
+            $potonganKaryawan = floatval($data['potongan_karyawan'] ?? 0);
+            $kasbonKaryawan = floatval($data['potongan_kasbon'] ?? 0); // Perbaikan: kasbon_karyawan -> potongan_kasbon
+            $potonganAbsensi = floatval($data['potongan_absensi'] ?? 0);
+            $potonganTerlambat = floatval($data['potongan_terlambat'] ?? 0);
             $totalPotonganKaryawan = $potonganKaryawan + $potonganAbsensi + $potonganTerlambat;
-            $lembur = $data['total_pendapatan_lembur'] ?? 0;
-            $dinasLuar = $data['dinas_luar_belum_terbayar'] ?? 0;
+            $lembur = floatval($data['total_pendapatan_lembur'] ?? 0);
+            $dinasLuar = floatval($data['dinas_luar_belum_terbayar'] ?? 0);
             $totalHadir = $data['total_absensi'] ?? 0;
             $totalTidakHadir = $data['total_alfa_range'] ?? 0;
+
+            // Hitung gaji bersih
+            $gajiBersih = ($gajiPokok + $tunjangan + $lembur + $dinasLuar) - ($potonganKaryawan + $kasbonKaryawan + $potonganAbsensi + $potonganTerlambat);
 
             $totalGajiBersih += $gajiBersih;
             $totalGajiPokok += $gajiPokok;
@@ -106,7 +105,6 @@ $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bula
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($lembur, 0, ',', '.') ?></td>
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($dinasLuar, 0, ',', '.') ?></td>
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right; font-weight: bold;"><?= number_format($gajiBersih, 0, ',', '.') ?></td>
-
             </tr>
         <?php endforeach; ?>
 
@@ -124,7 +122,6 @@ $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bula
             <td style="padding: 8px 4px; border: 1px solid #333; text-align: right;"><?= number_format($totalLembur, 0, ',', '.') ?></td>
             <td style="padding: 8px 4px; border: 1px solid #333; text-align: right;"><?= number_format($totalDinasLuar, 0, ',', '.') ?></td>
             <td style="padding: 8px 4px; border: 1px solid #333; text-align: right; background-color: #e7f3ff;"><?= number_format($totalGajiBersih, 0, ',', '.') ?></td>
-
         </tr>
     </tbody>
 </table>
@@ -135,16 +132,16 @@ $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bula
     </div>
 <?php endif; ?>
 
-<div style="margin-top: 20px; font-size: 9px; color: #666;">
+<div style="margin-top: 20px; font-size:9px; color: #666;">
     <p><strong>Keterangan:</strong></p>
     <ul style="margin: 0; padding-left: 15px; text-transform: capitalize;">
-        <li>Tunjangan : Tunjangan yang diberikan prusahaan ke karyawan</li>
-        <li>potongan : potongan yang diberikan prusahaan ke karyawan</li>
+        <li>Tunjangan: Tunjangan yang diberikan perusahaan kepada karyawan</li>
+        <li>Potongan: Potongan yang diberikan perusahaan kepada karyawan</li>
         <li>Total Hadir: Jumlah hari karyawan hadir bekerja</li>
         <li>Total Tidak Hadir: Jumlah hari karyawan tidak hadir (alfa)</li>
-        <li>Potongan Abesnsi: Potongan alfa & Potongan WFH sesuai potongan dari perusahaan</li>
-        <li>total lembur : biaya lembur yang dibayarkan perusahaan kepada karyawan</li>
-        <li>Dinas Luar Belum Terbayar : biaya dinas luar yang belum sempat perusahaan bayarkan</li>
+        <li>Potongan Absensi: Potongan alfa & potongan WFH sesuai ketentuan perusahaan</li>
+        <li>Total Lembur: Biaya lembur yang dibayarkan perusahaan kepada karyawan</li>
+        <li>Dinas Luar Belum Terbayar: Biaya dinas luar yang belum dibayarkan perusahaan</li>
         <li>Gaji Bersih: Gaji bersih setelah semua penambahan dan pengurangan</li>
     </ul>
 </div>

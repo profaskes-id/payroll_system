@@ -9,12 +9,8 @@ use backend\models\TransaksiGaji;
 use DateTime;
 use Yii;
 use yii\data\ArrayDataProvider;
-use yii\db\Query;
 
 
-/**
- * TransaksiGajiSearch represents the model behind the search form of `backend\models\TransaksiGaji`.
- */
 class TransaksiGajiSearch extends TransaksiGaji
 {
 
@@ -86,9 +82,6 @@ class TransaksiGajiSearch extends TransaksiGaji
 
     public function search($params, $id_karyawan, $bulan = null, $tahun = null)
     {
-
-
-        // dd($bulan, $tahun);
         $bulan = $bulan ?? date('m');   // default ke bulan sekarang
         $tahun = $tahun ?? date('Y');   // default ke tahun sekarang (4 digit)
 
@@ -376,10 +369,7 @@ class TransaksiGajiSearch extends TransaksiGaji
             ]);
 
         $rows = $query->all();
-
-
         $total = 0;
-
         foreach ($rows as $row) {
             if (($row['satuan'] == '%' || $row['jumlah'] < 100) && $gajiPokok > 0) {
                 $total += ($gajiPokok * $row['jumlah']) / 100;

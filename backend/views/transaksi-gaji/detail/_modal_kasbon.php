@@ -83,29 +83,95 @@ use yii\helpers\Html;
                         $params = Yii::$app->request->get('TransaksiGaji', []);
                         $bulan = isset($params['bulan']) && $params['bulan'] != '' ? $params['bulan'] : date('m');
                         $tahun = isset($params['tahun']) && $params['tahun'] != '' ? $params['tahun'] : date('Y');
+
+                        // Konversi bulan ke format teks (e.g., "01" jadi "Januari")
+                        $bulanTeks = \DateTime::createFromFormat('m', $bulan)->format('F'); // Nama bulan dalam bahasa Inggris
+                        // Jika ingin dalam bahasa Indonesia, gunakan array manual
+                        $bulanIndonesia = [
+                            '01' => 'Januari',
+                            '02' => 'Februari',
+                            '03' => 'Maret',
+                            '04' => 'April',
+                            '05' => 'Mei',
+                            '06' => 'Juni',
+                            '07' => 'Juli',
+                            '08' => 'Agustus',
+                            '09' => 'September',
+                            '10' => 'Oktober',
+                            '11' => 'November',
+                            '12' => 'Desember'
+                        ];
+                        $bulanTeks = $bulanIndonesia[$bulan] ?? $bulan;
                         ?>
 
-                        <?= Html::beginForm(['transaksi-gaji/pending-pembayaran'], 'post', ['id' => 'formPendingPembayaran']) ?>
-                        <?= Html::hiddenInput('bulan', $bulan, ['id' => 'bulanInput']) ?>
-                        <?= Html::hiddenInput('tahun', $tahun, ['id' => 'tahunInput']) ?>
-                        <?= Html::hiddenInput('id_karyawan', '', ['id' => 'idKaryawanInput']) ?>
-                        <?= Html::hiddenInput('id_kasbon', '', ['id' => 'idKasbonInput']) ?>
 
-                        <button type="submit" class="mx-auto mb-2 btn btn-warning d-block">
-                            Pending Pembayaran Bulan <?= $bulan ?> / <?= $tahun ?>
-                        </button>
-                        <?= Html::endForm() ?>
 
-                        <?= Html::beginForm(['transaksi-gaji/batal-pending'], 'post', ['id' => 'formBatalPending']) ?>
-                        <?= Html::hiddenInput('bulan', $bulan, ['id' => 'bulanBatalInput']) ?>
-                        <?= Html::hiddenInput('tahun', $tahun, ['id' => 'tahunBatalInput']) ?>
-                        <?= Html::hiddenInput('id_karyawan', '', ['id' => 'idKaryawanBatalInput']) ?>
-                        <?= Html::hiddenInput('id_kasbon', '', ['id' => 'idKasbonBatalInput']) ?>
+                        <p class="mb-2 text-muted">Pending Pembayaran Kasbon Pada <strong><?= Html::encode($bulanTeks . ' ' . $tahun) ?></strong></p>
+                        <div class="gap-2 mt-0 mb-3 d-flex justify-content-start">
+                            <?= Html::beginForm(['transaksi-gaji/pending-pembayaran'], 'post', ['id' => 'formPendingPembayaran']) ?>
+                            <?= Html::hiddenInput('bulan', $bulan, ['id' => 'bulanInput']) ?>
+                            <?= Html::hiddenInput('tahun', $tahun, ['id' => 'tahunInput']) ?>
+                            <?= Html::hiddenInput('id_karyawan', '', ['id' => 'idKaryawanInput']) ?>
+                            <?= Html::hiddenInput('id_kasbon', '', ['id' => 'idKasbonInput']) ?>
+                            <button type="submit" class="add-button">
+                                Iya, Pending Pembayaran
+                            </button>
+                            <?= Html::endForm() ?>
 
-                        <button type="submit" class="mx-auto btn btn-danger d-block">
-                            Batal Pending Bulan <?= $bulan ?> / <?= $tahun ?>
-                        </button>
-                        <?= Html::endForm() ?>
+                            <?= Html::beginForm(['transaksi-gaji/batal-pending'], 'post', ['id' => 'formBatalPending']) ?>
+                            <?= Html::hiddenInput('bulan', $bulan, ['id' => 'bulanBatalInput']) ?>
+                            <?= Html::hiddenInput('tahun', $tahun, ['id' => 'tahunBatalInput']) ?>
+                            <?= Html::hiddenInput('id_karyawan', '', ['id' => 'idKaryawanBatalInput']) ?>
+                            <?= Html::hiddenInput('id_kasbon', '', ['id' => 'idKasbonBatalInput']) ?>
+                            <button type="submit" class="reset-button bg-danger ms-1 ">
+                                Batalkan Pending
+                            </button>
+                            <?= Html::endForm() ?>
+                        </div>
+
+                        <!-- Script SweetAlert2 -->
+                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                // Tangani submit formPendingPembayaran dengan SweetAlert2
+                                document.getElementById('formPendingPembayaran').addEventListener('submit', function(e) {
+                                    e.preventDefault();
+                                    Swal.fire({
+                                        title: 'Konfirmasi Pending Pembayaran',
+                                        text: 'Apakah Anda yakin ingin menunda pembayaran untuk periode ini?',
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonColor: '#3085d6',
+                                        cancelButtonColor: '#d33',
+                                        confirmButtonText: 'Ya, Pending!',
+                                        cancelButtonText: 'Batal'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            this.submit();
+                                        }
+                                    });
+                                });
+
+                                // Tangani submit formBatalPending dengan SweetAlert2
+                                document.getElementById('formBatalPending').addEventListener('submit', function(e) {
+                                    e.preventDefault();
+                                    Swal.fire({
+                                        title: 'Konfirmasi Batal Pending',
+                                        text: 'Apakah Anda yakin ingin membatalkan status pending untuk periode ini?',
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonColor: '#3085d6',
+                                        cancelButtonColor: '#d33',
+                                        confirmButtonText: 'Ya, Batalkan!',
+                                        cancelButtonText: 'Batal'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            this.submit();
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
 
 
                     </div>
