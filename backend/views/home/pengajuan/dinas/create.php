@@ -3,6 +3,7 @@
 
     <?= $this->render('_form', [
         'model' => $model,
+        'dinasDetail' => $dinasDetail
     ]) ?>
 
 </section>

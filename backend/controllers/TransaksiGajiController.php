@@ -77,7 +77,6 @@ class TransaksiGajiController extends Controller
 
         // Ambil semua dari search (data lengkap dengan gaji_bersih)
         $allDataFromSearch = $searchModel->search($this->request->queryParams, $id_karyawan, $bulan, $tahun)->getModels();
-
         // Indexing data search berdasarkan ID karyawan
         $searchIndexed = [];
         foreach ($allDataFromSearch as $item) {
@@ -110,6 +109,7 @@ class TransaksiGajiController extends Controller
         foreach ($searchIndexed as $sisa) {
             $finalData[] = $sisa;
         }
+
         $dataProvider = new ArrayDataProvider([
             'allModels' => $finalData,
             'pagination' => [
@@ -227,9 +227,10 @@ class TransaksiGajiController extends Controller
                 }
                 $dinasList = PengajuanDinas::find()
                     ->where(['id_karyawan' => $idKaryawan, 'status' => 1, 'status_dibayar' => 0])
-                    ->andWhere(['between', 'tanggal_mulai', $tanggal_awal_periode, $tanggal_akhir_periode])
                     ->asArray()
                     ->all();
+
+
 
                 // Ambil data potongan absensi (alfa & WFH)
                 $potonganAbsensiData = $this->actionGetPotonganAbsensiKaryawan(
@@ -399,23 +400,15 @@ class TransaksiGajiController extends Controller
 
                 // Simpan detail dinas
                 foreach ($dinasList as $dinas) {
-                    $tanggalMulai = new \DateTime($dinas['tanggal_mulai']);
-                    $tanggalSelesai = new \DateTime($dinas['tanggal_selesai']);
 
-                    $interval = new \DateInterval('P1D');
-                    $period = new \DatePeriod($tanggalMulai, $interval, $tanggalSelesai->modify('+1 day'));
-
-                    foreach ($period as $tanggal) {
-                        $dinasDetailRows[] = [
-                            'id_karyawan' => $idKaryawan,
-                            'nama' => $modelData['nama'],
-                            'bulan' => $bulan,
-                            'tahun' => $tahun,
-                            'tanggal' => $tanggal->format('Y-m-d'),
-                            'keterangan' => $dinas['keterangan_perjalanan'],
-                            'biaya' => $dinas['biaya_yang_disetujui'] ?? 0,
-                        ];
-                    }
+                    $dinasDetailRows[] = [
+                        'id_karyawan' => $idKaryawan,
+                        'nama' => $modelData['nama'],
+                        'bulan' => $bulan,
+                        'tahun' => $tahun,
+                        'keterangan' => $dinas['keterangan_perjalanan'],
+                        'biaya' => $dinas['biaya_yang_disetujui'] ?? 0,
+                    ];
                 }
 
                 // Simpan detail lembur ke tabel lembur_gaji
@@ -622,7 +615,6 @@ class TransaksiGajiController extends Controller
                         'nama',
                         'bulan',
                         'tahun',
-                        'tanggal',
                         'keterangan',
                         'biaya',
                     ], $dinasDetailRows)->execute();
@@ -743,7 +735,6 @@ class TransaksiGajiController extends Controller
         // Ambil data dinas
         $dinasList = PengajuanDinas::find()
             ->where(['id_karyawan' => $id_karyawan, 'status' => 1, 'status_dibayar' => 0])
-            ->andWhere(['between', 'tanggal_mulai', $tanggal_awal_periode, $tanggal_akhir_periode])
             ->asArray()
             ->all();
 
@@ -882,22 +873,16 @@ class TransaksiGajiController extends Controller
 
         // Data dinas
         foreach ($dinasList as $dinas) {
-            $tanggalMulai = new \DateTime($dinas['tanggal_mulai']);
-            $tanggalSelesai = new \DateTime($dinas['tanggal_selesai']);
-            $interval = new \DateInterval('P1D');
-            $period = new \DatePeriod($tanggalMulai, $interval, $tanggalSelesai->modify('+1 day'));
 
-            foreach ($period as $tanggal) {
-                $dinasDetailRows[] = [
-                    'id_karyawan' => $id_karyawan,
-                    'nama' => $modelData['nama'],
-                    'bulan' => $bulan,
-                    'tahun' => $tahun,
-                    'tanggal' => $tanggal->format('Y-m-d'),
-                    'keterangan' => $dinas['keterangan_perjalanan'],
-                    'biaya' => $dinas['biaya_yang_disetujui'] ?? 0,
-                ];
-            }
+
+            $dinasDetailRows[] = [
+                'id_karyawan' => $id_karyawan,
+                'nama' => $modelData['nama'],
+                'bulan' => $bulan,
+                'tahun' => $tahun,
+                'keterangan' => $dinas['keterangan_perjalanan'],
+                'biaya' => $dinas['biaya_yang_disetujui'] ?? 0,
+            ];
         }
 
         // Data lembur
@@ -1091,7 +1076,6 @@ class TransaksiGajiController extends Controller
                         'nama',
                         'bulan',
                         'tahun',
-                        'tanggal',
                         'keterangan',
                         'biaya',
                     ], $dinasDetailRows)
@@ -1652,6 +1636,7 @@ class TransaksiGajiController extends Controller
                     ->one();
 
 
+
                 if ($oldPotongan) {
                     return [
                         'success' => true,
@@ -1669,7 +1654,7 @@ class TransaksiGajiController extends Controller
 
             $nominalGaji = $gajiKaryawan->nominal_gaji;
             $potonganwfhsehari = MasterKode::findOne(['nama_group' => Yii::$app->params['potongan-persen-wfh']])['nama_kode'];
-            $totalPotonganAbsensi = $gaji_perhari * $total_alfa_range;
+            $totalPotonganAbsensi = ($gaji_perhari * $total_alfa_range) + ($gaji_perhari * $jumlah_wfh * ($potonganwfhsehari / 100));
 
 
             return [
@@ -1709,8 +1694,6 @@ class TransaksiGajiController extends Controller
 
         $pengajuandinas = PengajuanDinas::find()
             ->where(['id_karyawan' => $id_karyawan, 'status' => 1, 'status_dibayar' => 0])
-            ->andWhere(['>=', 'tanggal_mulai', $tanggal_awal_periode])
-            ->andWhere(['<=', 'tanggal_selesai', $tanggal_akhir_periode])
             ->asArray()
             ->all();
 

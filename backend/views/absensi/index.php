@@ -191,17 +191,15 @@ $today = date('Y-m-d');
 
                     'label' => 'Kehadiran',
                     'value' => function ($model) {
-                        // if ($model['jadwal_kerja'] == null) {
-                        //     return "<span style='color: red; font-size: 10px; text-transform: capitalize;'> jadwal kerja  Belum di set</span>";
-                        // }
+
                         if ($model['absensi']) {
 
                             if ($model['absensi']['kode_status_hadir'] == "H") {
                                 return "<span class='text-success'>Hadir</span>";
-                            } else if ($model['absensi']['kode_status_hadir'] == 'I') {
-                                return "<span class='text-warning'>IZIN</span>";
-                            } else if ($model['absensi']['kode_status_hadir'] == 'S') {
-                                return "<span class='text-primary'>Sakit</span>";
+                            } else if ($model['absensi']['kode_status_hadir'] == 'C') {
+                                return "<span class='text-black'>Cuti</span>";
+                            } else if ($model['absensi']['kode_status_hadir'] == 'DL') {
+                                return "<span class='text-primary'>Dinas Luar</span>";
                             } else {
                                 return "<span class='text-black'>Tidak Hadir</span>";
                             }
@@ -211,6 +209,8 @@ $today = date('Y-m-d');
                     },
                     'format' => 'raw',
                 ],
+
+
                 [
                     'headerOptions' => ['style' => 'width: 100px; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 100px; text-align: center;'],

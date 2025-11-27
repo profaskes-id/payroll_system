@@ -209,15 +209,12 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                                 // Ambil ID shift kerja dari hasil query pertama
                                 $ids = array_column($shiftHariIniSemua, 'id_shift_kerja');
 
-                                // Lalu ambil data lengkap ShiftKerja berdasarkan ID-ID tersebut
                                 $dataShift = ShiftKerja::find()
                                     ->where(['id_shift_kerja' => $ids])
                                     ->asArray()
                                     ->all();
 
-
-
-                                // Format pilihan radioList
+                                // Format pilihan untuk dropdown
                                 $shiftOptions = [];
                                 foreach ($dataShift as $shift) {
                                     $jamMasuk = substr($shift['jam_masuk'], 0, 5);
@@ -227,18 +224,13 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                                 ?>
 
                                 <div class="max-w-md mx-auto">
-                                    <?= $formAbsen->field($model, 'id_shift')->radioList($shiftOptions, [
-                                        'item' => function ($index, $label, $name, $checked, $value) {
-                                            return "
-                                  <div class='inline-block w-1/2 px-1 mb-2'>
-                                        <input type='radio' name='{$name}' id='shift-{$value}' value='{$value}' class='hidden peer' " . ($checked ? 'checked' : '') . ">
-                                        <label for='shift-{$value}' class='block p-3 text-sm font-medium text-center text-gray-600 transition bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-400 hover:bg-blue-100'>
-                                            {$label}
-                                        </label>
-                                   </div>";
-                                        },
-                                        'class' => 'flex flex-wrap -mx-1' // Container untuk radio items
-                                    ])->label(false) ?>
+                                    <?= $formAbsen->field($model, 'id_shift')->dropDownList(
+                                        $shiftOptions,
+                                        [
+                                            'prompt' => '-- Pilih Shift Kerja --',
+                                            'class' => 'block w-full px-3 py-2 text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+                                        ]
+                                    )->label(false) ?>
                                 </div>
                             <?php endif; ?>
 

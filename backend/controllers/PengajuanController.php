@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use amnah\yii2\user\models\User;
 use backend\models\AtasanKaryawan;
+use backend\models\DetailDinas;
 use backend\models\DetailTugasLuar;
 use backend\models\helpers\EmailHelper;
 use backend\models\helpers\NotificationHelper;
@@ -652,52 +653,13 @@ class PengajuanController extends \yii\web\Controller
     {
         $this->layout = 'mobile-main';
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
-        $pengajuanDinas = PengajuanDinas::find()->where(['id_karyawan' => $karyawan->id_karyawan])->orderBy(['tanggal_mulai' => SORT_DESC, 'status' => SORT_ASC,])->all();
+        $pengajuanDinas = PengajuanDinas::find()->where(['id_karyawan' => $karyawan->id_karyawan])
+            ->orderBy(['status' => SORT_ASC])->all();
         return $this->render('/home/pengajuan/dinas/index', compact('pengajuanDinas'));
     }
 
 
-    public function actionDinasCreate()
-    {
 
-        $this->layout = 'mobile-main';
-        $model = new PengajuanDinas();
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-
-                $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
-                $model->id_karyawan = $karyawan->id_karyawan;
-                $model->disetujui_pada = date('Y-m-d');
-                $model->status = 0;
-
-                if ($model->save()) {
-                    // dapatkan atasan
-                    $useMessage = new UseMessageHelper();
-                    $adminUsers = $useMessage->getUserAtasanReceiver($karyawan->id_karyawan);
-
-                    // atur parameter yang alkan ditampilkan
-                    $params = [
-                        'judul' => 'Pengajuan Dinas',
-                        'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan dinas luar.',
-                        'nama_transaksi' => "",
-                        'nama_transaksi' => "/panel/tanggapan/dinas-view?id_pengajuan_dinas",
-                        'id_transaksi' => $model['id_pengajuan_dinas'],
-                    ];
-                    // kirim notifikasi ke notifikasi dan atasan
-                    $this->sendNotif($params, $model, $adminUsers, "Pengajuan Dinas Baru Dari " . $model->karyawan->nama);
-
-                    Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
-                    return $this->redirect(['/pengajuan/dinas']);
-                } else {
-                    Yii::$app->session->setFlash('error', 'Gagal Membuat Pengajuan');
-                    return $this->redirect(['/pengajuan/dinas']);
-                }
-            }
-        }
-
-        return $this->render('home/pengajuan/dinas/create', compact('model'));
-    }
 
     public function actionDinasDetail($id)
     {
@@ -710,6 +672,96 @@ class PengajuanController extends \yii\web\Controller
             $this->redirect(['/home/index']);
         }
     }
+
+    public function actionDinasCreate()
+    {
+        $this->layout = 'mobile-main';
+        $model = new PengajuanDinas();
+        $dinasDetail = new DetailDinas();
+        $detailModels = [];
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+
+                $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();
+                $model->id_karyawan = $karyawan->id_karyawan;
+                $model->disetujui_pada = date('Y-m-d');
+                $model->status = 0;
+
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    if ($model->save()) {
+                        $postData = Yii::$app->request->post();
+                        // Siapkan data detail dinas
+                        $detailData = [];
+
+                        // Ambil tanggal dari DetailDinas[tanggal] yang berupa string
+                        if (isset($postData['DetailDinas']['tanggal']) && !empty($postData['DetailDinas']['tanggal'])) {
+                            $tanggalString = $postData['DetailDinas']['tanggal'];
+                            $tanggalArray = array_map('trim', explode(',', $tanggalString));
+                            foreach ($tanggalArray as $tanggal) {
+                                // Skip jika tanggal kosong
+                                if (empty($tanggal)) {
+                                    continue;
+                                }
+
+                                $detailData[] = [
+                                    'id_pengajuan_dinas' => $model->id_pengajuan_dinas,
+                                    'tanggal' => $tanggal,
+                                    'keterangan' => '',
+                                    'status' => 1,
+                                ];
+                            }
+                        }
+
+                        // Simpan detail dinas menggunakan batchInsert
+                        if (!empty($detailData)) {
+                            Yii::$app->db->createCommand()
+                                ->batchInsert(
+                                    '{{%detail_dinas}}',
+                                    ['id_pengajuan_dinas', 'tanggal', 'keterangan', 'status'],
+                                    $detailData
+                                )
+                                ->execute();
+                        }
+
+                        $transaction->commit();
+
+                        // Dapatkan atasan
+                        $useMessage = new UseMessageHelper();
+                        $adminUsers = $useMessage->getUserAtasanReceiver($karyawan->id_karyawan);
+
+                        // Atur parameter yang akan ditampilkan
+                        $params = [
+                            'judul' => 'Pengajuan Dinas',
+                            'deskripsi' => 'Karyawan ' . $model->karyawan->nama . ' telah membuat pengajuan dinas luar.',
+                            'nama_transaksi' => "/panel/tanggapan/dinas-view?id_pengajuan_dinas",
+                            'id_transaksi' => $model->id_pengajuan_dinas,
+                        ];
+
+                        // Kirim notifikasi ke notifikasi dan atasan
+                        $this->sendNotif($params, $model, $adminUsers, "Pengajuan Dinas Baru Dari " . $model->karyawan->nama);
+
+                        Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
+                        return $this->redirect(['/pengajuan/dinas']);
+                    } else {
+                        throw new \Exception('Gagal menyimpan pengajuan dinas: ' . json_encode($model->errors));
+                    }
+                } catch (\Exception $e) {
+                    $transaction->rollBack();
+                    Yii::$app->session->setFlash('error', 'Gagal Membuat Pengajuan: ' . $e->getMessage());
+                    return $this->redirect(['/pengajuan/dinas']);
+                }
+            }
+        }
+
+        return $this->render('home/pengajuan/dinas/create', [
+            'model' => $model,
+            'detailModels' => $detailModels,
+            'dinasDetail' => $dinasDetail
+        ]);
+    }
+
     public function actionUploadDokumentasi()
     {
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => Yii::$app->user->identity->email])->one();

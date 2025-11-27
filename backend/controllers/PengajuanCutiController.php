@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use amnah\yii2\user\models\User;
+use backend\models\Absensi;
 use backend\models\DetailCuti;
 use backend\models\helpers\EmailHelper;
 use backend\models\helpers\NotificationHelper;
@@ -56,6 +57,7 @@ class PengajuanCutiController extends Controller
         $lastdate = date('Y-m-d', mktime(0, 0, 0, $bulan + 1, intval($tanggalAwal->nama_kode), $tahun));
         $tgl_mulai =  Yii::$app->request->get() == [] ? $firstDayOfMonth :  Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_mulai'];
         $tgl_selesai =  Yii::$app->request->get() == [] ? $lastdate :  Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_selesai'];
+
         $searchModel = new PengajuanCutiSearch();
         $dataProvider = $searchModel->search($this->request->queryParams, $tgl_mulai, $tgl_selesai);
 
@@ -124,21 +126,17 @@ class PengajuanCutiController extends Controller
         $model = $this->findModel($id_pengajuan_cuti);
 
         if ($this->request->isPost && $model->load($this->request->post())) {
-
-
             $model->sisa_hari = 0;
             $model->ditanggapi_pada = date('Y-m-d');
             $model->ditanggapi_oleh = Yii::$app->user->identity->id;
             if ($model->save()) {
-
-
 
                 $existingDetails = DetailCuti::find()
                     ->where(['id_pengajuan_cuti' => $model->id_pengajuan_cuti])
                     ->indexBy('id_detail_cuti')
                     ->all();
 
-                $postDetails = Yii::$app->request->post('DetailCuti', []); // ini seharusnya array data mentah dari form (bukan object)
+                $postDetails = Yii::$app->request->post('DetailCuti', []);
 
                 $usedIds = [];
                 $approvedCount = 0;
@@ -171,26 +169,49 @@ class PengajuanCutiController extends Controller
                     }
                 }
 
-
-
-
-
                 if ($model->status == Yii::$app->params['disetujui']) {
-                    $rekapan = RekapCuti::find()->where(['id_karyawan' => $model->id_karyawan, 'id_master_cuti' => $model->jenis_cuti, 'tahun' => date('Y')])->one();
+                    // Prepare data for batch insert into Absensi
+                    $absensiData = [];
+                    foreach ($postDetails as $data) {
+                        if (isset($data['status']) && $data['status'] == 1) {
+                            $absensiData[] = [
+                                $model->id_karyawan,
+                                '00:00:00',
+                                '00:00:00',
+                                $data['tanggal'],    // tanggal
+                                'C',                 // kode_status_hadir
+                            ];
+                        }
+                    }
+
+                    // Perform batch insert into Absensi table
+                    if (!empty($absensiData)) {
+                        Yii::$app->db->createCommand()->batchInsert(
+                            'absensi', // Table name
+                            ['id_karyawan', 'jam_masuk', 'jam_pulang', 'tanggal', 'kode_status_hadir'], // Columns
+                            $absensiData // Data
+                        )->execute();
+                    }
+
+                    // Update or create RekapCuti
+                    $rekapan = RekapCuti::find()->where([
+                        'id_karyawan' => $model->id_karyawan,
+                        'id_master_cuti' => $model->jenis_cuti,
+                        'tahun' => date('Y')
+                    ])->one();
+
                     if ($rekapan) {
                         $rekapan->total_hari_terpakai += $approvedCount ?? 0;
                         $rekapan->save();
                     } else {
-                        $NewrekapAsensi = new RekapCuti();
-                        $NewrekapAsensi->id_karyawan = $model->id_karyawan;
-                        $NewrekapAsensi->id_master_cuti = $model->jenis_cuti;
-                        $NewrekapAsensi->total_hari_terpakai = $approvedCount ?? 0;
-                        $NewrekapAsensi->tahun = date('Y');
-                        $NewrekapAsensi->save();
+                        $newRekapCuti = new RekapCuti();
+                        $newRekapCuti->id_karyawan = $model->id_karyawan;
+                        $newRekapCuti->id_master_cuti = $model->jenis_cuti;
+                        $newRekapCuti->total_hari_terpakai = $approvedCount ?? 0;
+                        $newRekapCuti->tahun = date('Y');
+                        $newRekapCuti->save();
                     }
                 }
-
-
                 $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
                 $sender = Yii::$app->user->identity->id;
 

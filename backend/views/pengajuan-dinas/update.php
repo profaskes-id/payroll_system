@@ -7,18 +7,19 @@ use yii\helpers\Html;
 
 $this->title = 'Pengajuan Dinas: ' . $model->karyawan->nama;
 $this->params['breadcrumbs'][] = ['label' => 'Pengajuan Dinas', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id_pengajuan_dinas, 'url' => ['view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]];
+$this->params['breadcrumbs'][] = ['label' => $model->karyawan->nama, 'url' => ['view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]];
 $this->params['breadcrumbs'][] = 'Tanggapan';
 ?>
 <div class="pengajuan-dinas-update">
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
     <?= $this->render('_form', [
         'model' => $model,
+        'detailModels' => $detailModels,
     ]) ?>
 
 </div>

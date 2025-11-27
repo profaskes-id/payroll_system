@@ -15,7 +15,6 @@ class m251014_081815_create_table_dinas_detail_gaji extends Migration
             'bulan' => $this->integer()->null(),
             'tahun' => $this->integer()->null(),
             'nama' => $this->string(255)->notNull(),
-            'tanggal' => $this->date()->notNull(),
             'keterangan' => $this->text(),
             'biaya' => $this->decimal(15, 2)->notNull()->defaultValue(0.00),
         ]);

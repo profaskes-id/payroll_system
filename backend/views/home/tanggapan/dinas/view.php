@@ -112,15 +112,39 @@ $tanggalFormater = new Tanggal();
                         <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= "Rp "  . number_format($model['biaya_yang_disetujui'] ?? 0, 0, ',', '.') ?></td>
                     </tr>
                     <tr>
-                        <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Tanggal Mulai</td>
-                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= $tanggalFormater->getIndonesiaFormatTanggal($model['tanggal_mulai']);   ?></td>
+                        <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Tanggal Dinas</td>
+                        <td class="px-6 py-4 text-sm text-gray-700">
+                            <?php if (!empty($model->detailDinas) && is_array($model->detailDinas)): ?>
+                                <ul class="space-y-2 list-disc list-inside">
+                                    <?php foreach ($model->detailDinas as $index => $detail): ?>
+                                        <?php if ($detail instanceof \backend\models\DetailDinas): ?>
+                                            <li>
+                                                <?php
+                                                $tanggal = $detail->tanggal ?? null;
+                                                if ($tanggal && !empty(trim($tanggal))) {
+                                                    echo htmlspecialchars($tanggalFormater->getIndonesiaFormatTanggal($tanggal), ENT_QUOTES, 'UTF-8');
+                                                } else {
+                                                    echo 'Tanggal tidak tersedia';
+                                                }
 
-                    </tr>
-                    <tr>
+                                                $keterangan = $detail->keterangan ?? '';
+                                                if (!empty(trim($keterangan))) {
+                                                    echo ' - ' . htmlspecialchars($keterangan, ENT_QUOTES, 'UTF-8');
+                                                }
 
-                        <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Tanggal Selesai</td>
-                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= $tanggalFormater->getIndonesiaFormatTanggal($model['tanggal_selesai']);   ?></td>
+                                                $status = $detail->status ?? null;
+
+                                                ?>
+                                            </li>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php else: ?>
+                                <span class="text-gray-500">Tidak ada data detail dinas</span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
+
                     <tr>
                         <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Status</td>
                         <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">

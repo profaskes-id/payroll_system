@@ -21,7 +21,7 @@ use yii\widgets\ActiveForm;
 
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2 ">
 
-        <div class="grid grid-cols-1 col-span-2 gap-6 md:grid-cols-2">
+        <div class="grid grid-cols-1 col-span-2 gap-6 ">
 
             <p class="block mb-2 text-sm font-medium text-gray-900 capitalize ">Karyawan</p>
             <?php
@@ -37,7 +37,7 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
 
-        <div class="grid grid-cols-1 col-span-2 gap-6 md:grid-cols-2">
+        <div class="grid grid-cols-1 col-span-2 gap-6 ">
 
             <?= $form->field($model, 'alasan')->textarea(['rows' => 3, 'class' => 'w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'])->label('Alasan') ?>
         </div>
@@ -59,14 +59,10 @@ use yii\widgets\ActiveForm;
                 ])->label('Tanggal Selesai') ?>
             </div>
         </div>
-        <div class="grid grid-cols-1 col-span-2 gap-6 md:grid-cols-2">
+        <div class="grid grid-cols-1 col-span-2 gap-6 ">
 
-            <?= $form->field($model, 'lokasi')->textInput(['maxlength' => true, 'placeholder' => 'Tentukan Lokasi', 'autocomplete' => 'off', 'value' => 'Rumah', 'class' => 'w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200'])->label('Lokasi') ?>
+            <?= $form->field($model, 'lokasi')->textInput(['disabled' => true, 'placeholder' => 'Tentukan Lokasi', 'autocomplete' => 'off', 'value' => 'Rumah', 'class' => 'w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:bg-gray-100 disabled:text-gray-500'])->label('Lokasi') ?>
         </div>
-
-
-
-
 
         <div class="col-span-2 space-y-4">
             <!-- Judul Section -->

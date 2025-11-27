@@ -111,14 +111,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
+                    'label' => 'Jenis Shift',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        return  $model->shift->nama_shift ?? '-';
+                    }
+                ],
+                [
                     'label' => 'jarak ke lokasi',
                     'format' => 'raw',
                     'value' => function ($model) {
                         return '<span id="distance"></span>';
                     }
                 ],
-
-                // Versi sederhana untuk Dibuat Oleh
                 [
                     'label' => 'Dibuat Oleh',
                     'value' => function ($model) {
@@ -127,7 +132,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
 
                 // Versi untuk Diupdate Oleh
-                
+
                 [
                     'attribute' => 'created_at',
                     'format' => ['date', 'php:d M Y  / H:i:s']

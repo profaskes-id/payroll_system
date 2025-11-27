@@ -104,7 +104,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ]); ?>
 
 
-        <h4 class="mt-4">Detail Tugas Luar</h4>
+        <h4 class="mt-4">Detail Cuti</h4>
 
         <?= GridView::widget([
             'dataProvider' => new \yii\data\ArrayDataProvider([

@@ -104,9 +104,7 @@ $tanggalFormater = new Tanggal();
                         ?>
                     </td>
                     <td class="px-6 py-1 text-xs">
-                        <?php echo "<p class='text-xs'>" . $tanggalFormater->getIndonesiaFormatTanggal($item->tanggal_mulai) . " - " . $tanggalFormater->getIndonesiaFormatTanggal($item->tanggal_selesai) . "</p>";
 
-                        ?>
                     </td>
                     <td class="px-6 text-xs py-1 <?= $statusColor ?>">
                         <?= $statusText ?>

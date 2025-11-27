@@ -193,7 +193,8 @@ $pathInfo = Yii::$app->request->getPathInfo();
 
         <?php
 
-        $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $model->id_karyawan])->one();
+
+        $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $id_karyawan])->one();
         ?>
 
         <?php if (isset($jamKerjaKaryawan) && $jamKerjaKaryawan->is_shift == 1) : ?>
@@ -208,7 +209,7 @@ $pathInfo = Yii::$app->request->getPathInfo();
             }
             ?>
 
-            <div class="col-md-6">
+            <div class="col-md-8 col-12">
                 <div class="form-group">
                     <?= Html::activeLabel($model, 'id_shift', [
                         'class' => 'control-label',
@@ -216,26 +217,24 @@ $pathInfo = Yii::$app->request->getPathInfo();
                     ]) ?>
 
                     <div>
-                        <?= $form->field($model, 'id_shift')->radioList(
-                            $shiftOptions,
-                            [
-                                'class' => 'btn-group',
-                                'data-toggle' => 'buttons',
-                                'item' => function ($index, $label, $name, $checked, $value) {
-                                    return '<label class="btn btn-default' . ($checked ? ' active' : '') . '">' .
-                                        Html::radio($name, $checked, [
-                                            'value' => $value,
-                                            'autocomplete' => 'off',
-                                        ]) . $label .
-                                        '</label>';
-                                }
+                        <?= $form->field($model, 'id_shift')->widget(Select2::classname(), [
+                            'data' => $shiftOptions,
+                            'options' => [
+                                'placeholder' => 'Pilih Shift Kerja ...',
+                                'multiple' => false
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
                             ]
-                        )->label(false) ?>
+                        ])->label(false) ?>
                     </div>
                 </div>
             </div>
 
         <?php endif; ?>
+
+
+
 
 
 

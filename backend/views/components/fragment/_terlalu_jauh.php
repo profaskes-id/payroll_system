@@ -50,10 +50,9 @@ use yii\widgets\ActiveForm;
 
                     <?php
                     // Ambil data shift dari database dengan pengecekan
-                    $dataShift =  ShiftKerja::find()->asArray()->all();
+                    $dataShift = ShiftKerja::find()->asArray()->all();
 
-
-                    // Format pilihan radioList dengan pengecekan
+                    // Format pilihan dropdown dengan pengecekan
                     $shiftOptions = [];
                     if (!empty($dataShift) && is_array($dataShift)) {
                         foreach ($dataShift as $shift) {
@@ -67,18 +66,14 @@ use yii\widgets\ActiveForm;
                     ?>
 
                     <?php if (!empty($shiftOptions)): ?>
-                        <div class="max-w-md mx-auto space-y-3">
-                            <?= $formAbsen->field($model, 'id_shift')->radioList($shiftOptions, [
-                                'item' => function ($index, $label, $name, $checked, $value) {
-                                    return "
-                    <div>
-                        <input type='radio' name='{$name}' id='shift-terlalujauh-{$value}' value='{$value}' class='hidden peer' " . ($checked ? 'checked' : '') . ">
-                        <label for='shift-terlalujauh-{$value}' class='block p-3 text-sm font-medium text-gray-600 transition bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-400 hover:bg-blue-100'>
-                            {$label}
-                        </label>
-                    </div>";
-                                }
-                            ])->label(false) ?>
+                        <div class="max-w-md mx-auto">
+                            <?= $formAbsen->field($model, 'id_shift')->dropDownList(
+                                $shiftOptions,
+                                [
+                                    'prompt' => '-- Pilih Shift --',
+                                    'class' => 'w-full p-3 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition'
+                                ]
+                            )->label(false) ?>
                         </div>
                     <?php else: ?>
                         <p class="text-red-500">Tidak ada data shift yang tersedia.</p>

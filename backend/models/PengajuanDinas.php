@@ -11,7 +11,7 @@ use Yii;
  * @property int $id_pengajuan_dinas
  * @property int $id_karyawan
  * @property string $keterangan_perjalanan
- * @property string $tanggal
+
  * @property float $estimasi_biaya
  * @property float|null $biaya_yang_disetujui
  * @property int|null $disetujui_oleh
@@ -36,10 +36,10 @@ class PengajuanDinas extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_karyawan', 'keterangan_perjalanan', 'tanggal_mulai', 'tanggal_selesai', 'estimasi_biaya', 'status'], 'required'],
+            [['id_karyawan', 'keterangan_perjalanan',  'estimasi_biaya', 'status'], 'required'],
             [['id_karyawan', 'disetujui_oleh', 'status_dibayar'], 'integer'],
             [['keterangan_perjalanan', 'catatan_admin', 'dokumentasi'], 'string'],
-            [['tanggal_mulai', 'tanggal_selesai', 'disetujui_pada', "disetujui_oleh"], 'safe'],
+            [['disetujui_pada', "disetujui_oleh"], 'safe'],
             [['estimasi_biaya', 'biaya_yang_disetujui'], 'number'],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
             [['dokumentasi'], 'file', 'extensions' => 'jpg, jpeg, png, pdf', 'maxFiles' => 10],
@@ -56,8 +56,6 @@ class PengajuanDinas extends \yii\db\ActiveRecord
             'id_pengajuan_dinas' => 'Pengajuan Dinas',
             'id_karyawan' => 'Karyawan',
             'keterangan_perjalanan' => 'Keterangan Perjalanan',
-            'tanggal_mulai' => 'Tanggal Mulai',
-            'tanggal_selesai' => 'Tanggal Selesai',
             'estimasi_biaya' => 'Estimasi Biaya',
             'biaya_yang_disetujui' => 'Biaya Yang Disetujui',
             'disetujui_oleh' => 'Ditanggapi Oleh',
@@ -87,5 +85,10 @@ class PengajuanDinas extends \yii\db\ActiveRecord
     public function getStatusPengajuan()
     {
         return $this->hasOne(MasterKode::class, ['kode' => 'status'])->onCondition(['nama_group' => 'status-pengajuan', 'status' => '1']);
+    }
+
+    public function getDetailDinas()
+    {
+        return $this->hasMany(DetailDinas::class, ['id_pengajuan_dinas' => 'id_pengajuan_dinas']);
     }
 }

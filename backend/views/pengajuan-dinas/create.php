@@ -13,11 +13,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
     <?= $this->render('_form', [
         'model' => $model,
+        'detailModels' => $detailModels,
     ]) ?>
 
 </div>

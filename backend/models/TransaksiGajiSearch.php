@@ -208,6 +208,7 @@ class TransaksiGajiSearch extends TransaksiGaji
             $karyawan['terlambat'] = $this->calculateTerlambat($karyawan['terlambat']);
             $karyawan['total_alfa_range'] = $this->getTotalAlfaRange($id, $periodeGajiObject, $karyawan['total_absensi']);
             $potonganAndwfh = $this->getPotonganAbsensi($id, $karyawan['gaji_perhari'], $karyawan['total_alfa_range'], $periodeGajiObject);
+
             $karyawan['jumlah_wfh'] = $potonganAndwfh['jumlah_wfh'];
             $karyawan['potongan_absensi'] = $potonganAndwfh['allpotongan'];
             $karyawan['dinas_luar_belum_terbayar'] = $this->getDinasLuarBelumTerbayar($id, $periodeGajiObject);
@@ -553,9 +554,9 @@ class TransaksiGajiSearch extends TransaksiGaji
                 'id_karyawan' => $id_karyawan,
                 'status' => 1,
                 'status_dibayar' => 0
-            ])
-            ->andWhere(['<=', 'tanggal_mulai', $tanggal_akhir])
-            ->andWhere(['>=', 'tanggal_selesai', $tanggal_awal]);
+            ]);
+        // ->andWhere(['<=', 'tanggal_mulai', $tanggal_akhir])
+        // ->andWhere(['>=', 'tanggal_selesai', $tanggal_awal]);
 
         return $query->sum('biaya_yang_disetujui') ?? 0;
     }
@@ -639,7 +640,7 @@ class TransaksiGajiSearch extends TransaksiGaji
         }
 
         // jika tidak ada gaji per jam atau tidak ada alfa, tidak ada potongan
-        if (empty($gajiPerhari) || empty($total_alfa)) {
+        if (empty($gajiPerhari)) {
             return [
                 'jumlah_wfh' => 0,
                 'allpotongan' => 0

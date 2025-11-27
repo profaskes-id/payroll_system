@@ -42,9 +42,7 @@ $tanggalFormater = new Tanggal();
                 <th scope="col" class="px-6 py-1">
                     Alasan
                 </th>
-                <th scope="col" class="px-6 py-1">
-                    Tanggal
-                </th>
+
                 <th scope="col" class="px-6 py-1">
                     Status
                 </th>
@@ -91,15 +89,7 @@ $tanggalFormater = new Tanggal();
                     <td class="px-6 py-2 text-xs">
                         <?= $item->alasan ?>
                     </td>
-                    <td class="px-6 py-2">
-                        <?php
-                        $json_tanggal_array = $item['tanggal_array'];
-                        $tanggal_array = json_decode($json_tanggal_array, true);
-                        foreach ($tanggal_array as $tanggal) {
-                            echo "<p class='text-xs'>" . $tanggalFormater->getIndonesiaFormatTanggal($tanggal) . "</p>";
-                        }
-                        ?>
-                    </td>
+
                     <td class=" text-xs<?= $statusColor ?>">
                         <?= $statusText ?>
 

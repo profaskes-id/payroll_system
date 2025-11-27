@@ -6,13 +6,14 @@ use amnah\yii2\user\models\User;
 use backend\models\Absensi;
 use backend\models\AtasanKaryawan;
 use backend\models\DetailCuti;
+use backend\models\DetailDinas;
 use backend\models\DetailTugasLuar;
 use backend\models\helpers\EmailHelper;
 use backend\models\helpers\NotificationHelper;
-use backend\models\helpers\UseMessageHelper;
+
 use backend\models\IzinPulangCepat;
 use backend\models\JadwalShift;
-use backend\models\JamKerjaKaryawan;
+
 use backend\models\MasterKode;
 use backend\models\PengajuanAbsensi;
 use backend\models\PengajuanCuti;
@@ -182,8 +183,6 @@ class TanggapanController extends Controller
 
                     // Redirect ke halaman view setelah berhasil diupdate
                     return $this->redirect(['/tanggapan/wfh-view', 'id_pengajuan_wfh' => $pengajuanWfh->id_pengajuan_wfh,]);
-
-                    return $this->redirect(['/tanggapan/wfh']);
                 } else {
                     Yii::$app->session->setFlash('error', 'Gagal , Pastikan data yang anda masukkan benar');
                 }
@@ -212,10 +211,6 @@ class TanggapanController extends Controller
         Yii::$app->session->setFlash('error', 'Gagal Menghapus Pengajuan');
         return $this->redirect(['/tanggapan/wfh']);
     }
-
-
-
-    // tugas luar
 
 
 
@@ -588,8 +583,6 @@ class TanggapanController extends Controller
 
 
 
-
-
     // Dinas
     public function actionDinas()
     {
@@ -695,46 +688,120 @@ class TanggapanController extends Controller
     {
         $id_admin = Yii::$app->user->identity->id_karyawan;
 
-
         $karyawanBawahanAdmin = AtasanKaryawan::find()
             ->where(['id_atasan' => $id_admin])
             ->asArray()
             ->all();
 
         $pengajuanDinas = PengajuanDinas::find()->where(['id_pengajuan_dinas' => $id])->one();
-
+        $detailModels = DetailDinas::find()->where(['id_pengajuan_dinas' => $id])->all();
 
         $model = PengajuanDinas::findOne($id);
 
         if ($this->request->isPost && $model->load($this->request->post())) {
-            $model->disetujui_oleh = Yii::$app->user->identity->id;
-            $model->disetujui_pada = date('Y-m-d H:i:s');
 
-            if ($model->save()) {
-
-                $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
-                $sender = Yii::$app->user->identity->id;
-
-                $params = [
-                    'judul' => 'Pengajuan dinas',
-                    'deskripsi' => 'Pengajuan Dinas luar Anda Telah Ditanggapi Oleh Atasan.',
-                    'nama_transaksi' => "/panel/pengajuan/dinas-detail?id",
-                    'id_transaksi' => $model['id_pengajuan_dinas'],
-                ];
-                $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan dinas ");
-
-
-                return $this->redirect(['/tanggapan/dinas-view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]);
+            // Set data persetujuan jika status disetujui
+            if ($model->status == Yii::$app->params['disetujui']) {
+                $model->disetujui_oleh = Yii::$app->user->identity->id;
+                $model->disetujui_pada = date('Y-m-d H:i:s');
+                $model->biaya_yang_disetujui = $model->estimasi_biaya;
             }
-            Yii::$app->session->setFlash('error', 'gagal mengupdate pengajuan');
-        }
 
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+
+                if ($model->save()) {
+                    $postData = Yii::$app->request->post();
+
+
+                    // Simpan detail dinas baru
+                    if (isset($postData['DetailDinas']) && is_array($postData['DetailDinas'])) {
+                        foreach ($postData['DetailDinas'] as $detailData) {
+                            // Skip jika tanggal kosong
+                            if (empty($detailData['tanggal'])) {
+                                continue;
+                            }
+
+                            $detailModel = new DetailDinas();
+                            $detailModel->id_pengajuan_dinas = $model->id_pengajuan_dinas;
+                            $detailModel->tanggal = $detailData['tanggal'];
+                            $detailModel->keterangan = $detailData['keterangan'] ?? '';
+                            $detailModel->status = $detailData['status'];
+
+                            if ($detailModel->save()) {
+                                // Jika status pengajuan disetujui DAN status detail = 1 (Disetujui), buat data absensi
+                                if ($model->status == Yii::$app->params['disetujui'] && $detailModel->status == 1) {
+                                    $this->createAbsensiDinas($model->id_karyawan, $detailModel->tanggal);
+                                }
+                            } else {
+                                throw new \Exception('Gagal menyimpan detail dinas: ' . json_encode($detailModel->errors));
+                            }
+                        }
+                    }
+
+                    $transaction->commit();
+                    Yii::$app->session->setFlash('success', 'Berhasil Mengupdate Data');
+
+                    // Kirim notifikasi
+                    $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+                    $sender = Yii::$app->user->identity->id;
+
+                    $params = [
+                        'judul' => 'Pengajuan dinas',
+                        'deskripsi' => 'Pengajuan Dinas luar Anda Telah Ditanggapi Oleh Atasan.',
+                        'nama_transaksi' => "/panel/pengajuan/dinas-detail?id",
+                        'id_transaksi' => $model->id_pengajuan_dinas,
+                    ];
+                    $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan dinas ");
+
+                    return $this->redirect(['/tanggapan/dinas-view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]);
+                } else {
+                    throw new \Exception('Gagal mengupdate pengajuan dinas: ' . json_encode($model->errors));
+                }
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::$app->session->setFlash('error', 'Gagal Mengupdate Data: ' . $e->getMessage());
+            }
+        }
 
         $this->layout = 'mobile-main';
         return $this->render('/home/tanggapan/dinas/update', [
             'model' => $pengajuanDinas,
+            'detailModels' => $detailModels,
             'karyawanBawahanAdmin' => $karyawanBawahanAdmin,
         ]);
+    }
+
+
+
+    private function createAbsensiDinas($idKaryawan, $tanggal)
+    {
+        // Cek apakah sudah ada data absensi untuk karyawan dan tanggal tersebut
+        $existingAbsensi = Absensi::find()
+            ->where([
+                'id_karyawan' => $idKaryawan,
+                'tanggal' => $tanggal,
+                'kode_status_hadir' => 'DL' // Cek khusus yang status DL
+            ])
+            ->exists();
+
+        if (!$existingAbsensi) {
+            $absensi = new Absensi();
+            $absensi->id_karyawan = $idKaryawan;
+            $absensi->tanggal = $tanggal;
+            $absensi->kode_status_hadir = 'DL'; // Dinas Luar
+            $absensi->keterangan = 'Dinas Luar';
+            $absensi->created_at = date('Y-m-d H:i:s');
+            $absensi->created_by = Yii::$app->user->identity->id;
+            if (!$absensi->save()) {
+                Yii::error('Gagal membuat absensi dinas: ' . json_encode($absensi->errors));
+                throw new \Exception('Gagal membuat absensi dinas: ' . json_encode($absensi->errors));
+            } else {
+                Yii::info("Berhasil membuat absensi DL untuk karyawan $idKaryawan pada tanggal $tanggal");
+            }
+        } else {
+            Yii::info("Absensi DL sudah ada untuk karyawan $idKaryawan pada tanggal $tanggal");
+        }
     }
 
 
@@ -749,13 +816,6 @@ class TanggapanController extends Controller
         Yii::$app->session->setFlash('error', 'Gagal Menghapus Pengajuan');
         return $this->redirect(['/tanggapan/dinas']);
     }
-
-
-
-
-
-
-
 
 
     // kasbon   
@@ -782,20 +842,23 @@ class TanggapanController extends Controller
             $model->disetujui_oleh = Yii::$app->user->identity->id;
             $model->tanggal_disetujui = date('Y-m-d');
             $model->status = 1; // contoh status disetujui
-            $model->save();
+            if ($model->save()) {
 
-            $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
-            $sender = Yii::$app->user->identity->id;
 
-            $params = [
-                'judul' => 'Pengajuan Kasbon',
-                'deskripsi' => 'Pengajuan kasbon Anda telah ditanggapi oleh atasan.',
-                'nama_transaksi' => "/panel/pengajuan/kasbon-detail?id",
-                'id_transaksi' => $model['id_pengajuan_kasbon'],
-            ];
-            $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan kasbon");
+                $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+                $sender = Yii::$app->user->identity->id;
 
-            return $this->redirect(['kasbon-view', 'id_pengajuan_kasbon' => $model->id_pengajuan_kasbon]);
+                $params = [
+                    'judul' => 'Pengajuan Kasbon',
+                    'deskripsi' => 'Pengajuan kasbon Anda telah ditanggapi oleh atasan.',
+                    'nama_transaksi' => "/panel/pengajuan/kasbon-detail?id",
+                    'id_transaksi' => $model['id_pengajuan_kasbon'],
+                ];
+                $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan kasbon");
+                return $this->redirect(['kasbon-view', 'id_pengajuan_kasbon' => $model->id_pengajuan_kasbon]);
+            } else {
+                Yii::$app->session->setFlash('error', 'gagal mengupdate pengajuan');
+            }
         }
 
         return $this->render('/home/tanggapan/kasbon/index', compact('pengajuanKasbonList', 'model'));
@@ -833,50 +896,6 @@ class TanggapanController extends Controller
             $model->gaji_pokok = $gaji ? $gaji->nominal_gaji : 0;
 
             if ($model->save()) {
-
-                // 🔹 Setelah Save → Buat atau update data PembayaranKasbon
-                // if ($model->status == 1) {
-                //     $idKasbonBaru = $model->id_pengajuan_kasbon;
-                //     $dataOld = \backend\models\PembayaranKasbon::find()
-                //         ->where([
-                //             'id_karyawan' => $model->id_karyawan,
-                //             'status_potongan' => 0,
-                //             'autodebt' => $model->tipe_potongan
-                //         ])
-                //         ->orderBy(['created_at' => SORT_DESC])
-                //         ->one();
-
-                //     if ($dataOld) {
-                //         // Jika ada data lama
-                //         $dataOld->id_kasbon = $idKasbonBaru;
-                //         $dataOld->jumlah_kasbon += $model->jumlah_kasbon;
-                //         $dataOld->jumlah_potong = 0;
-                //         $dataOld->tanggal_potong = $model->tanggal_mulai_potong;
-                //         $dataOld->angsuran = $model->angsuran_perbulan;
-                //         $dataOld->status_potongan = 0;
-                //         $dataOld->autodebt = $model->tipe_potongan;
-                //         $dataOld->sisa_kasbon += $model->jumlah_kasbon;
-                //         $dataOld->created_at = time();
-                //         $dataOld->deskripsi = 'Top-up Kasbon';
-
-                //         $dataOld->save(false);
-                //     } else {
-                //         // Jika belum ada, buat baru
-                //         $pembayaran = new \backend\models\PembayaranKasbon();
-                //         $pembayaran->id_karyawan = $model->id_karyawan;
-                //         $pembayaran->id_kasbon = $idKasbonBaru;
-                //         $pembayaran->jumlah_kasbon = $model->jumlah_kasbon;
-                //         $pembayaran->jumlah_potong = 0;
-                //         $pembayaran->tanggal_potong = $model->tanggal_mulai_potong;
-                //         $pembayaran->angsuran = $model->angsuran_perbulan;
-                //         $pembayaran->status_potongan = 0;
-                //         $pembayaran->autodebt = $model->tipe_potongan;
-                //         $pembayaran->sisa_kasbon = $model->jumlah_kasbon;
-                //         $pembayaran->created_at = time();
-                //         $pembayaran->deskripsi = 'Kasbon Baru';
-                //         $pembayaran->save(false);
-                //     }
-                // }
 
                 Yii::$app->session->setFlash('success', 'Berhasil membuat pengajuan kasbon.');
                 return $this->redirect(['/tanggapan/kasbon']);
@@ -1023,16 +1042,6 @@ class TanggapanController extends Controller
         return $this->redirect(['/tanggapan/kasbon']);
     }
     // end kasbon
-
-
-
-
-
-
-
-
-
-
 
     // deviasi absensi
 
@@ -1470,9 +1479,6 @@ class TanggapanController extends Controller
     }
 
 
-
-
-
     public function actionShift()
     {
         $this->layout = 'mobile-main';
@@ -1548,9 +1554,6 @@ class TanggapanController extends Controller
                         'tanggal' => $tanggal
                     ]);
 
-
-
-
                     if (!$jadwal) {
                         $jadwal = new JadwalShift();
                         $jadwal->id_karyawan = $model->id_karyawan;
@@ -1609,22 +1612,12 @@ class TanggapanController extends Controller
         }
     }
 
-
-
-
-
     public  function hitungHariKerja($tanggal_mulai, $tanggal_selesai, $containsNumber)
     {
-        // Konversi tanggal menjadi timestamp
         $timestamp_mulai = strtotime($tanggal_mulai);
         $timestamp_selesai = strtotime($tanggal_selesai);
-
-        // Inisialisasi variabel untuk menghitung hari kerja
         $hari_kerja = 0;
-
-        // Loop melalui semua hari antara tanggal mulai dan tanggal selesai
         for ($timestamp = $timestamp_mulai; $timestamp <= $timestamp_selesai; $timestamp += 86400) { // 86400 detik = 1 hari
-            // Ambil nama hari dalam seminggu (contoh: "Sunday", "Monday", dll.)
             $hari = date('l', $timestamp);
 
             if ($containsNumber) {
@@ -1636,7 +1629,6 @@ class TanggapanController extends Controller
                     $hari_kerja++;
                 }
             }
-            // Periksa apakah hari tersebut bukan Sabtu atau Minggu
         }
 
         return $hari_kerja;

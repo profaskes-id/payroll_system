@@ -536,4 +536,9 @@ class Absensi extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'updated_by']);
     }
+
+    public function getShift()
+    {
+        return $this->hasOne(ShiftKerja::class, ['id_shift_kerja' => 'id_shift']);
+    }
 }

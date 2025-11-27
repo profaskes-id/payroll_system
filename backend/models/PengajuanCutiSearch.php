@@ -38,17 +38,16 @@ class PengajuanCutiSearch extends PengajuanCuti
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $tgl_mulai, $tgl_selesai)
+    public function search($params, $tgl_mulai = null, $tgl_selesai = null)
     {
-        $query = PengajuanCuti::find();
-
-        // Add conditions that should always apply here
+        $query = PengajuanCuti::find()
+            ->joinWith('detailCuti'); // join relasi ke tabel detail_cuti
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => [
                 'defaultOrder' => [
-                    'status' => SORT_ASC, // Mengurutkan berdasarkan status secara ascending
+                    'status' => SORT_ASC,
                 ],
             ],
         ]);
@@ -56,45 +55,34 @@ class PengajuanCutiSearch extends PengajuanCuti
         $this->load($params);
 
         if (!$this->validate()) {
-            // Uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 
-        // Filter id_karyawan only if it's provided in the params
-        if (!empty($this->id_karyawan)) {
-            $query->andFilterWhere([
-                'id_karyawan' => (int)$this->id_karyawan,  // Pastikan id_karyawan dalam tipe data integer
+        // Filter by karyawan, status, jenis, alasan, catatan
+        $query->andFilterWhere(['id_karyawan' => $this->id_karyawan])
+            ->andFilterWhere(['status' => $this->status])
+            ->andFilterWhere(['jenis_cuti' => $this->jenis_cuti])
+            ->andFilterWhere(['like', 'alasan_cuti', $this->alasan_cuti])
+            ->andFilterWhere(['like', 'catatan_admin', $this->catatan_admin]);
+
+        // --- Filter tanggal (jika $tgl_mulai & $tgl_selesai diisi)
+        if (!empty($tgl_mulai) && !empty($tgl_selesai)) {
+            $query->andWhere([
+                'between',
+                'detail_cuti.tanggal',
+                $tgl_mulai,
+                $tgl_selesai
             ]);
         }
 
-        // Filter status only if it's provided in the params
-        if (!empty($this->status)) {
-            $query->andFilterWhere([
-                'status' => $this->status,
-            ]);
-        }
-
-        // Filter jenis_cuti only if it's provided in the params
-        if (!empty($this->jenis_cuti)) {
-            $query->andFilterWhere([
-                'jenis_cuti' => $this->jenis_cuti,
-            ]);
-        }
-
-        // Apply additional text filters if there are values for alasan_cuti and catatan_admin
-        if (!empty($this->alasan_cuti)) {
-            $query->andFilterWhere(['like', 'alasan_cuti', $this->alasan_cuti]);
-        }
-
-        if (!empty($this->catatan_admin)) {
-            $query->andFilterWhere(['like', 'catatan_admin', $this->catatan_admin]);
-        }
+        // Agar tidak duplikat karena join many-to-many
+        $query->groupBy('{{%pengajuan_cuti}}.id_pengajuan_cuti');
 
         return $dataProvider;
     }
 
-    public function searchApi($params, )
+
+    public function searchApi($params,)
     {
         $query = PengajuanCuti::find()
             ->select(['pengajuan_cuti.*', 'master_cuti.jenis_cuti as jenis_cuti', 'karyawan.nama'])
