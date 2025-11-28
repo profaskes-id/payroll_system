@@ -22,12 +22,12 @@ class RekapService
         //! mendapatkan seluruh data absensi karyawan,jam-karyawan dari firstDayOfMonth - lastDayOfMonth
         $absensi = $model->getAllAbsensiFromFirstAndLastMonth($model, $firstDayOfMonth, $lastDayOfMonth);
 
-
         //    ! get all data dari tanggal awal dan akhir bulan
         $tanggal_bulanan = $model->getTanggalFromFirstAndLastMonth($firstDayOfMonth, $lastDayOfMonth);
         $dataKaryawan = $model->getAllDetailDataKaryawan($karyawan);
         // memasukan absensi ke masing masing data karyawan
         $absensiAndTelat = $model->getIncludeKaryawanAndAbsenData($dataKaryawan, $absensi, $firstDayOfMonth, $lastDayOfMonth, $tanggal_bulanan);
+
 
         $keterlambatanPerTanggal = $absensiAndTelat['keterlambatanPerTanggal'];
 

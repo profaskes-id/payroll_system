@@ -47,11 +47,16 @@ class SettinganUmumController extends Controller
 
         $tanggal_cut_of = MasterKode::find()->where(['nama_group' => Yii::$app->params["tanggal-cut-of"]])->one();
         $potongan_persenan_wfh = MasterKode::find()->where(['nama_group' => Yii::$app->params['potongan-persen-wfh']])->one();
+        $toleransi_keterlambatan = MasterKode::find()->where(['nama_group' => Yii::$app->params['toleransi-keterlambatan']])->one();
+        $batas_deviasi_absensi = MasterKode::find()->where(['nama_group' => Yii::$app->params['batas-deviasi-absensi']])->one();
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'tanggal_cut_of' => $tanggal_cut_of,
             'potongan_persenan_wfh' => $potongan_persenan_wfh,
+            'toleransi_keterlambatan' => $toleransi_keterlambatan,
+            'batas_deviasi_absensi' => $batas_deviasi_absensi,
             'model' => $model
         ]);
     }

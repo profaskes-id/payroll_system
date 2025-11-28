@@ -52,6 +52,7 @@ return [
     'maximal-jam-lembur' => 'maximal-jam-lembur',
     'potongan-persen-wfh' => 'potongan-persen-wfh',
 
-    "teleransi-keterlambatan" => "teleransi-keterlambatan"
+    "toleransi-keterlambatan" => "toleransi-keterlambatan",
+    "batas-deviasi-absensi" => "batas-deviasi-absensi"
 
 ];

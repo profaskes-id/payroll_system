@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\helpers\KaryawanHelper;
 use backend\models\Karyawan;
 use backend\models\MasterKode;
 use kartik\select2\Select2;
@@ -19,7 +20,7 @@ use yii\widgets\ActiveForm;
 
         <div class="col-12 ">
             <?php
-            $data = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
+            $data = \yii\helpers\ArrayHelper::map(KaryawanHelper::getKaryawanData(), 'id_karyawan', 'nama');
             echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
                 'data' => $data,
                 'language' => 'id',
@@ -91,16 +92,10 @@ use yii\widgets\ActiveForm;
                             <label for="detaildinas-0-tanggal">Tanggal</label>
                             <input type="date" id="detaildinas-0-tanggal" name="DetailDinas[0][tanggal]" class="form-control form-control-sm" />
                         </div>
-                        <div class="col-md-4">
-                            <label for="detaildinas-0-keterangan">Keterangan (optional)</label>
-                            <input type="text" id="detaildinas-0-keterangan" name="DetailDinas[0][keterangan]" class="form-control form-control-sm" placeholder="Keterangan" />
-                        </div>
-                        <div class="col-md-4">
-                            <label for="detaildinas-0-lokasi_tujuan">Lokasi Tujuan</label>
-                            <input type="text" id="detaildinas-0-lokasi_tujuan" name="DetailDinas[0][lokasi_tujuan]" class="form-control form-control-sm" placeholder="Lokasi Tujuan" />
-                        </div>
+
                         <div class="col-md-3">
                             <label class="d-block">Status</label>
+
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="DetailDinas[0][status]" id="status_pending_0" value="0" checked>
                                 <label class="form-check-label" for="status_pending_0">Pending</label>
@@ -130,45 +125,73 @@ use yii\widgets\ActiveForm;
             </button>
         </div>
 
-        <div class="mt-5 col-12 col-md-6 ">
-            <?= $form->field($model, 'biaya_yang_disetujui')->textInput(['maxlength' => true, "type" => "number", "step" => "0.01", "min" => "0", "placeholder" => "0.00", 'value' => $model->estimasi_biaya]) ?>
+        <div class="mt-4 col-12">
+            <?= $form->field($model, 'keterangan_perjalanan')->textarea(['rows' => 1]) ?>
         </div>
-        <div class="mt-5 col-12 col-md-6">
-
+        <div class=" col-12">
             <?= $form->field($model, 'estimasi_biaya')->textInput(['maxlength' => true, "type" => "number", "step" => "0.01", "min" => "0", "placeholder" => "0.00"]) ?>
         </div>
 
-        <div class="col-12">
-            <?= $form->field($model, 'keterangan_perjalanan')->textarea(['rows' => 1]) ?>
-        </div>
 
         <?php if (!$model->isNewRecord) : ?>
+            <div class="col-12 ">
+                <?= $form->field($model, 'biaya_yang_disetujui')->textInput(['maxlength' => true, "type" => "number", "step" => "0.01", "min" => "0", "placeholder" => "0.00", 'value' => $model->estimasi_biaya]) ?>
+            </div>
             <div class="col-12">
                 <?= $form->field($model, 'catatan_admin')->textarea(['rows' => 1]) ?>
             </div>
+
+            <div class="col-12">
+                <?php
+                $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
+
+                echo $form->field($model, 'status')->radioList($data, [
+                    'item' => function ($index, $label, $name, $checked, $value) use ($model) {
+                        if ($model->isNewRecord) {
+                            $isChecked = $value == 1 ? true : $checked;
+                        } else {
+                            $isChecked = $checked;
+                        }
+
+                        return Html::radio($name, $isChecked, [
+                            'value' => $value,
+                            'label' => $label,
+                            'labelOptions' => ['class' => 'radio-label mr-4'],
+                        ]);
+                    },
+                ])->label('Status Pengajuan');
+                ?>
+            </div>
+
+            <div class="col-12">
+
+                <?php
+                // Ubah data radio list
+                $data = [
+                    0 => 'Tidak',
+                    1 => 'Iya'
+                ];
+
+                echo $form->field($model, 'isNewAbsen')->radioList($data, [
+                    'item' => function ($index, $label, $name, $checked, $value) use ($model) {
+
+                        // Jika form baru, set default value = 1
+                        if ($model->isNewRecord) {
+                            $isChecked = $value == 1 ? true : false;
+                        } else {
+                            $isChecked = $checked;
+                        }
+
+                        return Html::radio($name, $isChecked, [
+                            'value' => $value,
+                            'label' => $label,
+                            'labelOptions' => ['class' => 'radio-label mr-4'],
+                        ]);
+                    },
+                ])->label('Status Pengajuan (<small>Apakah Perlu Dibuatkan Absen Untuk tanggal yang di ajukan dengan keterangan Dinas Luar</small>)');
+                ?>
+            </div>
         <?php endif; ?>
-
-        <div class="col-12">
-            <?php
-            $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
-
-            echo $form->field($model, 'status')->radioList($data, [
-                'item' => function ($index, $label, $name, $checked, $value) use ($model) {
-                    if ($model->isNewRecord) {
-                        $isChecked = $value == 1 ? true : $checked;
-                    } else {
-                        $isChecked = $checked;
-                    }
-
-                    return Html::radio($name, $isChecked, [
-                        'value' => $value,
-                        'label' => $label,
-                        'labelOptions' => ['class' => 'radio-label mr-4'],
-                    ]);
-                },
-            ])->label('Status Pengajuan');
-            ?>
-        </div>
 
         <div class="form-group">
             <button class="add-button" type="submit">
@@ -192,14 +215,7 @@ $('#add-detail').click(function() {
             <label for="detaildinas-\${index}-tanggal">Tanggal</label>
             <input type="date" id="detaildinas-\${index}-tanggal" name="DetailDinas[\${index}][tanggal]" class="form-control form-control-sm" />
         </div>
-        <div class="col-md-4">
-            <label for="detaildinas-\${index}-keterangan">Keterangan (optional)</label>
-            <input type="text" id="detaildinas-\${index}-keterangan" name="DetailDinas[\${index}][keterangan]" class="form-control form-control-sm" placeholder="Keterangan" />
-        </div>
-        <div class="col-md-4">
-            <label for="detaildinas-\${index}-lokasi_tujuan">Lokasi Tujuan</label>
-            <input type="text" id="detaildinas-\${index}-lokasi_tujuan" name="DetailDinas[\${index}][lokasi_tujuan]" class="form-control form-control-sm" placeholder="Lokasi Tujuan" />
-        </div>
+      
         <div class="col-md-3">
             <label class="d-block">Status</label>
             <div class="form-check">

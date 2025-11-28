@@ -8,7 +8,7 @@ use yii\widgets\DetailView;
 /** @var backend\models\PengajuanWfh $model */
 
 $this->title = "Pengajuan WFH " . $model->karyawan->nama;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Pengajuan Wfhs'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Pengajuan Wfh'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>

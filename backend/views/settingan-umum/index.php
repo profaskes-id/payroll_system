@@ -85,7 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <th>Nama Group</th>
                     <th>Nilai</th>
                     <th>Deskripsi</th>
-                    <th>Status</th>
+
 
                 </tr>
             </thead>
@@ -106,11 +106,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <td><?= Html::encode($tanggal_cut_of['nama_group']) ?></td>
                     <td><?= Html::encode($tanggal_cut_of['nama_kode']) ?></td>
                     <td class="text-capitalize">Tanggal dimulai perhitungan penggajian dengan menginputkan (tanggal)</td>
-                    <td>
-                        <span class="badge <?= $tanggal_cut_of['status'] == 1 ? 'badge-success' : 'badge-danger' ?>">
-                            <?= $tanggal_cut_of['status'] == 1 ? 'Aktif' : 'Tidak Aktif' ?>
-                        </span>
-                    </td>
+
 
                 </tr>
 
@@ -129,12 +125,47 @@ $this->params['breadcrumbs'][] = $this->title;
                     </td>
                     <td><?= Html::encode($potongan_persenan_wfh['nama_group']) ?></td>
                     <td><?= Html::encode($potongan_persenan_wfh['nama_kode']) ?></td>
-                    <td style="text-transform: capitalize;">Potongan Persenan jika karyawan WFH</td>
+                    <td style="text-transform: capitalize;">(%) Potongan Persenan jika karyawan WFH</td>
+
+
+                </tr>
+
+                <tr>
                     <td>
-                        <span class="badge <?= $potongan_persenan_wfh['status'] == 1 ? 'badge-success' : 'badge-danger' ?>">
-                            <?= $potongan_persenan_wfh['status'] == 1 ? 'Aktif' : 'Tidak Aktif' ?>
-                        </span>
+
+                        <?= Html::a(
+                            '<i class="fas fa-edit"></i>',
+                            ['/your-controller/edit', 'id' => $toleransi_keterlambatan['kode'] ?? ''], // Update with your actual route
+                            [
+                                'class' => 'btn btn-sm btn-primary btn-edit b', // Added btn-edit class
+                                'title' => 'Edit',
+                                'data-toggle' => 'tooltip-3'
+                            ]
+                        ) ?>
                     </td>
+                    <td><?= Html::encode($toleransi_keterlambatan['nama_group']) ?></td>
+                    <td><?= Html::encode($toleransi_keterlambatan['nama_kode']) ?></td>
+                    <td style="text-transform: capitalize;">(Menit) nilai minimal toleransi keterlambatan, diatasnya akan dilakukan pemotongan gaji</td>
+
+
+                </tr>
+                <tr>
+                    <td>
+
+                        <?= Html::a(
+                            '<i class="fas fa-edit"></i>',
+                            ['/your-controller/edit', 'id' => $batas_deviasi_absensi['kode'] ?? ''], // Update with your actual route
+                            [
+                                'class' => 'btn btn-sm btn-primary btn-edit b', // Added btn-edit class
+                                'title' => 'Edit',
+                                'data-toggle' => 'tooltip-4'
+                            ]
+                        ) ?>
+                    </td>
+                    <td><?= Html::encode($batas_deviasi_absensi['nama_group']) ?></td>
+                    <td><?= Html::encode($batas_deviasi_absensi['nama_kode']) ?></td>
+                    <td style="text-transform: capitalize;">(hari) minimal batas deviasi absensi, diatasnya tidak akan dilakukan pemotongan gaji</td>
+
 
                 </tr>
             </tbody>
@@ -225,6 +256,53 @@ $this->registerJs(
 JS
 );
 $this->registerJs("$('[data-toggle=\"tooltip-2\"]').tooltip();");
+
+// JavaScript to handle modal loading
+$this->registerJs(
+    <<<JS
+    $(document).on('click', '.btn-wfh', function(e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        
+        // Load the form via AJAX
+        $('#editModalBody').load(url, function() {
+            $('#editModal').modal('show');
+            
+            // Initialize Select2 in the modal if needed
+            if ($('#masterkode-nama_group').length) {
+                $('#masterkode-nama_group').select2({
+                    language: 'id',
+                    placeholder: 'Masukan Nama Group ...',
+                    allowClear: true
+                });
+            }
+        });
+    });
+    
+    // Handle modal form submission
+    $(document).on('beforeSubmit', '#editModalBody form', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        $.ajax({
+            url: form.attr('action'),
+            type: 'post',
+            data: form.serialize(),
+            success: function(response) {
+                if (response.success) {
+                    $('#editModal').modal('hide');
+                    // Reload the page or update specific elements
+                    location.reload();
+                } else {
+                    // Update the form with validation errors
+                    $('#editModalBody').html(response.form);
+                }
+            }
+        });
+        return false;
+    });
+JS
+);
+$this->registerJs("$('[data-toggle=\"tooltip-3\"]').tooltip();");
 
 // JavaScript to handle modal loading
 $this->registerJs(

@@ -13,11 +13,11 @@ class m250717_022916_create_pengajuan_absensi_table extends Migration
     public function safeUp()
     {
         $tableOptions = null;
-        
+
         // Use utf8mb4 for MySQL 5.7 or utf8 for older versions
         if ($this->db->driverName === 'mysql') {
             $tableOptions = 'CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci ENGINE=InnoDB';
-            
+
             // For very old MySQL versions that don't support utf8mb4
             // $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB';
         }
@@ -34,6 +34,7 @@ class m250717_022916_create_pengajuan_absensi_table extends Migration
             'id_approver' => $this->integer()->null(),
             'tanggal_disetujui' => $this->datetime()->defaultValue(null),
             'catatan_approver' => $this->text()->null(),
+            'kode_status_hadir' => $this->string(10)->defaultValue('H'),
         ], $tableOptions);
 
         // Optional: Tambahkan foreign key jika punya relasi ke tabel karyawan dan user (approver)

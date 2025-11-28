@@ -103,25 +103,28 @@ $this->params['breadcrumbs'][] = 'Tanggapan';
         <button type="button" id="add-detail" class="mt-2 btn btn-primary btn-sm">Tambah Detail</button>
 
 
-        <div class="mt-5 col-12">
-            <?php
-            $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
-            echo $form->field($model, 'status')->radioList($data, [
-                'item' => function ($index, $label, $name, $checked, $value) {
-                    return Html::radio($name, $checked, [
-                        'value' => $value,
-                        'label' => $label,
-                        'labelOptions' => ['class' => 'radio-label mr-5'],
-                    ]);
-                },
-            ])->label('Status Pengajuan');
-            ?>
-        </div>
-
-
         <?php if (!$model->isNewRecord): ?>
-            <div class="col-6">
-                <?= $form->field($model, 'catatan_admin')->textarea(['rows' => 1]) ?>
+            <div class="mt-5 row col-12">
+
+                <div class="col-md-6 col-12">
+                    <?php
+                    $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
+                    echo $form->field($model, 'status')->radioList($data, [
+                        'item' => function ($index, $label, $name, $checked, $value) {
+                            return Html::radio($name, $checked, [
+                                'value' => $value,
+                                'label' => $label,
+                                'labelOptions' => ['class' => 'radio-label mr-5'],
+                            ]);
+                        },
+                    ])->label('Status Pengajuan');
+                    ?>
+                </div>
+
+
+                <div class="col-12 col-md-6">
+                    <?= $form->field($model, 'catatan_admin')->textarea(['rows' => 1]) ?>
+                </div>
             </div>
         <?php endif; ?>
 

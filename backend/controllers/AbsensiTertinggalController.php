@@ -13,6 +13,7 @@ use backend\models\Absensi;
 use backend\models\helpers\EmailHelper;
 use backend\models\helpers\NotificationHelper;
 use backend\models\helpers\UseMessageHelper;
+use backend\models\MasterKode;
 use yii\widgets\ActiveForm;
 
 class AbsensiTertinggalController extends Controller
@@ -55,8 +56,28 @@ class AbsensiTertinggalController extends Controller
             return ActiveForm::validate($model);
         }
 
+        $batas_deviasi_absensi = MasterKode::find()->where(['nama_group' => Yii::$app->params['batas-deviasi-absensi']])->asArray()->one();
+        $batas_hari = $batas_deviasi_absensi['nama_kode'] ?? 3; // Default 3 hari jika tidak ditemukan
+
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
+
+                // Validasi batas waktu pengajuan
+                $tanggal_absen = new \DateTime($model->tanggal_absen);
+                $tanggal_sekarang = new \DateTime();
+                $selisih_hari = $tanggal_sekarang->diff($tanggal_absen)->days;
+
+                // Cek apakah pengajuan melebihi batas hari
+                if ($selisih_hari > $batas_hari) {
+                    Yii::$app->session->setFlash('error', "Pengajuan absensi tidak dapat dilakukan. Maksimal pengajuan adalah $batas_hari hari dari tanggal absen.");
+
+                    $this->layout = 'mobile-main';
+                    return $this->render('/home/absensi-tertinggal/create', [
+                        'model' => $model,
+                    ]);
+                }
+
+                // dd($model, $batas_deviasi_absensi);
                 if ($model->save()) {
 
                     $useMessage = new UseMessageHelper();

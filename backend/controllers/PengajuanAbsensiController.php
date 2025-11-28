@@ -75,7 +75,7 @@ class PengajuanAbsensiController extends Controller
             if ($model->load($this->request->post())) {
 
 
-
+                $model->status = 0;
                 $model->tanggal_pengajuan = date('Y-m-d');
 
                 if ($model->save()) {
@@ -114,13 +114,25 @@ class PengajuanAbsensiController extends Controller
                 $absensi->jam_masuk = $model->jam_masuk;
                 $absensi->jam_pulang = $model->jam_keluar;
                 $absensi->keterangan = $model->alasan_pengajuan;
-                $absensi->created_at = date('Y-m-d H:i:s');
-                $absensi->created_by = Yii::$app->user->identity->id;
-                $absensi->updated_at = date('Y-m-d H:i:s');
-                $absensi->updated_by = Yii::$app->user->identity->id;
-                $absensi->kode_status_hadir = 'H';
                 $absensi->tanggal = date('Y-m-d', strtotime($model->tanggal_absen));
 
+                // Konversi ke lowercase untuk pengecekan yang konsisten
+                if (strtolower($model->kode_status_hadir) == 'wfh') {
+                    $absensi->kode_status_hadir = 'H'; // atau 'WFH' sesuai kebutuhan
+                    $absensi->is_wfh = 1;
+                } else {
+                    $absensi->kode_status_hadir = $model->kode_status_hadir;
+                    $absensi->is_wfh = 0; // atau null, tergantung default value
+                }
+
+                // Timestamp dan user info
+                $currentTime = date('Y-m-d H:i:s');
+                $currentUserId = Yii::$app->user->identity->id;
+
+                $absensi->created_at = $currentTime;
+                $absensi->created_by = $currentUserId;
+                $absensi->updated_at = $currentTime;
+                $absensi->updated_by = $currentUserId;
                 if ($absensi->save()) {
                     if ($model->save()) {
                         \Yii::$app->session->setFlash('success', 'Data berhasil disimpan');

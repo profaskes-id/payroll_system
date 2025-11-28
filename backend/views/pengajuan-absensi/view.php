@@ -46,16 +46,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 [
                     'attribute' => 'Tanggal Absen',
-                    'value' => function ($model)  {
-    return $model->tanggal_absen ?? '-';
+                    'value' => function ($model) {
+                        return $model->tanggal_absen ?? '-';
                     }
                 ],
                 'jam_masuk',
                 'jam_keluar',
                 'alasan_pengajuan:ntext',
+                'kode_status_hadir',
                 [
                     'attribute' => 'Diajukan Pada',
-                    'value' => function ($model)  {
+                    'value' => function ($model) {
 
                         return $model->tanggal_pengajuan ?? '-';
                     }
