@@ -48,10 +48,12 @@ $form = ActiveForm::begin([
                 'class' => 'block mb-2 font-medium text-gray-700'
             ]) ?>
 
+
+
             <?php
             // Data manual
             $data = [
-                'H'   => 'Hadir',
+                'H'   => "Hadir  <small> (Maximal mengajukan {$batas_hari} hari sebelum hari ini )</small>",
                 'DL'  => 'Dinas Luar  <small> (Telah Mengajukan Dinas)</small>',
                 'WFH' => 'WFH  <small> (Telah Mengajukan WFH)</small>',
             ];

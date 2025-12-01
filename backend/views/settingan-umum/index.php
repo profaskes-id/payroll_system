@@ -95,11 +95,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <?= Html::a(
                             '<i class="fas fa-edit"></i>',
-                            ['/your-controller/edit', 'id' => $tanggal_cut_of['kode'] ?? ''], // Update with your actual route
+                            ['/master-kode/view', 'nama_group' => Yii::$app->params['tanggal-cut-of'], 'kode' => $tanggal_cut_of['kode'] ?? ''], // Update with your actual route
                             [
                                 'class' => 'btn btn-sm btn-primary btn-edit', // Added btn-edit class
                                 'title' => 'Edit',
-                                'data-toggle' => 'tooltip-2'
+                                'target' => '_blank'
                             ]
                         ) ?>
                     </td>
@@ -115,11 +115,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <?= Html::a(
                             '<i class="fas fa-edit"></i>',
-                            ['/your-controller/edit', 'id' => $potongan_persenan_wfh['kode'] ?? ''], // Update with your actual route
+                            ['/master-kode/view', 'nama_group' => Yii::$app->params['potongan-persen-wfh'], 'kode' => $potongan_persenan_wfh['kode'] ?? ''],
                             [
-                                'class' => 'btn btn-sm btn-primary btn-edit b', // Added btn-edit class
+                                'class' => 'btn btn-sm btn-primary btn-edit ',
                                 'title' => 'Edit',
-                                'data-toggle' => 'tooltip-wfh'
+                                'target' => '_blank',
                             ]
                         ) ?>
                     </td>
@@ -135,11 +135,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <?= Html::a(
                             '<i class="fas fa-edit"></i>',
-                            ['/your-controller/edit', 'id' => $toleransi_keterlambatan['kode'] ?? ''], // Update with your actual route
+                            ['/master-kode/view', 'nama_group' => Yii::$app->params['toleransi-keterlambatan'], 'kode' => $toleransi_keterlambatan['kode'] ?? ''],
                             [
-                                'class' => 'btn btn-sm btn-primary btn-edit b', // Added btn-edit class
+                                'class' => 'btn btn-sm btn-primary btn-edit ',
                                 'title' => 'Edit',
-                                'data-toggle' => 'tooltip-3'
+                                'target' => '_blank'
                             ]
                         ) ?>
                     </td>
@@ -154,11 +154,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <?= Html::a(
                             '<i class="fas fa-edit"></i>',
-                            ['/your-controller/edit', 'id' => $batas_deviasi_absensi['kode'] ?? ''], // Update with your actual route
+                            ['/master-kode/view', 'nama_group' => Yii::$app->params['batas-deviasi-absensi'], 'kode' => $batas_deviasi_absensi['kode'] ?? ''],
                             [
-                                'class' => 'btn btn-sm btn-primary btn-edit b', // Added btn-edit class
+                                'class' => 'btn btn-sm btn-primary btn-edit ',
                                 'title' => 'Edit',
-                                'data-toggle' => 'tooltip-4'
+                                'target' => '_blank'
                             ]
                         ) ?>
                     </td>
@@ -172,180 +172,3 @@ $this->params['breadcrumbs'][] = $this->title;
         </table>
     </div>
 </div>
-
-<!-- Modal for Edit -->
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Tanggal Cut Off</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="editModalBody">
-                <div class="master-kode-form">
-                    <?php $form = ActiveForm::begin(['action' => Url::to(['/settingan-umum/edit-cutoff']), 'enableClientScript' => true, 'method' => 'post']); ?>
-
-                    <div class="row">
-                        <div class="col-12">
-                            <?= $form->field($tanggal_cut_of, 'nama_kode')->textInput(['maxlength' => true, 'placeholder' => 'Masukan Tanggal Cut Off'])->label('Tanggal Dimulai Cut Off') ?>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <?= Html::submitButton('Save', ['class' => 'add-button']) ?>
-                    </div>
-
-                    <?php ActiveForm::end(); ?>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-</div>
-
-<?php
-// Inisialisasi tooltip
-$this->registerJs("$('[data-toggle=\"tooltip\"]').tooltip();");
-
-// JavaScript to handle modal loading
-$this->registerJs(
-    <<<JS
-    $(document).on('click', '.btn-edit', function(e) {
-        e.preventDefault();
-        var url = $(this).attr('href');
-        
-        // Load the form via AJAX
-        $('#editModalBody').load(url, function() {
-            $('#editModal').modal('show');
-            
-            // Initialize Select2 in the modal if needed
-            if ($('#masterkode-nama_group').length) {
-                $('#masterkode-nama_group').select2({
-                    language: 'id',
-                    placeholder: 'Masukan Nama Group ...',
-                    allowClear: true
-                });
-            }
-        });
-    });
-    
-    // Handle modal form submission
-    $(document).on('beforeSubmit', '#editModalBody form', function(e) {
-        e.preventDefault();
-        var form = $(this);
-        $.ajax({
-            url: form.attr('action'),
-            type: 'post',
-            data: form.serialize(),
-            success: function(response) {
-                if (response.success) {
-                    $('#editModal').modal('hide');
-                    // Reload the page or update specific elements
-                    location.reload();
-                } else {
-                    // Update the form with validation errors
-                    $('#editModalBody').html(response.form);
-                }
-            }
-        });
-        return false;
-    });
-JS
-);
-$this->registerJs("$('[data-toggle=\"tooltip-2\"]').tooltip();");
-
-// JavaScript to handle modal loading
-$this->registerJs(
-    <<<JS
-    $(document).on('click', '.btn-wfh', function(e) {
-        e.preventDefault();
-        var url = $(this).attr('href');
-        
-        // Load the form via AJAX
-        $('#editModalBody').load(url, function() {
-            $('#editModal').modal('show');
-            
-            // Initialize Select2 in the modal if needed
-            if ($('#masterkode-nama_group').length) {
-                $('#masterkode-nama_group').select2({
-                    language: 'id',
-                    placeholder: 'Masukan Nama Group ...',
-                    allowClear: true
-                });
-            }
-        });
-    });
-    
-    // Handle modal form submission
-    $(document).on('beforeSubmit', '#editModalBody form', function(e) {
-        e.preventDefault();
-        var form = $(this);
-        $.ajax({
-            url: form.attr('action'),
-            type: 'post',
-            data: form.serialize(),
-            success: function(response) {
-                if (response.success) {
-                    $('#editModal').modal('hide');
-                    // Reload the page or update specific elements
-                    location.reload();
-                } else {
-                    // Update the form with validation errors
-                    $('#editModalBody').html(response.form);
-                }
-            }
-        });
-        return false;
-    });
-JS
-);
-$this->registerJs("$('[data-toggle=\"tooltip-3\"]').tooltip();");
-
-// JavaScript to handle modal loading
-$this->registerJs(
-    <<<JS
-    $(document).on('click', '.btn-wfh', function(e) {
-        e.preventDefault();
-        var url = $(this).attr('href');
-        
-        // Load the form via AJAX
-        $('#editModalBody').load(url, function() {
-            $('#editModal').modal('show');
-            
-            // Initialize Select2 in the modal if needed
-            if ($('#masterkode-nama_group').length) {
-                $('#masterkode-nama_group').select2({
-                    language: 'id',
-                    placeholder: 'Masukan Nama Group ...',
-                    allowClear: true
-                });
-            }
-        });
-    });
-    
-    // Handle modal form submission
-    $(document).on('beforeSubmit', '#editModalBody form', function(e) {
-        e.preventDefault();
-        var form = $(this);
-        $.ajax({
-            url: form.attr('action'),
-            type: 'post',
-            data: form.serialize(),
-            success: function(response) {
-                if (response.success) {
-                    $('#editModal').modal('hide');
-                    // Reload the page or update specific elements
-                    location.reload();
-                } else {
-                    // Update the form with validation errors
-                    $('#editModalBody').html(response.form);
-                }
-            }
-        });
-        return false;
-    });
-JS
-);

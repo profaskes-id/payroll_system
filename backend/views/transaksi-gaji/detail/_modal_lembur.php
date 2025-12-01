@@ -56,9 +56,8 @@ use yii\helpers\Url;
                                 <tr>
                                     <th width="5%">#</th>
                                     <th width="25%">Tanggal</th>
-                                    <th width="20%">Waktu Lembur</th>
-                                    <th width="15%" class="text-center">Durasi</th>
-                                    <th width="15%" class="text-center">Hitungan Jam</th>
+
+                                    <th width="15%" class="text-center">Hitungan Jam <small>(telah di konversi)</small></th>
                                     <th width="20%" class="text-end">Pekerjaan</th>
                                 </tr>
                             </thead>
@@ -67,8 +66,8 @@ use yii\helpers\Url;
                             </tbody>
                             <tfoot>
                                 <tr class="table-secondary fw-bold">
-                                    <td colspan="3" class="text-end">Total:</td>
-                                    <td id="totalDurasi" class="text-center">00:00:00</td>
+                                    <td class="text-end">Total:</td>
+                                    <td></td>
                                     <td id="totalHitungan" class="text-center">0 jam</td>
                                     <td class="text-end">-</td>
                                 </tr>
@@ -82,15 +81,8 @@ use yii\helpers\Url;
                             <div class="col-md-12">
                                 <div class="card bg-light">
                                     <div class="card-body d-flex flex-column">
-                                        <h6 class="card-title">Ringkasan Lembur</h6>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <p>Total Durasi:</p>
-                                            </div>
-                                            <div class="col-6 text-end">
-                                                <p id="totalJamLembur" class="fw-bold">0 jam</p>
-                                            </div>
-                                        </div>
+                                        <h6 class="mb-3 card-title">Ringkasan Lembur</h6>
+
                                         <div class="row">
                                             <div class="col-6">
                                                 <p>Total Hitungan Jam:</p>
@@ -308,12 +300,8 @@ use yii\helpers\Url;
                             ${item.disetujui_pada ? `<br><small class="text-muted">Disetujui: ${formatTanggal(item.disetujui_pada)}</small>` : ''}
                         </div>
                     </td>
-                    <td>
-                        <small>${formatWaktu(item.jam_mulai)} - ${formatWaktu(item.jam_selesai)}</small>
-                    </td>
-                    <td class="text-center">
-                        <span class="badge bg-info text-dark">${item.durasi || '00:00:00'}</span>
-                    </td>
+                 
+                    
                     <td class="text-center fw-bold text-warning">
                         ${hitunganJam} jam
                     </td>

@@ -61,61 +61,6 @@ class SettinganUmumController extends Controller
         ]);
     }
 
-    public function actionEditCutoff()
-    {
-
-        $model = MasterKode::find()->where(['nama_group' => Yii::$app->params["tanggal-cut-of"]])->one();
-
-        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
-            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-            if ($model->save()) {
-                return ['success' => true];
-            } else {
-                return [
-                    'success' => false,
-                    'form' => $this->renderAjax('_form', ['model' => $model]) // Buat partial view _form.php jika belum ada
-                ];
-            }
-        }
-
-        // Untuk non-AJAX request
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
-        }
-
-        return $this->render('edit', [
-            'model' => $model,
-        ]);
-    }
-
-    public function actionEditWfhPersen()
-    {
-        $model = MasterKode::find()->where(['nama_group' => 'potongan-persen-wfh'])->one();
-
-        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
-            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-            if ($model->save()) {
-                return ['success' => true];
-            } else {
-                return [
-                    'success' => false,
-                    'form' => $this->renderAjax('_form_wfh_persen', ['model' => $model])
-                ];
-            }
-        }
-
-        // Untuk non-AJAX fallback (opsional)
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
-        }
-
-        return $this->render('edit_wfh_persen', [
-            'model' => $model,
-        ]);
-    }
-
 
 
     /**
