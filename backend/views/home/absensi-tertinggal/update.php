@@ -6,5 +6,7 @@
 
     <?= $this->render('_form', [
         'model' => $model,
+        'batas_hari' => $batas_hari
+
     ]) ?>
 </section>

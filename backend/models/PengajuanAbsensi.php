@@ -19,6 +19,7 @@ use Yii;
  * @property int|null $id_approver
  * @property string|null $tanggal_disetujui
  * @property string|null $catatan_approver
+ * @property string|H $kode_status_hadir
  *
  * @property User $approver
  * @property Karyawan $karyawan
@@ -41,8 +42,8 @@ class PengajuanAbsensi extends \yii\db\ActiveRecord
         return [
             [['id_karyawan', 'tanggal_absen', 'alasan_pengajuan'], 'required'],
             [['id_karyawan', 'status', 'id_approver'], 'integer'],
-            [['tanggal_absen', 'jam_masuk', 'jam_keluar', 'tanggal_pengajuan', 'tanggal_disetujui'], 'safe'],
-            [['alasan_pengajuan', 'catatan_approver'], 'string'],
+            [['tanggal_absen', 'jam_masuk', 'jam_keluar', 'tanggal_pengajuan', 'tanggal_disetujui', 'kode_status_hadir'], 'safe'],
+            [['alasan_pengajuan', 'catatan_approver', 'kode_status_hadir'], 'string'],
             [['id_approver'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['id_approver' => 'id']],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
         ];
@@ -61,6 +62,7 @@ class PengajuanAbsensi extends \yii\db\ActiveRecord
             'jam_keluar' => 'Jam Keluar',
             'alasan_pengajuan' => 'Alasan Pengajuan',
             'status' => 'Status',
+            'kode_status_hadir' => 'Status Kehadiran',
             'tanggal_pengajuan' => 'Tanggal Pengajuan',
             'id_approver' => 'Id Approver',
             'tanggal_disetujui' => 'Tanggal Disetujui',

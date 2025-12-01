@@ -13,6 +13,7 @@ use backend\models\Absensi;
 use backend\models\helpers\EmailHelper;
 use backend\models\helpers\NotificationHelper;
 use backend\models\helpers\UseMessageHelper;
+use backend\models\MasterKode;
 use yii\widgets\ActiveForm;
 
 class AbsensiTertinggalController extends Controller
@@ -31,7 +32,7 @@ class AbsensiTertinggalController extends Controller
 
     public function actionIndex()
     {
-        $id_karyawan = Yii::$app->user->identity->id_karyawan;
+        $id_karyawan = Yii::$app->user->identity->id_karyawan; // Default 3 hari jika tidak ditemukan
         $data = [];
         if ($id_karyawan) {
             $data = PengajuanAbsensi::find()->where(['id_karyawan' => $id_karyawan])->orderBy(['tanggal_pengajuan' => SORT_DESC])->all();
@@ -49,14 +50,34 @@ class AbsensiTertinggalController extends Controller
         $model->id_karyawan = Yii::$app->user->identity->id_karyawan;
         $model->status = 0; // Default status pending
         $model->tanggal_pengajuan = date('Y-m-d H:i:s'); // Current timestamp
-
+        $batas_deviasi_absensi = MasterKode::find()->where(['nama_group' => Yii::$app->params['batas-deviasi-absensi']])->asArray()->one();
+        $batas_hari = $batas_deviasi_absensi['nama_kode'] ?? 3; // Default 3 hari jika tidak ditemukan
         if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
             Yii::$app->response->format = Response::FORMAT_JSON;
             return ActiveForm::validate($model);
         }
 
+
         if ($model->load(Yii::$app->request->post())) {
             if ($model->validate()) {
+
+                // Validasi batas waktu pengajuan
+                $tanggal_absen = new \DateTime($model->tanggal_absen);
+                $tanggal_sekarang = new \DateTime();
+                $selisih_hari = $tanggal_sekarang->diff($tanggal_absen)->days;
+
+                // Cek apakah pengajuan melebihi batas hari
+                if ($selisih_hari > $batas_hari && $model->kode_status_hadir == 'H') {
+                    Yii::$app->session->setFlash('error', "Pengajuan absensi tidak dapat dilakukan. Maksimal pengajuan adalah $batas_hari hari dari tanggal absen.");
+
+                    $this->layout = 'mobile-main';
+                    return $this->render('/home/absensi-tertinggal/create', [
+                        'model' => $model,
+                        'batas_hari' => $batas_hari
+                    ]);
+                }
+
+                // dd($model, $batas_deviasi_absensi);
                 if ($model->save()) {
 
                     $useMessage = new UseMessageHelper();
@@ -82,6 +103,7 @@ class AbsensiTertinggalController extends Controller
         $this->layout = 'mobile-main';
         return $this->render('/home/absensi-tertinggal/create', [
             'model' => $model,
+            'batas_hari' => $batas_hari
         ]);
     }
 
@@ -89,6 +111,8 @@ class AbsensiTertinggalController extends Controller
     {
         $model = $this->findModel($id);
 
+        $batas_deviasi_absensi = MasterKode::find()->where(['nama_group' => Yii::$app->params['batas-deviasi-absensi']])->asArray()->one();
+        $batas_hari = $batas_deviasi_absensi['nama_kode'] ?? 3;
         // Check if the record belongs to the current user
         if ($model->id_karyawan != Yii::$app->user->identity->id_karyawan) {
             throw new \yii\web\ForbiddenHttpException('Anda tidak memiliki akses untuk mengubah data ini.');
@@ -116,6 +140,7 @@ class AbsensiTertinggalController extends Controller
         $this->layout = 'mobile-main';
         return $this->render('/home/absensi-tertinggal/update', [
             'model' => $model,
+            'batas_hari' => $batas_hari
         ]);
     }
 

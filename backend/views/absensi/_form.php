@@ -14,6 +14,17 @@ use yii\widgets\ActiveForm;
 $pathInfo = Yii::$app->request->getPathInfo();
 
 ?>
+<style>
+    .radio-group .btn {
+        margin-right: 10px;
+        /* Spasi antar radio button */
+    }
+
+    .radio-group .btn span {
+        margin-left: 5px;
+        /* Spasi antara radio dan teks */
+    }
+</style>
 
 <div class="absensi-form table-container">
 
@@ -50,17 +61,7 @@ $pathInfo = Yii::$app->request->getPathInfo();
 
 
 
-        <style>
-            .radio-group .btn {
-                margin-right: 10px;
-                /* Spasi antar radio button */
-            }
 
-            .radio-group .btn span {
-                margin-left: 5px;
-                /* Spasi antara radio dan teks */
-            }
-        </style>
         <div class="col-md-6 col-12" style="overflow-x: auto;">
             <?php
             $data = \yii\helpers\ArrayHelper::map(
@@ -97,12 +98,65 @@ $pathInfo = Yii::$app->request->getPathInfo();
             </div>
         </div>
 
+        <div class="col-md-3">
+            <div class="form-group">
+                <?= Html::activeLabel($model, 'is_wfh', ['class' => 'control-label']) ?>
+                <div>
+                    <?= $form->field($model, 'is_wfh')->radioList(
+                        [0 => 'Tidak', 1 => 'Ya'],
+                        [
+                            'class' => 'btn-group',
+                            'data-toggle' => 'buttons',
+                            'item' => function ($index, $label, $name, $checked, $value) {
+                                return '<label class="btn btn-default' . ($checked ? ' active' : '') . '">' .
+                                    Html::radio($name, $checked, [
+                                        'value' => $value,
+                                        'autocomplete' => 'off'
+                                    ]) . $label .
+                                    '</label>';
+                            }
+                        ]
+                    )->label(false) ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <?= Html::activeLabel($model, 'is_lembur', ['class' => 'control-label']) ?>
+                <div>
+                    <?= $form->field($model, 'is_lembur')->radioList(
+                        [0 => 'Tidak', 1 => 'Ya'],
+                        [
+                            'class' => 'btn-group',
+                            'data-toggle' => 'buttons',
+                            'item' => function ($index, $label, $name, $checked, $value) {
+                                return '<label class="btn btn-default' . ($checked ? ' active' : '') . '">' .
+                                    Html::radio($name, $checked, [
+                                        'value' => $value,
+                                        'autocomplete' => 'off'
+                                    ]) . $label .
+                                    '</label>';
+                            }
+                        ]
+                    )->label(false) ?>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
 
         <div class="col-md-6 col-12">
             <?= $form->field($model, 'lampiran')->textInput(["placeholder" => "Lampiran", "class" => "form-control", 'type' => 'file'])->label('Lampiran (Optional)') ?>
             <p style="margin-top: -15px; font-size: 14.5px;" class="text-capitalize text-muted"> lampiran Jika berhalangan hadir</p>
         </div>
-        <div class="col-12">
+        <div class="col-12 col-md-6">
             <?= $form->field($model, 'keterangan')->textarea(['rows' => 1, 'maxlength' => true, "class" => "form-control", "placeholder" => "Keterangan "]) ?>
         </div>
 
@@ -140,55 +194,6 @@ $pathInfo = Yii::$app->request->getPathInfo();
         </div>
 
 
-        <div class="col-md-2">
-            <div class="form-group">
-                <?= Html::activeLabel($model, 'is_lembur', ['class' => 'control-label']) ?>
-                <div>
-                    <?= $form->field($model, 'is_lembur')->radioList(
-                        [0 => 'Tidak', 1 => 'Ya'],
-                        [
-                            'class' => 'btn-group',
-                            'data-toggle' => 'buttons',
-                            'item' => function ($index, $label, $name, $checked, $value) {
-                                return '<label class="btn btn-default' . ($checked ? ' active' : '') . '">' .
-                                    Html::radio($name, $checked, [
-                                        'value' => $value,
-                                        'autocomplete' => 'off'
-                                    ]) . $label .
-                                    '</label>';
-                            }
-                        ]
-                    )->label(false) ?>
-                </div>
-            </div>
-        </div>
-
-
-
-
-
-        <div class="col-md-2">
-            <div class="form-group">
-                <?= Html::activeLabel($model, 'is_wfh', ['class' => 'control-label']) ?>
-                <div>
-                    <?= $form->field($model, 'is_wfh')->radioList(
-                        [0 => 'Tidak', 1 => 'Ya'],
-                        [
-                            'class' => 'btn-group',
-                            'data-toggle' => 'buttons',
-                            'item' => function ($index, $label, $name, $checked, $value) {
-                                return '<label class="btn btn-default' . ($checked ? ' active' : '') . '">' .
-                                    Html::radio($name, $checked, [
-                                        'value' => $value,
-                                        'autocomplete' => 'off'
-                                    ]) . $label .
-                                    '</label>';
-                            }
-                        ]
-                    )->label(false) ?>
-                </div>
-            </div>
-        </div>
 
 
         <?php
@@ -240,17 +245,17 @@ $pathInfo = Yii::$app->request->getPathInfo();
 
 
 
+
+
+        <div class="form-group">
+            <button class="add-button" type="submit">
+                <span>
+                    Save
+                </span>
+            </button>
+        </div>
+
+        <?php ActiveForm::end(); ?>
     </div>
-
-
-    <div class="form-group">
-        <button class="add-button" type="submit">
-            <span>
-                Save
-            </span>
-        </button>
-    </div>
-
-    <?php ActiveForm::end(); ?>
 
 </div>

@@ -44,7 +44,7 @@ use yii\widgets\ActiveForm;
 
                 <?php
                 // Cek apakah variabel $dataJam ada dan memiliki struktur yang diharapkan
-                if ($manual_shift == 0):
+                if ($manual_shift == 0 && isset($dataJam['karyawan']['is_shift']) && $dataJam['karyawan']['is_shift'] == 1) :
                 ?>
                     <p>Tentukan Shift Masuk Anda</p>
 

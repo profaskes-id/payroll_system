@@ -28,7 +28,7 @@ $result = $tanggal->getIndonesiaFormatLong(date('l, d F Y'));
                     <!-- Header Section -->
                     <div class="flex items-start justify-between">
                         <div class="mb-6">
-                            <h2 class="text-2xl font-bold text-gray-800">Sellerku Payroll</h2>
+                            <h2 class="text-2xl font-bold text-gray-800">Payroll Profaskes</h2>
                             <p class="text-sm text-gray-600">Kelola absensi, pengajuan, dan pendataan dengan mudah dalam satu aplikasi</p>
                         </div>
                         <div class="flex items-center px-2 py-1 ml-2 rounded-full">
@@ -78,10 +78,10 @@ $result = $tanggal->getIndonesiaFormatLong(date('l, d F Y'));
                         <!-- Stat 4 -->
                         <div class="p-5 transition-shadow bg-white/90 backdrop-blur-sm rounded-xl hover:shadow-sm">
                             <div class="flex items-center justify-between">
-                                <span class="text-2xl font-bold text-red-600"><?= $TotalIzin ?> Orang</span>
+                                <span class="text-2xl font-bold text-red-600"><?= $wfhCountTouday ?> Orang</span>
                                 <!-- <span class="px-2 py-1 text-xs font-medium text-red-800 bg-red-100 rounded-full">15%</span> -->
                             </div>
-                            <p class="mt-2 text-sm font-medium text-gray-700">Izin Berhalangan Hadir</p>
+                            <p class="mt-2 text-sm font-medium text-gray-700">Total Karyawan WFH</p>
                             <p class="text-xs text-gray-500">Pada Hari Ini</p>
                         </div>
                     </div>

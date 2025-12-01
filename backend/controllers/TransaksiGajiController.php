@@ -1597,7 +1597,7 @@ class TransaksiGajiController extends Controller
 
         // Bulatkan ke 2 angka di belakang koma sebagai float
         $gajiPerMenitFloat = round($gajiPerMenit, 2);
-        $getToleranceTerlambat = MasterKode::findOne(['nama_group' => Yii::$app->params['teleransi-keterlambatan']])['nama_kode'];
+        $getToleranceTerlambat = MasterKode::findOne(['nama_group' => Yii::$app->params['toleransi-keterlambatan']])['nama_kode'];
         $filteredTerlambat = [];
 
         foreach ($allDataFromSearch['terlambat_with_date'] as $data) {

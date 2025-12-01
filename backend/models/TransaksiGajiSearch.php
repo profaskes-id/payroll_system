@@ -87,7 +87,7 @@ class TransaksiGajiSearch extends TransaksiGaji
 
         $periodeGajiObject = $this->getPerioderGajiSekarang($bulan, $tahun);
         $id_periode_penggajian = $periodeGajiObject->id_periode_gaji;
-        $getToleranceTerlambat = MasterKode::findOne(['nama_group' => Yii::$app->params['teleransi-keterlambatan']])['nama_kode'];;
+        $getToleranceTerlambat = MasterKode::findOne(['nama_group' => Yii::$app->params['toleransi-keterlambatan']])['nama_kode'];;
 
         // Buat query
         $query = (new \yii\db\Query())

@@ -206,7 +206,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="container mx-auto md:px-6">
         <!-- Header -->
-        <div class="mb-6">
+        <div class="my-6">
             <h2 class="text-lg font-bold text-gray-800">Pengajuan</h2>
         </div>
 

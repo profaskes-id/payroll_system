@@ -32,6 +32,7 @@ class PengajuanDinas extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    public $isNewAbsen;
 
     public function rules()
     {
@@ -39,7 +40,7 @@ class PengajuanDinas extends \yii\db\ActiveRecord
             [['id_karyawan', 'keterangan_perjalanan',  'estimasi_biaya', 'status'], 'required'],
             [['id_karyawan', 'disetujui_oleh', 'status_dibayar'], 'integer'],
             [['keterangan_perjalanan', 'catatan_admin', 'dokumentasi'], 'string'],
-            [['disetujui_pada', "disetujui_oleh"], 'safe'],
+            [['disetujui_pada', "disetujui_oleh", 'isNewAbsen'], 'safe'],
             [['estimasi_biaya', 'biaya_yang_disetujui'], 'number'],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
             [['dokumentasi'], 'file', 'extensions' => 'jpg, jpeg, png, pdf', 'maxFiles' => 10],
@@ -64,6 +65,7 @@ class PengajuanDinas extends \yii\db\ActiveRecord
             'dokumentasi' => 'dokumentasi',
             'catatan_admin' => 'Catatan Admin',
             'status_dibayar' => 'Status Dibayar',
+            'isNewAbsen' => 'Absen Baru ',
 
 
         ];
