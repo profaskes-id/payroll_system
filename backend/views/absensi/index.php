@@ -28,19 +28,45 @@ $today = date('Y-m-d');
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 <script>
-    function getDistance(latitude_now, longitude_now, latitude_penempatan, longitude_penempatan, idElement) {
+    function getDistance(latitude_now, longitude_now, latitude_penempatan, longitude_penempatan, idElement, options = {}) {
         if (!idElement) {
             return false;
-        } else {
-
-            let from = L.latLng(latitude_now, longitude_now);
-            let to = L.latLng(latitude_penempatan, longitude_penempatan);
-            let distance = from.distanceTo(to); // Jarak dalam meter
-            idElement.innerHTML = distance.toFixed(0) + ' Meter';
-
         }
+
+        let from = L.latLng(latitude_now, longitude_now);
+        let to = L.latLng(latitude_penempatan, longitude_penempatan);
+        let distance = from.distanceTo(to); // Jarak dalam meter
+
+        // Default options
+        const defaultOptions = {
+            unit: 'auto', // 'auto', 'meters', 'km'
+            decimalPlaces: 1,
+            showUnit: true
+        };
+
+        const config = {
+            ...defaultOptions,
+            ...options
+        };
+
+        // Format output berdasarkan config
+        let output = '';
+
+        if (config.unit === 'meters' || (config.unit === 'auto' && distance < 1000)) {
+            output = Math.round(distance);
+            if (config.showUnit) output += ' Meter';
+        } else {
+            let km = distance / 1000;
+            output = km.toFixed(config.decimalPlaces);
+            if (config.showUnit) output += ' km';
+        }
+
+        idElement.innerHTML = output;
+        return distance;
     }
 </script>
+
+
 
 <?php Pjax::begin(); ?>
 <div class="absensi-index position-relative">

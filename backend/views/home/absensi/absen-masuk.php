@@ -51,74 +51,89 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
 
 <section class="min-h-[90dvh] relative overflow-x-hidden z-50">
     <!-- Confirmation Modals -->
-    <?php foreach ($modals as $modal): ?>
-        <div id="<?= $modal['id'] ?>" tabindex="-1"
-            class="fixed inset-0 z-50 flex items-center justify-center hidden w-full h-full bg-gray-100/50">
-            <div class="relative w-full max-w-md p-4">
-                <div class="<?= $modalStyles['content'] ?>">
-                    <!-- Close Button -->
-                    <button type="button" onclick="closeModal('<?= $modal['id'] ?>')"
-                        class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
-                        <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                        </svg>
-                    </button>
+    <div id="popup-modal" tabindex="-1"
+        class="fixed inset-0 z-50 flex items-center justify-center hidden w-full h-full bg-gray-100/50">
+        <div class="relative w-full max-w-md p-4">
+            <div class="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-700 md:p-5">
+                <!-- Close Button -->
+                <button type="button" onclick="closeModal('popup-modal')"
+                    class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                    <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                </button>
 
-                    <div class="p-3 text-center">
+                <div class="p-3 text-center">
+                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Anda Akan Melakukan Aksi Absen Masuk ?</h3>
 
-                        <!-- Webcam Container -->
-                        <div id="camera-container-<?= $modal['id'] ?>" class="relative">
-                            <div id="camera-<?= $modal['id'] ?>" class="mx-auto mb-4 overflow-hidden bg-black rounded-lg"></div>
-                            <div id="liveness-instruction-<?= $modal['id'] ?>" class="absolute left-0 right-0 text-center top-2">
-                                <div class="inline-block px-3 py-1 text-sm text-white bg-black rounded-full bg-opacity-70">
-                                    Tekan "Mulai Verifikasi"
-                                </div>
-                            </div>
-                            <div class="flex justify-center mt-2 space-x-4">
-                                <button id="startLivenessBtn-<?= $modal['id'] ?>"
-                                    onclick="runLiveness('<?= $modal['id'] ?>')"
-                                    class="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700"
-                                    disabled>
-                                    Mulai Verifikasi
-                                </button>
+                    <!-- Webcam Container -->
+                    <div id="camera-container-popup-modal" class="relative">
+                        <div id="camera-popup-modal" class="mx-auto mb-4 overflow-hidden bg-black rounded-lg"></div>
+                        <div id="liveness-instruction-popup-modal" class="absolute left-0 right-0 text-center top-2">
+                            <div class="inline-block px-3 py-1 text-sm text-white bg-black rounded-full bg-opacity-70">
+                                Tekan "Mulai Verifikasi"
                             </div>
                         </div>
+                        <div class="flex justify-center mt-2 space-x-4">
+                            <button id="startLivenessBtn-popup-modal"
+                                onclick="runLiveness('popup-modal')"
+                                class="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700"
+                                disabled>
+                                Mulai Verifikasi
+                            </button>
+                        </div>
+                    </div>
 
-                        <!-- Results Container -->
-                        <div id="results-<?= $modal['id'] ?>" class="hidden">
-                            <p class="mb-2">Hasil Foto:</p>
-                            <div id="snapshotResult-<?= $modal['id'] ?>" class="mx-auto mb-4 bg-gray-200 "></div>
+                    <!-- Results Container -->
+                    <div id="results-popup-modal" class="hidden">
+                        <p class="mb-2">Hasil Foto:</p>
+                        <div id="snapshotResult-popup-modal" class="w-full mx-auto mb-4 bg-gray-200 aspect-video "></div>
 
-                            <input type="hidden" id="faceData-<?= $modal['id'] ?>" name="<?= $modal['face_input'] ?>">
+                        <input type="hidden" id="faceData-popup-modal" name="foto_masuk">
 
-                            <div class="flex justify-end">
-                                <button type="button" onclick="resetCamera('<?= $modal['id'] ?>')"
-                                    class="px-4 py-2 mr-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">
-                                    Ulangi
-                                </button>
-                                <button type="button" id="<?= $modal['confirm_id']; ?>" data-modalid="<?= $modal['id'] ?>" class="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600">
-                                    Simpan
-                                </button>
-                            </div>
+                        <div class="flex justify-end mt-4">
+                            <button type="button" onclick="resetCamera('popup-modal')"
+                                class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700">
+                                Ulangi
+                            </button>
+                            <button type="button" id="submitButton" data-modalid="popup-modal"
+                                class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                                Simpan
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    <?php endforeach; ?>
+    </div>
 
 
     <!-- popup moda keluar -->
-
-    <!-- Pulang Notification Modal -->
-    <div id="modal-pulang" class="hidden w-[80vw] md:w-[40vw] p-5 absolute left-1/2 -translate-x-1/2 top-1/2 z-50 -translate-y-1/2 rounded-xl border-red-400 border bg-white h-[150px]">
-        <div id="close-modal-pulang" class="absolute -top-2 px-2.5 py-1 text-white -translate-x-6 bg-red-500 rounded-full cursor-pointer -right-10">X</div>
-        <h1 class="text-xl font-bold capitalize">jam kerja anda telah selesai</h1>
-        <p class="font-normal capitalize">segera lngkapi absensi pulang anda, dengan click tombol absensi pulang</p>
-        <div class="flex flex-col items-center justify-around mb-5 space-y-3 lg:flex-row lg:space-y-0">
-            <a href="pengajuan/lebur" class="px-5 py-2 font-bold text-white bg-red-500 rounded-lg">Ajukan Lembur</a>
+    <div id="popup-modal-keluar" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative w-full max-w-md max-h-full p-4">
+            <div class="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-700 md:p-5">
+                <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal-keluar">
+                    <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+                <div class="p-4 text-center md:p-5">
+                    <svg class="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-gray-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Anda Akan Melakukan Aksi Absen Pulang ?</h3>
+                    <button id="submitButtonKeluar" data-modal-hide="popup-modal-keluar" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                        Ya, Yakin
+                    </button>
+                    <button data-modal-hide="popup-modal-keluar" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700">
+                        Batalkan
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
+
 
     <!-- Main Content -->
     <section class="grid grid-cols-12">
@@ -179,6 +194,8 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                                     <div class="grid place-items-center border border-[#D51405]/10 p-3 rounded-full">
                                         <button class="all-none border border-[#D51405]/50 p-3 rounded-full disabled:opacity-50"
                                             type="button"
+                                            data-modal-target="popup-modal-keluar"
+                                            data-modal-toggle="popup-modal-keluar"
                                             id="pulang-button">
                                             <div class="flex relative w-[225px] h-[225px] <?= $buttonStyles['pulang'] ?> shadow-2xl rounded-full">
                                                 <?= Html::img('@root/images/icons/click.svg', [
@@ -217,13 +234,12 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                                 'id' => 'my-form',
                                 'action' => ['home/absen-masuk']
                             ]) ?>
-                            <?= $formAbsen->field($model, 'latitude')->textInput(['class' => 'coordinate lat'])->label(false) ?>
-                            <?= $formAbsen->field($model, 'longitude')->textInput(['class' => 'coordinate lon'])->label(false) ?>
-                            <?= $formAbsen->field($model, 'foto_masuk')->textInput(['id' => 'foto_masuk', 'class' => 'foto_fr'])->label(false) ?>
+                            <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'coordinate lat'])->label(false) ?>
+                            <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'coordinate lon'])->label(false) ?>
+                            <?= $formAbsen->field($model, 'foto_masuk')->hiddenInput(['id' => 'foto_masuk', 'class' => 'foto_fr'])->label(false) ?>
 
                             <?php if ($dataJam['karyawan']['is_shift'] && $manual_shift == 0): ?>
                                 <?php
-                                // Ambil data shift dari database (pastikan ini sudah dijalankan sebelumnya)
 
                                 $jamKerjaKaryawan = $dataJam['karyawan']->jamKerja;
 
@@ -371,6 +387,8 @@ $dataAtasanPenempatanJson = json_encode($dataAtasanPenempatan, JSON_PRETTY_PRINT
 $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
 ?>
 
+
+<!-- script 2 -->
 <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 <script>
     const MODEL_URL = '<?= Yii::getAlias('@root'); ?>/panel/models';
@@ -410,18 +428,36 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
     function startCamera(modalId) {
         currentModalId = modalId;
         const cameraDiv = document.getElementById('camera-' + modalId);
-        const overlay = document.getElementById('overlay-' + modalId); // SESUAI ID
+        const overlay = document.getElementById('overlay-' + modalId);
+
         if (!cameraDiv || !overlay) return;
 
-        overlayCanvas = overlay;
-        overlayCtx = overlay.getContext('2d');
-
         Webcam.set({
-            width: 640,
-            height: 480,
+            width: 300,
+            height: 300,
             image_format: 'jpeg',
-            jpeg_quality: 90
+            jpeg_quality: 80,
+            flip_horiz: false,
+            mirror: false,
+            // HAPUS aspectRatio constraint, biarkan natural
         });
+
+        // UBAH KE object-fit: contain
+        cameraDiv.style.width = '300px';
+        cameraDiv.style.height = '300px';
+        cameraDiv.style.objectFit = 'contain'; // UBAH: contain
+        cameraDiv.style.backgroundColor = 'black'; // Background hitam
+        cameraDiv.style.borderRadius = '8px';
+        cameraDiv.style.overflow = 'hidden';
+
+        overlay.style.width = '300px';
+        overlay.style.height = '300px';
+        overlay.style.objectFit = 'contain'; // UBAH: contain
+        overlay.style.backgroundColor = 'black'; // Background hitam
+        overlay.style.borderRadius = '8px';
+        overlay.style.position = 'absolute';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
 
         Webcam.attach('#camera-' + modalId);
         webcamAttached = true;
@@ -463,15 +499,15 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
                         img,
                         new faceapi.TinyFaceDetectorOptions({
                             inputSize: 320,
-                            scoreThreshold: 0.5
+                            scoreThreshold: 0.4
                         })
                     ).withFaceLandmarks(); // HARUS ADA
 
                     const resized = faceapi.resizeResults(detections, {
-                        width: 640,
-                        height: 480
+                        width: 300,
+                        height: 300
                     });
-                    overlayCtx.clearRect(0, 0, 640, 480);
+                    overlayCtx.clearRect(0, 0, 300, 300);
 
                     faceapi.draw.drawDetections(overlayCanvas, resized);
                     faceapi.draw.drawFaceLandmarks(overlayCanvas, resized); // TITIK WAJAH TAMPIL
@@ -485,7 +521,7 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
 
     function stopFaceOverlay() {
         if (detectionInterval) clearInterval(detectionInterval);
-        if (overlayCtx) overlayCtx.clearRect(0, 0, 640, 480);
+        if (overlayCtx) overlayCtx.clearRect(0, 0, 300, 300);
     }
 
     // FIXED: inputSize 320 + threshold lebih rendah
@@ -562,17 +598,17 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
             {
                 text: 'Lihat ke kiri',
                 dir: 'left',
-                timeout: 10000
+                timeout: 5000
             },
             {
                 text: 'Lihat ke kanan',
                 dir: 'right',
-                timeout: 10000
+                timeout: 5000
             },
             {
                 text: 'Kembali ke tengah',
                 dir: 'center',
-                timeout: 3000
+                timeout: 1500
             }
         ];
 
@@ -597,34 +633,93 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
     };
 
     async function computeAndSaveDescriptor() {
-        return new Promise(resolve => {
-            Webcam.snap(async (data_uri) => {
-                try {
-                    await loadFaceRecognitionNet();
-                    const img = new Image();
-                    img.src = data_uri;
-                    await new Promise(r => img.onload = r);
-                    const detection = await faceapi.detectSingleFace(img, new faceapi.TinyFaceDetectorOptions({
-                            inputSize: 320,
-                            scoreThreshold: 0.4
-                        }))
-                        .withFaceLandmarks().withFaceDescriptor();
-                    if (!detection) throw new Error('Wajah tidak terdeteksi');
-                    const descriptor = Array.from(detection.descriptor).join(',');
-                    document.getElementById('faceData-' + currentModalId).value = descriptor;
-                    takeVerifiedPhoto(data_uri);
-                    resolve();
-                } catch (err) {
-                    alert('Gagal: ' + err.message);
-                    resolve();
-                }
+        try {
+            // Tunggu stabil
+            await new Promise(r => setTimeout(r, 500));
+            await loadFaceRecognitionNet();
+
+            return new Promise(resolve => {
+                Webcam.snap(async (data_uri) => {
+                    try {
+                        const img = new Image();
+                        img.onload = async () => {
+                            // BUAT CANVAS DENGAN SIZE NATURAL IMAGE
+                            const canvas = document.createElement('canvas');
+                            canvas.width = img.width; // Natural width
+                            canvas.height = img.height; // Natural height
+                            const ctx = canvas.getContext('2d');
+
+                            // Gambar image natural tanpa resize
+                            ctx.drawImage(img, 0, 0);
+
+                            console.log('SCRIPT 2 - Natural image size:', img.width, 'x', img.height);
+
+                            // Face detection pada gambar natural
+                            const detection = await faceapi.detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions({
+                                    inputSize: 320,
+                                    scoreThreshold: 0.4
+                                }))
+                                .withFaceLandmarks()
+                                .withFaceDescriptor();
+
+                            if (!detection) throw new Error('Wajah tidak terdeteksi');
+
+                            const descriptorString = Array.from(detection.descriptor).join(',');
+
+                            console.log('%c[SCRIPT 2] Natural aspect ratio', 'color: blue; font-weight: bold;');
+                            console.log('Descriptor:', Array.from(detection.descriptor).slice(0, 5));
+
+                            document.getElementById('faceData-' + currentModalId).value = descriptorString;
+                            takeVerifiedPhoto(data_uri);
+                            resolve();
+                        };
+                        img.src = data_uri;
+                    } catch (err) {
+                        console.error('Error:', err);
+                        alert('Gagal: ' + err.message);
+                        resolve();
+                    }
+                });
             });
-        });
+        } catch (err) {
+            console.error('Error:', err);
+            alert('Gagal: ' + err.message);
+        }
     }
 
+    // Di takeVerifiedPhoto() - Script 2:
     function takeVerifiedPhoto(data_uri) {
         const result = document.getElementById('snapshotResult-' + currentModalId);
-        result.innerHTML = `<img src="${data_uri}" class="w-full h-auto mx-auto rounded"/>`;
+        const img = new Image();
+
+        img.onload = function() {
+            // Canvas untuk contain (bukan crop)
+            const canvas = document.createElement('canvas');
+            canvas.width = 300;
+            canvas.height = 300;
+            const ctx = canvas.getContext('2d');
+
+            // Hitung scaling untuk contain
+            const scale = Math.min(300 / img.width, 300 / img.height);
+            const scaledWidth = img.width * scale;
+            const scaledHeight = img.height * scale;
+            const offsetX = (300 - scaledWidth) / 2;
+            const offsetY = (300 - scaledHeight) / 2;
+
+            // Gambar dengan contain
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, 300, 300);
+            ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
+
+            const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+
+            result.innerHTML = `
+            <div style="width: 300px; height: 300px; overflow: hidden; border-radius: 8px; margin: 0 auto; background: black;">
+                <img src="${croppedDataUrl}" style="width: 300px !important; height: 300px !important; aspect-ratio: 1 / 1;  object-fit: contain !important;" />
+            </div>`;
+        };
+        img.src = data_uri;
+
         document.getElementById('camera-container-' + currentModalId).classList.add('hidden');
         document.getElementById('results-' + currentModalId).classList.remove('hidden');
     }
@@ -698,13 +793,15 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
     const pulang_button = document.querySelector('#pulang-button');
     const warningBox = document.getElementById('warningBox');
     const closeWarning = document.getElementById('closeWarning');
-    const modalPulang = document.getElementById('modal-pulang');
-    const closeModalPulang = document.getElementById('close-modal-pulang');
+
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
-    // alert(JSON.stringify({viewportHeight , viewportWidth}, null,2));
+    const message = document.querySelector('#message');
 
-    // Functions
+    if (manual_shift == 1) {
+        if (pulang_button) pulang_button.disabled = true;
+    }
+
 
 
     const updateCoordinates = function(position) {
@@ -726,6 +823,7 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
         Swal.fire({
             icon: 'error',
             title: 'Error',
+            confirmButtonColor: "#3085d6",
             text: 'Gagal mendapatkan lokasi: ' + error.message
         });
     }, {
@@ -801,33 +899,43 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
             .catch(error => console.error('Error:', error));
     }
 
-    function cekWaktu() {
-        const sekarang = new Date();
-        const jam_pulang = todayJson?.today?.jam_keluar;
-        let jam, menit, detik;
+    // Jika bukan manual shift, langsung aktifkan tombol
 
-        if (manual_shift == 1) {
-            [jam, menit, detik] = jam_pulang.split(':').map(Number);
-        } else {
-            [jam, menit, detik] = "00:00:00".split(':').map(Number);
+    function cekWaktu() {
+        // Jika bukan manual shift, tidak perlu cek waktu
+        if (manual_shift == 0) {
+            if (message) {
+                message.classList.add('hidden');
+            }
         }
 
-        const waktuPulang = new Date(sekarang);
-        waktuPulang.setHours(jam, menit, detik, 0);
+        const sekarang = new Date();
+        const jam_sekarang = sekarang.getHours();
+        const menit_sekarang = sekarang.getMinutes();
 
-        // console.info(sekarang)
-        // console.info(waktuPulang)
+        // Jam 5 sore = 17:00
+        const jamPulangString = todayJson?.today?.jam_keluar;
 
-        if (sekarang >= waktuPulang) {
+        // Split string "17:00:00" menjadi jam, menit, detik
+        const [jam_pulang, menit_pulang, detik_pulang] = jamPulangString.split(':').map(Number);
+
+        // Cek apakah sekarang sudah melewati jam 5 sore
+        // Perbandingan: (jam_sekarang > 17) ATAU (jam_sekarang == 17 DAN menit_sekarang >= 0)
+        if (jam_sekarang > jam_pulang ||
+            (jam_sekarang === jam_pulang && menit_sekarang >= menit_pulang)) {
+
             const message = document.querySelector('#message');
             if (message) {
                 message.classList.add('hidden');
-                if (pulang_button) pulang_button.disabled = false;
+            }
+            if (pulang_button) {
+                pulang_button.disabled = false;
             }
         }
     }
 
     setInterval(cekWaktu, 1000);
+    cekWaktu(); // Panggil sekali saat load
 
 
 
@@ -975,13 +1083,24 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
 
 
         Webcam.set({
+            width: 300,
+            height: 300,
             image_format: 'jpeg',
             jpeg_quality: 80,
-            flip_horiz: true,
-            width: 300,
-            height: 400,
+            flip_horiz: false,
+            mirror: false,
             constraints: {
-                facingMode: 'user',
+                width: {
+                    min: 300,
+                    ideal: 300,
+                    max: 300
+                },
+                height: {
+                    min: 300,
+                    ideal: 300,
+                    max: 300
+                },
+                // aspectRatio: 1  // jangan paksa aspect ratio
             }
         });
 
@@ -1011,7 +1130,7 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
 
             if (cameraContainer) cameraContainer.classList.add('hidden');
             if (snapshotResult) {
-                snapshotResult.innerHTML = '<img src="' + data_uri + '" class="mx-auto mb-4 bg-gray-200 "/>';
+                snapshotResult.innerHTML = '<img src="' + data_uri + '" class="mx-auto mb-4 w-[300px] h-[300px] object-contain aspect-square "/>';
             }
             if (faceDataInput) faceDataInput.value = data_uri;
             if (resultsContainer) resultsContainer.classList.remove('hidden');

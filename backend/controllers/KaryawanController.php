@@ -559,7 +559,7 @@ class KaryawanController extends Controller
         $comporess = new CompressImagesHelper();
         if ($model->load(Yii::$app->request->post())) {
             $karyawan = Karyawan::findOne(['kode_karyawan' => $model->kode_karyawan]);
-
+            // dd(Yii::$app->request->post());
             if ($karyawan) {
                 // Get the base64 image data
                 $base64Image = $model->wajah;
@@ -573,69 +573,22 @@ class KaryawanController extends Controller
 
                 // Save compressed image to database
                 $karyawan->wajah = $compressedImage;
+                $karyawan->liveness_passed = $model->liveness_passed;
 
                 if ($karyawan->save()) {
-                    $url = Yii::$app->params['api_url_fr'] . '/core/register';
-                    $data = [
-                        "cluster" => Yii::$app->params['cluster_fr'],
-                        "user" => $karyawan->nama,
-                        "userID" => "{$karyawan->id_karyawan}",
-                        "data" => $compressedImage,
-                    ];
 
 
-
-                    $jsonData = json_encode($data);
-
-                    $ch = curl_init();
-
-                    // Set cURL options
-                    curl_setopt_array($ch, [
-                        CURLOPT_URL => $url,
-                        CURLOPT_POST => true,
-                        CURLOPT_POSTFIELDS => $jsonData,
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_HTTPHEADER => [
-                            'Content-Type: application/json',
-                            'Content-Length: ' . strlen($jsonData)
-                        ],
-                        CURLOPT_TIMEOUT => 30, // Timeout in seconds
-                    ]);
-
-                    // Execute the request
-                    $response = curl_exec($ch);
-                    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-                    // Check for errors
-                    if (curl_errno($ch)) {
-                        $error_msg = curl_error($ch);
-                        // Handle error (log or throw exception)
-                        throw new \Exception("cURL Error: " . $error_msg);
-                    }
-
-                    // Close cURL session
-                    curl_close($ch);
-
-                    if (empty($response)) {
-                        throw new \Exception("API mengembalikan response kosong");
-                    }
-
-
-                    $responseArray = json_decode($response, true);
-
-                    if (isset($responseArray['message'])) {
-                        Yii::$app->session->setFlash(
-                            'success',
-                            'Wajah berhasil diregistrasi. Data: ' .
-                                'Cluster: ' . $responseArray['data']['cluster'] . ', ' .
-                                'Nama: ' . $responseArray['data']['user']
-                        );
-                        return $this->redirect(['/home/expirience']);
-                    } else {
-                        $errorMessage = $responseArray['message'] ?? 'Tidak ada pesan error dari API';
-                        Yii::$app->session->setFlash('error', 'Gagal menyimpan wajah. Error: ' . $errorMessage);
-                        return $this->redirect(['/home/expirience']);
-                    }
+                    // if (isset($responseArray['message'])) {
+                    Yii::$app->session->setFlash(
+                        'success',
+                        'Wajah berhasil diregistrasi. Data: '
+                    );
+                    //     return $this->redirect(['/home/expirience']);
+                    // } else {
+                    //     $errorMessage = $responseArray['message'] ?? 'Tidak ada pesan error dari API';
+                    //     Yii::$app->session->setFlash('error', 'Gagal menyimpan wajah. Error: ' . $errorMessage);
+                    //     return $this->redirect(['/home/expirience']);
+                    // }
                 } else {
                     Yii::$app->session->setFlash('error', 'Gagal menyimpan wajah.');
                 }

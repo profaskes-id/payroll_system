@@ -210,16 +210,20 @@ $this->registerJs("
         L.marker([$latitude_penempatan, $longitude_penempatan]).addTo(map)
             .bindPopup('Lokasi Penempatan');
 
-   // Hitung jarak
-        let from = L.latLng($latitude_now, $longitude_now);
-        let to = L.latLng($latitude_penempatan, $longitude_penempatan);
-        let distance = from.distanceTo(to); // Jarak dalam meter
+// Hitung jarak
+let from = L.latLng($latitude_now, $longitude_now);
+let to = L.latLng($latitude_penempatan, $longitude_penempatan);
+let distance = from.distanceTo(to); // Jarak dalam meter
 
-        // Tampilkan jarak dalam kilometer
-        var container = document.getElementById('distance');
-        // container.innerHTML = (distance / 1000).toFixed(2) + ' km'; // Jarak dalam kilometer
-      container.innerHTML = distance.toFixed(0) + ' Meter'; // Jarak dalam meter
-
+// Tampilkan jarak dengan format yang sesuai
+var container = document.getElementById('distance');
+if (distance >= 1000) {
+    // Jika jarak ≥ 1000 meter, tampilkan dalam kilometer
+    container.innerHTML = (distance / 1000).toFixed(1) + ' km'; // 1 desimal
+} else {
+    // Jika jarak < 1000 meter, tampilkan dalam meter
+    container.innerHTML = Math.round(distance) + ' Meter'; // Bulatkan ke meter tanpa desimal
+}
 
 
             ");

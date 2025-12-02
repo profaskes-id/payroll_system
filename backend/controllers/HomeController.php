@@ -37,7 +37,7 @@ use backend\models\SettinganUmum;
 use backend\models\ShiftKerja;
 use backend\service\CekPengajuanKaryawanService;
 use backend\service\JamKerjaKaryawanService;
-use PhpParser\Node\Expr\AssignOp\ShiftLeft;
+use Exception;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -260,7 +260,7 @@ class HomeController extends Controller
 
         if ($this->handlePostAbsenMasuk($model, $comporess, $manual_shift, $setting_fr, $verificationFr)) {
             // jika sukses post dan simpan data, redirect atau render sesuai kebutuhan
-            return $this->redirect(['/panel/absens-masuk']); // sesuaikan redirect
+            return $this->redirect(['absen-masuk']); // sesuaikan redirect
         }
 
 
@@ -289,12 +289,6 @@ class HomeController extends Controller
         $karyawan = Karyawan::find()->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan])->one();
         $isAda = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
 
-        $base64Image = Yii::$app->request->post('Absensi')['foto_masuk'] ?? '';
-        if ($base64Image) {
-            $compressedImage = $comporess->compressBase64Image($base64Image);
-            $model->foto_masuk = $compressedImage;
-        }
-
         $model->id_karyawan = $karyawan->id_karyawan;
         $model->tanggal = date('Y-m-d');
         $model->kode_status_hadir = "H";
@@ -304,9 +298,8 @@ class HomeController extends Controller
         $model->keterangan = $model->is_lembur ? 'Lembur' : '-';
         $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
         $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
-
         $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
-        dd($model);
+        $model->foto_masuk = Yii::$app->request->post('Absensi')['foto_masuk'] ?? null;
         // Cek keterlambatan, sama seperti kode kamu
         if ($jamKerjaKaryawan && $jamKerjaKaryawan->is_shift == 1) {
             if ($manual_shift == 1) {
@@ -364,122 +357,364 @@ class HomeController extends Controller
             }
         }
 
-        // if (!$isAda) {
-        //     if ($setting_fr == 1) {
-        //         // Face recognition API call seperti kode kamu
-        //         $similar = 0;
-        //         $url = Yii::$app->params['api_url_fr'] . '/core/compare';
-        //         $data = [
-        //             "cluster" => Yii::$app->params['cluster_fr'],
-        //             "user" => $model['karyawan']['nama'] ?? 'User',
-        //             "userID" => "{$model->id_karyawan}",
-        //             "data" => $model->foto_masuk,
-        //         ];
+        if (!$isAda) {
+            if ($setting_fr == 1) {
+                // Face recognition API call seperti kode kamu
 
-        //         $jsonData = json_encode($data);
-        //         $ch = curl_init();
 
-        //         curl_setopt_array($ch, [
-        //             CURLOPT_URL => $url,
-        //             CURLOPT_POST => true,
-        //             CURLOPT_POSTFIELDS => $jsonData,
-        //             CURLOPT_RETURNTRANSFER => true,
-        //             CURLOPT_HTTPHEADER => [
-        //                 'Content-Type: application/json',
-        //                 'Content-Length: ' . strlen($jsonData)
-        //             ],
-        //             CURLOPT_TIMEOUT => 30,
-        //         ]);
+                // dd(
+                //     $karyawan['liveness_passed'],
+                //     $model['foto_masuk']
+                // );
 
-        //         $response = curl_exec($ch);
-        //         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-        //         if (curl_errno($ch)) {
-        //             $error_msg = curl_error($ch);
-        //             throw new \Exception("cURL Error: " . $error_msg);
-        //         }
+                $similarity = $this->calculateFaceSimilarity(
+                    $karyawan['liveness_passed'],
+                    $model['foto_masuk']
+                );
 
-        //         curl_close($ch);
+                // $descriptor1 = [
+                //     -0.10982992500066757,
+                //     0.016657570376992226,
+                //     0.029539821669459343,
+                //     -0.019469857215881348,
+                //     -0.02526845596730709,
+                //     -0.05746107175946236,
+                //     -0.030646584928035736,
+                //     -0.21048586070537567,
+                //     0.17307832837104797,
+                //     -0.08384707570075989,
+                //     0.28891754150390625,
+                //     -0.067601777613163,
+                //     -0.1741897165775299,
+                //     -0.12800684571266174,
+                //     -0.029267262667417526,
+                //     0.12004244327545166,
+                //     -0.19370876252651215,
+                //     -0.151769757270813,
+                //     -0.004030779004096985,
+                //     -0.03260328620672226,
+                //     0.0793643668293953,
+                //     -0.1058586984872818,
+                //     0.022320520132780075,
+                //     0.07462199032306671,
+                //     -0.14778408408164978,
+                //     -0.2758429944515228,
+                //     -0.16931602358818054,
+                //     -0.12788185477256775,
+                //     0.039049044251441956,
+                //     -0.04418935254216194,
+                //     -0.07588734477758408,
+                //     0.013179401867091656,
+                //     -0.2618994414806366,
+                //     -0.09871718287467957,
+                //     0.006146635394543409,
+                //     0.046091772615909576,
+                //     -0.014697353355586529,
+                //     -0.06673985719680786,
+                //     0.18839651346206665,
+                //     -0.075067438185215,
+                //     -0.17099426686763763,
+                //     -0.014771849848330021,
+                //     0.035805802792310715,
+                //     0.1756260097026825,
+                //     0.1072998121380806,
+                //     0.0523185171186924,
+                //     -0.0027241259813308716,
+                //     -0.13654929399490356,
+                //     0.1016574501991272,
+                //     -0.11143174767494202,
+                //     0.12834398448467255,
+                //     0.1865309625864029,
+                //     0.1151973158121109,
+                //     0.1087583675980568,
+                //     -0.003971753176301718,
+                //     -0.09055259823799133,
+                //     0.03328728303313255,
+                //     0.11313210427761078,
+                //     -0.15246090292930603,
+                //     0.0589471310377121,
+                //     0.10349632799625397,
+                //     -0.06982915848493576,
+                //     -0.012304145842790604,
+                //     -0.10497211664915085,
+                //     0.19108012318611145,
+                //     0.11285599321126938,
+                //     -0.10890926420688629,
+                //     -0.17166443169116974,
+                //     0.07267029583454132,
+                //     -0.13697406649589539,
+                //     -0.062352485954761505,
+                //     0.08481338620185852,
+                //     -0.1506623923778534,
+                //     -0.24046620726585388,
+                //     -0.3419204354286194,
+                //     0.06492568552494049,
+                //     0.400153785943985,
+                //     0.1348724514245987,
+                //     -0.19665291905403137,
+                //     0.04311288520693779,
+                //     -0.07027125358581543,
+                //     -0.04834138974547386,
+                //     0.1378633677959442,
+                //     0.15067557990550995,
+                //     0.014408402144908905,
+                //     0.0931972861289978,
+                //     -0.07516568154096603,
+                //     0.0011600664583966136,
+                //     0.1752212941646576,
+                //     -0.03982503339648247,
+                //     -0.037871286273002625,
+                //     0.22674371302127838,
+                //     -0.0645659863948822,
+                //     0.05066518113017082,
+                //     0.023156344890594482,
+                //     0.07184853404760361,
+                //     -0.03670289367437363,
+                //     0.018913719803094864,
+                //     -0.07052598148584366,
+                //     0.018531406298279762,
+                //     0.015628814697265625,
+                //     0.040648624300956726,
+                //     -0.01673036627471447,
+                //     0.05696769803762436,
+                //     -0.09394937753677368,
+                //     0.08205920457839966,
+                //     0.009641512297093868,
+                //     0.018408916890621185,
+                //     -0.03714427351951599,
+                //     -0.04664047062397003,
+                //     -0.08728883415460587,
+                //     -0.11830863356590271,
+                //     0.07577991485595703,
+                //     -0.30282309651374817,
+                //     0.17778046429157257,
+                //     0.12038836628198624,
+                //     0.03301829472184181,
+                //     0.1454205960035324,
+                //     0.03560742363333702,
+                //     0.12639227509498596,
+                //     -0.03011285327374935,
+                //     -0.0398959144949913,
+                //     -0.15427280962467194,
+                //     0.00012699079525191337,
+                //     0.12062869220972061,
+                //     0.011215019971132278,
+                //     0.09649605304002762,
+                //     -0.011814708821475506
+                // ];
 
-        //         if (empty($response)) {
-        //             throw new \Exception("API mengembalikan response kosong");
-        //         }
+                // $descriptor2 = [
+                //     -0.10982992500066757,
+                //     0.016657570376992226,
+                //     0.029539821669459343,
+                //     -0.019469857215881348,
+                //     -0.02526845596730709,
+                //     -0.05746107175946236,
+                //     -0.030646584928035736,
+                //     -0.21048586070537567,
+                //     0.17307832837104797,
+                //     -0.08384707570075989,
+                //     0.28891754150390625,
+                //     -0.067601777613163,
+                //     -0.1741897165775299,
+                //     -0.12800684571266174,
+                //     -0.029267262667417526,
+                //     0.12004244327545166,
+                //     -0.19370876252651215,
+                //     -0.151769757270813,
+                //     -0.004030779004096985,
+                //     -0.03260328620672226,
+                //     0.0793643668293953,
+                //     -0.1058586984872818,
+                //     0.022320520132780075,
+                //     0.07462199032306671,
+                //     -0.14778408408164978,
+                //     -0.2758429944515228,
+                //     -0.16931602358818054,
+                //     -0.12788185477256775,
+                //     0.039049044251441956,
+                //     -0.04418935254216194,
+                //     -0.07588734477758408,
+                //     0.013179401867091656,
+                //     -0.2618994414806366,
+                //     -0.09871718287467957,
+                //     0.006146635394543409,
+                //     0.046091772615909576,
+                //     -0.014697353355586529,
+                //     -0.06673985719680786,
+                //     0.18839651346206665,
+                //     -0.075067438185215,
+                //     -0.17099426686763763,
+                //     -0.014771849848330021,
+                //     0.035805802792310715,
+                //     0.1756260097026825,
+                //     0.1072998121380806,
+                //     0.0523185171186924,
+                //     -0.0027241259813308716,
+                //     -0.13654929399490356,
+                //     0.1016574501991272,
+                //     -0.11143174767494202,
+                //     0.12834398448467255,
+                //     0.1865309625864029,
+                //     0.1151973158121109,
+                //     0.1087583675980568,
+                //     -0.003971753176301718,
+                //     -0.09055259823799133,
+                //     0.03328728303313255,
+                //     0.11313210427761078,
+                //     -0.15246090292930603,
+                //     0.0589471310377121,
+                //     0.10349632799625397,
+                //     -0.06982915848493576,
+                //     -0.012304145842790604,
+                //     -0.10497211664915085,
+                //     0.19108012318611145,
+                //     0.11285599321126938,
+                //     -0.10890926420688629,
+                //     -0.17166443169116974,
+                //     0.07267029583454132,
+                //     -0.13697406649589539,
+                //     -0.062352485954761505,
+                //     0.08481338620185852,
+                //     -0.1506623923778534,
+                //     -0.24046620726585388,
+                //     -0.3419204354286194,
+                //     0.06492568552494049,
+                //     0.400153785943985,
+                //     0.1348724514245987,
+                //     -0.19665291905403137,
+                //     0.04311288520693779,
+                //     -0.07027125358581543,
+                //     -0.04834138974547386,
+                //     0.1378633677959442,
+                //     0.15067557990550995,
+                //     0.014408402144908905,
+                //     0.0931972861289978,
+                //     -0.07516568154096603,
+                //     0.0011600664583966136,
+                //     0.1752212941646576,
+                //     -0.03982503339648247,
+                //     -0.038871286273002625,
+                //     0.22674371302127838,
+                //     -0.0645659863948822,
+                //     0.05066518113017082,
+                //     0.023156344890594482,
+                //     0.07184853404760361,
+                //     -0.03670289367337363,
+                //     0.018913719803094864,
+                //     -0.07052598148584366,
+                //     0.018531406298279762,
+                //     0.015628814697265625,
+                //     0.040648624300956726,
+                //     -0.01673036627471447,
+                //     0.05696769803762436,
+                //     -0.09394937753677368,
+                //     0.08205920457839966,
+                //     0.009641512297093868,
+                //     0.018408916890621185,
+                //     -0.03714427351951599,
+                //     -0.04664047062397003,
+                //     -0.08728883415460587,
+                //     -0.11830863356590271,
+                //     0.07577991485595703,
+                //     -0.30282309651374817,
+                //     0.17778046429157257,
+                //     0.12038836628198624,
+                //     0.03301829472184181,
+                //     0.1454205960035324,
+                //     0.03560742363333702,
+                //     0.12639227509498596,
+                //     -0.03011285327374935,
+                //     -0.0398959144949913,
+                //     -0.15427280962467194,
+                //     0.00012699079525191337,
+                //     0.12062869220972061,
+                //     0.011215019971132278,
+                //     0.09649605304002762,
+                //     -0.011814708821475505
+                // ];
 
-        //         $responseArray = json_decode($response, true);
 
-        //         if (isset($responseArray['message']) && $responseArray['message'] == "OK") {
-        //             $similar  = $responseArray['data']['similarity'];
-        //         } else {
-        //             Yii::$app->session->setFlash('error', 'API Error: ');
-        //         }
 
-        //         if ($similar * 100 >= Yii::$app->params['minimal_kemiripan_fr']) {
-        //             $similarPercentage = round($similar * 100);
-        //             $model->similarity = $similarPercentage;
+                // $similarity = $this->calculateFaceSimilarity(
+                //     $descriptor1,
+                //     $descriptor2
+                // );
 
-        //             if ($model->save()) {
-        //                 $absensiKeduaTerakhir = Absensi::find()
-        //                     ->where(['id_karyawan' => $karyawan->id_karyawan])
-        //                     ->orderBy(['tanggal' => SORT_DESC])
-        //                     ->offset(1)
-        //                     ->limit(1)
-        //                     ->one();
+                // Yii::debug("Kemiripan wajah: " . $similarity . "%");
+                $similar = $similarity ? round($similarity) : 0;
 
-        //                 if ($absensiKeduaTerakhir && !empty($absensiKeduaTerakhir->foto_masuk)) {
-        //                     $absensiKeduaTerakhir->foto_masuk = null;
-        //                     $absensiKeduaTerakhir->save(false);
-        //                 }
 
-        //                 Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil dengan kemiripan wajah sebesar ' . $similarPercentage . '%');
-        //                 return true;
-        //             }
-        //         } else {
-        //             if ($verificationFr == 1) {
-        //                 $similarPercentage = round($similar * 100);
-        //                 Yii::$app->session->setFlash(
-        //                     'error',
-        //                     'Absen masuk tidak berhasil. Tingkat kemiripan wajah Anda hanya ' . $similarPercentage . '%. ' .
-        //                         'Silakan ulangi pemindaian wajah hingga mencapai nilai minimal '
-        //                 );
-        //             } else {
-        //                 $similarPercentage = round($similar * 100);
-        //                 $model->similarity = $similarPercentage;
+                if ($similar >= Yii::$app->params['minimal_kemiripan_fr']) {
+                    $model->similarity = $similar;
 
-        //                 if ($model->save()) {
-        //                     $absensiKeduaTerakhir = Absensi::find()
-        //                         ->where(['id_karyawan' => $karyawan->id_karyawan])
-        //                         ->orderBy(['tanggal' => SORT_DESC])
-        //                         ->offset(1)
-        //                         ->limit(1)
-        //                         ->one();
+                    if ($model->save()) {
+                        $absensiKeduaTerakhir = Absensi::find()
+                            ->where(['id_karyawan' => $karyawan->id_karyawan])
+                            ->orderBy(['tanggal' => SORT_DESC])
+                            ->offset(1)
+                            ->limit(1)
+                            ->one();
 
-        //                     if ($absensiKeduaTerakhir && !empty($absensiKeduaTerakhir->foto_masuk)) {
-        //                         $absensiKeduaTerakhir->foto_masuk = null;
-        //                         $absensiKeduaTerakhir->save(false);
-        //                     }
+                        if ($absensiKeduaTerakhir && !empty($absensiKeduaTerakhir->foto_masuk)) {
+                            $absensiKeduaTerakhir->foto_masuk = null;
+                            $absensiKeduaTerakhir->save(false);
+                        }
 
-        //                     Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil dengan kemiripan wajah sebesar ' . $similarPercentage . '%');
-        //                     return true;
-        //                 }
-        //             }
-        //         }
-        //     } else {
-        //         $model->foto_masuk = null;
-        //         $model->similarity = 0;
-        //         if ($model->save()) {
-        //             Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil');
-        //             return true;
-        //         } else {
-        //             Yii::$app->session->setFlash('error', 'Absen Masuk tidak Berhasil');
-        //         }
-        //     }
-        // } else {
-        //     Yii::$app->session->setFlash('success', 'Absen Masuk Anda Sudah Ada');
-        //     return true;
-        // }
+                        Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil dengan kemiripan wajah sebesar ' . $similar . '%');
+                        return true;
+                    }
+                } else {
+                    if ($verificationFr == 1) {
+                        $similarPercentage = $similar;
+                        Yii::$app->session->setFlash(
+                            'error',
+                            'Absen masuk tidak berhasil. Tingkat kemiripan wajah Anda hanya ' . $similarPercentage . '%. ' .
+                                'Silakan ulangi pemindaian wajah hingga mencapai nilai minimal '
+                        );
+                    } else {
+                        $similarPercentage = $similar;
+                        $model->similarity = $similarPercentage;
+
+                        if ($model->save()) {
+                            $absensiKeduaTerakhir = Absensi::find()
+                                ->where(['id_karyawan' => $karyawan->id_karyawan])
+                                ->orderBy(['tanggal' => SORT_DESC])
+                                ->offset(1)
+                                ->limit(1)
+                                ->one();
+
+                            if ($absensiKeduaTerakhir && !empty($absensiKeduaTerakhir->foto_masuk)) {
+                                $absensiKeduaTerakhir->foto_masuk = null;
+                                $absensiKeduaTerakhir->save(false);
+                            }
+
+                            Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil dengan kemiripan wajah sebesar ' . $similarPercentage . '%');
+                            return true;
+                        }
+                    }
+                }
+            } else {
+                $model->foto_masuk = null;
+                $model->similarity = 0;
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil');
+                    return true;
+                } else {
+                    Yii::$app->session->setFlash('error', 'Absen Masuk tidak Berhasil');
+                }
+            }
+        } else {
+            Yii::$app->session->setFlash('success', 'Absen Masuk Anda Sudah Ada');
+            return true;
+        }
 
         return false;
     }
+
+
+
 
     private function handleAbsenView($model, $absensiToday, $dataProvider, $jamKerjaKaryawan, $dataJam, $jamKerjaToday, $masterLokasi, $isTerlambatActive, $isPulangCepat, $manual_shift, $setting_fr)
     {
@@ -607,65 +842,18 @@ class HomeController extends Controller
             if (!$isAda) {
                 if ($setting_fr == 1) {
 
-                    $similar = 0;
-                    $url = Yii::$app->params['api_url_fr'] . '/core/compare';
-                    $data = [
-                        "cluster" => Yii::$app->params['cluster_fr'],
-                        "user" => $model['karyawan']['nama'],
+                    $similarity = $this->calculateFaceSimilarity(
+                        $karyawan['liveness_passed'],
+                        $model['foto_masuk']
+                    );
 
-                        "userID" => "{$model->id_karyawan}",
-                        "data" => $model->foto_masuk, // Tidak perlu quotes tambahan jika sudah string
-                    ];
-
-                    $jsonData = json_encode($data);
-
-                    $ch = curl_init();
-
-                    // Set cURL options
-                    curl_setopt_array($ch, [
-                        CURLOPT_URL => $url,
-                        CURLOPT_POST => true,
-                        CURLOPT_POSTFIELDS => $jsonData,
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_HTTPHEADER => [
-                            'Content-Type: application/json',
-                            'Content-Length: ' . strlen($jsonData)
-                        ],
-                        CURLOPT_TIMEOUT => 30, // Timeout in seconds
-                    ]);
-
-                    // Execute the request
-                    $response = curl_exec($ch);
-                    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-                    // Check for errors
-                    if (curl_errno($ch)) {
-                        $error_msg = curl_error($ch);
-                        // Handle error (log or throw exception)
-                        throw new \Exception("cURL Error: " . $error_msg);
-                    }
-
-                    // Close cURL session
-                    curl_close($ch);
-
-                    if (empty($response)) {
-                        throw new \Exception("API mengembalikan response kosong");
-                    }
-
-                    $responseArray = json_decode($response, true);
-
-                    if (isset($responseArray['message']) == "OK") {
-                        // Request berhasil
-                        $similar  = $responseArray['data']['similarity'];
-                    } else {
-                        //flash error
-                        Yii::$app->session->setFlash('error', 'API Error: ');
-                    }
+                    // Yii::debug("Kemiripan wajah: " . $similarity . "%");
+                    $similar = $similarity ? round($similarity) : 0;
 
                     // /jika mirip
-                    if ($similar * 100 >= Yii::$app->params['minimal_kemiripan_fr']) {
+                    if ($similar >= Yii::$app->params['minimal_kemiripan_fr']) {
                         // Hitung persentase kemiripan (dikalikan 100 dan dibulatkan)
-                        $similarPercentage = round($similar * 100);
+                        $similarPercentage = round($similar);
                         $model->similarity = $similarPercentage;
 
                         if ($model->save()) {
@@ -687,14 +875,14 @@ class HomeController extends Controller
                     } else {
                         // check verivikasi_fr
                         if ($verificationFr == 1) {
-                            $similarPercentage = round($similar * 100);
+                            $similarPercentage = round($similar);
                             Yii::$app->session->setFlash(
                                 'error',
                                 'Absen masuk tidak berhasil. Tingkat kemiripan wajah Anda hanya ' . $similarPercentage . '%. '
                                     . 'Silakan ulangi pemindaian wajah hingga mencapai nilai minimal '
                             );
                         } else {
-                            $similarPercentage = round($similar * 100);
+                            $similarPercentage = round($similar);
                             $model->similarity = $similarPercentage;
 
                             if ($model->save()) {
@@ -755,7 +943,7 @@ class HomeController extends Controller
             $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
             $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
             $model->alasan_terlalu_jauh = Yii::$app->request->post('Absensi')['alasan_terlalu_jauh'];
-
+            $model->foto_masuk = Yii::$app->request->post('Absensi')['foto_masuk'] ?? null;
             // Hanya lakukan pengecekan keterlambatan jika manual_shift == 1
             $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
 
@@ -834,66 +1022,18 @@ class HomeController extends Controller
 
                 if ($setting_fr == 1) {
 
-                    $similar = 0;
-                    $url = Yii::$app->params['api_url_fr'] . '/core/compare';
-                    $data = [
-                        "cluster" => Yii::$app->params['cluster_fr'],
-                        "user" => $model['karyawan']['nama'],
-                        // "user" => 'syaid',
-                        "userID" => "{$model->id_karyawan}",
-                        // "userID" => "18",
-                        "data" => $model->foto_masuk, // Tidak perlu quotes tambahan jika sudah string
-                    ];
+                    $similarity = $this->calculateFaceSimilarity(
+                        $karyawan['liveness_passed'],
+                        $model['foto_masuk']
+                    );
 
-                    $jsonData = json_encode($data);
-
-                    $ch = curl_init();
-
-                    // Set cURL options
-                    curl_setopt_array($ch, [
-                        CURLOPT_URL => $url,
-                        CURLOPT_POST => true,
-                        CURLOPT_POSTFIELDS => $jsonData,
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_HTTPHEADER => [
-                            'Content-Type: application/json',
-                            'Content-Length: ' . strlen($jsonData)
-                        ],
-                        CURLOPT_TIMEOUT => 30, // Timeout in seconds
-                    ]);
-
-                    // Execute the request
-                    $response = curl_exec($ch);
-                    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-                    // Check for errors
-                    if (curl_errno($ch)) {
-                        $error_msg = curl_error($ch);
-                        // Handle error (log or throw exception)
-                        throw new \Exception("cURL Error: " . $error_msg);
-                    }
-
-                    // Close cURL session
-                    curl_close($ch);
-
-                    if (empty($response)) {
-                        throw new \Exception("API mengembalikan response kosong");
-                    }
-
-                    $responseArray = json_decode($response, true);
-
-                    if (isset($responseArray['message']) == "OK") {
-                        // Request berhasil
-                        $similar  = $responseArray['data']['similarity'];
-                    } else {
-                        //flash error
-                        Yii::$app->session->setFlash('error', 'API Error: ');
-                    }
+                    // Yii::debug("Kemiripan wajah: " . $similarity . "%");
+                    $similar = $similarity ? round($similarity) : 0;
 
                     // jika mirip
-                    if ($similar * 100 >= Yii::$app->params['minimal_kemiripan_fr']) {
+                    if ($similar >= Yii::$app->params['minimal_kemiripan_fr']) {
                         // Hitung persentase kemiripan (dikalikan 100 dan dibulatkan)
-                        $similarPercentage = round($similar * 100);
+                        $similarPercentage = $similar;
                         $model->similarity = $similarPercentage;
 
                         if ($model->save()) {
@@ -915,14 +1055,14 @@ class HomeController extends Controller
                     } else {
                         // check verivikasi_fr
                         if ($verificationFr == 1) {
-                            $similarPercentage = round($similar * 100);
+                            $similarPercentage = $similar;
                             Yii::$app->session->setFlash(
                                 'error',
                                 'Absen masuk tidak berhasil. Tingkat kemiripan wajah Anda hanya ' . $similarPercentage . '%. '
                                     . 'Silakan ulangi pemindaian wajah hingga mencapai nilai minimal '
                             );
                         } else {
-                            $similarPercentage = round($similar * 100);
+                            $similarPercentage = $similar;
                             $model->similarity = $similarPercentage;
 
                             if ($model->save()) {
@@ -1033,6 +1173,142 @@ class HomeController extends Controller
     //============================================END ABSEN REGULAR============================================
 
 
+    protected function calculateFaceSimilarity($descriptor1, $descriptor2)
+    {
+        $apiUrl = 'http://face-recognation.profaskes.id/compare';
+
+        // ==============================================
+        // KONVERSI DESCRIPTOR KE ARRAY YANG VALID
+        // ==============================================
+
+        // Jika descriptor adalah string, coba decode dari JSON
+        if (is_string($descriptor1)) {
+            $decoded = json_decode($descriptor1, true);
+            $descriptor1 = (json_last_error() === JSON_ERROR_NONE) ? $decoded : explode(',', $descriptor1);
+        }
+
+        if (is_string($descriptor2)) {
+            $decoded = json_decode($descriptor2, true);
+            $descriptor2 = (json_last_error() === JSON_ERROR_NONE) ? $decoded : explode(',', $descriptor2);
+        }
+
+        // Jika descriptor adalah object, konversi ke array
+        if (is_object($descriptor1)) {
+            $descriptor1 = (array) $descriptor1;
+        }
+
+        if (is_object($descriptor2)) {
+            $descriptor2 = (array) $descriptor2;
+        }
+
+        // Pastikan descriptor adalah array
+        if (!is_array($descriptor1)) {
+            throw new InvalidArgumentException('descriptor1 harus berupa array');
+        }
+
+        if (!is_array($descriptor2)) {
+            throw new InvalidArgumentException('descriptor2 harus berupa array');
+        }
+
+        // Bersihkan array dari whitespace dan konversi ke float
+        $descriptor1 = array_map(function ($value) {
+            return is_numeric($value) ? (float) $value : 0.0;
+        }, $descriptor1);
+
+        $descriptor2 = array_map(function ($value) {
+            return is_numeric($value) ? (float) $value : 0.0;
+        }, $descriptor2);
+
+        // ==============================================
+        // LANJUTKAN DENGAN REQUEST KE API
+        // ==============================================
+
+        // Siapkan data yang akan dikirim
+        $postData = [
+            'descriptor1' => array_values($descriptor1), // Pastikan array index numeric
+            'descriptor2' => array_values($descriptor2)
+        ];
+
+        // Debug: cek format data sebelum dikirim
+        Yii::info('Descriptor1 sample: ' . print_r(array_slice($descriptor1, 0, 5), true));
+        Yii::info('Descriptor2 sample: ' . print_r(array_slice($descriptor2, 0, 5), true));
+        Yii::info('Total items descriptor1: ' . count($descriptor1));
+        Yii::info('Total items descriptor2: ' . count($descriptor2));
+
+        // Encode data menjadi JSON
+        $jsonData = json_encode($postData);
+
+        // Validasi JSON encoding
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception('Gagal encode data ke JSON: ' . json_last_error_msg());
+        }
+
+        // Inisialisasi cURL
+        $ch = curl_init($apiUrl);
+
+        // Set opsi cURL
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $jsonData,
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'Accept: application/json',
+                'Content-Length: ' . strlen($jsonData)
+            ],
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_SSL_VERIFYPEER => false, // Jika HTTPS tapi self-signed
+            CURLOPT_SSL_VERIFYHOST => 0,
+        ]);
+
+        // Eksekusi request
+        $response = curl_exec($ch);
+
+        // Cek error
+        if (curl_errno($ch)) {
+            $errorMsg = curl_error($ch);
+            $errno = curl_errno($ch);
+            curl_close($ch);
+            throw new Exception("cURL error ($errno): $errorMsg");
+        }
+
+        // Dapatkan HTTP status code
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        // Tutup koneksi cURL
+        curl_close($ch);
+
+        // Cek HTTP status
+        if ($httpCode !== 200) {
+            Yii::error("API returned HTTP $httpCode. Response: " . substr($response, 0, 500));
+            throw new Exception("Server merespon dengan status HTTP: $httpCode");
+        }
+
+        // Parse response JSON
+        $result = json_decode($response, true);
+
+        // Validasi response
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            Yii::error('Invalid JSON response: ' . substr($response, 0, 500));
+            throw new Exception('Invalid JSON response from API: ' . json_last_error_msg());
+        }
+
+        // Debug: tampilkan seluruh response
+        Yii::info('API Response: ' . print_r($result, true));
+
+        // Cek jika ada error dari API
+        if (isset($result['error'])) {
+            throw new Exception('API Error: ' . $result['error']);
+        }
+
+        if (!isset($result['similarity'])) {
+            throw new Exception('Similarity not found in API response. Response: ' . print_r($result, true));
+        }
+
+        // Return nilai similarity saja
+        return (float) $result['similarity'];
+    }
 
     //============================================ABSENSI 24 JAM ============================================
 
