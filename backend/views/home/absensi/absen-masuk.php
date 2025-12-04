@@ -433,13 +433,25 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
         if (!cameraDiv || !overlay) return;
 
         Webcam.set({
-            width: 300,
-            height: 300,
+            width: 300, // ← UBAH: 400 jadi 300
+            height: 225, // ← UBAH: 380 jadi 225 (300 * 3/4 = 225)
             image_format: 'jpeg',
             jpeg_quality: 80,
             flip_horiz: false,
             mirror: false,
-            // HAPUS aspectRatio constraint, biarkan natural
+            constraints: {
+                width: {
+                    min: 240,
+                    ideal: 300, // ← IDEAL 300px
+                    max: 400
+                },
+                height: {
+                    min: 180,
+                    ideal: 225, // ← IDEAL 225px (4:3)
+                    max: 300
+                }
+                // Tetap TANPA aspectRatio
+            }
         });
 
         // UBAH KE object-fit: contain
@@ -458,6 +470,14 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
         overlay.style.position = 'absolute';
         overlay.style.top = '0';
         overlay.style.left = '0';
+
+        overlayCanvas = document.getElementById('overlay-' + modalId);
+        if (overlayCanvas) {
+            overlayCtx = overlayCanvas.getContext('2d');
+            overlayCanvas.width = 300;
+            overlayCanvas.height = 300;
+            console.log('Overlay context initialized');
+        }
 
         Webcam.attach('#camera-' + modalId);
         webcamAttached = true;
@@ -484,7 +504,6 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
         stopFaceOverlay();
     }
 
-    // FIXED: .withFaceLandmarks() + drawFaceLandmarks
     function startFaceOverlay() {
         if (!isModelsLoaded || !overlayCtx) return;
         stopFaceOverlay();
@@ -497,11 +516,12 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
 
                     const detections = await faceapi.detectAllFaces(
                         img,
+                        // UBAH INI ↓↓↓
                         new faceapi.TinyFaceDetectorOptions({
-                            inputSize: 320,
-                            scoreThreshold: 0.4
+                            inputSize: 416, // Naikkan dari 320 ke 416
+                            scoreThreshold: 0.3 // Turunkan dari 0.4 ke 0.3
                         })
-                    ).withFaceLandmarks(); // HARUS ADA
+                    ).withFaceLandmarks();
 
                     const resized = faceapi.resizeResults(detections, {
                         width: 300,
@@ -509,8 +529,8 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
                     });
                     overlayCtx.clearRect(0, 0, 300, 300);
 
-                    faceapi.draw.drawDetections(overlayCanvas, resized);
-                    faceapi.draw.drawFaceLandmarks(overlayCanvas, resized); // TITIK WAJAH TAMPIL
+                    // faceapi.draw.drawDetections(overlayCanvas, resized);
+                    // faceapi.draw.drawFaceLandmarks(overlayCanvas, resized);
 
                 } catch (err) {
                     console.warn('Overlay error:', err);
@@ -524,7 +544,6 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
         if (overlayCtx) overlayCtx.clearRect(0, 0, 300, 300);
     }
 
-    // FIXED: inputSize 320 + threshold lebih rendah
     async function detectHeadPose() {
         return new Promise(resolve => {
             Webcam.snap(async (data_uri) => {
@@ -534,10 +553,12 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
                     await new Promise(r => img.onload = r);
 
                     const detection = await faceapi
-                        .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions({
-                            inputSize: 320,
-                            scoreThreshold: 0.4
-                        }))
+                        .detectSingleFace(img,
+                            // UBAH INI ↓↓↓
+                            new faceapi.TinyFaceDetectorOptions({
+                                inputSize: 416, // SAMA di sini
+                                scoreThreshold: 0.3 // SAMA di sini
+                            }))
                         .withFaceLandmarks();
 
                     if (!detection) return resolve(null);
@@ -550,7 +571,6 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
                     const eyeDist = rightEye.x - leftEye.x;
                     if (eyeDist < 40) return resolve(null);
 
-                    // BALIK LOGIKA YAW (kiri = positif, kanan = negatif di HP)
                     const yaw = ((rightEye.x - nose.x) - (nose.x - leftEye.x)) / eyeDist * 100;
                     resolve(yaw);
 
@@ -560,7 +580,6 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
             });
         });
     }
-
     // FIXED: threshold lebih rendah
     async function waitForPose(dir, timeout = 10000) {
         return new Promise(resolve => {
@@ -593,22 +612,22 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
         const steps = [{
                 text: 'Tatap lurus',
                 dir: null,
-                timeout: 1500
+                timeout: 2000
             },
             {
-                text: 'Lihat ke kiri',
+                text: 'Lihat ke KANAN',
                 dir: 'left',
                 timeout: 5000
             },
             {
-                text: 'Lihat ke kanan',
+                text: 'Lihat ke kiri',
                 dir: 'right',
                 timeout: 5000
             },
             {
                 text: 'Kembali ke tengah',
                 dir: 'center',
-                timeout: 1500
+                timeout: 5500
             }
         ];
 
@@ -631,10 +650,8 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
         livenessPassed = true;
         await computeAndSaveDescriptor();
     };
-
     async function computeAndSaveDescriptor() {
         try {
-            // Tunggu stabil
             await new Promise(r => setTimeout(r, 500));
             await loadFaceRecognitionNet();
 
@@ -643,22 +660,33 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
                     try {
                         const img = new Image();
                         img.onload = async () => {
-                            // BUAT CANVAS DENGAN SIZE NATURAL IMAGE
                             const canvas = document.createElement('canvas');
-                            canvas.width = img.width; // Natural width
-                            canvas.height = img.height; // Natural height
+                            canvas.width = img.width;
+                            canvas.height = img.height;
                             const ctx = canvas.getContext('2d');
-
-                            // Gambar image natural tanpa resize
                             ctx.drawImage(img, 0, 0);
 
-                            console.log('SCRIPT 2 - Natural image size:', img.width, 'x', img.height);
+                            // TAMBAH: Standardize image size jika terlalu kecil
+                            if (canvas.width < 400 || canvas.height < 400) {
+                                console.log('Image too small, upscaling...');
+                                const tempCanvas = document.createElement('canvas');
+                                tempCanvas.width = Math.max(canvas.width, 500);
+                                tempCanvas.height = Math.max(canvas.height, 500);
+                                const tempCtx = tempCanvas.getContext('2d');
+                                tempCtx.drawImage(canvas, 0, 0, tempCanvas.width, tempCanvas.height);
+                                canvas.width = tempCanvas.width;
+                                canvas.height = tempCanvas.height;
+                                ctx.drawImage(tempCanvas, 0, 0);
+                            }
 
-                            // Face detection pada gambar natural
-                            const detection = await faceapi.detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions({
-                                    inputSize: 320,
-                                    scoreThreshold: 0.4
-                                }))
+                            console.log('SCRIPT 2 - Final image size:', canvas.width, 'x', canvas.height);
+
+                            const detection = await faceapi.detectSingleFace(canvas,
+                                    // UBAH INI ↓↓↓ (PALING PENTING)
+                                    new faceapi.TinyFaceDetectorOptions({
+                                        inputSize: 416, // Naikkan ke 416
+                                        scoreThreshold: 0.3 // Turunkan ke 0.3
+                                    }))
                                 .withFaceLandmarks()
                                 .withFaceDescriptor();
 
@@ -666,8 +694,9 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
 
                             const descriptorString = Array.from(detection.descriptor).join(',');
 
-                            console.log('%c[SCRIPT 2] Natural aspect ratio', 'color: blue; font-weight: bold;');
-                            console.log('Descriptor:', Array.from(detection.descriptor).slice(0, 5));
+                            console.log('%c[SCRIPT 2] Optimized detection', 'color: blue; font-weight: bold;');
+                            console.log('Descriptor mean:',
+                                Array.from(detection.descriptor).reduce((a, b) => a + b, 0) / 128);
 
                             document.getElementById('faceData-' + currentModalId).value = descriptorString;
                             takeVerifiedPhoto(data_uri);
@@ -684,6 +713,56 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
         } catch (err) {
             console.error('Error:', err);
             alert('Gagal: ' + err.message);
+        }
+    }
+
+
+    // FUNGSI STANDARD PREPROCESSING (taruh di sini)
+    function standardizeImageForFaceDetection(img) {
+        const targetSize = 500;
+
+        const canvas = document.createElement('canvas');
+        const scale = Math.min(targetSize / img.width, targetSize / img.height);
+        const width = Math.round(img.width * scale);
+        const height = Math.round(img.height * scale);
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+
+        // Enhance image quality
+        ctx.filter = 'contrast(1.1) brightness(1.05) saturate(1.1)';
+        ctx.drawImage(img, 0, 0, width, height);
+
+        console.log(`Image standardized: ${img.width}x${img.height} → ${width}x${height}`);
+        return canvas;
+    }
+
+    // OPTIONAL: Aligned face descriptor (jika masih rendah)
+    async function getOptimizedFaceDescriptor(imageElement) {
+        try {
+            // Step 1: Standardize image
+            const standardizedCanvas = standardizeImageForFaceDetection(imageElement);
+
+            // Step 2: Detect with optimized settings
+            const detection = await faceapi
+                .detectSingleFace(standardizedCanvas,
+                    new faceapi.TinyFaceDetectorOptions({
+                        inputSize: 416,
+                        scoreThreshold: 0.3
+                    }))
+                .withFaceLandmarks()
+                .withFaceDescriptor();
+
+            if (!detection) throw new Error('Wajah tidak terdeteksi');
+
+            console.log('Optimized descriptor generated');
+            return detection.descriptor;
+
+        } catch (error) {
+            console.error('Error in getOptimizedFaceDescriptor:', error);
+            throw error;
         }
     }
 
@@ -768,6 +847,103 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
             startCamera(currentModalId);
         };
     });
+
+
+    // FUNGSI BARU UNTUK KEDUA SCRIPT: faceAlignment.js
+    async function getAlignedFaceDescriptor(imageElement, options = {}) {
+        try {
+            // Default options
+            const opts = {
+                inputSize: 320,
+                scoreThreshold: 0.4,
+                alignFace: true, // Enable alignment
+                ...options
+            };
+
+            // Buat canvas dari image
+            const canvas = document.createElement('canvas');
+            canvas.width = imageElement.width || imageElement.videoWidth || 640;
+            canvas.height = imageElement.height || imageElement.videoHeight || 480;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(imageElement, 0, 0, canvas.width, canvas.height);
+
+            // Deteksi wajah dengan landmarks
+            const detection = await faceapi
+                .detectSingleFace(canvas, new faceapi.TinyFaceDetectorOptions({
+                    inputSize: opts.inputSize,
+                    scoreThreshold: opts.scoreThreshold
+                }))
+                .withFaceLandmarks()
+                .withFaceDescriptor();
+
+            if (!detection) {
+                throw new Error('Wajah tidak terdeteksi');
+            }
+
+            // OPTIONAL: Face alignment (jika diperlukan)
+            if (opts.alignFace && detection.landmarks) {
+                const alignedCanvas = await alignFace(canvas, detection.landmarks);
+                // Re-detect pada aligned face
+                const alignedDetection = await faceapi
+                    .detectSingleFace(alignedCanvas, new faceapi.TinyFaceDetectorOptions({
+                        inputSize: opts.inputSize,
+                        scoreThreshold: opts.scoreThreshold
+                    }))
+                    .withFaceLandmarks()
+                    .withFaceDescriptor();
+
+                if (alignedDetection) {
+                    console.log('Face alignment applied');
+                    return alignedDetection.descriptor;
+                }
+            }
+
+            return detection.descriptor;
+        } catch (error) {
+            console.error('Error in getAlignedFaceDescriptor:', error);
+            throw error;
+        }
+    }
+
+    // Fungsi alignment sederhana
+    async function alignFace(canvas, landmarks) {
+        const points = landmarks.positions;
+
+        // Ambil eye points
+        const leftEye = points[36]; // Left eye corner
+        const rightEye = points[45]; // Right eye corner
+
+        // Hitung angle rotasi
+        const eyeCenterX = (leftEye.x + rightEye.x) / 2;
+        const eyeCenterY = (leftEye.y + rightEye.y) / 2;
+        const angle = Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x) * (180 / Math.PI);
+
+        // Buat canvas untuk aligned face
+        const alignedCanvas = document.createElement('canvas');
+        alignedCanvas.width = 300; // Standard size
+        alignedCanvas.height = 300;
+        const alignedCtx = alignedCanvas.getContext('2d'); // ← PERBAIKAN: alignedCanvas bukan alignedCtx
+
+        // Simpan state context
+        alignedCtx.save();
+
+        // Pindahkan origin ke center
+        alignedCtx.translate(150, 150);
+        alignedCtx.rotate(-angle * Math.PI / 180);
+
+        // Gambar dengan rotation
+        alignedCtx.drawImage(canvas,
+            eyeCenterX - 150,
+            eyeCenterY - 150,
+            300, 300,
+            -150, -150,
+            300, 300
+        );
+
+        alignedCtx.restore();
+
+        return alignedCanvas;
+    }
 </script>
 
 
@@ -1081,29 +1257,27 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
             return;
         }
 
-
         Webcam.set({
-            width: 300,
-            height: 300,
+            width: 300, // ← UBAH: 400 jadi 300
+            height: 225, // ← UBAH: 380 jadi 225 (300 * 3/4 = 225)
             image_format: 'jpeg',
             jpeg_quality: 80,
             flip_horiz: false,
             mirror: false,
             constraints: {
                 width: {
-                    min: 300,
-                    ideal: 300,
-                    max: 300
+                    min: 240,
+                    ideal: 300, // ← IDEAL 300px
+                    max: 400
                 },
                 height: {
-                    min: 300,
-                    ideal: 300,
+                    min: 180,
+                    ideal: 225, // ← IDEAL 225px (4:3)
                     max: 300
-                },
-                // aspectRatio: 1  // jangan paksa aspect ratio
+                }
+                // Tetap TANPA aspectRatio
             }
         });
-
         Webcam.attach('#camera-' + modalId);
         cameraStates[modalId].isCameraOn = true;
 

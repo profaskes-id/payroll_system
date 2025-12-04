@@ -208,7 +208,7 @@ $this->title = 'Expirience';
                                                     <h3 class="mb-4 text-lg font-medium leading-6 text-gray-900">Register Wajah</h3>
                                                     <div class="mb-4">
                                                         <div class="relative">
-                                                            <video id="video" class="w-full h-64 mb-4 bg-gray-200 rounded" autoplay playsinline muted></video>
+                                                            <video id="video" class="block w-full mx-auto mb-4 bg-gray-200 rounded" autoplay playsinline muted></video>
                                                             <canvas id="overlay" class="absolute top-0 left-0 w-full h-full pointer-events-none"></canvas>
                                                             <div id="liveness-instruction" class="absolute left-0 right-0 text-center top-2">
                                                                 <div class="inline-block px-3 py-1 text-sm text-white bg-black rounded-full bg-opacity-70">
@@ -230,9 +230,9 @@ $this->title = 'Expirience';
                                                             'options' => ['enctype' => 'multipart/form-data']
                                                         ]); ?>
 
-                                                        <?= $form->field($model, 'kode_karyawan')->textInput(['value' => $karyawan->kode_karyawan])->label(false) ?>
-                                                        <?= $form->field($model, 'wajah')->textInput(['id' => 'faceData'])->label(false) ?>
-                                                        <?= $form->field($model, 'liveness_passed')->textInput(['id' => 'livenessPassed', 'value' => '0'])->label(false) ?>
+                                                        <?= $form->field($model, 'kode_karyawan')->hiddenInput(['value' => $karyawan->kode_karyawan])->label(false) ?>
+                                                        <?= $form->field($model, 'wajah')->hiddenInput(['id' => 'faceData'])->label(false) ?>
+                                                        <?= $form->field($model, 'liveness_passed')->hiddenInput(['id' => 'livenessPassed', 'value' => '0'])->label(false) ?>
 
                                                         <div class="flex justify-end space-x-2" id="faceControls" style="display:none;">
                                                             <button type="button" onclick="resetCameraView(); startCamera();" class="px-4 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400">Ambil Ulang</button>
@@ -757,37 +757,40 @@ $this->title = 'Expirience';
 
 
 
-<!-- script 1 -->
+<!-- script 1 - FIXED VERSION (Match with Script 2) -->
 <script>
     const MODEL_URL = '<?= Yii::getAlias('@root'); ?>/panel/models';
     let video, canvas, ctx, detectionInterval;
     let livenessPassed = false;
     let isModelsLoaded = false;
     let faceRecognitionNetLoaded = false;
+    let overlayCtx = null; // ← TAMBAHKAN INI
 
     // Load hanya tiny + landmark
     async function loadModels() {
         if (isModelsLoaded) return;
         try {
+            // console.log('Loading face detection models (Script 1)...');
             await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
             await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
             isModelsLoaded = true;
-            console.log('Models loaded: tinyFaceDetector + faceLandmark68Net');
+            // console.log('✓ Face detection models loaded (Script 1)');
         } catch (err) {
+            // console.error('Failed to load models:', err);
             alert('Gagal load model: ' + err.message);
-            console.error(err);
         }
     }
 
     async function loadFaceRecognitionNet() {
         if (faceRecognitionNetLoaded) return;
         try {
+            // console.log('Loading face recognition net (Script 1)...');
             await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
             faceRecognitionNetLoaded = true;
-            console.log('faceRecognitionNet loaded');
+            // console.log('✓ Face recognition net loaded (Script 1)');
         } catch (err) {
+            // console.error('Failed to load face recognition net:', err);
             alert('Gagal load faceRecognitionNet: ' + err.message);
-            console.error(err);
         }
     }
 
@@ -812,58 +815,65 @@ $this->title = 'Expirience';
         video = document.getElementById('video');
         canvas = document.getElementById('overlay');
         ctx = canvas.getContext('2d');
+        overlayCtx = ctx;
 
-        // TAMBAHKAN CSS UNTUK NON-MIRROR (ASLI WEBCAM) DAN KOTAK
-        video.style.transform = 'scaleX(1)'; // Non-mirror
+        // UBAH CSS untuk 4:3 (300x225)
+        video.style.transform = 'scaleX(1)';
         video.style.width = '300px';
-        video.style.height = '300px';
-        video.style.objectFit = 'cover';
+        video.style.height = '225px'; // ← UBAH: 300 jadi 225 (4:3)
+        video.style.objectFit = 'contain';
         video.style.borderRadius = '8px';
         video.style.overflow = 'hidden';
+        video.style.backgroundColor = 'black';
 
         canvas.style.width = '300px';
-        canvas.style.height = '300px';
-        canvas.style.objectFit = 'cover';
+        canvas.style.height = '225px'; // ← UBAH: 300 jadi 225
+        canvas.style.objectFit = 'contain';
         canvas.style.borderRadius = '8px';
         canvas.style.position = 'absolute';
         canvas.style.top = '0';
         canvas.style.left = '0';
+        canvas.style.backgroundColor = 'transparent';
 
         navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: 'user',
-                    width: {
-                        ideal: 300,
-                        max: 300
-                    }, // Batasi ukuran
-                    height: {
-                        ideal: 300,
-                        max: 300
-                    }, // Batasi ukuran
-                    aspectRatio: 1 // Force 1:1 aspect ratio
+            video: {
+                facingMode: 'user',
+                width: {
+                    min: 240, // ← TAMBAHKAN
+                    ideal: 300, // ← UBAH: 640 jadi 300
+                    max: 400 // ← TAMBAHKAN
+                },
+                height: {
+                    min: 180, // ← TAMBAHKAN (4:3 dari 240)
+                    ideal: 225, // ← UBAH: 480 jadi 225
+                    max: 300 // ← TAMBAHKAN
                 }
-            })
-            .then(stream => {
-                video.srcObject = stream;
-                video.onloadedmetadata = () => {
-                    video.play();
+                // Tetap TANPA aspectRatio constraint!
+            }
+        }).then(stream => {
+            video.srcObject = stream;
+            video.onloadedmetadata = () => {
+                video.play();
 
-                    // Set canvas size sesuai dengan video
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
+                // Tetap set canvas size sesuai video NATURAL
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
 
-                    // PASTIKAN TETAP NON-MIRROR DAN KOTAK
-                    video.style.transform = 'scaleX(1)';
-                    video.style.width = '300px';
-                    video.style.height = '300px';
-                    video.style.objectFit = 'cover';
-                };
-            })
-            .catch(err => alert('Kamera error: ' + err.message));
+                // console.log('Script 1 - Camera started, natural size:',
+                //     video.videoWidth, 'x', video.videoHeight,
+                //     'Display: 300x225 (4:3)');
+            };
+        }).catch(err => {
+            // console.error('Camera error:', err);
+            alert('Kamera error: ' + err.message);
+        });
     }
 
     function stopCamera() {
-        if (video?.srcObject) video.srcObject.getTracks().forEach(t => t.stop());
+        if (video?.srcObject) {
+            video.srcObject.getTracks().forEach(t => t.stop());
+            // console.log('Script 1 - Camera stopped');
+        }
     }
 
     function startFaceOverlay() {
@@ -875,25 +885,36 @@ $this->title = 'Expirience';
 
             try {
                 const detections = await faceapi
-                    .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions({
-                        inputSize: 320,
-                        scoreThreshold: 0.4
-                    }));
+                    .detectAllFaces(video,
+                        // UBAH INI ↓↓↓ (SAMA dengan Script 2)
+                        new faceapi.TinyFaceDetectorOptions({
+                            inputSize: 416, // SAMA: 416 bukan 320
+                            scoreThreshold: 0.3 // SAMA: 0.3 bukan 0.4
+                        }));
 
                 const resized = faceapi.resizeResults(detections, {
                     width: 300,
                     height: 300
                 });
-                overlayCtx.clearRect(0, 0, 300, 300);
-                faceapi.draw.drawDetections(canvas, resized);
-            } catch (err) {}
-        }, 100);
+
+                if (overlayCtx) {
+                    overlayCtx.clearRect(0, 0, 300, 300);
+                    // faceapi.draw.drawDetections(canvas, resized);
+                }
+            } catch (err) {
+                // console.warn('Overlay error:', err);
+            }
+        }, 500); // Sedikit lebih lambat untuk performa
     }
 
     function stopFaceOverlay() {
-        if (detectionInterval) clearInterval(detectionInterval);
-        detectionInterval = null;
-        if (overlayCtx) overlayCtx.clearRect(0, 0, 300, 300); // Ubah di sini juga
+        if (detectionInterval) {
+            clearInterval(detectionInterval);
+            detectionInterval = null;
+        }
+        if (overlayCtx) {
+            overlayCtx.clearRect(0, 0, 300, 300);
+        }
     }
 
     function resetCameraView() {
@@ -911,13 +932,15 @@ $this->title = 'Expirience';
     async function detectHeadPose() {
         if (!isModelsLoaded) return null;
         try {
-            // PAKSA TINY DETECTOR DI SINI JUGA
             const detection = await faceapi
-                .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({
-                    inputSize: 320,
-                    scoreThreshold: 0.4
-                }))
+                .detectSingleFace(video,
+                    // UBAH INI ↓↓↓ (SAMA dengan Script 2)
+                    new faceapi.TinyFaceDetectorOptions({
+                        inputSize: 416, // SAMA: 416
+                        scoreThreshold: 0.3 // SAMA: 0.3
+                    }))
                 .withFaceLandmarks();
+
             if (!detection) return null;
 
             const l = detection.landmarks;
@@ -925,9 +948,12 @@ $this->title = 'Expirience';
             const rightEye = l.getRightEye()[3];
             const nose = l.getNose()[3];
             const eyeDist = rightEye.x - leftEye.x;
-            const yaw = ((nose.x - leftEye.x) - (rightEye.x - nose.x)) / eyeDist * 100;
+
+            // Formula yang sama dengan Script 2
+            const yaw = ((rightEye.x - nose.x) - (nose.x - leftEye.x)) / eyeDist * 100;
             return yaw;
         } catch (err) {
+            console.warn('Head pose error:', err);
             return null;
         }
     }
@@ -936,13 +962,26 @@ $this->title = 'Expirience';
         return new Promise(resolve => {
             const start = Date.now();
             const check = async () => {
-                if (Date.now() - start > timeout) return resolve(false);
+                if (Date.now() - start > timeout) {
+                    return resolve(false);
+                }
+
                 const yaw = await detectHeadPose();
-                if (yaw === null) return setTimeout(check, 300);
-                if (dir === 'left' && yaw < -12) resolve(true);
-                else if (dir === 'right' && yaw > 12) resolve(true);
-                else if (dir === 'center' && Math.abs(yaw) < 8) resolve(true);
-                else setTimeout(check, 300);
+                if (yaw === null) {
+                    setTimeout(check, 400);
+                    return;
+                }
+
+                // console.log(`Script 1 - Pose ${dir}: yaw = ${yaw.toFixed(1)}`);
+
+                // Threshold yang sama dengan Script 2 (atau lebih longgar)
+                if ((dir === 'left' && yaw < -6) || // Sama dengan Script 2
+                    (dir === 'right' && yaw > 6) || // Sama dengan Script 2
+                    (dir === 'center' && Math.abs(yaw) < 10)) { // Sama dengan Script 2
+                    resolve(true);
+                } else {
+                    setTimeout(check, 400);
+                }
             };
             check();
         });
@@ -953,6 +992,8 @@ $this->title = 'Expirience';
             alert('Model belum siap!');
             return;
         }
+
+        // console.log('Script 1 - Starting liveness detection...');
 
         document.getElementById('startLivenessBtn').disabled = true;
         const inst = document.getElementById('liveness-instruction');
@@ -965,17 +1006,17 @@ $this->title = 'Expirience';
             {
                 text: 'Lihat ke kiri',
                 dir: 'left',
-                timeout: 5000
+                timeout: 10000
             },
             {
                 text: 'Lihat ke kanan',
                 dir: 'right',
-                timeout: 5000
+                timeout: 10000
             },
             {
                 text: 'Kembali ke tengah',
                 dir: 'center',
-                timeout: 4000
+                timeout: 5000
             }
         ];
 
@@ -985,8 +1026,10 @@ $this->title = 'Expirience';
                 await new Promise(r => setTimeout(r, s.timeout));
                 continue;
             }
+
             inst.innerHTML = `<div class="inline-block px-3 py-1 text-sm text-white bg-orange-600 rounded-full">${s.text}</div>`;
             const ok = await waitForPose(s.dir, s.timeout);
+
             if (!ok) {
                 inst.innerHTML = `<div class="inline-block px-3 py-1 text-sm text-white bg-red-600 rounded-full">Gagal: ${s.text}</div>`;
                 setTimeout(() => {
@@ -998,97 +1041,159 @@ $this->title = 'Expirience';
 
         inst.innerHTML = `<div class="inline-block px-3 py-1 text-sm text-white bg-green-600 rounded-full">Liveness lolos!</div>`;
         livenessPassed = true;
+        // console.log('✓ Script 1 - Liveness passed');
 
-        // HITUNG & TAMPILKAN DESCRIPTOR
         await computeAndSaveDescriptor();
     }
 
-    // HITUNG & SIMPAN DESCRIPTOR + TAMPILKAN DI CONSOLE
+    // HITUNG & SIMPAN DESCRIPTOR
     async function computeAndSaveDescriptor() {
         try {
-            // Pastikan faceRecognitionNet sudah loaded
+            console.log('Script 1 - Computing face descriptor...');
             await loadFaceRecognitionNet();
 
-            // BUAT CANVAS 300x300 SAMA SEPERTI SCRIPT 2
+            // BUAT CANVAS DENGAN SIZE NATURAL VIDEO
             const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = 300;
-            tempCanvas.height = 300;
+            tempCanvas.width = video.videoWidth;
+            tempCanvas.height = video.videoHeight;
             const tempCtx = tempCanvas.getContext('2d');
 
-            // CROP VIDEO KE 300x300 (sama seperti di takeVerifiedPhoto)
-            const videoWidth = video.videoWidth;
-            const videoHeight = video.videoHeight;
-            const size = Math.min(videoWidth, videoHeight);
-            const offsetX = (videoWidth - size) / 2;
-            const offsetY = (videoHeight - size) / 2;
+            // Draw video TANPA CROPPING, natural size
+            tempCtx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
 
-            tempCtx.drawImage(video, offsetX, offsetY, size, size, 0, 0, 300, 300);
+            // console.log('SCRIPT 1 - Natural video size:', video.videoWidth, 'x', video.videoHeight);
+            // console.log('SCRIPT 1 - Aspect ratio:', (video.videoWidth / video.videoHeight).toFixed(2));
 
-            // PAKSA TINY DETECTOR PADA CANVAS 300x300 (SAMA DENGAN SCRIPT 2)
+            // Gunakan fungsi optimized descriptor (SAMA dengan Script 2)
+            const descriptor = await getOptimizedFaceDescriptor(tempCanvas);
+            const descriptorString = Array.from(descriptor).join(',');
+
+            // console.log('%c[SCRIPT 1] Optimized descriptor', 'color: green; font-weight: bold;');
+            // console.log('Descriptor length:', descriptor.length);
+            // console.log('First 5 values:', Array.from(descriptor).slice(0, 5));
+            // console.log('Descriptor mean:',
+            //     Array.from(descriptor).reduce((a, b) => a + b, 0) / descriptor.length);
+
+            document.getElementById('livenessPassed').value = descriptorString;
+
+            // Untuk display, pakai contain (sama seperti Script 2)
+            takeVerifiedPhoto();
+        } catch (err) {
+            console.error('Script 1 - Error compute descriptor:', err);
+            alert('Gagal menghitung descriptor wajah: ' + err.message);
+        }
+    }
+
+    // FUNGSI OPTIMIZED FACE DESCRIPTOR (SAMA dengan Script 2)
+    async function getOptimizedFaceDescriptor(imageElement) {
+        try {
+            // console.log('Script 1 - Generating optimized descriptor...');
+
+            // Step 1: Standardize image (SAMA dengan Script 2)
+            const standardizedCanvas = standardizeImageForFaceDetection(imageElement);
+            // console.log('Script 1 - Standardized size:',
+            //     standardizedCanvas.width, 'x', standardizedCanvas.height);
+
+            // Step 2: Deteksi dengan settings optimal (SAMA dengan Script 2)
             const detection = await faceapi
-                .detectSingleFace(tempCanvas, new faceapi.TinyFaceDetectorOptions({
-                    inputSize: 320,
-                    scoreThreshold: 0.4
-                }))
+                .detectSingleFace(standardizedCanvas,
+                    new faceapi.TinyFaceDetectorOptions({
+                        inputSize: 416,
+                        scoreThreshold: 0.3
+                    }))
                 .withFaceLandmarks()
                 .withFaceDescriptor();
 
             if (!detection) {
-                alert('Wajah tidak terdeteksi saat menghitung descriptor');
-                return;
+                throw new Error('Wajah tidak terdeteksi pada gambar standar');
             }
 
-            const descriptor = detection.descriptor;
-            const descriptorArray = Array.from(descriptor);
-            const descriptorString = descriptorArray.join(',');
+            // console.log('✓ Script 1 - Optimized descriptor generated');
+            // console.log('Detection score:', detection.detection.score);
 
-            // TAMPILKAN DI CONSOLE
-            console.log('%c[FACE DESCRIPTOR Script 1] Liveness lolos!', 'color: green; font-weight: bold;');
-            console.log('Descriptor (128 float):', descriptorArray);
-            console.log('String (untuk DB):', descriptorString);
-            console.log('Face detection pada gambar: 300x300 (cropped)');
+            return detection.descriptor;
 
-            // MASUKKAN KE INPUT
-            const input = document.getElementById('livenessPassed');
-            input.value = descriptorString;
-            console.log('Input #livenessPassed di-set ke:', input.value.substring(0, 100) + '...');
+        } catch (error) {
+            // console.error('Script 1 - Error in getOptimizedFaceDescriptor:', error);
 
-            // Ambil foto dengan cropping
-            takeVerifiedPhoto();
-        } catch (err) {
-            console.error('Error compute descriptor:', err);
-            alert('Gagal menghitung descriptor wajah');
+            // // Fallback: coba metode biasa (SAMA dengan Script 2)
+            // console.log('Script 1 - Trying fallback detection...');
+            const canvas = document.createElement('canvas');
+            canvas.width = imageElement.width;
+            canvas.height = imageElement.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(imageElement, 0, 0);
+
+            const fallbackDetection = await faceapi
+                .detectSingleFace(canvas,
+                    new faceapi.TinyFaceDetectorOptions({
+                        inputSize: 416,
+                        scoreThreshold: 0.3
+                    }))
+                .withFaceLandmarks()
+                .withFaceDescriptor();
+
+            if (!fallbackDetection) {
+                throw new Error('Wajah tidak terdeteksi sama sekali');
+            }
+
+            return fallbackDetection.descriptor;
         }
     }
 
+    // FUNGSI STANDARD PREPROCESSING (SAMA dengan Script 2)
+    function standardizeImageForFaceDetection(img) {
+        const targetSize = 500;
+
+        const canvas = document.createElement('canvas');
+        const scale = Math.min(targetSize / img.width, targetSize / img.height);
+        const width = Math.round(img.width * scale);
+        const height = Math.round(img.height * scale);
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+
+        // SAMA dengan Script 2 (tanpa filter untuk konsistensi)
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // console.log(`Script 1 - Image standardized: ${img.width}x${img.height} → ${width}x${height}`);
+        return canvas;
+    }
+
     function takeVerifiedPhoto() {
-        // Buat canvas untuk cropping
+        // Buat canvas untuk display 300x300 dengan CONTAIN
         const c = document.createElement('canvas');
-        c.width = 300; // Ukuran akhir kotak
-        c.height = 300; // Ukuran akhir kotak
+        c.width = 300;
+        c.height = 300;
         const ctx = c.getContext('2d');
 
-        // Hitung ukuran cropping
-        const videoWidth = video.videoWidth;
-        const videoHeight = video.videoHeight;
-        const size = Math.min(videoWidth, videoHeight); // Ambil sisi terpendek
-        const offsetX = (videoWidth - size) / 2;
-        const offsetY = (videoHeight - size) / 2;
+        // Hitung scaling untuk CONTAIN (sama seperti Script 2)
+        const scale = Math.min(300 / video.videoWidth, 300 / video.videoHeight);
+        const scaledWidth = video.videoWidth * scale;
+        const scaledHeight = video.videoHeight * scale;
+        const offsetX = (300 - scaledWidth) / 2;
+        const offsetY = (300 - scaledHeight) / 2;
 
-        // Draw gambar dengan cropping tengah
-        ctx.drawImage(video, offsetX, offsetY, size, size, 0, 0, 300, 300);
+        // Gambar dengan CONTAIN + padding hitam (sama seperti Script 2)
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, 300, 300);
+        ctx.drawImage(video, offsetX, offsetY, scaledWidth, scaledHeight);
 
-        const dataUri = c.toDataURL('image/jpeg', 0.8);
+        const dataUri = c.toDataURL('image/jpeg', 0.9);
 
-        // Tampilkan hasil yang sudah di-crop
+        // Tampilkan hasil dengan CONTAIN (sama seperti Script 2)
         document.getElementById('snapshotResult').innerHTML =
-            `<div style="width: 300px; height: 300px; overflow: hidden; border-radius: 8px; margin: 0 auto;">
-                <img src="${dataUri}" style="width: 100%; height: 100%; object-fit: cover;" />
+            `<div style="width: 300px; height: 300px; overflow: hidden; border-radius: 8px; margin: 0 auto; background: black;">
+                <img src="${dataUri}" style="width: 100%; height: 100%; object-fit: contain;" />
             </div>`;
 
         document.getElementById('faceData').value = dataUri;
         document.getElementById('results').classList.remove('hidden');
         document.getElementById('faceControls').style.display = 'flex';
+
+        // console.log('✓ Script 1 - Photo taken and displayed');
     }
 
     function handleSubmit() {
