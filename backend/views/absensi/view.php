@@ -131,12 +131,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
 
-                [
-                    'label' => 'similarity',
-                    'value' => function ($model) {
-                        return $model->similarity ?? '-';
-                    }
-                ],
+                // Versi untuk Diupdate Oleh
 
                 [
                     'attribute' => 'created_at',
@@ -176,6 +171,8 @@ $latitude_now = $model->latitude;
 $longitude_now = $model->longitude;
 $latitude_penempatan = strval($alamat->latitude);
 $longitude_penempatan = strval($alamat->longtitude);
+// $latitude_now = "-0.350190";
+// $longitude_now = "100.372248";
 
 // Debugging: Pastikan nilai-nilai ini benar
 echo "<script>console.log('Now: {$latitude_now}, {$longitude_now}, Penempatan: {$latitude_penempatan}, {$longitude_penempatan}');</script>";

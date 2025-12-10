@@ -54,7 +54,13 @@ use yii\widgets\ActiveForm;
                     <?php foreach ($detailModels as $index => $detailModel): ?>
                         <div class="mb-2 detail-item" data-index="<?= $index ?>">
                             <?= $form->field($detailModel, "[$index]tanggal")->input('date', ['class' => 'form-control form-control-sm'])->label('Tanggal') ?>
-
+                            <?= $form->field($detailModel, "[$index]keterangan")->textInput(['class' => 'form-control form-control-sm', 'placeholder' => 'Keterangan'])->label('Keterangan') ?>
+                            <div>
+                                <label>Status:</label>
+                                <?= Html::radio("DetailCuti[$index][status]", 0, ['label' => 'Pending', 'class' => 'form-check-input', 'id' => "status_pending_$index"]) ?>
+                                <?= Html::radio("DetailCuti[$index][status]", 1, ['label' => 'Disetujui', 'class' => 'form-check-input', 'id' => "status_approved_$index"]) ?>
+                                <?= Html::radio("DetailCuti[$index][status]", 2, ['label' => 'Ditolak', 'class' => 'form-check-input', 'id' => "status_rejected_$index"]) ?>
+                            </div>
                             <button type="button" class="mt-1 btn btn-danger btn-sm remove-detail" data-index="<?= $index ?>">Hapus</button>
                             <hr>
                         </div>
@@ -102,7 +108,24 @@ $('#add-detail').click(function() {
         <label for="detailcuti-\${index}-tanggal">Tanggal</label>
         <input type="date" id="detailcuti-\${index}-tanggal" name="DetailCuti[\${index}][tanggal]" class="form-control form-control-sm" />
 
-        
+        <label for="detailcuti-\${index}-keterangan" class="mt-2">Keterangan</label>
+        <input type="text" id="detailcuti-\${index}-keterangan" name="DetailCuti[\${index}][keterangan]" class="form-control form-control-sm" placeholder="Keterangan" />
+
+        <div class="mt-2">
+            <label>Status:</label>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="DetailCuti[\${index}][status]" id="status_pending_\${index}" value="0" checked>
+                <label class="form-check-label" for="status_pending_\${index}">Pending</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="DetailCuti[\${index}][status]" id="status_approved_\${index}" value="1">
+                <label class="form-check-label" for="status_approved_\${index}">Disetujui</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="DetailCuti[\${index}][status]" id="status_rejected_\${index}" value="2">
+                <label class="form-check-label" for="status_rejected_\${index}">Ditolak</label>
+            </div>
+        </div>
 
         <button type="button" class="mt-1 btn btn-danger btn-sm remove-detail" data-index="\${index}">Hapus</button>
         <hr>

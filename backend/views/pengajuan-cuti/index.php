@@ -18,12 +18,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php Pjax::begin(); ?>
 
-<!-- <div class="costume-container">
+<div class="costume-container">
     <p class="">
-        <?php // Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) 
-        ?>
+        <?= Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) ?>
     </p>
-</div> -->
+</div>
 
 
 <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
