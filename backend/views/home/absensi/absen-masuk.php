@@ -38,7 +38,8 @@ $modalStyles = [
 
 $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full grid place-items-center';
 ?>
-
+<!-- Tambahkan di head -->
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3"></script>
@@ -115,7 +116,8 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                                 alt="Screenshot Wajah">
                         </div>
 
-                        <input type="hidden" id="faceData-popup-modal" name="foto_masuk">
+                        <input type="text" id="faceData-popup-modal" name="foto_masuk">
+                        <input type="text" id="faceDescriptor-popup-modal" name="face_descriptor">
 
                         <div class="flex justify-end mt-4 space-x-2">
                             <button type="button" onclick="resetLiveness('popup-modal')"
@@ -424,11 +426,3 @@ echo $this->render('utils/_script_timeandlocation.php', [
     'manual_shift' => $manual_shift,
 ]);
 ?>
-
-<!-- <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script> -->
-<!-- <script> -->
-<!-- // const MODEL_URL = '<?php //Yii::getAlias('@root'); 
-                            ?>/panel/models'; -->
-<!-- // let isModelsLoaded = false; -->
-<!-- // let isVerifying = false; -->
-<!-- // let currentModalId = 'popup-modal'; -->

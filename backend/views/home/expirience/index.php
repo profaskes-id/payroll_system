@@ -757,468 +757,6 @@ $this->title = 'Expirience';
 
 
 
-<!-- script 1 - FIXED VERSION (Match with Script 2) -->
-<script>
-    const MODEL_URL = '<?= Yii::getAlias('@root'); ?>/panel/models';
-    let video, canvas, ctx, detectionInterval;
-    let livenessPassed = false;
-    let isModelsLoaded = false;
-    let faceRecognitionNetLoaded = false;
-    let overlayCtx = null; // ← TAMBAHKAN INI
-
-    // Load hanya tiny + landmark
-    async function loadModels() {
-        if (isModelsLoaded) return;
-        try {
-            // console.log('Loading face detection models (Script 1)...');
-            await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
-            await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
-            isModelsLoaded = true;
-            // console.log('✓ Face detection models loaded (Script 1)');
-        } catch (err) {
-            // console.error('Failed to load models:', err);
-            alert('Gagal load model: ' + err.message);
-        }
-    }
-
-    async function loadFaceRecognitionNet() {
-        if (faceRecognitionNetLoaded) return;
-        try {
-            // console.log('Loading face recognition net (Script 1)...');
-            await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
-            faceRecognitionNetLoaded = true;
-            // console.log('✓ Face recognition net loaded (Script 1)');
-        } catch (err) {
-            // console.error('Failed to load face recognition net:', err);
-            alert('Gagal load faceRecognitionNet: ' + err.message);
-        }
-    }
-
-    function openFaceModal() {
-        document.getElementById('faceModal').classList.remove('hidden');
-        resetCameraView();
-        loadModels().then(() => {
-            startCamera();
-            startFaceOverlay();
-        });
-    }
-
-    function closeModal() {
-        document.getElementById('faceModal').classList.add('hidden');
-        stopCamera();
-        stopFaceOverlay();
-        document.getElementById('results').classList.add('hidden');
-        document.getElementById('faceControls').style.display = 'none';
-    }
-
-    function startCamera() {
-        video = document.getElementById('video');
-        canvas = document.getElementById('overlay');
-        ctx = canvas.getContext('2d');
-        overlayCtx = ctx;
-
-        // UBAH CSS untuk 4:3 (300x225)
-        video.style.transform = 'scaleX(1)';
-        video.style.width = '300px';
-        video.style.height = '225px'; // ← UBAH: 300 jadi 225 (4:3)
-        video.style.objectFit = 'contain';
-        video.style.borderRadius = '8px';
-        video.style.overflow = 'hidden';
-        video.style.backgroundColor = 'black';
-
-        canvas.style.width = '300px';
-        canvas.style.height = '225px'; // ← UBAH: 300 jadi 225
-        canvas.style.objectFit = 'contain';
-        canvas.style.borderRadius = '8px';
-        canvas.style.position = 'absolute';
-        canvas.style.top = '0';
-        canvas.style.left = '0';
-        canvas.style.backgroundColor = 'transparent';
-
-        navigator.mediaDevices.getUserMedia({
-            video: {
-                facingMode: 'user',
-                width: {
-                    min: 240, // ← TAMBAHKAN
-                    ideal: 300, // ← UBAH: 640 jadi 300
-                    max: 400 // ← TAMBAHKAN
-                },
-                height: {
-                    min: 180, // ← TAMBAHKAN (4:3 dari 240)
-                    ideal: 225, // ← UBAH: 480 jadi 225
-                    max: 300 // ← TAMBAHKAN
-                }
-                // Tetap TANPA aspectRatio constraint!
-            }
-        }).then(stream => {
-            video.srcObject = stream;
-            video.onloadedmetadata = () => {
-                video.play();
-
-                // Tetap set canvas size sesuai video NATURAL
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-
-                // console.log('Script 1 - Camera started, natural size:',
-                //     video.videoWidth, 'x', video.videoHeight,
-                //     'Display: 300x225 (4:3)');
-            };
-        }).catch(err => {
-            // console.error('Camera error:', err);
-            alert('Kamera error: ' + err.message);
-        });
-    }
-
-    function stopCamera() {
-        if (video?.srcObject) {
-            video.srcObject.getTracks().forEach(t => t.stop());
-            // console.log('Script 1 - Camera stopped');
-        }
-    }
-
-    function startFaceOverlay() {
-        if (!isModelsLoaded || !video) return;
-        stopFaceOverlay();
-
-        detectionInterval = setInterval(async () => {
-            if (!video || video.paused || video.ended) return;
-
-            try {
-                const detections = await faceapi
-                    .detectAllFaces(video,
-                        // UBAH INI ↓↓↓ (SAMA dengan Script 2)
-                        new faceapi.TinyFaceDetectorOptions({
-                            inputSize: 416, // SAMA: 416 bukan 320
-                            scoreThreshold: 0.3 // SAMA: 0.3 bukan 0.4
-                        }));
-
-                const resized = faceapi.resizeResults(detections, {
-                    width: 300,
-                    height: 300
-                });
-
-                if (overlayCtx) {
-                    overlayCtx.clearRect(0, 0, 300, 300);
-                    // faceapi.draw.drawDetections(canvas, resized);
-                }
-            } catch (err) {
-                // console.warn('Overlay error:', err);
-            }
-        }, 500); // Sedikit lebih lambat untuk performa
-    }
-
-    function stopFaceOverlay() {
-        if (detectionInterval) {
-            clearInterval(detectionInterval);
-            detectionInterval = null;
-        }
-        if (overlayCtx) {
-            overlayCtx.clearRect(0, 0, 300, 300);
-        }
-    }
-
-    function resetCameraView() {
-        document.getElementById('results').classList.add('hidden');
-        document.getElementById('faceControls').style.display = 'none';
-        document.getElementById('snapshotResult').innerHTML = '';
-        document.getElementById('faceData').value = '';
-        document.getElementById('livenessPassed').value = '0';
-        livenessPassed = false;
-        document.getElementById('liveness-instruction').innerHTML =
-            '<div class="inline-block px-3 py-1 text-sm text-white bg-black rounded-full bg-opacity-70">Tekan "Mulai Verifikasi"</div>';
-        document.getElementById('startLivenessBtn').disabled = false;
-    }
-
-    async function detectHeadPose() {
-        if (!isModelsLoaded) return null;
-        try {
-            const detection = await faceapi
-                .detectSingleFace(video,
-                    // UBAH INI ↓↓↓ (SAMA dengan Script 2)
-                    new faceapi.TinyFaceDetectorOptions({
-                        inputSize: 416, // SAMA: 416
-                        scoreThreshold: 0.3 // SAMA: 0.3
-                    }))
-                .withFaceLandmarks();
-
-            if (!detection) return null;
-
-            const l = detection.landmarks;
-            const leftEye = l.getLeftEye()[0];
-            const rightEye = l.getRightEye()[3];
-            const nose = l.getNose()[3];
-            const eyeDist = rightEye.x - leftEye.x;
-
-            // Formula yang sama dengan Script 2
-            const yaw = ((rightEye.x - nose.x) - (nose.x - leftEye.x)) / eyeDist * 100;
-            return yaw;
-        } catch (err) {
-            console.warn('Head pose error:', err);
-            return null;
-        }
-    }
-
-    async function waitForPose(dir, timeout = 5000) {
-        return new Promise(resolve => {
-            const start = Date.now();
-            const check = async () => {
-                if (Date.now() - start > timeout) {
-                    return resolve(false);
-                }
-
-                const yaw = await detectHeadPose();
-                if (yaw === null) {
-                    setTimeout(check, 400);
-                    return;
-                }
-
-                // console.log(`Script 1 - Pose ${dir}: yaw = ${yaw.toFixed(1)}`);
-
-                // Threshold yang sama dengan Script 2 (atau lebih longgar)
-                if ((dir === 'left' && yaw < -6) || // Sama dengan Script 2
-                    (dir === 'right' && yaw > 6) || // Sama dengan Script 2
-                    (dir === 'center' && Math.abs(yaw) < 10)) { // Sama dengan Script 2
-                    resolve(true);
-                } else {
-                    setTimeout(check, 400);
-                }
-            };
-            check();
-        });
-    }
-
-    async function startLiveness() {
-        if (!isModelsLoaded) {
-            alert('Model belum siap!');
-            return;
-        }
-
-        // console.log('Script 1 - Starting liveness detection...');
-
-        document.getElementById('startLivenessBtn').disabled = true;
-        const inst = document.getElementById('liveness-instruction');
-
-        const steps = [{
-                text: 'Tatap lurus',
-                dir: null,
-                timeout: 2000
-            },
-            {
-                text: 'Lihat ke kiri',
-                dir: 'left',
-                timeout: 10000
-            },
-            {
-                text: 'Lihat ke kanan',
-                dir: 'right',
-                timeout: 10000
-            },
-            {
-                text: 'Kembali ke tengah',
-                dir: 'center',
-                timeout: 5000
-            }
-        ];
-
-        for (let s of steps) {
-            if (!s.dir) {
-                inst.innerHTML = `<div class="inline-block px-3 py-1 text-sm text-white bg-blue-600 rounded-full">${s.text}</div>`;
-                await new Promise(r => setTimeout(r, s.timeout));
-                continue;
-            }
-
-            inst.innerHTML = `<div class="inline-block px-3 py-1 text-sm text-white bg-orange-600 rounded-full">${s.text}</div>`;
-            const ok = await waitForPose(s.dir, s.timeout);
-
-            if (!ok) {
-                inst.innerHTML = `<div class="inline-block px-3 py-1 text-sm text-white bg-red-600 rounded-full">Gagal: ${s.text}</div>`;
-                setTimeout(() => {
-                    document.getElementById('startLivenessBtn').disabled = false;
-                }, 2000);
-                return;
-            }
-        }
-
-        inst.innerHTML = `<div class="inline-block px-3 py-1 text-sm text-white bg-green-600 rounded-full">Liveness lolos!</div>`;
-        livenessPassed = true;
-        // console.log('✓ Script 1 - Liveness passed');
-
-        await computeAndSaveDescriptor();
-    }
-
-    // HITUNG & SIMPAN DESCRIPTOR
-    async function computeAndSaveDescriptor() {
-        try {
-            console.log('Script 1 - Computing face descriptor...');
-            await loadFaceRecognitionNet();
-
-            // BUAT CANVAS DENGAN SIZE NATURAL VIDEO
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = video.videoWidth;
-            tempCanvas.height = video.videoHeight;
-            const tempCtx = tempCanvas.getContext('2d');
-
-            // Draw video TANPA CROPPING, natural size
-            tempCtx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-
-            // console.log('SCRIPT 1 - Natural video size:', video.videoWidth, 'x', video.videoHeight);
-            // console.log('SCRIPT 1 - Aspect ratio:', (video.videoWidth / video.videoHeight).toFixed(2));
-
-            // Gunakan fungsi optimized descriptor (SAMA dengan Script 2)
-            const descriptor = await getOptimizedFaceDescriptor(tempCanvas);
-            const descriptorString = Array.from(descriptor).join(',');
-
-            // console.log('%c[SCRIPT 1] Optimized descriptor', 'color: green; font-weight: bold;');
-            // console.log('Descriptor length:', descriptor.length);
-            // console.log('First 5 values:', Array.from(descriptor).slice(0, 5));
-            // console.log('Descriptor mean:',
-            //     Array.from(descriptor).reduce((a, b) => a + b, 0) / descriptor.length);
-
-            document.getElementById('livenessPassed').value = descriptorString;
-
-            // Untuk display, pakai contain (sama seperti Script 2)
-            takeVerifiedPhoto();
-        } catch (err) {
-            console.error('Script 1 - Error compute descriptor:', err);
-            alert('Gagal menghitung descriptor wajah: ' + err.message);
-        }
-    }
-
-    // FUNGSI OPTIMIZED FACE DESCRIPTOR (SAMA dengan Script 2)
-    async function getOptimizedFaceDescriptor(imageElement) {
-        try {
-            // console.log('Script 1 - Generating optimized descriptor...');
-
-            // Step 1: Standardize image (SAMA dengan Script 2)
-            const standardizedCanvas = standardizeImageForFaceDetection(imageElement);
-            // console.log('Script 1 - Standardized size:',
-            //     standardizedCanvas.width, 'x', standardizedCanvas.height);
-
-            // Step 2: Deteksi dengan settings optimal (SAMA dengan Script 2)
-            const detection = await faceapi
-                .detectSingleFace(standardizedCanvas,
-                    new faceapi.TinyFaceDetectorOptions({
-                        inputSize: 416,
-                        scoreThreshold: 0.3
-                    }))
-                .withFaceLandmarks()
-                .withFaceDescriptor();
-
-            if (!detection) {
-                throw new Error('Wajah tidak terdeteksi pada gambar standar');
-            }
-
-            // console.log('✓ Script 1 - Optimized descriptor generated');
-            // console.log('Detection score:', detection.detection.score);
-
-            return detection.descriptor;
-
-        } catch (error) {
-            // console.error('Script 1 - Error in getOptimizedFaceDescriptor:', error);
-
-            // // Fallback: coba metode biasa (SAMA dengan Script 2)
-            // console.log('Script 1 - Trying fallback detection...');
-            const canvas = document.createElement('canvas');
-            canvas.width = imageElement.width;
-            canvas.height = imageElement.height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(imageElement, 0, 0);
-
-            const fallbackDetection = await faceapi
-                .detectSingleFace(canvas,
-                    new faceapi.TinyFaceDetectorOptions({
-                        inputSize: 416,
-                        scoreThreshold: 0.3
-                    }))
-                .withFaceLandmarks()
-                .withFaceDescriptor();
-
-            if (!fallbackDetection) {
-                throw new Error('Wajah tidak terdeteksi sama sekali');
-            }
-
-            return fallbackDetection.descriptor;
-        }
-    }
-
-    // FUNGSI STANDARD PREPROCESSING (SAMA dengan Script 2)
-    function standardizeImageForFaceDetection(img) {
-        const targetSize = 500;
-
-        const canvas = document.createElement('canvas');
-        const scale = Math.min(targetSize / img.width, targetSize / img.height);
-        const width = Math.round(img.width * scale);
-        const height = Math.round(img.height * scale);
-
-        canvas.width = width;
-        canvas.height = height;
-
-        const ctx = canvas.getContext('2d');
-
-        // SAMA dengan Script 2 (tanpa filter untuk konsistensi)
-        ctx.drawImage(img, 0, 0, width, height);
-
-        // console.log(`Script 1 - Image standardized: ${img.width}x${img.height} → ${width}x${height}`);
-        return canvas;
-    }
-
-    function takeVerifiedPhoto() {
-        // Buat canvas untuk display 300x300 dengan CONTAIN
-        const c = document.createElement('canvas');
-        c.width = 300;
-        c.height = 300;
-        const ctx = c.getContext('2d');
-
-        // Hitung scaling untuk CONTAIN (sama seperti Script 2)
-        const scale = Math.min(300 / video.videoWidth, 300 / video.videoHeight);
-        const scaledWidth = video.videoWidth * scale;
-        const scaledHeight = video.videoHeight * scale;
-        const offsetX = (300 - scaledWidth) / 2;
-        const offsetY = (300 - scaledHeight) / 2;
-
-        // Gambar dengan CONTAIN + padding hitam (sama seperti Script 2)
-        ctx.fillStyle = 'black';
-        ctx.fillRect(0, 0, 300, 300);
-        ctx.drawImage(video, offsetX, offsetY, scaledWidth, scaledHeight);
-
-        const dataUri = c.toDataURL('image/jpeg', 0.9);
-
-        // Tampilkan hasil dengan CONTAIN (sama seperti Script 2)
-        document.getElementById('snapshotResult').innerHTML =
-            `<div style="width: 300px; height: 300px; overflow: hidden; border-radius: 8px; margin: 0 auto; background: black;">
-                <img src="${dataUri}" style="width: 100%; height: 100%; object-fit: contain;" />
-            </div>`;
-
-        document.getElementById('faceData').value = dataUri;
-        document.getElementById('results').classList.remove('hidden');
-        document.getElementById('faceControls').style.display = 'flex';
-
-        // console.log('✓ Script 1 - Photo taken and displayed');
-    }
-
-    function handleSubmit() {
-        if (!livenessPassed) {
-            alert('Liveness belum lolos!');
-            return false;
-        }
-
-        const descriptorValue = document.getElementById('livenessPassed').value;
-        if (!descriptorValue || descriptorValue === '0') {
-            alert('Descriptor wajah belum dihitung!');
-            return false;
-        }
-
-        const btn = document.getElementById('submitButton');
-        btn.disabled = true;
-        document.getElementById('buttonText').classList.add('hidden');
-        document.getElementById('loadingSpinner').classList.remove('hidden');
-        document.getElementById('face-form').submit();
-    }
-
-    window.onclick = e => {
-        if (e.target === document.getElementById('faceModal')) closeModal();
-    };
-</script>
 
 <script>
     function deleteClick(e) {
@@ -1228,4 +766,459 @@ $this->title = 'Expirience';
             parentForm.submit();
         });
     }
+</script>
+
+<style>
+    /* MediaPipe Liveness Styles */
+    .liveness-container {
+        position: relative;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .liveness-video-container {
+        position: relative;
+        width: 100%;
+        background: #000;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .liveness-video {
+        width: 100%;
+        height: auto;
+
+        display: block;
+    }
+
+    .liveness-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+
+    .liveness-instruction {
+        position: absolute;
+        top: 10px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        z-index: 10;
+    }
+
+    .liveness-status {
+        padding: 8px 12px;
+        border-radius: 20px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        font-size: 12px;
+        display: inline-block;
+    }
+
+    .liveness-indicators {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin: 10px 0;
+    }
+
+    .liveness-indicator {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 14px;
+    }
+
+    .liveness-indicator span {
+        font-size: 18px;
+    }
+
+    #screenshotResult {
+        width: 100%;
+        max-height: 200px;
+        object-fit: contain;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+</style>
+
+
+<script>
+    const MODEL_URL = '<?= Yii::getAlias('@root'); ?>/panel/models';
+    // face js
+    // Global variable untuk face-api models
+    // Global state untuk face registration modal
+    const faceRegState = {
+        faceLandmarker: null,
+        video: null,
+        canvas: null,
+        canvasCtx: null,
+        runningMode: "IMAGE",
+        webcamRunning: false,
+        blinkVerified: false,
+        mouthVerified: false,
+        autoCaptured: false,
+        stream: null
+    };
+
+    // Buka modal register wajah
+    function openFaceModal() {
+        document.getElementById('faceModal').classList.remove('hidden');
+        resetFaceRegistration();
+    }
+
+    // Tutup modal
+    function closeModal() {
+        document.getElementById('faceModal').classList.add('hidden');
+        stopFaceRegistration();
+    }
+
+    // Reset semua state face registration
+    function resetFaceRegistration() {
+        const results = document.getElementById('results');
+        const controls = document.getElementById('controls');
+        const instruction = document.getElementById('liveness-instruction');
+        const startBtn = document.getElementById('startLivenessBtn');
+        const faceControls = document.getElementById('faceControls');
+
+        // Reset UI
+        results.classList.add('hidden');
+        faceControls.style.display = 'none';
+        startBtn.style.display = 'inline-block';
+        startBtn.textContent = 'Mulai Verifikasi';
+
+        // Reset state
+        faceRegState.blinkVerified = false;
+        faceRegState.mouthVerified = false;
+        faceRegState.autoCaptured = false;
+        faceRegState.webcamRunning = false;
+
+        // Clear form inputs
+        document.getElementById('faceData').value = '';
+        document.getElementById('livenessPassed').value = '0';
+
+        // Update instruction
+        instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-black rounded-full bg-opacity-70">Tekan "Mulai Verifikasi" untuk memulai</div>';
+
+        // Stop any existing stream
+        if (faceRegState.stream) {
+            faceRegState.stream.getTracks().forEach(track => track.stop());
+            faceRegState.stream = null;
+        }
+    }
+
+    // Stop face registration (stop camera)
+    function stopFaceRegistration() {
+        faceRegState.webcamRunning = false;
+
+        if (faceRegState.stream) {
+            faceRegState.stream.getTracks().forEach(track => track.stop());
+            faceRegState.stream = null;
+        }
+
+        const video = document.getElementById('video');
+        if (video) video.srcObject = null;
+    }
+
+    // Initialize MediaPipe Face Landmarker untuk face registration
+    async function initFaceRegistrationLandmarker() {
+        const vision = await import("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3");
+        const {
+            FaceLandmarker,
+            FilesetResolver
+        } = vision;
+
+        const filesetResolver = await FilesetResolver.forVisionTasks(
+            "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
+        );
+
+        faceRegState.faceLandmarker = await FaceLandmarker.createFromOptions(filesetResolver, {
+            baseOptions: {
+                modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+                delegate: "GPU"
+            },
+            outputFaceBlendshapes: true,
+            runningMode: faceRegState.runningMode,
+            numFaces: 1
+        });
+
+        console.log('Face Landmarker initialized for registration');
+    }
+
+    // Mulai verifikasi liveness untuk face registration
+    async function startLiveness() {
+        const video = document.getElementById('video');
+        const overlay = document.getElementById('overlay');
+        const instruction = document.getElementById('liveness-instruction');
+        const startBtn = document.getElementById('startLivenessBtn');
+        const results = document.getElementById('results');
+        const faceControls = document.getElementById('faceControls');
+
+        // Initialize Face Landmarker jika belum
+        if (!faceRegState.faceLandmarker) {
+            await initFaceRegistrationLandmarker();
+        }
+
+        try {
+            // Akses webcam
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    width: {
+                        ideal: 640
+                    },
+                    height: {
+                        ideal: 480
+                    },
+                    facingMode: "user"
+                }
+            });
+
+            faceRegState.stream = stream;
+            video.srcObject = stream;
+            faceRegState.webcamRunning = true;
+
+            // Setup canvas
+            video.addEventListener('loadeddata', () => {
+                overlay.width = video.videoWidth;
+                overlay.height = video.videoHeight;
+                faceRegState.canvasCtx = overlay.getContext('2d');
+            });
+
+            // Update UI
+            instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-black rounded-full bg-opacity-70">Silakan hadapkan wajah ke kamera</div>';
+            startBtn.textContent = 'Mendeteksi...';
+            startBtn.disabled = true;
+
+            // Reset state
+            faceRegState.blinkVerified = false;
+            faceRegState.mouthVerified = false;
+            faceRegState.autoCaptured = false;
+
+            // Mulai prediction loop
+            predictRegistrationWebcam();
+
+        } catch (error) {
+            console.error('Error accessing webcam:', error);
+            instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-red-500 rounded-full bg-opacity-90">Gagal mengakses kamera</div>';
+            startBtn.disabled = false;
+        }
+    }
+
+    // Prediction loop untuk face registration
+    async function predictRegistrationWebcam() {
+        if (!faceRegState.webcamRunning || !faceRegState.faceLandmarker) return;
+
+        const video = document.getElementById('video');
+        const instruction = document.getElementById('liveness-instruction');
+
+        if (!video || video.readyState !== 4) {
+            requestAnimationFrame(predictRegistrationWebcam);
+            return;
+        }
+
+        // Switch ke VIDEO mode jika perlu
+        if (faceRegState.runningMode === "IMAGE") {
+            faceRegState.runningMode = "VIDEO";
+            await faceRegState.faceLandmarker.setOptions({
+                runningMode: faceRegState.runningMode
+            });
+        }
+
+        // Detect face landmarks
+        const results = faceRegState.faceLandmarker.detectForVideo(video, performance.now());
+
+        // Process results
+        if (results.faceBlendshapes && results.faceBlendshapes.length > 0) {
+            const blend = results.faceBlendshapes[0].categories;
+            const jaw = blend.find(s => s.categoryName === "jawOpen")?.score || 0;
+            const blinkL = blend.find(s => s.categoryName === "eyeBlinkLeft")?.score || 0;
+            const blinkR = blend.find(s => s.categoryName === "eyeBlinkRight")?.score || 0;
+
+            // Update instruction berdasarkan progress
+            if (!faceRegState.blinkVerified) {
+                instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-blue-500 rounded-full bg-opacity-90">Silakan berkedip</div>';
+            } else if (!faceRegState.mouthVerified) {
+                instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-blue-500 rounded-full bg-opacity-90">Sekarang buka mulut</div>';
+            }
+
+            // Check for blink
+            if (!faceRegState.blinkVerified && blinkL > 0.5 && blinkR > 0.5) {
+                faceRegState.blinkVerified = true;
+                instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-green-500 rounded-full bg-opacity-90">✓ Berkedip terdeteksi!</div>';
+            }
+
+            // Check for mouth open
+            if (faceRegState.blinkVerified && !faceRegState.mouthVerified && jaw > 0.35) {
+                faceRegState.mouthVerified = true;
+                instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-green-500 rounded-full bg-opacity-90">✓ Mulut terbuka terdeteksi!</div>';
+
+                // Capture photo setelah delay
+                setTimeout(() => {
+                    captureRegistrationPhoto();
+                }, 1000);
+            }
+        }
+
+        // Continue loop
+        if (faceRegState.webcamRunning) {
+            requestAnimationFrame(predictRegistrationWebcam);
+        }
+    }
+
+    // Capture foto untuk registration
+    async function captureRegistrationPhoto() {
+        const video = document.getElementById('video');
+        const overlay = document.getElementById('overlay');
+        const snapshotResult = document.getElementById('snapshotResult');
+        const results = document.getElementById('results');
+        const faceControls = document.getElementById('faceControls');
+        const instruction = document.getElementById('liveness-instruction');
+
+        // Buat canvas untuk capture (tanpa mirror)
+        const captureCanvas = document.createElement('canvas');
+        const captureCtx = captureCanvas.getContext('2d');
+
+        captureCanvas.width = video.videoWidth;
+        captureCanvas.height = video.videoHeight;
+
+        // Capture frame (tanpa mirror)
+        captureCtx.drawImage(video, 0, 0);
+
+        // Get base64 data
+        const dataURL = captureCanvas.toDataURL('image/jpeg', 0.8);
+
+        // Tampilkan hasil
+        snapshotResult.innerHTML = `<img src="${dataURL}" class="w-full h-auto rounded" alt="Foto Wajah">`;
+
+        // Simpan ke form input
+        document.getElementById('faceData').value = dataURL;
+        document.getElementById('livenessPassed').value = '1';
+
+        // Extract face descriptor menggunakan face-api.js
+        const descriptor = await extractRegistrationFaceDescriptor(captureCanvas);
+
+        if (descriptor) {
+            // Tambahkan descriptor ke form (buat input hidden baru)
+            let descriptorInput = document.getElementById('faceDescriptor');
+            if (!descriptorInput) {
+                descriptorInput = document.createElement('input');
+                descriptorInput.type = 'hidden';
+                descriptorInput.id = 'faceDescriptor';
+                descriptorInput.name = 'Karyawan[face_descriptor]';
+                document.getElementById('face-form').appendChild(descriptorInput);
+            }
+            descriptorInput.value = JSON.stringify(Array.from(descriptor));
+        }
+
+        // Update UI
+        results.classList.remove('hidden');
+        faceControls.style.display = 'flex';
+        instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-green-500 rounded-full bg-opacity-90">✓ Verifikasi berhasil!</div>';
+
+        // Stop camera
+        stopFaceRegistration();
+
+        // Cleanup
+        captureCanvas.remove();
+    }
+
+    // Extract face descriptor untuk registration
+    async function extractRegistrationFaceDescriptor(canvasElement) {
+        try {
+            // Load face-api models jika belum
+            const modelsLoaded = await loadFaceApiModels();
+            if (!modelsLoaded) {
+                alert('Gagal memuat model deteksi wajah');
+                return null;
+            }
+
+            // Detect face
+            const detection = await faceapi.detectSingleFace(
+                canvasElement,
+                new faceapi.TinyFaceDetectorOptions()
+            ).withFaceLandmarks().withFaceDescriptor();
+
+            if (!detection) {
+                alert('Wajah tidak terdeteksi dalam foto. Silakan coba lagi.');
+                return null;
+            }
+
+            return detection.descriptor;
+
+        } catch (error) {
+            console.error('Error extracting face descriptor:', error);
+            alert('Error saat mendeteksi wajah. Silakan coba lagi.');
+            return null;
+        }
+    }
+
+    // Handle form submission untuk face registration
+    function handleSubmit() {
+        const form = document.getElementById('face-form');
+        const buttonText = document.getElementById('buttonText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const submitButton = document.getElementById('submitButton');
+
+        // Validasi
+        const faceData = document.getElementById('faceData').value;
+        const livenessPassed = document.getElementById('livenessPassed').value;
+
+        if (!faceData || livenessPassed !== '1') {
+            alert('Silakan selesaikan verifikasi wajah terlebih dahulu!');
+            return false;
+        }
+
+        // Tampilkan loading
+        buttonText.textContent = 'Menyimpan...';
+        loadingSpinner.classList.remove('hidden');
+        submitButton.disabled = true;
+
+        // Submit form
+        form.submit();
+    }
+
+    // Reset camera view (untuk ambil ulang)
+    function resetCameraView() {
+        const results = document.getElementById('results');
+        const faceControls = document.getElementById('faceControls');
+        const startBtn = document.getElementById('startLivenessBtn');
+
+        results.classList.add('hidden');
+        faceControls.style.display = 'none';
+        startBtn.style.display = 'inline-block';
+        startBtn.disabled = false;
+        startBtn.textContent = 'Mulai Verifikasi';
+
+        // Reset state
+        faceRegState.blinkVerified = false;
+        faceRegState.mouthVerified = false;
+        faceRegState.autoCaptured = false;
+
+        // Clear inputs
+        document.getElementById('faceData').value = '';
+        document.getElementById('livenessPassed').value = '0';
+
+        // Mulai ulang camera
+        startLiveness();
+    }
+
+    // Event listener untuk modal
+    document.addEventListener('DOMContentLoaded', function() {
+        // Close modal dengan ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Close modal ketika klik di luar
+        document.getElementById('faceModal').addEventListener('click', function(e) {
+            if (e.target.id === 'faceModal') {
+                closeModal();
+            }
+        });
+    });
 </script>
