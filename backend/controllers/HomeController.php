@@ -290,6 +290,7 @@ class HomeController extends Controller
         $karyawan = Karyawan::find()->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan])->one();
         $isAda = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
 
+
         $model->id_karyawan = $karyawan->id_karyawan;
         $model->tanggal = date('Y-m-d');
         $model->kode_status_hadir = "H";
@@ -301,7 +302,7 @@ class HomeController extends Controller
         $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
         $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
         $model->foto_masuk = Yii::$app->request->post('Absensi')['foto_masuk'] ?? null;
-        // Cek keterlambatan, sama seperti kode kamu
+        $model->liveness_passed = Yii::$app->request->post('Absensi')['liveness_passed'] ?? null;
         if ($jamKerjaKaryawan && $jamKerjaKaryawan->is_shift == 1) {
             if ($manual_shift == 1) {
                 $tanggalHariIni = date('Y-m-d');
@@ -364,7 +365,7 @@ class HomeController extends Controller
 
                 $similarity = $this->calculateFaceSimilarity(
                     $karyawan['liveness_passed'],
-                    $model['foto_masuk']
+                    $model['liveness_passed']
                 );
 
 
@@ -529,6 +530,7 @@ class HomeController extends Controller
             $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
             $model->alasan_terlambat = Yii::$app->request->post('Absensi')['alasan_terlambat'];
             $base64Image = Yii::$app->request->post('Absensi')['foto_masuk'] ?? '-';
+            $model->liveness_passed = Yii::$app->request->post('Absensi')['liveness_passed'] ?? null;
             $verificationFr = FaceRecognationHelper::cekVerificationFr();
 
 
@@ -570,7 +572,7 @@ class HomeController extends Controller
 
                     $similarity = $this->calculateFaceSimilarity(
                         $karyawan['liveness_passed'],
-                        $model['foto_masuk']
+                        $model['liveness_passed']
                     );
 
 
@@ -673,7 +675,8 @@ class HomeController extends Controller
             $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
             $model->alasan_terlalu_jauh = Yii::$app->request->post('Absensi')['alasan_terlalu_jauh'];
             $model->foto_masuk = Yii::$app->request->post('Absensi')['foto_masuk'] ?? null;
-            // Hanya lakukan pengecekan keterlambatan jika manual_shift == 1
+            $model->liveness_passed = Yii::$app->request->post('Absensi')['liveness_passed'] ?? null;
+
             $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
 
             if ($jamKerjaKaryawan && $jamKerjaKaryawan->is_shift == 1) {
@@ -753,7 +756,7 @@ class HomeController extends Controller
 
                     $similarity = $this->calculateFaceSimilarity(
                         $karyawan['liveness_passed'],
-                        $model['foto_masuk']
+                        $model['liveness_passed']
                     );
 
                     // Yii::debug("Kemiripan wajah: " . $similarity . "%");
@@ -905,138 +908,40 @@ class HomeController extends Controller
     protected function calculateFaceSimilarity($descriptor1, $descriptor2)
     {
 
+
         $apiUrl = 'http://face-recognation.profaskes.id/compare';
 
-        // ==============================================
-        // KONVERSI DESCRIPTOR KE ARRAY YANG VALID
-        // ==============================================
-
-        // Jika descriptor adalah string, coba decode dari JSON
-        if (is_string($descriptor1)) {
-            $decoded = json_decode($descriptor1, true);
-            $descriptor1 = (json_last_error() === JSON_ERROR_NONE) ? $decoded : explode(',', $descriptor1);
-        }
-
-        if (is_string($descriptor2)) {
-            $decoded = json_decode($descriptor2, true);
-            $descriptor2 = (json_last_error() === JSON_ERROR_NONE) ? $decoded : explode(',', $descriptor2);
-        }
-
-        // Jika descriptor adalah object, konversi ke array
-        if (is_object($descriptor1)) {
-            $descriptor1 = (array) $descriptor1;
-        }
-
-        if (is_object($descriptor2)) {
-            $descriptor2 = (array) $descriptor2;
-        }
-
-        // Pastikan descriptor adalah array
-        if (!is_array($descriptor1)) {
-            throw new InvalidArgumentException('descriptor1 harus berupa array');
-        }
-
-        if (!is_array($descriptor2)) {
-            throw new InvalidArgumentException('descriptor2 harus berupa array');
-        }
-
-        // Bersihkan array dari whitespace dan konversi ke float
-        $descriptor1 = array_map(function ($value) {
-            return is_numeric($value) ? (float) $value : 0.0;
-        }, $descriptor1);
-
-        $descriptor2 = array_map(function ($value) {
-            return is_numeric($value) ? (float) $value : 0.0;
-        }, $descriptor2);
-
-        // ==============================================
-        // LANJUTKAN DENGAN REQUEST KE API
-        // ==============================================
-
-        // Siapkan data yang akan dikirim
+        // Format descriptor sebagai string comma-separated
         $postData = [
-            'descriptor1' => array_values($descriptor1), // Pastikan array index numeric
-            'descriptor2' => array_values($descriptor2)
+            'descriptor1' => is_array($descriptor1) ? implode(',', $descriptor1) : $descriptor1,
+            'descriptor2' => is_array($descriptor2) ? implode(',', $descriptor2) : $descriptor2
         ];
 
-        // Debug: cek format data sebelum dikirim
-        Yii::info('Descriptor1 sample: ' . print_r(array_slice($descriptor1, 0, 5), true));
-        Yii::info('Descriptor2 sample: ' . print_r(array_slice($descriptor2, 0, 5), true));
-        Yii::info('Total items descriptor1: ' . count($descriptor1));
-        Yii::info('Total items descriptor2: ' . count($descriptor2));
-
-        // Encode data menjadi JSON
         $jsonData = json_encode($postData);
 
-        // Validasi JSON encoding
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exception('Gagal encode data ke JSON: ' . json_last_error_msg());
-        }
-
-        // Inisialisasi cURL
         $ch = curl_init($apiUrl);
-
-        // Set opsi cURL
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => $jsonData,
-            CURLOPT_HTTPHEADER => [
-                'Content-Type: application/json',
-                'Accept: application/json',
-                'Content-Length: ' . strlen($jsonData)
-            ],
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_CONNECTTIMEOUT => 10,
-            CURLOPT_SSL_VERIFYPEER => false, // Jika HTTPS tapi self-signed
-            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+            CURLOPT_TIMEOUT => 10,
         ]);
 
-        // Eksekusi request
         $response = curl_exec($ch);
-
-        // Cek error
-        if (curl_errno($ch)) {
-            $errorMsg = curl_error($ch);
-            $errno = curl_errno($ch);
-            curl_close($ch);
-            throw new Exception("cURL error ($errno): $errorMsg");
-        }
-
-        // Dapatkan HTTP status code
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        // Tutup koneksi cURL
         curl_close($ch);
 
-        // Cek HTTP status
         if ($httpCode !== 200) {
-            Yii::error("API returned HTTP $httpCode. Response: " . substr($response, 0, 500));
-            throw new Exception("Server merespon dengan status HTTP: $httpCode");
+            throw new Exception("API error: HTTP $httpCode");
         }
 
-        // Parse response JSON
         $result = json_decode($response, true);
 
-        // Validasi response
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            Yii::error('Invalid JSON response: ' . substr($response, 0, 500));
-            throw new Exception('Invalid JSON response from API: ' . json_last_error_msg());
-        }
-
-        // Debug: tampilkan seluruh response
-        Yii::info('API Response: ' . print_r($result, true));
-
-        // Cek jika ada error dari API
-        if (isset($result['error'])) {
-            throw new Exception('API Error: ' . $result['error']);
-        }
-
         if (!isset($result['similarity'])) {
-            throw new Exception('Similarity not found in API response. Response: ' . print_r($result, true));
+            throw new Exception('Invalid API response');
         }
 
-        // Return nilai similarity saja
         return (float) $result['similarity'];
     }
 

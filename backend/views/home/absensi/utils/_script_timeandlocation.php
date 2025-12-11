@@ -6,11 +6,6 @@
     let globatLong = 0;
 
 
-    // Variabel global untuk koordinat
-    let currentLat = 0;
-    let currentLon = 0;
-    let liveness_passed_fr = '';
-
     // DOM Elements
     const jam_masuk = todayJson?.today?.jam_masuk;
     const max_telat = todayJson?.karyawan?.max_terlambat;
@@ -169,46 +164,11 @@
 
     if (submitButton) {
         submitButton.addEventListener('click', function(e) {
+            closeModalFace('popup-modal');
 
-            let jenis = e.target.getAttribute('data-modalid') ?? '';
-            const modalId = e.target.getAttribute('data-modalid');
-            const faceData = document.getElementById('faceData-' + modalId)?.value;
-
-            if (!faceData) {
-                alert('Silakan ambil foto terlebih dahulu!');
-                return;
-            }
-
-            liveness_passed_fr = faceData;
-
-            // Update semua input koordinat di semua form
-            document.querySelectorAll('.foto_fr').forEach(el => el.value = faceData);
-
-            const alasanTerlambat = document.querySelector('#alasanTerlambat');
             const alasanterlalujauh = document.querySelector('#alasanterlalujauh');
+            const alasanTerlambat = document.querySelector('#alasanTerlambat');
 
-            stopCamera(jenis);
-            closeModal(jenis);
-
-            if (manual_shift == 0) {
-                // Check if Leaflet is available
-                if (typeof L === 'undefined') {
-                    console.error('Leaflet library not loaded!');
-                    alert('Error: Map library not loaded');
-                    return;
-                }
-
-                const from = L.latLng(globatLat, globatLong);
-                const to = L.latLng(AtasanKaryawanJson.latitude, AtasanKaryawanJson.longtitude);
-                const distance = from.distanceTo(to);
-
-                if (distance.toFixed(0) <= AtasanKaryawanJson.radius) {
-                    form.submit();
-                } else {
-                    if (alasanterlalujauh) alasanterlalujauh.classList.toggle('hidden');
-                }
-                return;
-            }
 
             // For non-manual shift, check time and distance
             const sekarang = new Date();
@@ -222,6 +182,7 @@
             const from = L.latLng(globatLat, globatLong);
             const to = L.latLng(AtasanKaryawanJson.latitude, AtasanKaryawanJson.longtitude);
             const distance = from.distanceTo(to);
+
 
             if (isSebelumBatas(jam, menit, detik, batasJam, batasMenit, batasDetik)) {
                 if (distance.toFixed(0) <= AtasanKaryawanJson.radius) {

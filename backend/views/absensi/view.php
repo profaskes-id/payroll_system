@@ -148,6 +148,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
 
+                [
+                    'label' => 'Similarity',
+                    'value' => function ($model) {
+                        return $model->similarity . '%' ?? '-';
+                    }
+                ]
+
 
 
             ],

@@ -37,7 +37,8 @@ use yii\widgets\ActiveForm;
                 $formAbsen = ActiveForm::begin(['method' => 'post', 'id' => 'my-form',  'action' => ['home/absen-terlalujauh']]); ?>
                 <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'coordinate lat'])->label(false) ?>
                 <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'coordinate lon'])->label(false) ?>
-                <?= $formAbsen->field($model, 'foto_masuk')->hiddenInput(['id' => 'foto_masuk', 'class' => 'foto_fr'])->label(false) ?>
+                <?= $formAbsen->field($model, 'foto_masuk')->hiddenInput(['id' => 'foto_masuk',])->label(false) ?>
+                <?= $formAbsen->field($model, 'liveness_passed')->hiddenInput(['id' => 'faceDescriptor-terlalujauh'])->label(false) ?>
 
                 <?= $formAbsen->field($model, 'alasan_terlalu_jauh')->textarea(['class' => 'py-1 w-full border border-gray-200 rounded-md', 'required' => true, 'rows' => 7, 'placeholder' => 'Alasan Anda Terlalu Jauh Dari Lokasi Penempatan Kerja'])->label(false) ?>
 
@@ -111,7 +112,8 @@ use yii\widgets\ActiveForm;
             // Update koordinat saat modal dibuka
             document.querySelectorAll('.coordinate.lat').forEach(el => el.value = currentLat);
             document.querySelectorAll('.coordinate.lon').forEach(el => el.value = currentLon);
-            document.querySelectorAll('.foto_fr').forEach(el => el.value = wajah_fr);
+            let fcterlalujauh = document.querySelector('#faceDescriptor').value;
+            document.querySelector('#faceDescriptor-terlalujauh').value = fcterlalujauh;
 
 
             // Copy shift yang dipilih

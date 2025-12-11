@@ -105,6 +105,7 @@
 
     // Function untuk extract face descriptor
     async function extractFaceDescriptor(canvasElement, modalId) {
+        document.getElementById('submitButton').disabled = true;
         const statusText = document.getElementById(`status-${modalId}`);
 
         try {
@@ -136,18 +137,14 @@
 
 
             // Convert descriptor array to JSON string
-            const descriptorJson = JSON.stringify(Array.from(descriptor));
+            const descriptorJson = descriptor;
 
-            // Simpan descriptor ke hidden input
-            document.getElementById('faceDescriptor-popup-modal').value = descriptorJson;
+            document.getElementById('faceDescriptor').value = descriptorJson;
+            document.getElementById('submitButton').disabled = false;
 
-            // Juga simpan ke form input untuk foto_masuk (optional)
-            // atau buat input hidden baru khusus untuk descriptor
 
             statusText.textContent = '✅ Wajah terdeteksi! Klik "Simpan Absen" untuk melanjutkan.';
 
-            // console.log('Face descriptor extracted:', descriptor.length, 'dimensions');
-            // console.log('Descriptor sample:', descriptor.slice(0, 5));
 
             return descriptor;
 
@@ -385,8 +382,7 @@
         const canvas = document.getElementById(`output_canvas-${modalId}`);
         const resultsContainer = document.getElementById(`results-${modalId}`);
         const screenshotImg = document.getElementById(`screenshotResult-${modalId}`);
-        const faceDataInput = document.getElementById(`faceData-${modalId}`);
-        const faceDescriptorInput = document.getElementById(`faceDescriptor-popup-modal`);
+        const faceDataInput = document.getElementById(`faceData`);
         const statusText = document.getElementById(`status-${modalId}`);
 
         if (!video || !canvas) return;
@@ -462,7 +458,6 @@
         // Clear form inputs
         document.getElementById('foto_masuk').value = '';
         document.getElementById('faceDescriptor').value = '';
-        document.getElementById('faceDescriptor-popup-modal').value = '';
 
         // Reset state
         if (livenessState[modalId]) {
@@ -472,10 +467,12 @@
         }
     }
     // Close modal handler
-    function closeModal(modalId) {
+    function closeModalFace(modalId) {
         stopLivenessVerification(modalId);
         document.getElementById(modalId).classList.add('hidden');
-        resetLiveness(modalId);
+        document.body.style.overflow = 'auto';
+        document.getElementsByClassName('bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40')[0].remove();
+        // resetLiveness(modalId);
     }
 
     // Initialize when modal opens
@@ -495,15 +492,6 @@
         }
 
         // Handle form submission
-        document.getElementById('submitButton')?.addEventListener('click', function() {
-            const fotoData = document.getElementById('foto_masuk').value;
-            if (!fotoData) {
-                alert('Silakan selesaikan verifikasi wajah terlebih dahulu!');
-                return false;
-            }
 
-            // Submit form
-            document.getElementById('my-form').submit();
-        });
     });
 </script>

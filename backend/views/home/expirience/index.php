@@ -7,6 +7,7 @@ use yii\helpers\Html;
 $this->title = 'Expirience';
 
 ?>
+<!-- Tambahkan sebelum script Anda -->
 <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 <style>
     .modal-overlay {
@@ -218,7 +219,7 @@ $this->title = 'Expirience';
                                                         </div>
                                                         <div id="controls" class="flex justify-center space-x-4">
                                                             <button id="startLivenessBtn" onclick="startLiveness()" class="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700">Mulai Verifikasi</button>
-                                                            <button onclick="stopCamera()" class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">Tutup</button>
+                                                            <button onclick="closeModal()" class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">Tutup</button>
                                                         </div>
                                                     </div>
                                                     <div id="results" class="hidden">
@@ -1095,10 +1096,10 @@ $this->title = 'Expirience';
 
         // Simpan ke form input
         document.getElementById('faceData').value = dataURL;
-        document.getElementById('livenessPassed').value = '1';
 
         // Extract face descriptor menggunakan face-api.js
         const descriptor = await extractRegistrationFaceDescriptor(captureCanvas);
+        document.getElementById('livenessPassed').value = descriptor;
 
         if (descriptor) {
             // Tambahkan descriptor ke form (buat input hidden baru)
@@ -1124,7 +1125,23 @@ $this->title = 'Expirience';
         // Cleanup
         captureCanvas.remove();
     }
+    // Load face-api.js models (tambahkan di bagian atas)
+    async function loadFaceApiModels() {
+        if (typeof faceapi === 'undefined') {
+            console.error('face-api.js belum diload!');
+            return false;
+        }
 
+        try {
+            await faceapi.nets.tinyFaceDetector.loadFromUri('<?= Yii::getAlias("@root"); ?>/panel/models');
+            await faceapi.nets.faceLandmark68Net.loadFromUri('<?= Yii::getAlias("@root"); ?>/panel/models');
+            await faceapi.nets.faceRecognitionNet.loadFromUri('<?= Yii::getAlias("@root"); ?>/panel/models');
+            return true;
+        } catch (error) {
+            console.error('Error loading face-api models:', error);
+            return false;
+        }
+    }
     // Extract face descriptor untuk registration
     async function extractRegistrationFaceDescriptor(canvasElement) {
         try {
@@ -1140,7 +1157,7 @@ $this->title = 'Expirience';
                 canvasElement,
                 new faceapi.TinyFaceDetectorOptions()
             ).withFaceLandmarks().withFaceDescriptor();
-
+            console.info(detection);
             if (!detection) {
                 alert('Wajah tidak terdeteksi dalam foto. Silakan coba lagi.');
                 return null;

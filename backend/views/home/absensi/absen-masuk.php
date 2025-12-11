@@ -52,7 +52,7 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
         <div class="relative w-full max-w-md p-4">
             <div class="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-700 md:p-5">
                 <!-- Close Button -->
-                <button type="button" onclick="closeModal('popup-modal')"
+                <button type="button" onclick="closeModalFace('popup-modal')"
                     class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
                     <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
@@ -61,7 +61,6 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
 
                 <div class="p-3 text-center">
                     <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Verifikasi Wajah untuk Absen Masuk</h3>
-
                     <!-- MediaPipe Liveness Container -->
                     <div id="liveness-container-popup-modal" class="liveness-container">
                         <div class="liveness-video-container">
@@ -116,8 +115,6 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                                 alt="Screenshot Wajah">
                         </div>
 
-                        <input type="text" id="faceData-popup-modal" name="foto_masuk">
-                        <input type="text" id="faceDescriptor-popup-modal" name="face_descriptor">
 
                         <div class="flex justify-end mt-4 space-x-2">
                             <button type="button" onclick="resetLiveness('popup-modal')"
@@ -125,7 +122,7 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                                 Ambil Ulang
                             </button>
                             <button type="button" id="submitButton" data-modalid="popup-modal"
-                                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700">
+                                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-50">
                                 Simpan Absen
                             </button>
                         </div>
@@ -264,7 +261,8 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                             ]) ?>
                             <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'coordinate lat'])->label(false) ?>
                             <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'coordinate lon'])->label(false) ?>
-                            <?= $formAbsen->field($model, 'foto_masuk')->hiddenInput(['id' => 'foto_masuk', 'class' => 'foto_fr'])->label(false) ?>
+                            <?= $formAbsen->field($model, 'foto_masuk')->hiddenInput(['id' => 'faceData'])->label(false) ?>
+                            <?= $formAbsen->field($model, 'liveness_passed')->hiddenInput(['id' => 'faceDescriptor'])->label(false) ?>
 
                             <?php if ($dataJam['karyawan']['is_shift'] && $manual_shift == 0): ?>
                                 <?php
@@ -402,9 +400,6 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
 </section>
 
 
-<?php
-echo $this->render('utils/_script_face.php');
-?>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <?php
@@ -418,6 +413,7 @@ $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
 ?>
 
 <?php
+echo $this->render('utils/_script_face.php');
 echo $this->render('utils/_script_timeandlocation.php', [
     'dataToday' => $dataToday,
     'dataTodayJson' => $dataTodayJson,
