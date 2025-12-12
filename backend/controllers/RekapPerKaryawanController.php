@@ -28,13 +28,34 @@ class RekapPerKaryawanController extends \yii\web\Controller
         $model = new Karyawan();
         $id_karyawan = $request->get('id_karyawan'); // <- dari form Select2
 
+
         $tanggalAwal = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one();
-        $bulan = date('m');
-        $tahun = date('Y');
-        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, intval($tanggalAwal->nama_kode) + 1, $tahun));
-        $lastdate = date('Y-m-d', mktime(0, 0, 0, $bulan + 1, intval($tanggalAwal->nama_kode), $tahun));
-        $tanggal_awal =  Yii::$app->request->get() == [] ? $firstDayOfMonth :  Yii::$app->request->get()['tanggal_awal'];
-        $tanggal_akhir =  Yii::$app->request->get() == [] ? $lastdate :  Yii::$app->request->get()['tanggal_akhir'];
+        $tanggalAwalInt = intval($tanggalAwal->nama_kode); // Misalnya 20
+        $tanggalSekarang = date('d');
+        $bulanSekarang = date('m');
+        $tahunSekarang = date('Y');
+
+        if ($tanggalSekarang < $tanggalAwalInt) {
+            // Jika tanggal sekarang < tanggalAwal (misal: sekarang tgl 15, tanggalAwal = 20)
+            // tanggal_awal = tanggalAwal+1 + bulan lalu + tahun ini
+            $tanggal_awal = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang - 1, $tanggalAwalInt + 1, $tahunSekarang));
+            // tanggal_akhir = tanggalAwal + bulan sekarang + tahun ini
+            $tanggal_akhir = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt, $tahunSekarang));
+        } else {
+            // Jika tanggal sekarang >= tanggalAwal (misal: sekarang tgl 25, tanggalAwal = 20)
+            // tanggal_awal = tanggalAwal+1 + bulan sekarang + tahun ini
+            $tanggal_awal = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt + 1, $tahunSekarang));
+            // tanggal_akhir = tanggalAwal + bulan depan + tahun menyesuaikan
+            $tanggal_akhir = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang + 1, $tanggalAwalInt, $tahunSekarang));
+        }
+
+        // Jika ada parameter GET, gunakan nilai dari GET
+        if (!empty(Yii::$app->request->get()['tanggal_awal'])) {
+            $tanggal_awal = Yii::$app->request->get()['tanggal_awal'];
+        }
+        if (!empty(Yii::$app->request->get()['tanggal_akhir'])) {
+            $tanggal_akhir = Yii::$app->request->get()['tanggal_akhir'];
+        }
 
 
 

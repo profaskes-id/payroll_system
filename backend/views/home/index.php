@@ -153,7 +153,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <!-- Animated corner accent -->
             <div class="absolute top-0 left-0 w-16 h-16 overflow-hidden">
-                <div class="absolute w-32 transform rotate-180 bg-white h-14 -left-8 top-6 "></div>
+                <div class="absolute w-32 h-10 transform rotate-180 bg-white -left-8 top-4 "></div>
             </div>
         </div>
     </div>

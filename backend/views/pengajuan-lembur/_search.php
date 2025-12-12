@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\helpers\KaryawanHelper;
 use backend\models\Karyawan;
 use backend\models\MasterKode;
 use yii\helpers\Html;
@@ -22,7 +23,7 @@ use yii\widgets\ActiveForm;
     <div class="row">
 
         <div class="col-12 col-md-3">
-            <?php $nama_group = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
+            <?php $nama_group = \yii\helpers\ArrayHelper::map(KaryawanHelper::getKaryawanData(), 'id_karyawan', 'nama');
             echo $form->field($model, 'id_karyawan')->widget(kartik\select2\Select2::classname(), [
                 'data' => $nama_group,
                 'language' => 'id',

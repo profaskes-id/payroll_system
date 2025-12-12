@@ -58,6 +58,7 @@ class MasterGajiSearch extends MasterGaji
             ->leftJoin('data_pekerjaan dp', 'dp.id_karyawan = k.id_karyawan AND dp.is_aktif = 1')
             ->leftJoin('master_gaji mg', 'mg.id_karyawan = k.id_karyawan')
             ->leftJoin('master_kode mk', 'mk.nama_group = "jabatan" and dp.jabatan = mk.kode')
+            ->orderBy(['k.id_karyawan' => SORT_ASC])
             ->where(['k.is_aktif' => 1]);
 
         $dataProvider = new ActiveDataProvider([

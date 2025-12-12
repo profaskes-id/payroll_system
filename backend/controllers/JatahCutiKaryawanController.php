@@ -43,9 +43,7 @@ class JatahCutiKaryawanController extends Controller
         $id_karyawan = Yii::$app->request->get('JatahCutiKaryawanSearch')['id_karyawan'] ?? null;
         $tahun = Yii::$app->request->get('JatahCutiKaryawanSearch')['tahun'] ?? date('Y');
         $masterCuti = Yii::$app->request->get('JatahCutiKaryawanSearch')['id_master_cuti'] ?? null;
-
         $dataProvider = $searchModel->search($this->request->queryParams, null,  $tahun, $masterCuti, $id_karyawan);
-
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,

@@ -43,27 +43,37 @@ class JatahCutiKaryawanSearch extends JatahCutiKaryawan
 
     public function search($params, $formName = null, $tahun = null, $id_master_cuti = null, $id_karyawan = null)
     {
+        // default master cuti jika tidak diisi
+        if ($id_master_cuti === null) {
+            $id_master_cuti = 1;
+        }
+
+        // SUBQUERY: ambil tepat 1 jatah_cuti_karyawan per karyawan
+        $subQuery = (new \yii\db\Query())
+            ->from('jatah_cuti_karyawan')
+            ->where([
+                'id_master_cuti' => $id_master_cuti
+            ])
+            ->andFilterWhere([
+                'tahun' => $tahun
+            ]);
+
         $query = (new Query())
             ->select([
                 'karyawan.id_karyawan',
                 'karyawan.nama',
                 'karyawan.kode_jenis_kelamin',
-                'jatah_cuti_karyawan.tahun',
-                'jatah_cuti_karyawan.id_jatah_cuti',
-                'jatah_cuti_karyawan.jatah_hari_cuti',
-                'jatah_cuti_karyawan.id_master_cuti',
+                'j.tahun',
+                'j.id_jatah_cuti',
+                'j.jatah_hari_cuti',
+                'j.id_master_cuti',
             ])
             ->from('karyawan')
-            ->leftJoin(
-                'jatah_cuti_karyawan',
-                'jatah_cuti_karyawan.id_karyawan = karyawan.id_karyawan' .
-                    ($tahun !== null ? " AND jatah_cuti_karyawan.tahun = $tahun" : "") .
-                    ($id_master_cuti !== null ? " AND jatah_cuti_karyawan.id_master_cuti = $id_master_cuti" : "")
-            )
+            ->leftJoin(['j' => $subQuery], 'j.id_karyawan = karyawan.id_karyawan')
             ->where(['karyawan.is_aktif' => 1])
             ->orderBy(['karyawan.nama' => SORT_ASC]);
 
-        // Filter karyawan spesifik
+        // filter khusus karyawan tertentu
         if ($id_karyawan) {
             $query->andWhere(['karyawan.id_karyawan' => $id_karyawan]);
         }
@@ -72,16 +82,6 @@ class JatahCutiKaryawanSearch extends JatahCutiKaryawan
         if ($id_master_cuti == 2) {
             $query->andWhere(['karyawan.kode_jenis_kelamin' => 'P']);
         }
-
-        $query->groupBy([
-            'karyawan.id_karyawan',
-            'karyawan.nama',
-            'karyawan.kode_jenis_kelamin',
-            'jatah_cuti_karyawan.tahun',
-            'jatah_cuti_karyawan.id_jatah_cuti',
-            'jatah_cuti_karyawan.jatah_hari_cuti',
-            'jatah_cuti_karyawan.id_master_cuti',
-        ]);
 
         return new \yii\data\ArrayDataProvider([
             'allModels' => $query->all(),

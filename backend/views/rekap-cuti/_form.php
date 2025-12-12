@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\helpers\KaryawanHelper;
 use backend\models\Karyawan;
 use kartik\select2\Select2;
 use yii\helpers\Html;
@@ -17,7 +18,7 @@ use yii\widgets\ActiveForm;
     <div class="row">
         <div class="col-6">
             <?php
-            $data = \yii\helpers\ArrayHelper::map(Karyawan::find()->all(), 'id_karyawan', 'nama');
+            $data = \yii\helpers\ArrayHelper::map(KaryawanHelper::getKaryawanData(), 'id_karyawan', 'nama');
             echo $form->field($model, 'id_karyawan')->widget(Select2::classname(), [
                 'data' => $data,
                 'language' => 'id',

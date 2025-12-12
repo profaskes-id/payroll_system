@@ -29,7 +29,7 @@ use yii\widgets\ActiveForm;
             echo $form->field($model, 'nama_hari')->widget(Select2::classname(), [
                 'data' => $nama_kode,
                 'language' => 'id',
-                'options' => ['placeholder' => 'Cari nama kode ...'],
+                'options' => ['placeholder' => 'Cari Nama Libur ...'],
                 'pluginOptions' => [
                     'tags' => true,
                     'allowClear' => true

@@ -18,6 +18,8 @@ $tahun = Yii::$app->request->get('JatahCutiKaryawanSearch')['tahun'] ?? date('Y'
 ?>
 <div class="jatah-cuti-karyawan-index">
 
+
+    <p class="text-xs text-muted text-capitalize">ubah jeis cuti pada bagian search</p>
     <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
         <i class="fas fa-search"></i>
         <span>
