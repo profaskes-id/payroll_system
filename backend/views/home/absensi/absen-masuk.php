@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\JadwalKerja;
+use backend\models\Karyawan;
 use backend\models\ShiftKerja;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
@@ -158,6 +159,36 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
             </div>
         </div>
     </div>
+
+    <?php
+    $liveness = Karyawan::find()
+        ->select('liveness_passed')
+        ->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan])
+        ->scalar();
+
+    ?>
+
+    <?php if ($liveness == null): ?>
+        <script>
+            Swal.fire({
+                title: "Wajah Anda Belum Terdaftar",
+                html: `
+        <p class="text-gray-700">
+            Silakan daftar wajah Anda terlebih dahulu untuk melanjutkan.
+        </p>
+        <a href="/panel/home/expirience"
+           class="inline-block px-4 py-2 mt-4 text-white transition bg-blue-600 rounded-lg shadow hover:bg-blue-700">
+            Daftar Sekarang
+        </a>
+    `,
+                icon: "warning",
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                width: "32rem",
+            });
+        </script>
+    <?php endif; ?>
 
 
     <!-- Main Content -->
