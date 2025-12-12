@@ -85,17 +85,17 @@ class AtasanKaryawanController extends Controller
                 if (($this->request->get('id_atasan'))) {
                     $model->id_atasan = intval($this->request->get('id_atasan'));
                 }
-                
-                
+
+
                 $atasan = Karyawan::findOne(['id_karyawan' => $model->atasan]);
                 if ($atasan === null) {
                     Yii::$app->session->setFlash('error', 'Atasan tidak ditemukan.');
                     return $this->redirect(['index']);
                 }
-                
+
                 // Mark the selected atasan as an official atasan
                 $atasan->is_atasan = 1;
-                
+
                 // Wrap in transaction for atomic save
                 $transaction = Yii::$app->db->beginTransaction();
                 try {
@@ -164,8 +164,7 @@ class AtasanKaryawanController extends Controller
     public function actionUpdate($id_atasan_karyawan)
     {
         $model = $this->findModel($id_atasan_karyawan);
-        $dataKaryawan = Karyawan::find()->select(['id_karyawan', 'nama', 'is_atasan'])->asArray()->all();
-
+        $dataKaryawan = Karyawan::find()->select(['id_karyawan', 'nama', 'is_atasan'])->where(['is_aktif' => 1])->orderBy(['nama' => SORT_ASC])->asArray()->all();
         if ($this->request->isPost && $model->load($this->request->post())) {
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'Berhasil Melakukan Update Data ');

@@ -40,16 +40,20 @@ $form = ActiveForm::begin(); ?>
         <?= $form->field($model, 'sisa_hari')->textInput(['id' => 'sisa_hari', 'type' => 'text', 'disabled' => true, 'class' => 'disabled:bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '])->label(false) ?>
     </div>
     <p class="mb-5 -mt-1 text-sm text-red-500 capitalize" id="error"></p>
+
+
+
     <div class="mb-5">
         <label for="tanggal" class="block mb-2 text-sm font-medium text-gray-900 capitalize">Tanggal</label>
         <?= $form->field($model, 'tanggal')->textInput([
             'id' => 'tanggal-multi',
             'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5',
         ])->label(false) ?>
+        <p class="m-0 -mt-1 text-xs text-gray-700">Anda dapat memilih beberapa tanggal sekaligus.</p>
+
     </div>
 
     <p class="hidden mb-5 -mt-1 text-sm text-red-500 capitalize" id="error-year"></p>
-
     <div class="mb-5">
         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">Jumlah Hari</label>
         <input type="text" disabled class="disabled:bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" id="jumlah_hari">

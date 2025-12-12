@@ -111,13 +111,7 @@ use yii\helpers\Url;
                             <tbody id="tabelPotonganAbsensiBody">
                                 <!-- Data akan diisi via AJAX -->
                             </tbody>
-                            <tfoot>
-                                <tr class="table-secondary fw-bold">
-                                    <td colspan="4" class="text-end">Total Seluruh Potongan:</td>
-                                    <td id="totalSemuaPotongan" class="text-end">Rp 0</td>
-                                    <td></td>
-                                </tr>
-                            </tfoot>
+
                         </table>
                     </div>
 

@@ -75,9 +75,20 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
                                     <hr class="w-1/3 my-2">
                                     <div class="flex space-x-3 text-gray-500">
-                                        <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
-                                        <span>&nbsp;~&nbsp;&nbsp;</span>
-                                        <p><?= date('d-m-Y', strtotime($value['tanggal_selesai'])) ?></p>
+                                        <?php
+                                        $detailDinas = $value->detailDinas;
+                                        if (!empty($detailDinas)) {
+                                            $tanggalAwal = $detailDinas[0]->tanggal; // Indeks pertama
+                                            $tanggalAkhir = end($detailDinas)->tanggal; // Indeks terakhir
+
+                                            // Format tanggal jika perlu
+                                            $tanggalAwalFormatted = Yii::$app->formatter->asDate($tanggalAwal, 'php:d M Y');
+                                            $tanggalAkhirFormatted = Yii::$app->formatter->asDate($tanggalAkhir, 'php:d M Y');
+                                        ?>
+                                            <p><?= $tanggalAwalFormatted ?></p>
+                                            <span>&nbsp;~&nbsp;&nbsp;</span>
+                                            <p><?= $tanggalAkhirFormatted ?></p>
+                                        <?php } ?>
                                     </div>
                                     <hr class="my-2">
                                     <div class="flex items-center justify-between py-2 ">
@@ -126,9 +137,20 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
                                         <p><?= $teksTerbatas ?>...</p>
                                         <hr class="w-1/3 my-2">
                                         <div class="flex space-x-3 text-gray-500">
-                                            <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
-                                            <span>&nbsp;~&nbsp;&nbsp;</span>
-                                            <p><?= date('d-m-Y', strtotime($value['tanggal_selesai'])) ?></p>
+                                            <?php
+                                            $detailDinas = $value->detailDinas;
+                                            if (!empty($detailDinas)) {
+                                                $tanggalAwal = $detailDinas[0]->tanggal; // Indeks pertama
+                                                $tanggalAkhir = end($detailDinas)->tanggal; // Indeks terakhir
+
+                                                // Format tanggal jika perlu
+                                                $tanggalAwalFormatted = Yii::$app->formatter->asDate($tanggalAwal, 'php:d M Y');
+                                                $tanggalAkhirFormatted = Yii::$app->formatter->asDate($tanggalAkhir, 'php:d M Y');
+                                            ?>
+                                                <p><?= $tanggalAwalFormatted ?></p>
+                                                <span>&nbsp;~&nbsp;&nbsp;</span>
+                                                <p><?= $tanggalAkhirFormatted ?></p>
+                                            <?php } ?>
                                         </div>
                                         <hr class="my-2">
 
@@ -168,9 +190,20 @@ $izin = MasterKode::find()->where(['nama_group' => 'status-hadir'])->andWhere(['
 
                                             <hr class="w-1/3 my-2">
                                             <div class="flex space-x-3 text-gray-500">
-                                                <p><?= date('d-m-Y', strtotime($value['tanggal_mulai'])) ?></p>
-                                                <span>&nbsp;~&nbsp;&nbsp;</span>
-                                                <p><?= date('d-m-Y', strtotime($value['tanggal_selesai'])) ?></p>
+                                                <?php
+                                                $detailDinas = $value->detailDinas;
+                                                if (!empty($detailDinas)) {
+                                                    $tanggalAwal = $detailDinas[0]->tanggal; // Indeks pertama
+                                                    $tanggalAkhir = end($detailDinas)->tanggal; // Indeks terakhir
+
+                                                    // Format tanggal jika perlu
+                                                    $tanggalAwalFormatted = Yii::$app->formatter->asDate($tanggalAwal, 'php:d M Y');
+                                                    $tanggalAkhirFormatted = Yii::$app->formatter->asDate($tanggalAkhir, 'php:d M Y');
+                                                ?>
+                                                    <p><?= $tanggalAwalFormatted ?></p>
+                                                    <span>&nbsp;~&nbsp;&nbsp;</span>
+                                                    <p><?= $tanggalAkhirFormatted ?></p>
+                                                <?php } ?>
                                             </div>
                                             <hr class="my-2">
 

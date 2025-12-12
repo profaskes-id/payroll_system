@@ -140,6 +140,7 @@ class Absensi extends \yii\db\ActiveRecord
 
             ->all();
 
+
         return $absensi;
     }
 
@@ -372,9 +373,15 @@ class Absensi extends \yii\db\ActiveRecord
                             }
                             $totalHadir++;
                         }
-                        if ($statusHadir == 'DL') {
-                            $totalHadir++;
-                        }
+                    }
+                    if ($statusHadir == 'DL') {
+                        $totalHadir++;
+                    }
+                    if ($statusHadir == 'wfh' || $statusHadir == 'WFH') {
+                        $totalHadir++;
+                    }
+                    if ($statusHadir == 'c' || $statusHadir == 'C') {
+                        $totalHadir++;
                     }
 
                     $karyawanData[] = [
@@ -535,5 +542,10 @@ class Absensi extends \yii\db\ActiveRecord
     public function getUpdateBy()
     {
         return $this->hasOne(User::class, ['id' => 'updated_by']);
+    }
+
+    public function getShift()
+    {
+        return $this->hasOne(ShiftKerja::class, ['id_shift_kerja' => 'id_shift']);
     }
 }

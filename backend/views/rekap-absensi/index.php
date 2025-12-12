@@ -219,6 +219,7 @@ function formatJamDesimal($decimalHours)
                                         ?>
 
 
+
                                         <?php if ($data !== null && $data['status_hadir'] !== null && $data['jam_masuk_karyawan'] !== null): ?>
                                             <?php
                                             $jamKerjakaryawan = $data['jam_masuk_karyawan']; //karyawan masuj
@@ -303,6 +304,7 @@ function formatJamDesimal($decimalHours)
 
                 <?php foreach ($keterlambatanPerTanggal as $key => $terlambattgl) : ?>
                     <?php
+
                     $dataTerlambat = ($terlambattgl && $terlambattgl > 0) ? $terlambattgl : '0';
                     ?>
                     <td style="font-weight:600; text-align:center; background-color: #f43f5e; color:#fff; border:1px solid #000">

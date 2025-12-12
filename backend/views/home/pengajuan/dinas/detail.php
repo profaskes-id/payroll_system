@@ -10,24 +10,32 @@ use yii\widgets\ActiveForm;
     <div class="bg-gray-100/50 w-full h-[80dvh] rounded-md   relative ">
 
         <div class="w-full p-3 bg-white rounded-md">
-            <p class="text-sm">Diajukan Untuk Tanggal : <?= date('d-m-Y', strtotime($model['tanggal_mulai'])) ?></p>
             <p class="text-sm fw-bold">Status : <?= $model['status'] == '0' ? '<span class="text-yellow-500">Pending</span>' : ($model['status'] == '1' ? '<span class="text-green-500">Disetujui</span>' : '<span class="text-rose-500">Ditolak</span>')  ?></p>
         </div>
         <div class="w-full p-2 mt-2 text-black bg-white rounded-md">
-            <p class="text-sm text-gray-500 capitalize">Alasan Cuti</p>
+            <p class="text-sm text-gray-500 capitalize">Keterangan Perjalanan</p>
             <p><?= $model['keterangan_perjalanan'] ?></p>
             <hr class="my-2">
             <p class="text-sm text-gray-500 capitalize">Catatan Admin : </p>
             <p><?= $model['catatan_admin']  ?? '-' ?></p>
             <hr class="my-2">
-            <hr class="my-2">
-            <p class="text-sm text-gray-500 capitalize">diajukan pada</p>
-            <div class="flex space-x-3 text-sm text-gray-500">
-                <p><?= date('d-m-Y', strtotime($model['tanggal_mulai']))
-                    ?></p>
-                <p><?= date('d-m-Y', strtotime($model['tanggal_selesai']))
-                    ?></p>
-
+            <p class="text-sm text-gray-500 capitalize">diajukan untuk tanggal</p>
+            <div class="flex space-x-3 text-gray-500">
+                <?php
+                $detailDinas = $model->detailDinas;
+                if (!empty($detailDinas)):
+                ?>
+                    <div class="flex flex-wrap gap-1">
+                        <?php foreach ($detailDinas as $detail): ?>
+                            <?php
+                            $tanggalFormatted = Yii::$app->formatter->asDate($detail->tanggal, 'php:d M Y');
+                            ?>
+                            <span class="inline-block px-2 py-1 text-xs text-blue-800 bg-blue-100 rounded-full">
+                                <?= $tanggalFormatted ?>
+                            </span>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
         <div class="relative inline-flex items-center justify-center w-full mb-4">

@@ -75,6 +75,7 @@ class SiteController extends Controller
         $assignments = Yii::$app->authManager->getAssignments(Yii::$app->user->id);
         $roleNames = array_column($assignments, 'roleName');
 
+        $today = date('Y-m-d');
 
         if (Yii::$app->user->isGuest) {
             return $this->redirect(['user/login']);
@@ -85,8 +86,21 @@ class SiteController extends Controller
             $TotalKaryawan = Karyawan::find()->where(['is_aktif' => 1])->count();
             $TotalData = Absensi::find()->where(['tanggal' => date('Y-m-d'), 'kode_status_hadir' => 'H'])->count();
             $TotalDataBelum = $TotalKaryawan - $TotalData;
-            $izin = MasterKode::find()->where(['nama_group' => 'status-hadir', 'nama_kode' => 'Izin'])->one();
-            $TotalIzin = Absensi::find()->where(['kode_status_hadir' => $izin->kode, 'tanggal' => date('Y-m-d')])->count();
+
+
+
+            $count = PengajuanWfh::find()
+                ->select(['id_karyawan']) // Pilih kolom yang di-group
+                ->where([
+                    'AND',
+                    'JSON_CONTAINS(tanggal_array, :today) = 1',
+                    ['!=', 'status', 2]
+                ])
+                ->groupBy(['id_karyawan']) // Group by id_karyawan
+                ->addParams([':today' => json_encode($today)])
+                ->count();
+
+            $wfhCountTouday = $count;
 
             // total pegumuman
             $totalPengumuman = Pengumuman::find()->count();
@@ -135,7 +149,7 @@ class SiteController extends Controller
                 ->count();
 
 
-            return $this->render('index', compact('is_ada_notif', 'datesAsJson', 'TotalKaryawan', 'TotalData', 'TotalDataBelum', 'TotalIzin', 'totalPengumuman', 'pengajuanLembur', 'pengajuanCuti', 'pengajuanDinas', 'pengajuanPulangCepat', 'pengajuanWFH', 'pengajuanAbsensi', 'pengajuanTugasLuar'));
+            return $this->render('index', compact('is_ada_notif', 'datesAsJson', 'TotalKaryawan', 'TotalData', 'TotalDataBelum', 'wfhCountTouday', 'totalPengumuman', 'pengajuanLembur', 'pengajuanCuti', 'pengajuanDinas', 'pengajuanPulangCepat', 'pengajuanWFH', 'pengajuanAbsensi', 'pengajuanTugasLuar'));
         }
     }
 

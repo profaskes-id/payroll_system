@@ -8,7 +8,7 @@ use yii\widgets\DetailView;
 /** @var backend\models\PengajuanWfh $model */
 
 $this->title = "Pengajuan WFH " . $model->karyawan->nama;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Pengajuan Wfhs'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Pengajuan Wfh'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -34,6 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ]) ?>
         </p>
 
+
         <?= DetailView::widget([
             'model' => $model,
             'attributes' => [
@@ -50,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'tanggal',
                     'value' => function ($model) {
                         $tanggalFormat = new Tanggal();
-                        $day_wfh =  json_decode($model->tanggal_array);
+                        $day_wfh = json_decode($model->tanggal_array);
                         if ($day_wfh) {
                             $finalValue = [];
                             foreach ($day_wfh as $item) {
@@ -62,8 +63,28 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     },
                 ],
-                'longitude',
-                'latitude',
+                [
+                    'attribute' => 'lokasi', // Mengganti kolom latitude dan longitude dengan tautan Google Maps
+                    'label' => 'Peta Lokasi',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        if ($model->latitude && $model->longitude) {
+                            $mapUrl = "https://www.google.com/maps?q={$model->latitude},{$model->longitude}";
+                            return Html::a(
+                                '<i class="fa fa-map-marker-alt"></i> Lihat Peta Lokasi google maps',
+                                $mapUrl,
+                                [
+                                    'class' => 'btn btn-sm btn-outline-primary',
+                                    'target' => '_blank',
+                                    'data-toggle' => 'tooltip',
+                                    'title' => 'Buka di Google Maps'
+                                ]
+                            );
+                        }
+                        return '-';
+                    },
+                    'contentOptions' => ['style' => 'text-align: left; vertical-align: middle;'],
+                ],
                 [
                     'format' => 'raw',
                     'attribute' => 'status',
@@ -73,7 +94,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         } elseif ($model->status == 1) {
                             return '<span class="text-success">Pengajuan Telah Disetujui</span>';
                         } elseif ($model->status == 2) {
-                            return '<span class="text-danger">Pengajuan  Ditolak</span>';
+                            return '<span class="text-danger">Pengajuan Ditolak</span>';
                         } else {
                             return "<span class='text-danger'>master kode tidak aktif</span>";
                         }

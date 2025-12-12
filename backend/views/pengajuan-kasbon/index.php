@@ -1,6 +1,7 @@
 <?php
 
 use backend\models\PengajuanKasbon;
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -12,6 +13,7 @@ use yii\grid\GridView;
 
 $this->title = 'Pengajuan Kasbon';
 $this->params['breadcrumbs'][] = $this->title;
+$tanggal = new Tanggal();
 ?>
 <div class="pengajuan-kasbon-index">
 
@@ -61,8 +63,21 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->karyawan->nama;
                     }
                 ],
-                'jumlah_kasbon',
-                'tanggal_pengajuan',
+                [
+                    'label' => 'Jumlah Kasbon',
+                    'value' => function ($model) {
+                        $format = number_format((float)$model->jumlah_kasbon, 0, ',', '.');
+                        return 'Rp ' .  $format;
+                    }
+                ],
+
+                [
+                    'attribute' => 'tanggal_pengajuan',
+                    'label' => 'Tanggal pengajuan',
+                    'value' => function ($model) use ($tanggal) {
+                        return $tanggal->getIndonesiaFormatTanggal($model->tanggal_pengajuan);
+                    }
+                ],
 
                 [
                     'format' => 'raw',

@@ -16,8 +16,6 @@ class m240822_080624_create_pengajuan_dinas_table extends Migration
             'id_pengajuan_dinas' => $this->primaryKey(),
             'id_karyawan' => $this->integer()->notNull(),
             'keterangan_perjalanan' => $this->text()->notNull(),
-            'tanggal_mulai' => $this->date()->notNull(),
-            'tanggal_selesai' => $this->date()->notNull(),
             'estimasi_biaya' => $this->decimal(10, 2)->notNull(),
             'biaya_yang_disetujui' => $this->decimal(10, 2),
             'status' => $this->integer()->defaultValue(0),

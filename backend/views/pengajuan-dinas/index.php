@@ -1,7 +1,7 @@
 <?php
 
 use backend\models\PengajuanDinas;
-use backend\models\Tanggal;
+// use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -75,17 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
 
 
-                [
-                    'headerOptions' => ['style' => 'text-align: center;'],
-                    'contentOptions' => ['style' => 'text-align: center;'],
-                    'label' => 'Tanggal Mulai',
-                    // 'format' => 'date',
-                    'value' => function ($model) {
-                        $tanggalFormat = new Tanggal();
-                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_mulai);
-                        // return $model->tanggal_mulai;
-                    }
-                ],
+
                 [
 
                     'label' => 'Biaya Diajukan',

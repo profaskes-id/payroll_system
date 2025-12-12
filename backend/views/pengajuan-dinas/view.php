@@ -2,6 +2,7 @@
 
 use amnah\yii2\user\models\User;
 use backend\models\Tanggal;
+use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -41,22 +42,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'value' => $model->karyawan->nama
                 ],
                 'keterangan_perjalanan:ntext',
-                [
-                    'label' => 'Mulai Perjalanan',
-                    'value' => function ($model) {
-                        $tanggalFormat = new Tanggal();
-                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_mulai);
-                        // return date('d-m-Y', strtotime($model->tanggal_mulai));
-                    }
-                ],
-                [
-                    'label' => 'Selesai Pada',
-                    'value' => function ($model) {
-                        $tanggalFormat = new Tanggal();
-                        return $tanggalFormat->getIndonesiaFormatTanggal($model->tanggal_selesai);
-                        // return date('d-m-Y', strtotime($model->tanggal_selesai));
-                    }
-                ],
+
+
                 [
                     'label' => 'Biaya Diajukan',
                     'value' => function ($model) {
@@ -140,4 +127,73 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
 
     </div>
+    <h4 class="mt-4">Detail Dinas</h4>
+
+    <?= GridView::widget([
+        'dataProvider' => new \yii\data\ArrayDataProvider([
+            'allModels' => $model->detailDinas, // ganti sesuai data yang ingin ditampilkan
+            'pagination' => false,
+        ]),
+        'tableOptions' => ['class' => 'table table-striped table-bordered'],
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+
+            [
+                'attribute' => 'tanggal',
+                'value' => function ($model) {
+                    return Yii::$app->formatter->asDate($model->tanggal, 'php:d M Y');
+                },
+                'headerOptions' => ['style' => 'text-align: center;'],
+                'contentOptions' => ['style' => 'text-align: center;'],
+            ],
+
+            [
+                'attribute' => 'keterangan',
+                'value' => function ($model) {
+                    return $model->keterangan ?? '-';
+                },
+                'headerOptions' => ['style' => 'text-align: center;'],
+                'contentOptions' => ['style' => 'text-align: left;'],
+            ],
+
+            [
+                'attribute' => 'status',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $status = (int) $model->status;
+                    return match ($status) {
+                        0 => "<span class='text-warning'>Pending</span>",
+                        1 => "<span class='text-success'>Disetujui</span>",
+                        2 => "<span class='text-danger'>Ditolak</span>",
+                        default => "<span class='text-secondary'>Tidak Diketahui</span>",
+                    };
+                },
+                'headerOptions' => ['style' => 'text-align: center;'],
+                'contentOptions' => ['style' => 'text-align: center;'],
+            ],
+
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{delete}',
+                'buttons' => [
+                    'delete' => function ($url, $model, $key) {
+                        return Html::a(
+                            '<i class="fas fa-trash"></i>',
+                            ['delete-detail', 'id' => $model->id_detail_dinas, 'id_pengajuan_dinas' => $model->id_pengajuan_dinas],
+                            [
+                                'class' => 'btn btn-sm btn-danger',
+                                'data' => [
+                                    'confirm' => 'Apakah Anda yakin ingin menghapus detail ini?',
+                                    'method' => 'post',
+                                ],
+                                'title' => 'Hapus'
+                            ]
+                        );
+                    }
+                ],
+                'contentOptions' => ['style' => 'width: 50px; text-align: center;'],
+            ],
+        ],
+    ]); ?>
+
 </div>

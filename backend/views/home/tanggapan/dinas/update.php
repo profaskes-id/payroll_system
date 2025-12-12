@@ -17,6 +17,7 @@ $this->title = Yii::t('app', 'Update Pengajuan Dinas Karyawan');
 
     <?= $this->render('_form', [
         'model' => $model,
+        'detailModels' => $detailModels,
         'karyawanBawahanAdmin' => $karyawanBawahanAdmin,
 
     ]) ?>

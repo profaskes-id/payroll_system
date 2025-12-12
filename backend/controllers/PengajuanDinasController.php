@@ -3,6 +3,8 @@
 namespace backend\controllers;
 
 use amnah\yii2\user\models\User;
+use backend\models\Absensi;
+use backend\models\DetailDinas;
 use backend\models\helpers\EmailHelper;
 use backend\models\helpers\NotificationHelper;
 use backend\models\MasterKode;
@@ -45,21 +47,34 @@ class PengajuanDinasController extends Controller
     public function actionIndex()
     {
         $tanggalAwal = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one();
-        $bulan = date('m');
-        $tahun = date('Y');
-        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, intval($tanggalAwal->nama_kode) + 1, $tahun));
-        $lastdate = date('Y-m-d', mktime(0, 0, 0, $bulan + 1, intval($tanggalAwal->nama_kode), $tahun));
-        $tgl_mulai =  Yii::$app->request->get() == [] ? $firstDayOfMonth :  Yii::$app->request->get()['PengajuanDinasSearch']['tanggal_mulai'];
-        $tgl_selesai =  Yii::$app->request->get() == [] ? $lastdate :  Yii::$app->request->get()['PengajuanDinasSearch']['tanggal_selesai'];
+        $tanggalAwalInt = intval($tanggalAwal->nama_kode); // Misalnya 20
+        $tanggalSekarang = date('d');
+        $bulanSekarang = date('m');
+        $tahunSekarang = date('Y');
 
+        if ($tanggalSekarang < $tanggalAwalInt) {
+            // Jika tanggal sekarang < tanggalAwal (misal: sekarang tgl 15, tanggalAwal = 20)
+            // tgl_mulai = tanggalAwal+1 + bulan lalu + tahun ini
+            $tgl_mulai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang - 1, $tanggalAwalInt + 1, $tahunSekarang));
+            // tgl_selesai = tanggalAwal + bulan sekarang + tahun ini
+            $tgl_selesai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt, $tahunSekarang));
+        } else {
+            // Jika tanggal sekarang >= tanggalAwal (misal: sekarang tgl 25, tanggalAwal = 20)
+            // tgl_mulai = tanggalAwal+1 + bulan sekarang + tahun ini
+            $tgl_mulai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt + 1, $tahunSekarang));
+            // tgl_selesai = tanggalAwal + bulan depan + tahun menyesuaikan
+            $tgl_selesai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang + 1, $tanggalAwalInt, $tahunSekarang));
+        }
+
+        // Jika ada parameter GET, gunakan nilai dari GET
+        if (!empty(Yii::$app->request->get()['PengajuanDinasSearch']['tanggal_mulai'])) {
+            $tgl_mulai = Yii::$app->request->get()['PengajuanDinasSearch']['tanggal_mulai'];
+        }
+        if (!empty(Yii::$app->request->get()['PengajuanDinasSearch']['tanggal_selesai'])) {
+            $tgl_selesai = Yii::$app->request->get()['PengajuanDinasSearch']['tanggal_selesai'];
+        }
         $searchModel = new PengajuanDinasSearch();
         $dataProvider = $searchModel->search($this->request->queryParams, $tgl_mulai, $tgl_selesai);
-
-        // if ($this->request->isPost) {
-        //     $tgl_mulai = $this->request->post('PengajuanDinasSearch')['tanggal_mulai'];
-        //     $tgl_selesai = $this->request->post('PengajuanDinasSearch')['tanggal_selesai'];
-        //     $dataProvider = $searchModel->search($searchModel, $tgl_mulai, $tgl_selesai);
-        // }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -82,71 +97,188 @@ class PengajuanDinasController extends Controller
         ]);
     }
 
-    /**
-     * Creates a new PengajuanDinas model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
+
     public function actionCreate()
     {
         $model = new PengajuanDinas();
+        $detailModels = [];
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
+                try {
+                    $model->status = 0;
+                    if ($model->save()) {
+                        $postData = Yii::$app->request->post();
 
-                if ($model['status'] == Yii::$app->params['disetujui']) {
-                    $model->disetujui_oleh = Yii::$app->user->identity->id;
-                    $model->disetujui_pada = date('Y-m-d H:i:s');
-                    $model->biaya_yang_disetujui = $model->estimasi_biaya;
+                        if (isset($postData['DetailDinas']) && is_array($postData['DetailDinas'])) {
+                            foreach ($postData['DetailDinas'] as $detailData) {
+                                if (empty($detailData['tanggal'])) {
+                                    continue;
+                                }
+
+                                $detailModel = new DetailDinas();
+                                $detailModel->id_pengajuan_dinas = $model->id_pengajuan_dinas;
+                                $detailModel->tanggal = $detailData['tanggal'];
+                                $detailModel->status = 1;
+
+                                if ($detailModel->save()) {
+                                } else {
+                                    throw new \Exception('Gagal menyimpan detail dinas: ' . json_encode($detailModel->errors));
+                                }
+                            }
+                        }
+
+                        Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data');
+
+                        // Kirim notifikasi
+                        $sender = Yii::$app->user->identity->id;
+
+                        $params = [
+                            'judul' => 'Pengajuan dinas',
+                            'deskripsi' => 'Pengajuan Dinas luar Baru Telah Dibuat.',
+                            'nama_transaksi' => "dinas",
+                            'id_transaksi' => $model->id_pengajuan_dinas,
+                        ];
+                        $this->sendNotif($params, $sender, $model, [], "Pengajuan dinas Baru Dari " . $model->karyawan->nama);
+                        return $this->redirect(['view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]);
+                    } else {
+                        throw new \Exception('Gagal menyimpan pengajuan dinas: ' . json_encode($model->errors));
+                    }
+                } catch (\Exception $e) {
+                    Yii::$app->session->setFlash('error', 'Gagal Menambahkan Data: ' . $e->getMessage());
                 }
-                if ($model->save()) {
-                    Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data ');
-                } else {
-                    Yii::$app->session->setFlash('error', 'gagal Menambahkan Data ');
-                }
-                return $this->redirect(['view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]);
             }
-        } else {
-            $model->loadDefaultValues();
         }
 
         return $this->render('create', [
             'model' => $model,
+            'detailModels' => $detailModels,
+        ]);
+    }
+
+    public function actionUpdate($id_pengajuan_dinas)
+    {
+        $model = $this->findModel($id_pengajuan_dinas);
+        $detailModels = DetailDinas::find()->where(['id_pengajuan_dinas' => $id_pengajuan_dinas])->all();
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+
+            // Set data persetujuan jika status disetujui
+            if ($model->status == Yii::$app->params['disetujui']) {
+                $model->disetujui_oleh = Yii::$app->user->identity->id;
+                $model->disetujui_pada = date('Y-m-d H:i:s');
+                $model->biaya_yang_disetujui = $model->estimasi_biaya;
+            }
+
+            try {
+                if ($model->save()) {
+                    $postData = Yii::$app->request->post();
+
+                    // Hapus absensi lama yang terkait dengan dinas ini
+                    $this->deleteAbsensiDinas($model->id_karyawan, $model->id_pengajuan_dinas);
+
+                    // Simpan detail dinas baru
+                    if (isset($postData['DetailDinas']) && is_array($postData['DetailDinas'])) {
+                        foreach ($postData['DetailDinas'] as $detailData) {
+                            // Skip jika tanggal kosong
+                            if (empty($detailData['tanggal'])) {
+                                continue;
+                            }
+
+                            $detailModel = new DetailDinas();
+                            $detailModel->id_pengajuan_dinas = $model->id_pengajuan_dinas;
+                            $detailModel->tanggal = $detailData['tanggal'];
+                            $detailModel->keterangan = $detailData['keterangan'] ?? '';
+                            // $detailModel->lokasi_tujuan = $detailData['lokasi_tujuan'] ?? '';
+                            $detailModel->status = $detailData['status'];
+
+
+                            if ($detailModel->save()) {
+                                // Jika status detail = 1 (Disetujui), buat data absensi
+                                if ($detailModel->status == 1 && $model->isNewAbsen == 1) {
+                                    $this->createAbsensiDinas($model->id_karyawan, $detailModel->tanggal);
+                                }
+                            } else {
+                                throw new \Exception('Gagal menyimpan detail dinas: ' . json_encode($detailModel->errors));
+                            }
+                        }
+                    }
+
+                    Yii::$app->session->setFlash('success', 'Berhasil Mengupdate Data');
+
+                    // Kirim notifikasi
+                    $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
+                    $sender = Yii::$app->user->identity->id;
+
+                    $params = [
+                        'judul' => 'Pengajuan dinas',
+                        'deskripsi' => 'Pengajuan Dinas luar Anda Telah Ditanggapi Oleh Atasan.',
+                        'nama_transaksi' => "dinas",
+                        'id_transaksi' => $model->id_pengajuan_dinas,
+                    ];
+                    // $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan dinas Baru Dari " . $model->karyawan->nama);
+                    return $this->redirect(['view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]);
+                } else {
+                    throw new \Exception('Gagal mengupdate pengajuan dinas: ' . json_encode($model->errors));
+                }
+            } catch (\Exception $e) {
+                Yii::$app->session->setFlash('error', 'Gagal Mengupdate Data: ' . $e->getMessage());
+            }
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+            'detailModels' => $detailModels,
         ]);
     }
 
     /**
-     * Updates an existing PengajuanDinas model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id_pengajuan_dinas Id Pengajuan Dinas
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * Membuat data absensi untuk dinas
      */
-    public function actionUpdate($id_pengajuan_dinas)
+    private function createAbsensiDinas($idKaryawan, $tanggal)
     {
-        $model = $this->findModel($id_pengajuan_dinas);
+        // Cek apakah sudah ada data absensi untuk karyawan dan tanggal tersebut
+        $existingAbsensi = Absensi::find()
+            ->where(['id_karyawan' => $idKaryawan])
+            ->andWhere(['tanggal' => $tanggal])
+            ->exists();
 
-        if ($this->request->isPost && $model->load($this->request->post())) {
-            $model->disetujui_oleh = Yii::$app->user->identity->id;
-            $model->disetujui_pada = date('Y-m-d H:i:s');
-            $model->save();
-            $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
-            $sender = Yii::$app->user->identity->id;
-
-            $params = [
-                'judul' => 'Pengajuan dinas',
-                'deskripsi' => 'Pengajuan Dinas luar Anda Telah Ditanggapi Oleh Atasan.',
-                'nama_transaksi' => "dinas",
-                'id_transaksi' => $model['id_pengajuan_dinas'],
-            ];
-            $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan dinas Baru Dari " . $model->karyawan->nama);
+        if (!$existingAbsensi) {
+            $absensi = new Absensi();
+            $absensi->id_karyawan = $idKaryawan;
+            $absensi->tanggal = $tanggal;
+            $absensi->kode_status_hadir = 'DL'; // Dinas Luar
+            $absensi->keterangan = 'Dinas Luar';
+            $absensi->created_at = date('Y-m-d H:i:s');
+            $absensi->created_by = Yii::$app->user->identity->id;
 
 
-            return $this->redirect(['view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]);
+            if (!$absensi->save()) {
+                Yii::error('Gagal membuat absensi dinas: ' . json_encode($absensi->errors));
+            }
         }
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+    }
+
+    /**
+     * Menghapus data absensi yang terkait dengan dinas
+     */
+    private function deleteAbsensiDinas($idKaryawan, $idPengajuanDinas)
+    {
+        // Dapatkan semua tanggal dari detail dinas yang disetujui
+        $detailDates = DetailDinas::find()
+            ->select('tanggal')
+            ->where(['id_pengajuan_dinas' => $idPengajuanDinas])
+            ->andWhere(['status' => 1])
+            ->column();
+
+        if (!empty($detailDates)) {
+            // Hapus absensi yang terkait dengan tanggal-tanggal tersebut
+            Absensi::deleteAll([
+                'id_karyawan' => $idKaryawan,
+                'tanggal' => $detailDates,
+                'kode_status_hadir' => 'DL'
+            ]);
+        }
     }
 
     /**
@@ -174,6 +306,27 @@ class PengajuanDinasController extends Controller
         $model->delete();
         return $this->redirect(['index']);
     }
+    public function actionDeleteDetail($id, $id_pengajuan_dinas)
+    {
+        $model = DetailDinas::findOne($id);
+
+        // Jika data tidak ditemukan
+        if ($model === null) {
+            Yii::$app->session->setFlash('error', 'Data tidak ditemukan.');
+            return $this->redirect(['view', 'id_pengajuan_dinas' => $id_pengajuan_dinas]);
+        }
+
+        // Hapus data
+        if ($model->delete()) {
+            Yii::$app->session->setFlash('success', 'Data berhasil dihapus.');
+        } else {
+            Yii::$app->session->setFlash('error', 'Gagal menghapus data.');
+        }
+
+        // Redirect yang benar
+        return $this->redirect(['view', 'id_pengajuan_dinas' => $id_pengajuan_dinas]);
+    }
+
 
 
     public function actionBayarkan($id)

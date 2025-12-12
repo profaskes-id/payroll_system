@@ -59,12 +59,6 @@ use yii\widgets\ActiveForm;
 
 
 
-        <?php if (!$model->isNewRecord) : ?>
-            <div class="col-12 ">
-                <?= $form->field($model, 'catatan_admin')->textarea(['rows' => 2]) ?>
-            </div>
-
-        <?php endif ?>
 
 
         <div class="col-12 col-md-6">
@@ -77,28 +71,34 @@ use yii\widgets\ActiveForm;
 
 
 
-        <div class="col-12">
-            <?php
+        <?php if (!$model->isNewRecord) : ?>
+            <div class="col-12 ">
+                <?= $form->field($model, 'catatan_admin')->textarea(['rows' => 2]) ?>
+            </div>
 
-            $data = \yii\helpers\ArrayHelper::map(StatusPengajuanHelper::getStatusPengajuan(), 'kode', 'nama_kode');
-            echo $form->field($model, 'status')->radioList($data, [
-                'item' => function ($index, $label, $name, $checked, $value) use ($model) {
-                    if ($model->isNewRecord) {
-                        $isChecked = $value == 1 ? true : $checked;
-                    } else {
-                        $isChecked = $checked;
-                    }
+            <div class="col-12">
+                <?php
 
-                    return Html::radio($name, $isChecked, [
-                        'value' => $value,
-                        'label' => $label,
-                        'labelOptions' => ['class' => 'radio-label mr-4'],
-                    ]);
-                },
-            ])->label('Status');
-            ?>
-        </div>
+                $data = \yii\helpers\ArrayHelper::map(StatusPengajuanHelper::getStatusPengajuan(), 'kode', 'nama_kode');
+                echo $form->field($model, 'status')->radioList($data, [
+                    'item' => function ($index, $label, $name, $checked, $value) use ($model) {
+                        if ($model->isNewRecord) {
+                            $isChecked = $value == 1 ? true : $checked;
+                        } else {
+                            $isChecked = $checked;
+                        }
 
+                        return Html::radio($name, $isChecked, [
+                            'value' => $value,
+                            'label' => $label,
+                            'labelOptions' => ['class' => 'radio-label mr-4'],
+                        ]);
+                    },
+                ])->label('Status');
+                ?>
+            </div>
+
+        <?php endif ?>
 
 
 

@@ -206,7 +206,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="container mx-auto md:px-6">
         <!-- Header -->
-        <div class="mb-6">
+        <div class="my-6">
             <h2 class="text-lg font-bold text-gray-800">Pengajuan</h2>
         </div>
 
@@ -498,13 +498,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <p class="text-sm text-gray-500">Pengajuan kerja dari rumah</p>
                                 </div>
                             </div>
-                            <!-- <div class="flex items-center">
-                            <span class="mr-3 text-sm text-gray-500">12 pending</span>
-                            <div class="px-2 py-1 text-xs font-bold text-purple-700 transition-colors duration-200 bg-purple-100 rounded-full group-hover:bg-purple-200">
-                                12
-                            </div>
-                            <i class="ml-2 text-gray-400 transition-colors duration-200 fas fa-chevron-right group-hover:text-purple-600"></i>
-                        </div> -->
                         </div>
                     </a>
 
@@ -520,13 +513,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <p class="text-sm text-gray-500">Pengajuan waktu cuti</p>
                                 </div>
                             </div>
-                            <!-- <div class="flex items-center">
-                            <span class="mr-3 text-sm text-gray-500">8 pending</span>
-                            <div class="px-2 py-1 text-xs font-bold text-green-700 transition-colors duration-200 bg-green-100 rounded-full group-hover:bg-green-200">
-                                8
-                            </div>
-                            <i class="ml-2 text-gray-400 transition-colors duration-200 fas fa-chevron-right group-hover:text-green-600"></i>
-                        </div> -->
                         </div>
                     </a>
 
@@ -542,13 +528,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <p class="text-sm text-gray-500">Pengajuan kerja lembur</p>
                                 </div>
                             </div>
-                            <!-- <div class="flex items-center">
-                            <span class="mr-3 text-sm text-gray-500">5 pending</span>
-                            <div class="px-2 py-1 text-xs font-bold text-red-700 transition-colors duration-200 bg-red-100 rounded-full group-hover:bg-red-200">
-                                5
-                            </div>
-                            <i class="ml-2 text-gray-400 transition-colors duration-200 fas fa-chevron-right group-hover:text-red-600"></i>
-                        </div> -->
+
                         </div>
                     </a>
 
@@ -564,13 +544,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <p class="text-sm text-gray-500">Pengajuan perjalanan dinas</p>
                                 </div>
                             </div>
-                            <!-- <div class="flex items-center">
-                                <span class="mr-3 text-sm text-gray-500">3 pending</span>
-                                <div class="px-2 py-1 text-xs font-bold text-blue-700 transition-colors duration-200 bg-blue-100 rounded-full group-hover:bg-blue-200">
-                                    3
-                                </div>
-                                <i class="ml-2 text-gray-400 transition-colors duration-200 fas fa-chevron-right group-hover:text-blue-600"></i>
-                            </div> -->
                         </div>
                     </a>
 
@@ -586,13 +559,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <p class="text-sm text-gray-500">Pengajuan penyesuaian absensi</p>
                                 </div>
                             </div>
-                            <!-- <div class="flex items-center">
-                                <span class="mr-3 text-sm text-gray-500">7 pending</span>
-                                <div class="px-2 py-1 text-xs font-bold text-yellow-700 transition-colors duration-200 bg-yellow-100 rounded-full group-hover:bg-yellow-200">
-                                    7
-                                </div>
-                                <i class="ml-2 text-gray-400 transition-colors duration-200 fas fa-chevron-right group-hover:text-yellow-600"></i> -->
-                            <!-- </div> -->
                         </div>
                     </a>
 
@@ -608,13 +574,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <p class="text-sm text-gray-500">Pengajuan tugas luar kantor</p>
                                 </div>
                             </div>
-                            <!-- <div class="flex items-center">
-                                <span class="mr-3 text-sm text-gray-500">4 pending</span>
-                                <div class="px-2 py-1 text-xs font-bold text-indigo-700 transition-colors duration-200 bg-indigo-100 rounded-full group-hover:bg-indigo-200">
-                                    4
-                                </div>
-                                <i class="ml-2 text-gray-400 transition-colors duration-200 fas fa-chevron-right group-hover:text-indigo-600"></i>
-                            </div> -->
+
                         </div>
                     </a>
                     <a href="/panel/tanggapan/kasbon" class="block transition-all duration-200 group hover:bg-blue-50">
@@ -628,20 +588,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <p class="text-sm text-gray-500">Pinjaman Karyawan</p>
                                 </div>
                             </div>
-                            <!-- <div class="flex items-center">
-                            <span class="mr-3 text-sm text-gray-500">12 pending</span>
-                            <div class="px-2 py-1 text-xs font-bold text-purple-700 transition-colors duration-200 bg-purple-100 rounded-full group-hover:bg-purple-200">
-                                12
-                            </div>
-                            <i class="ml-2 text-gray-400 transition-colors duration-200 fas fa-chevron-right group-hover:text-purple-600"></i>
-                        </div> -->
+
                         </div>
                     </a>
                 </div>
-
-                <!-- <div class="p-4 text-sm text-center text-gray-500 bg-gray-50">
-                    Total 39 pengajuan yang membutuhkan persetujuan
-                </div> -->
             </div>
         </div>
     <?php endif; ?>

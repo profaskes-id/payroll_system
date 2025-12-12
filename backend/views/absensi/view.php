@@ -111,14 +111,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
                 [
+                    'label' => 'Jenis Shift',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        return  $model->shift->nama_shift ?? '-';
+                    }
+                ],
+                [
                     'label' => 'jarak ke lokasi',
                     'format' => 'raw',
                     'value' => function ($model) {
                         return '<span id="distance"></span>';
                     }
                 ],
-
-                // Versi sederhana untuk Dibuat Oleh
                 [
                     'label' => 'Dibuat Oleh',
                     'value' => function ($model) {
@@ -126,8 +131,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
 
-                // Versi untuk Diupdate Oleh
-                
+                [
+                    'label' => 'similarity',
+                    'value' => function ($model) {
+                        return $model->similarity ?? '-';
+                    }
+                ],
+
                 [
                     'attribute' => 'created_at',
                     'format' => ['date', 'php:d M Y  / H:i:s']
@@ -166,8 +176,6 @@ $latitude_now = $model->latitude;
 $longitude_now = $model->longitude;
 $latitude_penempatan = strval($alamat->latitude);
 $longitude_penempatan = strval($alamat->longtitude);
-// $latitude_now = "-0.350190";
-// $longitude_now = "100.372248";
 
 // Debugging: Pastikan nilai-nilai ini benar
 echo "<script>console.log('Now: {$latitude_now}, {$longitude_now}, Penempatan: {$latitude_penempatan}, {$longitude_penempatan}');</script>";

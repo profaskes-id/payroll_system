@@ -37,24 +37,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                         <?php ActiveForm::end(); ?>
                     </div>
-
-
-                    <!-- Div yang hanya muncul pada Android -->
-                    <div id="mobile-login-link" style="display:none;">
-                        <hr>
-                        <a href="https://app.payroll.profaskes.id">Login Menggunakan Aplikasi Mobile</a>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-
-<!-- Menambahkan script untuk mendeteksi Android -->
-<script type="text/javascript">
-    // Cek apakah user menggunakan perangkat Android
-    if (navigator.userAgent.match(/Android/i)) {
-        // Jika Android, tampilkan elemen yang disembunyikan
-        document.getElementById('mobile-login-link').style.display = 'block';
-    }
-</script>

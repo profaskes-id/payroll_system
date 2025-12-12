@@ -42,7 +42,7 @@ class PengajuanDinasSearch extends PengajuanDinas
 
     public function search($params, $tgl_mulai, $tgl_selesai)
     {
-        $query = PengajuanDinas::find()->where(['>=', 'tanggal_mulai', $tgl_mulai])->andWhere(['<=', 'tanggal_selesai', $tgl_selesai]);
+        $query = PengajuanDinas::find();
 
         // add conditions that should always apply here
 
@@ -64,8 +64,6 @@ class PengajuanDinasSearch extends PengajuanDinas
         $query->andFilterWhere([
             'id_pengajuan_dinas' => $this->id_pengajuan_dinas,
             'id_karyawan' => $this->id_karyawan,
-            // 'tanggal_mulai' => $this->tanggal_mulai,
-            // 'tanggal_selesai' => $this->tanggal_selesai,
             'estimasi_biaya' => $this->estimasi_biaya,
             'biaya_yang_disetujui' => $this->biaya_yang_disetujui,
             'disetujui_oleh' => $this->disetujui_oleh,
@@ -81,7 +79,7 @@ class PengajuanDinasSearch extends PengajuanDinas
 
     public function searchApi($params, $tgl_mulai, $tgl_selesai)
     {
-        $query = PengajuanDinas::find()->select(['pengajuan_dinas.*', 'karyawan.nama'])->where(['>=', 'tanggal_mulai', $tgl_mulai])->andWhere(['<=', 'tanggal_selesai', $tgl_selesai])->leftJoin('karyawan', 'pengajuan_dinas.id_karyawan = karyawan.id_karyawan ')->asArray();
+        $query = PengajuanDinas::find()->select(['pengajuan_dinas.*', 'karyawan.nama'])->leftJoin('karyawan', 'pengajuan_dinas.id_karyawan = karyawan.id_karyawan ')->asArray();
 
         // add conditions that should always apply here
 
@@ -103,8 +101,6 @@ class PengajuanDinasSearch extends PengajuanDinas
         $query->andFilterWhere([
             'id_pengajuan_dinas' => $this->id_pengajuan_dinas,
             'id_karyawan' => $this->id_karyawan,
-            // 'tanggal_mulai' => $this->tanggal_mulai,
-            // 'tanggal_selesai' => $this->tanggal_selesai,
             'estimasi_biaya' => $this->estimasi_biaya,
             'biaya_yang_disetujui' => $this->biaya_yang_disetujui,
             'disetujui_oleh' => $this->disetujui_oleh,

@@ -2,6 +2,7 @@
 
 use backend\models\JadwalKerja;
 use backend\models\JadwalShift;
+use backend\models\Karyawan;
 use backend\models\ShiftKerja;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
@@ -389,8 +390,53 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
 
 
 
+<<<<<<< Updated upstream
 <!-- JavaScript Libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
+=======
+<?php
+$karyawan = Karyawan::find()
+    ->select(['id_karyawan', 'liveness_passed'])
+    ->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan])
+    ->one();
+
+// Cek apakah kolom liveness_passed ada dan memiliki nilai (tidak null)
+$livenessAda = $karyawan && isset($karyawan->liveness_passed) && $karyawan->liveness_passed !== null;
+?>
+
+<?php if (!$livenessAda): ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                title: 'Wajah Belum Terdaftar!',
+                html: 'Silakan daftarkan wajah Anda untuk dapat menggunakan fitur ini.<br><br><a href="/panel/home/exporience" class="mt-2 btn btn-primary">Daftarkan Disini</a>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Daftar Sekarang',
+                cancelButtonText: 'Nanti Saja',
+                showCloseButton: true,
+                customClass: {
+                    confirmButton: 'btn btn-primary p-2',
+                    cancelButton: 'btn btn-secondary p-2'
+                },
+                buttonsStyling: false,
+                allowOutsideClick: false,
+                allowEscapeKey: true,
+                showLoaderOnConfirm: false,
+                preConfirm: function() {
+                    window.location.href = '/panel/home/expirience';
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/panel/home/expirience';
+                }
+            });
+        });
+    </script>
+<?php endif; ?>
+
+
+>>>>>>> Stashed changes
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <?php
