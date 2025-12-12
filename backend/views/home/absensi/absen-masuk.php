@@ -117,7 +117,7 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
 
 
                         <div class="flex justify-end mt-4 space-x-2">
-                            <button type="button" onclick="resetLiveness('popup-modal')"
+                            <button type="button" onclick=" window.location.reload();"
                                 class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded hover:bg-gray-200">
                                 Ambil Ulang
                             </button>

@@ -206,9 +206,9 @@ $this->title = 'Expirience';
                                             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
                                             <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                                                 <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
-                                                    <h3 class="mb-4 text-lg font-medium leading-6 text-gray-900">Register Wajah</h3>
+                                                    <h3 id="title-controls" class="mb-4 text-lg font-medium leading-6 text-gray-900">Register Wajah</h3>
                                                     <div class="mb-4">
-                                                        <div class="relative">
+                                                        <div class="relative" id="video-canvas">
                                                             <video id="video" class="block w-full mx-auto mb-4 bg-gray-200 rounded" autoplay playsinline muted></video>
                                                             <canvas id="overlay" class="absolute top-0 left-0 w-full h-full pointer-events-none"></canvas>
                                                             <div id="liveness-instruction" class="absolute left-0 right-0 text-center top-2">
@@ -218,7 +218,7 @@ $this->title = 'Expirience';
                                                             </div>
                                                         </div>
                                                         <div id="controls" class="flex justify-center space-x-4">
-                                                            <button id="startLivenessBtn" onclick="startLiveness()" class="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700">Mulai Verifikasi</button>
+                                                            <button id="startLivenessBtn" onclick="startLiveness()" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Mulai Verifikasi</button>
                                                             <button onclick="closeModal()" class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">Tutup</button>
                                                         </div>
                                                     </div>
@@ -236,7 +236,7 @@ $this->title = 'Expirience';
                                                         <?= $form->field($model, 'liveness_passed')->hiddenInput(['id' => 'livenessPassed', 'value' => '0'])->label(false) ?>
 
                                                         <div class="flex justify-end space-x-2" id="faceControls" style="display:none;">
-                                                            <button type="button" onclick="resetCameraView(); startCamera();" class="px-4 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400">Ambil Ulang</button>
+                                                            <button type="button" onclick="window.location.reload();" class="px-4 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400">Ambil Ulang</button>
                                                             <button type="submit" class="relative px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700" id="submitButton" onclick="handleSubmit()">
                                                                 <span id="buttonText">Simpan</span>
                                                                 <span id="loadingSpinner" class="hidden inline-block ml-2">
@@ -246,7 +246,7 @@ $this->title = 'Expirience';
                                                                     </svg>
                                                                 </span>
                                                             </button>
-                                                            <button type="button" onclick="closeModal()" class="px-4 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
+                                                            <button type="button" onclick="window.location.reload();" class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-400">Batal</button>
                                                         </div>
                                                         <?php yii\widgets\ActiveForm::end(); ?>
                                                     </div>
@@ -1059,7 +1059,7 @@ $this->title = 'Expirience';
                 // Capture photo setelah delay
                 setTimeout(() => {
                     captureRegistrationPhoto();
-                }, 1000);
+                }, 500);
             }
         }
 
@@ -1097,6 +1097,7 @@ $this->title = 'Expirience';
         // Simpan ke form input
         document.getElementById('faceData').value = dataURL;
 
+
         // Extract face descriptor menggunakan face-api.js
         const descriptor = await extractRegistrationFaceDescriptor(captureCanvas);
         document.getElementById('livenessPassed').value = descriptor;
@@ -1118,7 +1119,9 @@ $this->title = 'Expirience';
         results.classList.remove('hidden');
         faceControls.style.display = 'flex';
         instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-green-500 rounded-full bg-opacity-90">✓ Verifikasi berhasil!</div>';
-
+        document.getElementById('video-canvas').style.display = 'none';
+        document.getElementById('controls').style.display = 'none';
+        document.getElementById('title-controls').style.display = 'none';
         // Stop camera
         stopFaceRegistration();
 
@@ -1183,7 +1186,7 @@ $this->title = 'Expirience';
         const faceData = document.getElementById('faceData').value;
         const livenessPassed = document.getElementById('livenessPassed').value;
 
-        if (!faceData || livenessPassed !== '1') {
+        if (!faceData || !livenessPassed) {
             alert('Silakan selesaikan verifikasi wajah terlebih dahulu!');
             return false;
         }

@@ -360,7 +360,7 @@ class HomeController extends Controller
         }
 
         if (!$isAda) {
-            if ($setting_fr == 1) {
+            if ($setting_fr == 1 && $karyawan['liveness_passed'] && $model['liveness_passed']) {
 
 
                 $similarity = $this->calculateFaceSimilarity(
@@ -568,7 +568,9 @@ class HomeController extends Controller
             }
 
             if (!$isAda) {
-                if ($setting_fr == 1) {
+                if ($setting_fr == 1 && $karyawan['liveness_passed'] && $model['liveness_passed']) {
+
+
 
                     $similarity = $this->calculateFaceSimilarity(
                         $karyawan['liveness_passed'],
@@ -752,7 +754,7 @@ class HomeController extends Controller
 
                 $setting_fr = FaceRecognationHelper::cekFaceRecognation();
 
-                if ($setting_fr == 1) {
+                if ($setting_fr == 1 && $karyawan['liveness_passed'] && $model['liveness_passed']) {
 
                     $similarity = $this->calculateFaceSimilarity(
                         $karyawan['liveness_passed'],
