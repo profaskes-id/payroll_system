@@ -51,32 +51,13 @@ class PengajuanCutiController extends Controller
     {
 
         $tanggalAwal = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one();
-        $tanggalAwalInt = intval($tanggalAwal->nama_kode); // Misalnya 20
-        $tanggalSekarang = date('d');
-        $bulanSekarang = date('m');
-        $tahunSekarang = date('Y');
+        $bulan = date('m');
+        $tahun = date('Y');
+        $firstDayOfMonth = date('Y-m-d', mktime(0, 0, 0, $bulan, intval($tanggalAwal->nama_kode) + 1, $tahun));
+        $lastdate = date('Y-m-d', mktime(0, 0, 0, $bulan + 1, intval($tanggalAwal->nama_kode), $tahun));
+        $tgl_mulai =  Yii::$app->request->get() == [] ? $firstDayOfMonth :  Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_mulai'];
+        $tgl_selesai =  Yii::$app->request->get() == [] ? $lastdate :  Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_selesai'];
 
-        if ($tanggalSekarang < $tanggalAwalInt) {
-            // Jika tanggal sekarang < tanggalAwal (misal: sekarang tgl 15, tanggalAwal = 20)
-            // tgl_mulai = tanggalAwal+1 + bulan lalu + tahun ini
-            $tgl_mulai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang - 1, $tanggalAwalInt + 1, $tahunSekarang));
-            // tgl_selesai = tanggalAwal + bulan sekarang + tahun ini
-            $tgl_selesai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt, $tahunSekarang));
-        } else {
-            // Jika tanggal sekarang >= tanggalAwal (misal: sekarang tgl 25, tanggalAwal = 20)
-            // tgl_mulai = tanggalAwal+1 + bulan sekarang + tahun ini
-            $tgl_mulai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt + 1, $tahunSekarang));
-            // tgl_selesai = tanggalAwal + bulan depan + tahun menyesuaikan
-            $tgl_selesai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang + 1, $tanggalAwalInt, $tahunSekarang));
-        }
-
-        // Jika ada parameter GET, gunakan nilai dari GET
-        if (!empty(Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_mulai'])) {
-            $tgl_mulai = Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_mulai'];
-        }
-        if (!empty(Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_selesai'])) {
-            $tgl_selesai = Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_selesai'];
-        }
         $searchModel = new PengajuanCutiSearch();
         $dataProvider = $searchModel->search($this->request->queryParams, $tgl_mulai, $tgl_selesai);
 
@@ -107,31 +88,31 @@ class PengajuanCutiController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    // public function actionCreate()
-    // {
-    //     $model = new PengajuanCuti();
+    public function actionCreate()
+    {
+        $model = new PengajuanCuti();
 
-    //     if ($this->request->isPost) {
-    //         if ($model->load($this->request->post())) {
-    //             $model->tanggal_pengajuan = date('Y-m-d');
-    //             $model->sisa_hari = 0;
-    //             $model->status = 0;
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $model->tanggal_pengajuan = date('Y-m-d');
+                $model->sisa_hari = 0;
+                $model->status = 0;
 
-    //             if ($model->save()) {
-    //                 Yii::$app->session->setFlash('success', 'Pengajuan Cuti Berhasil');
-    //                 return $this->redirect(['view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]);
-    //             } else {
-    //                 Yii::$app->session->setFlash('error', 'Gagal Membuat Pengajuan Cuti');
-    //             }
-    //         }
-    //     } else {
-    //         $model->loadDefaultValues();
-    //     }
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Pengajuan Cuti Berhasil');
+                    return $this->redirect(['view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Gagal Membuat Pengajuan Cuti');
+                }
+            }
+        } else {
+            $model->loadDefaultValues();
+        }
 
-    //     return $this->render('create', [
-    //         'model' => $model,
-    //     ]);
-    // }
+        return $this->render('create', [
+            'model' => $model,
+        ]);
+    }
 
     /**
      * Updates an existing PengajuanCuti model.
@@ -148,81 +129,67 @@ class PengajuanCutiController extends Controller
             $model->sisa_hari = 0;
             $model->ditanggapi_pada = date('Y-m-d');
             $model->ditanggapi_oleh = Yii::$app->user->identity->id;
-
             if ($model->save()) {
+
                 $existingDetails = DetailCuti::find()
                     ->where(['id_pengajuan_cuti' => $model->id_pengajuan_cuti])
                     ->indexBy('id_detail_cuti')
                     ->all();
+
                 $postDetails = Yii::$app->request->post('DetailCuti', []);
 
-                $postDates = array_column($postDetails, 'tanggal'); // Ambil semua tanggal dari POST
+                $usedIds = [];
                 $approvedCount = 0;
 
-                // Loop data yang sudah ada di database
-                foreach ($existingDetails as $id => $detail) {
-                    // Cek apakah tanggal detail ini ada di data POST
-                    if (in_array($detail->tanggal, $postDates)) {
-                        // Jika ada di POST, set status = 1 (Disetujui)
-                        $detail->status = 1;
-                        $approvedCount++;
+                // Loop data dari form POST
+                foreach ($postDetails as $key => $data) {
+                    if (!empty($data['id_detail_cuti']) && isset($existingDetails[$data['id_detail_cuti']])) {
+                        // Update
+                        $detail = $existingDetails[$data['id_detail_cuti']];
+                        $detail->load($data, ''); // Load data ke model tanpa form name
+                        $detail->save();
+                        $usedIds[] = $data['id_detail_cuti'];
                     } else {
-                        // Jika tidak ada di POST, set status = 2 (Ditolak)
-                        $detail->status = 2;
-                    }
-                    $detail->save();
-                }
-
-                // Insert data baru dari POST yang belum ada di database
-                foreach ($postDetails as $data) {
-                    $tanggal = $data['tanggal'];
-                    $exists = false;
-
-                    // Cek apakah tanggal ini sudah ada di database
-                    foreach ($existingDetails as $detail) {
-                        if ($detail->tanggal === $tanggal) {
-                            $exists = true;
-                            break;
-                        }
-                    }
-
-                    // Jika belum ada, buat baru dengan status = 1 (Disetujui)
-                    if (!$exists) {
+                        // Insert baru
                         $detail = new DetailCuti();
                         $detail->id_pengajuan_cuti = $model->id_pengajuan_cuti;
-                        $detail->tanggal = $tanggal;
-                        $detail->status = 1; // Status disetujui
+                        $detail->load($data, '');
                         $detail->save();
+                    }
+
+                    if (isset($data['status']) && $data['status'] == 1) {
                         $approvedCount++;
                     }
                 }
 
-                // Jika status pengajuan = Disetujui, proses ke Absensi dan RekapCuti
+                // Delete yang tidak ada di POST
+                foreach ($existingDetails as $id => $detail) {
+                    if (!in_array($id, $usedIds)) {
+                        $detail->delete();
+                    }
+                }
+
                 if ($model->status == Yii::$app->params['disetujui']) {
                     // Prepare data for batch insert into Absensi
                     $absensiData = [];
-
-                    // Ambil semua detail dengan status = 1 (Disetujui)
-                    $approvedDetails = DetailCuti::find()
-                        ->where(['id_pengajuan_cuti' => $model->id_pengajuan_cuti, 'status' => 1])
-                        ->all();
-
-                    foreach ($approvedDetails as $detail) {
-                        $absensiData[] = [
-                            $model->id_karyawan,
-                            '00:00:00',
-                            '00:00:00',
-                            $detail->tanggal,
-                            'C',
-                        ];
+                    foreach ($postDetails as $data) {
+                        if (isset($data['status']) && $data['status'] == 1) {
+                            $absensiData[] = [
+                                $model->id_karyawan,
+                                '00:00:00',
+                                '00:00:00',
+                                $data['tanggal'],    // tanggal
+                                'C',                 // kode_status_hadir
+                            ];
+                        }
                     }
 
                     // Perform batch insert into Absensi table
                     if (!empty($absensiData)) {
                         Yii::$app->db->createCommand()->batchInsert(
-                            'absensi',
-                            ['id_karyawan', 'jam_masuk', 'jam_pulang', 'tanggal', 'kode_status_hadir'],
-                            $absensiData
+                            'absensi', // Table name
+                            ['id_karyawan', 'jam_masuk', 'jam_pulang', 'tanggal', 'kode_status_hadir'], // Columns
+                            $absensiData // Data
                         )->execute();
                     }
 
@@ -234,18 +201,17 @@ class PengajuanCutiController extends Controller
                     ])->one();
 
                     if ($rekapan) {
-                        $rekapan->total_hari_terpakai += $approvedCount;
+                        $rekapan->total_hari_terpakai += $approvedCount ?? 0;
                         $rekapan->save();
                     } else {
                         $newRekapCuti = new RekapCuti();
                         $newRekapCuti->id_karyawan = $model->id_karyawan;
                         $newRekapCuti->id_master_cuti = $model->jenis_cuti;
-                        $newRekapCuti->total_hari_terpakai = $approvedCount;
+                        $newRekapCuti->total_hari_terpakai = $approvedCount ?? 0;
                         $newRekapCuti->tahun = date('Y');
                         $newRekapCuti->save();
                     }
                 }
-
                 $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
                 $sender = Yii::$app->user->identity->id;
 
@@ -261,7 +227,6 @@ class PengajuanCutiController extends Controller
 
                 return $this->redirect(['view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]);
             }
-
             Yii::$app->session->setFlash('error', 'Pengajuan Cuti gagal Ditanggapi');
             return $this->redirect(['view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]);
         }

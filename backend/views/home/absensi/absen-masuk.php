@@ -1,8 +1,6 @@
 <?php
 
 use backend\models\JadwalKerja;
-use backend\models\JadwalShift;
-use backend\models\Karyawan;
 use backend\models\ShiftKerja;
 use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
@@ -40,78 +38,105 @@ $modalStyles = [
 
 $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full grid place-items-center';
 ?>
+<!-- Tambahkan di head -->
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
-
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-
-
-
-
 
 <section class="min-h-[90dvh] relative overflow-x-hidden z-50">
     <!-- Confirmation Modals -->
-    <?php foreach ($modals as $modal): ?>
-        <div id="<?= $modal['id'] ?>" tabindex="-1"
-            class="fixed inset-0 z-50 flex items-center justify-center hidden w-full h-full bg-gray-100/50">
-            <div class="relative w-full max-w-md p-4">
-                <div class="<?= $modalStyles['content'] ?>">
-                    <!-- Close Button -->
-                    <button type="button" onclick="closeModal('<?= $modal['id'] ?>')"
-                        class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
-                        <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                        </svg>
-                    </button>
+    <div id="popup-modal" tabindex="-1"
+        class="fixed inset-0 z-50 flex items-center justify-center hidden w-full h-full bg-gray-100/50">
+        <div class="relative w-full max-w-md p-4">
+            <div class="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-700 md:p-5">
+                <!-- Close Button -->
+                <button type="button" onclick="closeModalFace('popup-modal')"
+                    class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                    <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                </button>
 
-                    <div class="p-3 text-center">
+                <div class="p-3 text-center">
+                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Verifikasi Wajah untuk Absen Masuk</h3>
+                    <!-- MediaPipe Liveness Container -->
+                    <div id="liveness-container-popup-modal" class="liveness-container">
+                        <div class="liveness-video-container">
+                            <!-- Video untuk webcam -->
+                            <video id="webcam-popup-modal" class="liveness-video" autoplay playsinline></video>
+                            <!-- Canvas untuk overlay -->
+                            <canvas id="output_canvas-popup-modal" class="liveness-canvas"></canvas>
 
-                        <!-- Webcam Container -->
-                        <!-- Webcam Container -->
-                        <div id="camera-container-<?= $modal['id'] ?>">
-                            <div id="camera-<?= $modal['id'] ?>" class="mx-auto mb-4 bg-black"></div>
-                            <div class="flex justify-center space-x-4">
-                                <button onclick="takeSnapshot('<?= $modal['id'] ?>')"
-                                    class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
-                                    Ambil Foto
-                                </button>
-                                <!-- <button onclick="stopCamera('<?php // $modal['id'] 
-                                                                    ?>')"
-                                    class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">
-                                    Tutup Kamera
-                                </button> -->
+                            <!-- Instruction overlay -->
+                            <div id="instruction-overlay-popup-modal" class="liveness-instruction">
+                                <div class="liveness-status">Tekan "Mulai Verifikasi"</div>
                             </div>
                         </div>
 
-                        <!-- Results Container -->
-                        <div id="results-<?= $modal['id'] ?>" class="hidden">
-                            <p class="mb-2">Hasil Foto:</p>
-                            <div id="snapshotResult-<?= $modal['id'] ?>" class="mx-auto mb-4 bg-gray-200 "></div>
-
-                            <input type="hidden" id="faceData-<?= $modal['id'] ?>" name="<?= $modal['face_input'] ?>">
-
-                            <div class="flex justify-end">
-                                <button type="button" onclick="resetCamera('<?= $modal['id'] ?>')"
-                                    class="px-4 py-2 mr-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">
-                                    Ulangi
-                                </button>
-                                <button type="button" id="<?= $modal['confirm_id']; ?>" data-modalid="<?= $modal['id'] ?>" class="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600">
-                                    Simpan
-                                </button>
+                        <!-- Liveness Indicators -->
+                        <div id="indicators-popup-modal" class="liveness-indicators" style="display: none;">
+                            <div id="blink-indicator-popup-modal" class="liveness-indicator">
+                                <span>👁</span>
+                                <span>Berkedip</span>
                             </div>
+                            <div id="mouth-indicator-popup-modal" class="liveness-indicator">
+                                <span>👄</span>
+                                <span>Buka Mulut</span>
+                            </div>
+                        </div>
+
+                        <!-- Status Text -->
+                        <div id="status-popup-modal" class="mt-2 text-sm text-gray-600"></div>
+
+                        <!-- Control Buttons -->
+                        <div class="flex justify-center mt-3 space-x-4">
+                            <button id="startLivenessBtn-popup-modal"
+                                onclick="startLivenessVerification('popup-modal')"
+                                class="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700">
+                                Mulai Verifikasi
+                            </button>
+                            <button id="stopLivenessBtn-popup-modal"
+                                onclick="stopLivenessVerification('popup-modal')"
+                                class="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700"
+                                style="display: none;">
+                                Berhenti
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Results Container -->
+                    <div id="results-popup-modal" class="hidden mt-4">
+                        <p class="mb-2 font-medium">Foto yang akan dikirim:</p>
+                        <div class="w-full mx-auto mb-4">
+                            <img id="screenshotResult-popup-modal"
+                                class="object-contain w-full h-auto border rounded max-h-48"
+                                alt="Screenshot Wajah">
+                        </div>
+
+
+                        <div class="flex justify-end mt-4 space-x-2">
+                            <button type="button" onclick=" window.location.reload();"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded hover:bg-gray-200">
+                                Ambil Ulang
+                            </button>
+                            <button type="button" id="submitButton" data-modalid="popup-modal"
+                                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-50">
+                                Simpan Absen
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    <?php endforeach; ?>
+    </div>
 
 
-
-    <div id="popup-modal-keluar" tabindex="-1" class="<?= $modalStyles['container'] ?>">
+    <!-- popup moda keluar -->
+    <div id="popup-modal-keluar" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative w-full max-w-md max-h-full p-4">
-            <div class="<?= $modalStyles['content'] ?>">
+            <div class="relative p-4 text-center bg-white rounded-lg shadow dark:bg-gray-700 md:p-5">
                 <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal-keluar">
                     <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
@@ -122,25 +147,18 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                     <svg class="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-gray-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
-                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Anda Akan Melakukan Absen pulang</h3>
-                    <button id="submitButtonKeluar" data-modal-hide="popup-modal-keluar" type="button" class="<?= $modalStyles['button']['confirm'] ?>">
+                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Anda Akan Melakukan Aksi Absen Pulang ?</h3>
+                    <button id="submitButtonKeluar" data-modal-hide="popup-modal-keluar" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
                         Ya, Yakin
                     </button>
-                    <button data-modal-hide="<?= $modal['id'] ?>" type="button" class="<?= $modalStyles['button']['cancel'] ?>">Batalkan</button>
+                    <button data-modal-hide="popup-modal-keluar" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700">
+                        Batalkan
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Pulang Notification Modal -->
-    <div id="modal-pulang" class="hidden w-[80vw] md:w-[40vw] p-5 absolute left-1/2 -translate-x-1/2 top-1/2 z-50 -translate-y-1/2 rounded-xl border-red-400 border bg-white h-[150px]">
-        <div id="close-modal-pulang" class="absolute -top-2 px-2.5 py-1 text-white -translate-x-6 bg-red-500 rounded-full cursor-pointer -right-10">X</div>
-        <h1 class="text-xl font-bold capitalize">jam kerja anda telah selesai</h1>
-        <p class="font-normal capitalize">segera lngkapi absensi pulang anda, dengan click tombol absensi pulang</p>
-        <div class="flex flex-col items-center justify-around mb-5 space-y-3 lg:flex-row lg:space-y-0">
-            <a href="pengajuan/lebur" class="px-5 py-2 font-bold text-white bg-red-500 rounded-lg">Ajukan Lembur</a>
-        </div>
-    </div>
 
     <!-- Main Content -->
     <section class="grid grid-cols-12">
@@ -200,9 +218,9 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                                 <div class="flex flex-col items-center justify-center space-y-3 lg:flex-row lg:space-y-0">
                                     <div class="grid place-items-center border border-[#D51405]/10 p-3 rounded-full">
                                         <button class="all-none border border-[#D51405]/50 p-3 rounded-full disabled:opacity-50"
-                                            disabled data-modal-target="popup-modal-keluar"
-                                            data-modal-toggle="popup-modal-keluar"
                                             type="button"
+                                            data-modal-target="popup-modal-keluar"
+                                            data-modal-toggle="popup-modal-keluar"
                                             id="pulang-button">
                                             <div class="flex relative w-[225px] h-[225px] <?= $buttonStyles['pulang'] ?> shadow-2xl rounded-full">
                                                 <?= Html::img('@root/images/icons/click.svg', [
@@ -243,11 +261,11 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                             ]) ?>
                             <?= $formAbsen->field($model, 'latitude')->hiddenInput(['class' => 'coordinate lat'])->label(false) ?>
                             <?= $formAbsen->field($model, 'longitude')->hiddenInput(['class' => 'coordinate lon'])->label(false) ?>
-                            <?= $formAbsen->field($model, 'foto_masuk')->hiddenInput(['id' => 'foto_masuk', 'class' => 'foto_fr'])->label(false) ?>
+                            <?= $formAbsen->field($model, 'foto_masuk')->hiddenInput(['id' => 'faceData'])->label(false) ?>
+                            <?= $formAbsen->field($model, 'liveness_passed')->hiddenInput(['id' => 'faceDescriptor'])->label(false) ?>
 
                             <?php if ($dataJam['karyawan']['is_shift'] && $manual_shift == 0): ?>
                                 <?php
-                                // Ambil data shift dari database (pastikan ini sudah dijalankan sebelumnya)
 
                                 $jamKerjaKaryawan = $dataJam['karyawan']->jamKerja;
 
@@ -262,9 +280,7 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                                     ->asArray()
                                     ->all();
 
-
-
-                                // Format pilihan radioList
+                                // Format pilihan untuk dropdown
                                 $shiftOptions = [];
                                 foreach ($dataShift as $shift) {
                                     $jamMasuk = substr($shift['jam_masuk'], 0, 5);
@@ -274,18 +290,13 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                                 ?>
 
                                 <div class="max-w-md mx-auto">
-                                    <?= $formAbsen->field($model, 'id_shift')->radioList($shiftOptions, [
-                                        'item' => function ($index, $label, $name, $checked, $value) {
-                                            return "
-                                  <div class='inline-block w-1/2 px-1 mb-2'>
-                                        <input type='radio' name='{$name}' id='shift-{$value}' value='{$value}' class='hidden peer' " . ($checked ? 'checked' : '') . ">
-                                        <label for='shift-{$value}' class='block p-3 text-sm font-medium text-center text-gray-600 transition bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:border-blue-400 hover:bg-blue-100'>
-                                            {$label}
-                                        </label>
-                                   </div>";
-                                        },
-                                        'class' => 'flex flex-wrap -mx-1' // Container untuk radio items
-                                    ])->label(false) ?>
+                                    <?= $formAbsen->field($model, 'id_shift')->dropDownList(
+                                        $shiftOptions,
+                                        [
+                                            'prompt' => '-- Pilih Shift Kerja --',
+                                            'class' => 'block w-full px-3 py-2 text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+                                        ]
+                                    )->label(false) ?>
                                 </div>
                             <?php endif; ?>
 
@@ -390,576 +401,24 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
 
 
 
-<<<<<<< Updated upstream
-<!-- JavaScript Libraries -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
-=======
-<?php
-$karyawan = Karyawan::find()
-    ->select(['id_karyawan', 'liveness_passed'])
-    ->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan])
-    ->one();
-
-// Cek apakah kolom liveness_passed ada dan memiliki nilai (tidak null)
-$livenessAda = $karyawan && isset($karyawan->liveness_passed) && $karyawan->liveness_passed !== null;
-?>
-
-<?php if (!$livenessAda): ?>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                title: 'Wajah Belum Terdaftar!',
-                html: 'Silakan daftarkan wajah Anda untuk dapat menggunakan fitur ini.<br><br><a href="/panel/home/exporience" class="mt-2 btn btn-primary">Daftarkan Disini</a>',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Daftar Sekarang',
-                cancelButtonText: 'Nanti Saja',
-                showCloseButton: true,
-                customClass: {
-                    confirmButton: 'btn btn-primary p-2',
-                    cancelButton: 'btn btn-secondary p-2'
-                },
-                buttonsStyling: false,
-                allowOutsideClick: false,
-                allowEscapeKey: true,
-                showLoaderOnConfirm: false,
-                preConfirm: function() {
-                    window.location.href = '/panel/home/expirience';
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '/panel/home/expirience';
-                }
-            });
-        });
-    </script>
-<?php endif; ?>
-
-
->>>>>>> Stashed changes
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <?php
 $dataToday = ArrayHelper::toArray($dataJam) ?? [];
 $dataTodayJson = json_encode($dataToday, JSON_PRETTY_PRINT) ?? [];
+
 $dataAtasanPenempatan = ArrayHelper::toArray($masterLokasi) ?? [];
 $dataAtasanPenempatanJson = json_encode($dataAtasanPenempatan, JSON_PRETTY_PRINT) ?? [];
+
 $manual_shift = json_encode($manual_shift, JSON_PRETTY_PRINT) ?? [];
 ?>
 
-
-<script>
-    let datawajah = <?= $dataToday['wajah'] ?>;
-
-    if (!datawajah) {
-
-        Swal.fire({
-            title: 'Absensi Wajah Tidak Terdaftar',
-            html: `
-            <div class="text-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mx-auto text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-            <h3 class="mt-4 text-lg font-medium text-gray-900">Wajah Anda Belum Terdaftar</h3>
-            <div class="mt-2 text-sm text-gray-600">
-            <p>Untuk melakukan absensi wajah, silahkan daftarkan wajah Anda terlebih dahulu. di data pribadi ada tombol register wajah</p>
-            </div>
-            </div>
-            `,
-            showCancelButton: true,
-            confirmButtonText: 'Daftarkan Wajah',
-            cancelButtonText: 'Nanti Saja',
-            confirmButtonColor: '#3B82F6',
-            cancelButtonColor: '#EF4444',
-            focusConfirm: false,
-            customClass: {
-                popup: 'rounded-lg shadow-xl',
-                confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2',
-                cancelButton: 'bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded'
-            },
-            buttonsStyling: false,
-            showLoaderOnConfirm: true,
-            preConfirm: () => {
-                return new Promise((resolve) => {
-                    window.location.href = '/panel/home/expirience'; // Ganti dengan URL yang sesuai
-                });
-            }
-        }).then((result) => {
-            if (result.dismiss === Swal.DismissReason.cancel) {
-                Swal.fire({
-                    title: 'Peringatan',
-                    text: 'Anda tidak dapat melakukan absensi wajah sampai mendaftarkan wajah Anda',
-                    icon: 'warning',
-                    confirmButtonText: 'Mengerti',
-                    confirmButtonColor: '#3B82F6',
-                    customClass: {
-                        popup: 'rounded-lg shadow-xl'
-                    }
-                });
-            }
-        });
-
-    }
-</script>
-
-
-
-
-<script>
-    let manual_shift = <?= $manual_shift ?> ?? 0;
-    let todayJson = <?= $dataTodayJson ?> ?? 0;
-    let AtasanKaryawanJson = <?= $dataAtasanPenempatanJson ?> ?? 0;
-    let globatLat = 0;
-    let globatLong = 0;
-
-
-    // Variabel global untuk koordinat
-    let currentLat = 0;
-    let currentLon = 0;
-    let wajah_fr = '';
-
-    // DOM Elements
-    const jam_masuk = todayJson?.today?.jam_masuk;
-    const max_telat = todayJson?.karyawan?.max_terlambat;
-    const form = document.getElementById('my-form');
-    const submitButton = document.getElementById('submitButton');
-    const submitButtonKeluar = document.getElementById('submitButtonKeluar');
-    const pulang_button = document.querySelector('#pulang-button');
-    const warningBox = document.getElementById('warningBox');
-    const closeWarning = document.getElementById('closeWarning');
-    const modalPulang = document.getElementById('modal-pulang');
-    const closeModalPulang = document.getElementById('close-modal-pulang');
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    // alert(JSON.stringify({viewportHeight , viewportWidth}, null,2));
-
-    // Functions
-
-
-    const updateCoordinates = function(position) {
-
-        currentLat = position.coords.latitude.toFixed(10);
-        currentLon = position.coords.longitude.toFixed(10);
-
-        // Update semua input koordinat di semua form
-        document.querySelectorAll('.coordinate.lat').forEach(el => el.value = currentLat);
-        document.querySelectorAll('.coordinate.lon').forEach(el => el.value = currentLon);
-
-        globatLat = currentLat;
-        globatLong = currentLon;
-        dapatkanAlamat(currentLat, currentLon);
-    };
-
-
-    navigator.geolocation.watchPosition(updateCoordinates, function(error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Gagal mendapatkan lokasi: ' + error.message
-        });
-    }, {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-    });
-
-    function checkLocationAccess() {
-
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    // Lokasi berhasil diambil
-                    globatLat = position.coords.latitude;
-                    globatLong = position.coords.longitude;
-                    // console.log('Location obtained:', globatLat, globatLong);
-                },
-                (error) => {
-                    // console.error('Geolocation error:', error);
-                    Swal.fire({
-                        confirmButtonColor: "#3085d6",
-                        text: "Izinkan Browser Untuk Mengakses Lokasi Anda!"
-                    });
-                }
-            );
-        } else {
-            Swal.fire({
-                confirmButtonColor: "#3085d6",
-                text: "Browser Anda tidak mendukung geolokasi!"
-            });
-        }
-    }
-
-    function setupGeolocationWatcher() {
-        const latitudeInput = document.querySelector('.latitude');
-        const longitudeInput = document.querySelector('.longitude');
-
-        if (navigator.geolocation) {
-            navigator.geolocation.watchPosition(
-                (position) => {
-                    const lat = position.coords.latitude.toFixed(10);
-                    const lon = position.coords.longitude.toFixed(10);
-
-                    document.querySelectorAll('.coordinate.lat').forEach(el => el.value = lat);
-                    document.querySelectorAll('.coordinate.lon').forEach(el => el.value = lon);
-                    dapatkanAlamat(lat, lng);
-                },
-                (error) => {
-                    console.error('Error watching location:', error);
-                }, {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                }
-            );
-        }
-    }
-
-    function dapatkanAlamat(lat, lon) {
-        const elemenAlamat = document.getElementById("alamat");
-        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`, {
-
-            })
-            .then(response => response.json())
-
-            .then(data => {
-                // console.log(data.display_name);
-                if (elemenAlamat) {
-                    elemenAlamat.textContent = data.display_name;
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    }
-
-    function cekWaktu() {
-        const sekarang = new Date();
-        const jam_pulang = todayJson?.today?.jam_keluar;
-        let jam, menit, detik;
-
-        if (manual_shift == 1) {
-            [jam, menit, detik] = jam_pulang.split(':').map(Number);
-        } else {
-            [jam, menit, detik] = "00:00:00".split(':').map(Number);
-        }
-
-        const waktuPulang = new Date(sekarang);
-        waktuPulang.setHours(jam, menit, detik, 0);
-
-        // console.info(sekarang)
-        // console.info(waktuPulang)
-
-        if (sekarang >= waktuPulang) {
-            const message = document.querySelector('#message');
-            if (message) {
-                message.classList.add('hidden');
-                if (pulang_button) pulang_button.disabled = false;
-            }
-        }
-    }
-
-    setInterval(cekWaktu, 1000);
-
-
-
-    // Form Submission Handlers
-    if (submitButtonKeluar) {
-        submitButtonKeluar.addEventListener('click', () => form.submit());
-    }
-
-    if (submitButton) {
-        submitButton.addEventListener('click', function(e) {
-
-            let jenis = e.target.getAttribute('data-modalid') ?? '';
-            const modalId = e.target.getAttribute('data-modalid');
-            const faceData = document.getElementById('faceData-' + modalId)?.value;
-
-            if (!faceData) {
-                alert('Silakan ambil foto terlebih dahulu!');
-                return;
-            }
-
-            wajah_fr = faceData;
-
-            // Update semua input koordinat di semua form
-            document.querySelectorAll('.foto_fr').forEach(el => el.value = faceData);
-
-            const alasanTerlambat = document.querySelector('#alasanTerlambat');
-            const alasanterlalujauh = document.querySelector('#alasanterlalujauh');
-
-            stopCamera(jenis);
-            closeModal(jenis);
-
-            if (manual_shift == 0) {
-                // Check if Leaflet is available
-                if (typeof L === 'undefined') {
-                    console.error('Leaflet library not loaded!');
-                    alert('Error: Map library not loaded');
-                    return;
-                }
-
-                const from = L.latLng(globatLat, globatLong);
-                const to = L.latLng(AtasanKaryawanJson.latitude, AtasanKaryawanJson.longtitude);
-                const distance = from.distanceTo(to);
-
-                if (distance.toFixed(0) <= AtasanKaryawanJson.radius) {
-                    form.submit();
-                } else {
-                    if (alasanterlalujauh) alasanterlalujauh.classList.toggle('hidden');
-                }
-                return;
-            }
-
-            // For non-manual shift, check time and distance
-            const sekarang = new Date();
-            const jam = sekarang.getHours();
-            const menit = sekarang.getMinutes();
-            const detik = sekarang.getSeconds();
-
-            const [batasJam, batasMenit, batasDetik] = jam_masuk.split(':').map(Number);
-            const [maximalTelatJam, maximalTelatbatasMenit, maximalTelatbatasDetik] = max_telat.split(':').map(Number);
-
-            const from = L.latLng(globatLat, globatLong);
-            const to = L.latLng(AtasanKaryawanJson.latitude, AtasanKaryawanJson.longtitude);
-            const distance = from.distanceTo(to);
-
-            if (isSebelumBatas(jam, menit, detik, batasJam, batasMenit, batasDetik)) {
-                if (distance.toFixed(0) <= AtasanKaryawanJson.radius) {
-                    form.submit();
-                } else {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Jarak Terlalu Jauh',
-                        text: 'Anda berada di luar radius yang diizinkan. Silakan scroll ke bawah untuk mengisi alasan.',
-                        confirmButtonText: 'Mengerti'
-                    });
-                    if (alasanterlalujauh) alasanterlalujauh.classList.toggle('hidden');
-                }
-            } else if (isTerlambat(jam, menit, detik, batasJam, maximalTelatbatasMenit)) {
-                if (jam === batasJam && menit <= maximalTelatbatasMenit) {
-                    if (distance.toFixed(0) <= AtasanKaryawanJson.radius) {
-                        form.submit();
-                    } else {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Jarak Terlalu Jauh',
-                            text: 'Anda berada di luar radius yang diizinkan. Silakan scroll ke bawah untuk mengisi alasan.',
-                            confirmButtonText: 'Mengerti'
-                        });
-                        if (alasanterlalujauh) alasanterlalujauh.classList.toggle('hidden');
-                    }
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Anda Terlambat',
-                        text: 'Waktu kehadiran Anda melebihi batas yang ditentukan. Silakan scroll ke bawah untuk mengisi alasan keterlambatan.',
-                        confirmButtonText: 'Mengerti'
-                    });
-                    if (alasanTerlambat) alasanTerlambat.classList.toggle('hidden');
-                }
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Anda Terlambat',
-                    text: 'Waktu kehadiran Anda melebihi batas yang ditentukan. Silakan scroll ke bawah untuk mengisi alasan keterlambatan.',
-                    confirmButtonText: 'Mengerti'
-                });
-                if (alasanTerlambat) alasanTerlambat.classList.toggle('hidden');
-            }
-        });
-    }
-
-    // Helper Functions
-    function isSebelumBatas(jam, menit, detik, batasJam, batasMenit, batasDetik) {
-        if (jam < batasJam) return true;
-        if (jam === batasJam && menit < batasMenit) return true;
-        if (jam === batasJam && menit === batasMenit && detik < batasDetik) return true;
-        return false;
-    }
-
-    function isTerlambat(jam, menit, detik, batasJam, maximalTelatbatasMenit) {
-        if (jam > batasJam) return true;
-        if (jam == batasJam && menit < maximalTelatbatasMenit) return true;
-        return false;
-    }
-
-    // Camera Handling Functions
-    const cameraStates = {};
-
-    function initModal(modalId) {
-        cameraStates[modalId] = {
-            isCameraOn: false,
-            hasSnapshot: false
-        };
-    }
-
-    function startCamera(modalId) {
-        if (!cameraStates[modalId]) initModal(modalId);
-        if (cameraStates[modalId].isCameraOn) return;
-
-        // Check if Webcam is available
-        if (typeof Webcam === 'undefined') {
-            console.error('Webcam library not loaded!');
-            alert('Error: Webcam library not loaded');
-            return;
-        }
-
-
-        Webcam.set({
-            image_format: 'jpeg',
-            jpeg_quality: 80,
-            flip_horiz: true,
-            width: 300,
-            height: 400,
-            constraints: {
-                facingMode: 'user',
-            }
-        });
-
-        Webcam.attach('#camera-' + modalId);
-        cameraStates[modalId].isCameraOn = true;
-
-        const cameraContainer = document.getElementById('camera-container-' + modalId);
-        const resultsContainer = document.getElementById('results-' + modalId);
-
-        if (cameraContainer) cameraContainer.classList.remove('hidden');
-        if (resultsContainer) resultsContainer.classList.add('hidden');
-    }
-
-    function takeSnapshot(modalId) {
-        if (!cameraStates[modalId]?.isCameraOn) {
-            alert('Kamera belum diaktifkan!');
-            return;
-        }
-
-        Webcam.snap(function(data_uri) {
-            cameraStates[modalId].hasSnapshot = true;
-
-            const cameraContainer = document.getElementById('camera-container-' + modalId);
-            const snapshotResult = document.getElementById('snapshotResult-' + modalId);
-            const faceDataInput = document.getElementById('faceData-' + modalId);
-            const resultsContainer = document.getElementById('results-' + modalId);
-
-            if (cameraContainer) cameraContainer.classList.add('hidden');
-            if (snapshotResult) {
-                snapshotResult.innerHTML = '<img src="' + data_uri + '" class="mx-auto mb-4 bg-gray-200 "/>';
-            }
-            if (faceDataInput) faceDataInput.value = data_uri;
-            if (resultsContainer) resultsContainer.classList.remove('hidden');
-        });
-    }
-
-    function resetCamera(modalId) {
-        stopCamera(modalId);
-
-        const resultsContainer = document.getElementById('results-' + modalId);
-        const cameraContainer = document.getElementById('camera-container-' + modalId);
-
-        if (resultsContainer) resultsContainer.classList.add('hidden');
-        if (cameraContainer) cameraContainer.classList.remove('hidden');
-
-        startCamera(modalId);
-    }
-
-    function stopCamera(modalId) {
-        if (cameraStates[modalId]?.isCameraOn) {
-            Webcam.reset('#camera-' + modalId);
-            cameraStates[modalId].isCameraOn = false;
-        }
-    }
-
-    function closeModal(modalId) {
-        const modal = document.getElementById(modalId);
-        const bg = document.querySelector('.z-40');
-
-        if (modal) {
-            // Webcam.reset('#camera-' + modalId);
-            modal.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }
-        if (bg) {
-            bg.classList.add('hidden');
-        }
-    }
-
-    function handleSave(modalId, confirmFunction) {
-        if (!cameraStates[modalId]?.hasSnapshot) {
-            alert('Silakan ambil foto terlebih dahulu!');
-            return;
-        }
-
-        if (typeof window[confirmFunction] === 'function') {
-            window[confirmFunction]();
-        } else {
-            console.error('Function ' + confirmFunction + ' tidak ditemukan!');
-        }
-
-        // closeModal(modalId);
-    }
-
-
-    initModal('popup-modal'); // Ganti dengan ID modal Anda
-
-    // Tambahkan event untuk tombol buka kamera
-    const btnBukaKamera = document.querySelector('[data-modal-toggle="popup-modal"]');
-    if (btnBukaKamera) {
-        btnBukaKamera.addEventListener('click', function() {
-            startCamera('popup-modal'); // Ganti dengan ID modal Anda
-        });
-    }
-
-    // Event untuk tombol ambil foto
-    const btnAmbilFoto = document.getElementById('btn-ambil-foto');
-    if (btnAmbilFoto) {
-        btnAmbilFoto.addEventListener('click', function() {
-            takeSnapshot('popup-modal'); // Ganti dengan ID modal Anda
-            // Update semua input koordinat di semua form
-            document.querySelectorAll('.foto_fr').forEach(el => el.value = wajah_fr);
-        });
-    }
-
-
-
-    // Ganti dengan salah satu dari berikut:
-    // 1. Untuk DOMContentLoaded (saat HTML selesai diparse)
-    document.addEventListener('DOMContentLoaded', function() {
-        let currentLat, currentLon;
-
-        navigator.geolocation.watchPosition(function(position) {
-            currentLat = position.coords.latitude.toFixed(10);
-            currentLon = position.coords.longitude.toFixed(10);
-
-            // Update form utama
-            document.querySelectorAll('.latitude, .longitude').forEach(el => {
-                el.value = el.classList.contains('latitude') ? currentLat : currentLon;
-            });
-
-            if (position) {
-                dapatkanAlamat(globatLat, globatLong);
-            }
-
-        }, function(error) {
-            // Menangani kesalahan dan menampilkan SweetAlert2
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Terjadi kesalahan: Lokasi anda tidak terdeteksi',
-                confirmButtonColor: "#3085d6", // Warna biru biasa
-                confirmButtonText: 'OK',
-                footer: '<p>Pastikan izin lokasi diaktifkan</p>'
-            });
-
-        }, {
-            enableHighAccuracy: true,
-            timeout: 10000, // Ubah timeout menjadi 10 detik
-            maximumAge: 0
-        });
-    });
-</script>
-
-<style>
-    .swal2-confirm {
-        background-color: #3085d6 !important;
-        color: white !important;
-        border: none !important;
-        box-shadow: none !important;
-    }
-</style>
+<?php
+echo $this->render('utils/_script_face.php');
+echo $this->render('utils/_script_timeandlocation.php', [
+    'dataToday' => $dataToday,
+    'dataTodayJson' => $dataTodayJson,
+    'dataAtasanPenempatan' => $dataAtasanPenempatan,
+    'dataAtasanPenempatanJson' => $dataAtasanPenempatanJson,
+    'manual_shift' => $manual_shift,
+]);
+?>

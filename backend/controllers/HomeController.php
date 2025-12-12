@@ -37,7 +37,8 @@ use backend\models\SettinganUmum;
 use backend\models\ShiftKerja;
 use backend\service\CekPengajuanKaryawanService;
 use backend\service\JamKerjaKaryawanService;
-use PhpParser\Node\Expr\AssignOp\ShiftLeft;
+use Exception;
+use InvalidArgumentException;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -197,19 +198,7 @@ class HomeController extends Controller
     //============================================START ABSEN REGULAR============================================
 
 
-    /*************  ✨ Windsurf Command ⭐  *************/
-    /**
-     * Handle Absen Masuk
-     *
-     * @param Model $model
-     * @param CompressImagesHelper $comporess
-     * @param boolean $manual_shift
-     * @param boolean $setting_fr
-     * @param boolean $verificationFr
-     *
-     * @return mixed
-     */
-    /*******  52894786-2798-4022-8a68-7091dca9f1ca  *******/    public function actionAbsenMasuk()
+    public function actionAbsenMasuk()
     {
         $hariIni = (int) date('w');
         $this->layout = 'mobile-main';
@@ -224,7 +213,7 @@ class HomeController extends Controller
         ]);
         $karyawan = Karyawan::find()->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan, 'is_aktif' => 1])->one();  //karyawan yang login
         $absensiToday = Absensi::find()->where(['tanggal' => date('Y-m-d'), 'id_karyawan' => $karyawan->id_karyawan])->all(); //melihat data absesni hari ini
-        $adaWajahTeregistrasi = karyawan::find()->select('id_karyawan')->where(['id_karyawan' => $karyawan->id_karyawan])->andWhere(['IS NOT', 'wajah', null])->andWhere(['<>', 'wajah', ''])->exists();
+        $adaWajahTeregistrasi = karyawan::find()->select('id_karyawan')->where(['id_karyawan' => $karyawan->id_karyawan])->andWhere(['IS NOT', 'liveness_passed', null])->andWhere(['<>', 'liveness_passed', ''])->exists();
         $atasanPenempatan = AtasanKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one(); // data atasa dan penempatan karyawan yang loin
         if ($atasanPenempatan) {
             $masterLokasi = $atasanPenempatan->masterLokasi; // lokasi karyawan ditempatkan
@@ -262,7 +251,7 @@ class HomeController extends Controller
         $jamKerjaToday = JamKerjaKaryawanService::getJamKerjaKaryawanHariIni($jamKerjaKaryawan, $jamKerjaHari, $hariIni, $manual_shift);
 
         $dataJam = [
-            'wajah' => $adaWajahTeregistrasi ? 1 : 0,
+            'liveness_passed' => $adaWajahTeregistrasi ? 1 : 0,
             'karyawan' => $jamKerjaKaryawan,
             'today' => $jamKerjaToday,
             'lembur' => $hasilLembur,
@@ -272,7 +261,7 @@ class HomeController extends Controller
 
         if ($this->handlePostAbsenMasuk($model, $comporess, $manual_shift, $setting_fr, $verificationFr)) {
             // jika sukses post dan simpan data, redirect atau render sesuai kebutuhan
-            return $this->redirect(['/panel/absens-masuk']); // sesuaikan redirect
+            return $this->redirect(['absen-masuk']); // sesuaikan redirect
         }
 
 
@@ -301,11 +290,6 @@ class HomeController extends Controller
         $karyawan = Karyawan::find()->where(['id_karyawan' => Yii::$app->user->identity->id_karyawan])->one();
         $isAda = Absensi::find()->where(['id_karyawan' => $karyawan->id_karyawan, 'tanggal' => date('Y-m-d')])->one();
 
-        $base64Image = Yii::$app->request->post('Absensi')['foto_masuk'] ?? '';
-        if ($base64Image) {
-            $compressedImage = $comporess->compressBase64Image($base64Image);
-            $model->foto_masuk = $compressedImage;
-        }
 
         $model->id_karyawan = $karyawan->id_karyawan;
         $model->tanggal = date('Y-m-d');
@@ -316,10 +300,9 @@ class HomeController extends Controller
         $model->keterangan = $model->is_lembur ? 'Lembur' : '-';
         $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
         $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
-
         $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
-
-        // Cek keterlambatan, sama seperti kode kamu
+        $model->foto_masuk = Yii::$app->request->post('Absensi')['foto_masuk'] ?? null;
+        $model->liveness_passed = Yii::$app->request->post('Absensi')['liveness_passed'] ?? null;
         if ($jamKerjaKaryawan && $jamKerjaKaryawan->is_shift == 1) {
             if ($manual_shift == 1) {
                 $tanggalHariIni = date('Y-m-d');
@@ -377,57 +360,21 @@ class HomeController extends Controller
         }
 
         if (!$isAda) {
-            if ($setting_fr == 1) {
-                // Face recognition API call seperti kode kamu
-                $similar = 0;
-                $url = Yii::$app->params['api_url_fr'] . '/core/compare';
-                $data = [
-                    "cluster" => Yii::$app->params['cluster_fr'],
-                    "user" => $model['karyawan']['nama'] ?? 'User',
-                    "userID" => "{$model->id_karyawan}",
-                    "data" => $model->foto_masuk,
-                ];
+            if ($setting_fr == 1 && $karyawan['liveness_passed'] && $model['liveness_passed']) {
 
-                $jsonData = json_encode($data);
-                $ch = curl_init();
 
-                curl_setopt_array($ch, [
-                    CURLOPT_URL => $url,
-                    CURLOPT_POST => true,
-                    CURLOPT_POSTFIELDS => $jsonData,
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_HTTPHEADER => [
-                        'Content-Type: application/json',
-                        'Content-Length: ' . strlen($jsonData)
-                    ],
-                    CURLOPT_TIMEOUT => 30,
-                ]);
+                $similarity = $this->calculateFaceSimilarity(
+                    $karyawan['liveness_passed'],
+                    $model['liveness_passed']
+                );
 
-                $response = curl_exec($ch);
-                $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-                if (curl_errno($ch)) {
-                    $error_msg = curl_error($ch);
-                    throw new \Exception("cURL Error: " . $error_msg);
-                }
 
-                curl_close($ch);
+                $similar = $similarity ? round($similarity) : 0;
 
-                if (empty($response)) {
-                    throw new \Exception("API mengembalikan response kosong");
-                }
 
-                $responseArray = json_decode($response, true);
-
-                if (isset($responseArray['message']) && $responseArray['message'] == "OK") {
-                    $similar  = $responseArray['data']['similarity'];
-                } else {
-                    Yii::$app->session->setFlash('error', 'API Error: ');
-                }
-
-                if ($similar * 100 >= Yii::$app->params['minimal_kemiripan_fr']) {
-                    $similarPercentage = round($similar * 100);
-                    $model->similarity = $similarPercentage;
+                if ($similar >= Yii::$app->params['minimal_kemiripan_fr']) {
+                    $model->similarity = $similar;
 
                     if ($model->save()) {
                         $absensiKeduaTerakhir = Absensi::find()
@@ -442,19 +389,19 @@ class HomeController extends Controller
                             $absensiKeduaTerakhir->save(false);
                         }
 
-                        Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil dengan kemiripan wajah sebesar ' . $similarPercentage . '%');
+                        Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil dengan kemiripan wajah sebesar ' . $similar . '%');
                         return true;
                     }
                 } else {
                     if ($verificationFr == 1) {
-                        $similarPercentage = round($similar * 100);
+                        $similarPercentage = $similar;
                         Yii::$app->session->setFlash(
                             'error',
                             'Absen masuk tidak berhasil. Tingkat kemiripan wajah Anda hanya ' . $similarPercentage . '%. ' .
                                 'Silakan ulangi pemindaian wajah hingga mencapai nilai minimal '
                         );
                     } else {
-                        $similarPercentage = round($similar * 100);
+                        $similarPercentage = $similar;
                         $model->similarity = $similarPercentage;
 
                         if ($model->save()) {
@@ -492,6 +439,9 @@ class HomeController extends Controller
 
         return false;
     }
+
+
+
 
     private function handleAbsenView($model, $absensiToday, $dataProvider, $jamKerjaKaryawan, $dataJam, $jamKerjaToday, $masterLokasi, $isTerlambatActive, $isPulangCepat, $manual_shift, $setting_fr)
     {
@@ -580,6 +530,7 @@ class HomeController extends Controller
             $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
             $model->alasan_terlambat = Yii::$app->request->post('Absensi')['alasan_terlambat'];
             $base64Image = Yii::$app->request->post('Absensi')['foto_masuk'] ?? '-';
+            $model->liveness_passed = Yii::$app->request->post('Absensi')['liveness_passed'] ?? null;
             $verificationFr = FaceRecognationHelper::cekVerificationFr();
 
 
@@ -617,67 +568,25 @@ class HomeController extends Controller
             }
 
             if (!$isAda) {
-                if ($setting_fr == 1) {
+                if ($setting_fr == 1 && $karyawan['liveness_passed'] && $model['liveness_passed']) {
 
-                    $similar = 0;
-                    $url = Yii::$app->params['api_url_fr'] . '/core/compare';
-                    $data = [
-                        "cluster" => Yii::$app->params['cluster_fr'],
-                        "user" => $model['karyawan']['nama'],
 
-                        "userID" => "{$model->id_karyawan}",
-                        "data" => $model->foto_masuk, // Tidak perlu quotes tambahan jika sudah string
-                    ];
 
-                    $jsonData = json_encode($data);
+                    $similarity = $this->calculateFaceSimilarity(
+                        $karyawan['liveness_passed'],
+                        $model['liveness_passed']
+                    );
 
-                    $ch = curl_init();
 
-                    // Set cURL options
-                    curl_setopt_array($ch, [
-                        CURLOPT_URL => $url,
-                        CURLOPT_POST => true,
-                        CURLOPT_POSTFIELDS => $jsonData,
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_HTTPHEADER => [
-                            'Content-Type: application/json',
-                            'Content-Length: ' . strlen($jsonData)
-                        ],
-                        CURLOPT_TIMEOUT => 30, // Timeout in seconds
-                    ]);
 
-                    // Execute the request
-                    $response = curl_exec($ch);
-                    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-                    // Check for errors
-                    if (curl_errno($ch)) {
-                        $error_msg = curl_error($ch);
-                        // Handle error (log or throw exception)
-                        throw new \Exception("cURL Error: " . $error_msg);
-                    }
-
-                    // Close cURL session
-                    curl_close($ch);
-
-                    if (empty($response)) {
-                        throw new \Exception("API mengembalikan response kosong");
-                    }
-
-                    $responseArray = json_decode($response, true);
-
-                    if (isset($responseArray['message']) == "OK") {
-                        // Request berhasil
-                        $similar  = $responseArray['data']['similarity'];
-                    } else {
-                        //flash error
-                        Yii::$app->session->setFlash('error', 'API Error: ');
-                    }
+                    // Yii::debug("Kemiripan wajah: " . $similarity . "%");
+                    $similar = $similarity ? round($similarity) : 0;
 
                     // /jika mirip
-                    if ($similar * 100 >= Yii::$app->params['minimal_kemiripan_fr']) {
+                    if ($similar >= Yii::$app->params['minimal_kemiripan_fr']) {
                         // Hitung persentase kemiripan (dikalikan 100 dan dibulatkan)
-                        $similarPercentage = round($similar * 100);
+                        $similarPercentage = round($similar);
                         $model->similarity = $similarPercentage;
 
                         if ($model->save()) {
@@ -699,14 +608,14 @@ class HomeController extends Controller
                     } else {
                         // check verivikasi_fr
                         if ($verificationFr == 1) {
-                            $similarPercentage = round($similar * 100);
+                            $similarPercentage = round($similar);
                             Yii::$app->session->setFlash(
                                 'error',
                                 'Absen masuk tidak berhasil. Tingkat kemiripan wajah Anda hanya ' . $similarPercentage . '%. '
                                     . 'Silakan ulangi pemindaian wajah hingga mencapai nilai minimal '
                             );
                         } else {
-                            $similarPercentage = round($similar * 100);
+                            $similarPercentage = round($similar);
                             $model->similarity = $similarPercentage;
 
                             if ($model->save()) {
@@ -767,8 +676,9 @@ class HomeController extends Controller
             $model->latitude = Yii::$app->request->post('Absensi')['latitude'];
             $model->longitude = Yii::$app->request->post('Absensi')['longitude'];
             $model->alasan_terlalu_jauh = Yii::$app->request->post('Absensi')['alasan_terlalu_jauh'];
+            $model->foto_masuk = Yii::$app->request->post('Absensi')['foto_masuk'] ?? null;
+            $model->liveness_passed = Yii::$app->request->post('Absensi')['liveness_passed'] ?? null;
 
-            // Hanya lakukan pengecekan keterlambatan jika manual_shift == 1
             $jamKerjaKaryawan = JamKerjaKaryawan::find()->where(['id_karyawan' => $karyawan->id_karyawan])->one();
 
             if ($jamKerjaKaryawan && $jamKerjaKaryawan->is_shift == 1) {
@@ -844,68 +754,20 @@ class HomeController extends Controller
 
                 $setting_fr = FaceRecognationHelper::cekFaceRecognation();
 
-                if ($setting_fr == 1) {
+                if ($setting_fr == 1 && $karyawan['liveness_passed'] && $model['liveness_passed']) {
 
-                    $similar = 0;
-                    $url = Yii::$app->params['api_url_fr'] . '/core/compare';
-                    $data = [
-                        "cluster" => Yii::$app->params['cluster_fr'],
-                        "user" => $model['karyawan']['nama'],
-                        // "user" => 'syaid',
-                        "userID" => "{$model->id_karyawan}",
-                        // "userID" => "18",
-                        "data" => $model->foto_masuk, // Tidak perlu quotes tambahan jika sudah string
-                    ];
+                    $similarity = $this->calculateFaceSimilarity(
+                        $karyawan['liveness_passed'],
+                        $model['liveness_passed']
+                    );
 
-                    $jsonData = json_encode($data);
-
-                    $ch = curl_init();
-
-                    // Set cURL options
-                    curl_setopt_array($ch, [
-                        CURLOPT_URL => $url,
-                        CURLOPT_POST => true,
-                        CURLOPT_POSTFIELDS => $jsonData,
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_HTTPHEADER => [
-                            'Content-Type: application/json',
-                            'Content-Length: ' . strlen($jsonData)
-                        ],
-                        CURLOPT_TIMEOUT => 30, // Timeout in seconds
-                    ]);
-
-                    // Execute the request
-                    $response = curl_exec($ch);
-                    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-                    // Check for errors
-                    if (curl_errno($ch)) {
-                        $error_msg = curl_error($ch);
-                        // Handle error (log or throw exception)
-                        throw new \Exception("cURL Error: " . $error_msg);
-                    }
-
-                    // Close cURL session
-                    curl_close($ch);
-
-                    if (empty($response)) {
-                        throw new \Exception("API mengembalikan response kosong");
-                    }
-
-                    $responseArray = json_decode($response, true);
-
-                    if (isset($responseArray['message']) == "OK") {
-                        // Request berhasil
-                        $similar  = $responseArray['data']['similarity'];
-                    } else {
-                        //flash error
-                        Yii::$app->session->setFlash('error', 'API Error: ');
-                    }
+                    // Yii::debug("Kemiripan wajah: " . $similarity . "%");
+                    $similar = $similarity ? round($similarity) : 0;
 
                     // jika mirip
-                    if ($similar * 100 >= Yii::$app->params['minimal_kemiripan_fr']) {
+                    if ($similar >= Yii::$app->params['minimal_kemiripan_fr']) {
                         // Hitung persentase kemiripan (dikalikan 100 dan dibulatkan)
-                        $similarPercentage = round($similar * 100);
+                        $similarPercentage = $similar;
                         $model->similarity = $similarPercentage;
 
                         if ($model->save()) {
@@ -927,14 +789,14 @@ class HomeController extends Controller
                     } else {
                         // check verivikasi_fr
                         if ($verificationFr == 1) {
-                            $similarPercentage = round($similar * 100);
+                            $similarPercentage = $similar;
                             Yii::$app->session->setFlash(
                                 'error',
                                 'Absen masuk tidak berhasil. Tingkat kemiripan wajah Anda hanya ' . $similarPercentage . '%. '
                                     . 'Silakan ulangi pemindaian wajah hingga mencapai nilai minimal '
                             );
                         } else {
-                            $similarPercentage = round($similar * 100);
+                            $similarPercentage = $similar;
                             $model->similarity = $similarPercentage;
 
                             if ($model->save()) {
@@ -1045,6 +907,45 @@ class HomeController extends Controller
     //============================================END ABSEN REGULAR============================================
 
 
+    protected function calculateFaceSimilarity($descriptor1, $descriptor2)
+    {
+
+
+        $apiUrl = 'http://face-recognation.profaskes.id/compare';
+
+        // Format descriptor sebagai string comma-separated
+        $postData = [
+            'descriptor1' => is_array($descriptor1) ? implode(',', $descriptor1) : $descriptor1,
+            'descriptor2' => is_array($descriptor2) ? implode(',', $descriptor2) : $descriptor2
+        ];
+
+        $jsonData = json_encode($postData);
+
+        $ch = curl_init($apiUrl);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $jsonData,
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+            CURLOPT_TIMEOUT => 10,
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 200) {
+            throw new Exception("API error: HTTP $httpCode");
+        }
+
+        $result = json_decode($response, true);
+
+        if (!isset($result['similarity'])) {
+            throw new Exception('Invalid API response');
+        }
+
+        return (float) $result['similarity'];
+    }
 
     //============================================ABSENSI 24 JAM ============================================
 

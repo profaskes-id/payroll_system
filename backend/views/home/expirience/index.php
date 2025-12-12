@@ -7,7 +7,8 @@ use yii\helpers\Html;
 $this->title = 'Expirience';
 
 ?>
-
+<!-- Tambahkan sebelum script Anda -->
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 <style>
     .modal-overlay {
         position: fixed;
@@ -50,7 +51,7 @@ $this->title = 'Expirience';
         font-size: 20px;
     }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
+
 <div class="container relative mx-auto px-3 lg:px-5 min-h-[90dvh] z-50">
     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home', 'title' => 'Data & Riwayat']); ?>
     <section>
@@ -89,10 +90,9 @@ $this->title = 'Expirience';
         </div>
         <div id="default-styled-tab-content">
             <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-karyawan" role="tabpanel" aria-labelledby="karyawan-tab">
-
                 <h2 class="font-semibold text-gray-900 ">Data Personal </h2>
-                <div class="grid grid-cols-1 mt-2 gap-y-3">
-                    <?php if (!empty($karyawan)) : ?>
+                <?php if (!empty($karyawan)) : ?>
+                    <div class="grid grid-cols-1 mt-2 gap-y-3">
 
                         <div class="flex flex-col w-full p-2 space-y-1 bg-white rounded ">
                             <div class="grid grid-cols-12 gap-2">
@@ -104,6 +104,7 @@ $this->title = 'Expirience';
                                                 <th>Kode Karyawan</th>
                                                 <td><?= $karyawan->kode_karyawan ?></td>
                                             </tr>
+
                                             <tr class="border-b border-gray-300 ">
                                                 <th>Nama Karyawan</th>
                                                 <td><?= $karyawan->nama ?></td>
@@ -149,6 +150,9 @@ $this->title = 'Expirience';
                                                 <td><?= $karyawan->masterAgama->nama_kode ?></td>
                                             </tr>
 
+
+
+
                                             <tr class="">
                                                 <th>wajah</th>
                                                 <td>
@@ -187,7 +191,7 @@ $this->title = 'Expirience';
                                         <div class="w-full col-span-12 p-2 border border-gray-300 lg:col-span-6">
                                             <div class="mt-4">
                                                 <button type="button" onclick="openFaceModal()" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
-    <?=  $karyawan->wajah ? "Update Wajah" :  "Register Wajah" ?>                                                  
+                                                    <?= $karyawan->wajah ? "Update Wajah" :  "Register Wajah" ?>
                                                 </button>
                                             </div>
                                         </div>
@@ -202,17 +206,25 @@ $this->title = 'Expirience';
                                             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
                                             <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                                                 <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
-                                                    <h3 class="mb-4 text-lg font-medium leading-6 text-gray-900">Register Wajah</h3>
+                                                    <h3 id="title-controls" class="mb-4 text-lg font-medium leading-6 text-gray-900">Register Wajah</h3>
                                                     <div class="mb-4">
-                                                        <div id="camera" class="w-full h-64 mb-4 bg-gray-200"></div>
+                                                        <div class="relative" id="video-canvas">
+                                                            <video id="video" class="block w-full mx-auto mb-4 bg-gray-200 rounded" autoplay playsinline muted></video>
+                                                            <canvas id="overlay" class="absolute top-0 left-0 w-full h-full pointer-events-none"></canvas>
+                                                            <div id="liveness-instruction" class="absolute left-0 right-0 text-center top-2">
+                                                                <div class="inline-block px-3 py-1 text-sm text-white bg-black rounded-full bg-opacity-70">
+                                                                    Tekan "Mulai Verifikasi" untuk memulai
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                         <div id="controls" class="flex justify-center space-x-4">
-                                                            <button onclick="takeSnapshot()" class="px-4 py-2 text-white bg-blue-500 rounded">Ambil Foto</button>
-                                                            <button onclick="stopCamera()" class="px-4 py-2 text-white bg-red-500 rounded">Tutup Kamera</button>
+                                                            <button id="startLivenessBtn" onclick="startLiveness()" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Mulai Verifikasi</button>
+                                                            <button onclick="closeModal()" class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">Tutup</button>
                                                         </div>
                                                     </div>
                                                     <div id="results" class="hidden">
-                                                        <p class="mb-2">Hasil Foto:</p>
-                                                        <div id="snapshotResult" class="mx-auto mb-4 bg-gray-200 "></div>
+                                                        <p class="mb-2 font-medium">Hasil Foto:</p>
+                                                        <div id="snapshotResult" class="mx-auto mb-4 overflow-hidden bg-gray-200 rounded"></div>
                                                         <?php $form = yii\widgets\ActiveForm::begin([
                                                             'id' => 'face-form',
                                                             'action' => ['karyawan/upload-face'],
@@ -221,19 +233,20 @@ $this->title = 'Expirience';
 
                                                         <?= $form->field($model, 'kode_karyawan')->hiddenInput(['value' => $karyawan->kode_karyawan])->label(false) ?>
                                                         <?= $form->field($model, 'wajah')->hiddenInput(['id' => 'faceData'])->label(false) ?>
+                                                        <?= $form->field($model, 'liveness_passed')->hiddenInput(['id' => 'livenessPassed', 'value' => '0'])->label(false) ?>
 
-                                                        <div class="flex justify-end" id="faceControls">
-                                                            <button type="button" onclick="resetCameraView(); startCamera();" class="px-4 py-2 bg-gray-300 rounded">Ambil Ulang</button>
-                                                            <button type="submit" class="px-4 py-2 mx-2 add-button" id="submitButton" onclick="handleSubmit()">
+                                                        <div class="flex justify-end space-x-2" id="faceControls" style="display:none;">
+                                                            <button type="button" onclick="window.location.reload();" class="px-4 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400">Ambil Ulang</button>
+                                                            <button type="submit" class="relative px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700" id="submitButton" onclick="handleSubmit()">
                                                                 <span id="buttonText">Simpan</span>
-                                                                <span id="loadingSpinner" class="hidden ml-2">
+                                                                <span id="loadingSpinner" class="hidden inline-block ml-2">
                                                                     <svg class="w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                                                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                                                     </svg>
                                                                 </span>
                                                             </button>
-                                                            <button type="button" onclick="closeModal()" class="px-4 py-2 mr-2 bg-gray-300 rounded">Batal</button>
+                                                            <button type="button" onclick="window.location.reload();" class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-400">Batal</button>
                                                         </div>
                                                         <?php yii\widgets\ActiveForm::end(); ?>
                                                     </div>
@@ -439,20 +452,16 @@ $this->title = 'Expirience';
                                 </div>
                             </div>
                         </div>
-
-                </div>
-
-            <?php else: ?>
-                <div class="flex flex-col w-full p-2 space-y-1 bg-white rounded ">
-                    <div>
-                        <p class="py-2 text-[#272727]">Belum Ada Data</p>
                     </div>
 
-                </div>
-            <?php endif ?>
+                <?php else: ?>
+                    <div class="flex flex-col w-full p-2 space-y-1 bg-white rounded ">
+                        <div>
+                            <p class="py-2 text-[#272727]">Belum Ada Data</p>
+                        </div>
 
-
-
+                    </div>
+                <?php endif ?>
             </div>
         </div>
         <div class="hidden p-4 bg-gray-100 rounded-lg dark:bg-gray-800" id="styled-profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -719,111 +728,36 @@ $this->title = 'Expirience';
 
             </div>
         </div>
-</div>
-</section>
 
 
 
-
-<div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative w-full max-w-md max-h-full p-4">
-        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-            <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal">
-                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                </svg>
-                <span class="sr-only">Close modal</span>
-            </button>
-            <div class="p-4 text-center md:p-5">
-                <svg class="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                </svg>
-                <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Yakin Melakukan Hapus Data?</h3>
-                <button id="delete-button" data-modal-hide="popup-modal" type="submit" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
-                    Yes, Hapus
-                </button>
-                <button data-modal-hide="popup-modal" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Batal</button>
+        <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div class="relative w-full max-w-md max-h-full p-4">
+                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                    <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                    </button>
+                    <div class="p-4 text-center md:p-5">
+                        <svg class="w-12 h-12 mx-auto mb-4 text-gray-400 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Yakin Melakukan Hapus Data?</h3>
+                        <button id="delete-button" data-modal-hide="popup-modal" type="submit" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                            Yes, Hapus
+                        </button>
+                        <button data-modal-hide="popup-modal" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Batal</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 </div>
 
 
-<script>
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
 
-    function openFaceModal() {
-        document.getElementById('faceModal').classList.remove('hidden');
-        resetCameraView(); // Reset view saat modal dibuka
-        startCamera();
-    }
-
-    function closeModal() {
-        document.getElementById('faceModal').classList.add('hidden');
-        stopCamera();
-        document.getElementById('results').classList.add('hidden');
-        document.getElementById('faceControls').style.display = 'none';
-    }
-
-    function resetCameraView() {
-        // Reset tampilan ke mode kamera
-        document.getElementById('camera').style.display = 'block';
-        document.getElementById('snapshotResult').style.display = 'none';
-        document.getElementById('controls').style.display = 'flex';
-        document.getElementById('snapshotResult').innerHTML = '';
-        document.getElementById('faceData').value = '';
-        document.getElementById('results').classList.add('hidden');
-    }
-
-    function startCamera() {
-  Webcam.set({
-            image_format: 'jpeg',
-            jpeg_quality: 90,
-            flip_horiz: true,
-            width: 300,
-            height: 400,
-            constraints: {
-                facingMode: 'user',
-            }
-        });
-
-
-
-        Webcam.attach('#camera');
-    }
-
-    function stopCamera() {
-        Webcam.reset();
-        closeModal();
-        document.getElementById('snapshotResult').style.display = 'none';
-    }
-
-    function takeSnapshot() {
-        Webcam.snap(function(data_uri) {
-            document.getElementById('camera').style.display = 'none';
-            document.getElementById('snapshotResult').style.display = 'block';
-            document.getElementById('controls').style.display = 'none';
-            document.getElementById('snapshotResult').innerHTML =
-                '<img src="' + data_uri + '" class="mx-auto mb-4 bg-gray-200 "/>';
-            document.getElementById('faceData').value = data_uri;
-            // Only show results if there's a photo value
-            if (data_uri) {
-                document.getElementById('results').classList.remove('hidden');
-            } else {
-                document.getElementById('results').classList.add('hidden');
-            }
-        });
-    }
-
-    // Close modal when clicking outside
-    window.onclick = function(event) {
-        const modal = document.getElementById('faceModal');
-        if (event.target === modal) {
-            closeModal();
-        }
-    }
-</script>
 
 <script>
     function deleteClick(e) {
@@ -835,31 +769,476 @@ $this->title = 'Expirience';
     }
 </script>
 
+<style>
+    /* MediaPipe Liveness Styles */
+    .liveness-container {
+        position: relative;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .liveness-video-container {
+        position: relative;
+        width: 100%;
+        background: #000;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .liveness-video {
+        width: 100%;
+        height: auto;
+
+        display: block;
+    }
+
+    .liveness-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+
+    .liveness-instruction {
+        position: absolute;
+        top: 10px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        z-index: 10;
+    }
+
+    .liveness-status {
+        padding: 8px 12px;
+        border-radius: 20px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        font-size: 12px;
+        display: inline-block;
+    }
+
+    .liveness-indicators {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin: 10px 0;
+    }
+
+    .liveness-indicator {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 14px;
+    }
+
+    .liveness-indicator span {
+        font-size: 18px;
+    }
+
+    #screenshotResult {
+        width: 100%;
+        max-height: 200px;
+        object-fit: contain;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+</style>
+
 
 <script>
-function handleSubmit() {
-    const submitButton = document.getElementById('submitButton');
-    const buttonText = document.getElementById('buttonText');
-    const loadingSpinner = document.getElementById('loadingSpinner');
-    
-    // Disable the button to prevent multiple clicks
-    submitButton.disabled = true;
-    submitButton.classList.add('opacity-75', 'cursor-not-allowed');
-    
-    // Show loading spinner
-    loadingSpinner.classList.remove('hidden');
-    buttonText.textContent = 'Menyimpan...';
-    
-    // Submit the form programmatically
-    document.getElementById('face-form').submit();
-    
-    // Optional: Re-enable after timeout if submission fails
-    setTimeout(() => {
-        if (!submitButton.disabled) return;
-        submitButton.disabled = false;
-        submitButton.classList.remove('opacity-75', 'cursor-not-allowed');
-        loadingSpinner.classList.add('hidden');
-        buttonText.textContent = 'Simpan';
-    }, 10000); // 10 seconds timeout
-}
+    const MODEL_URL = '<?= Yii::getAlias('@root'); ?>/panel/models';
+    // face js
+    // Global variable untuk face-api models
+    // Global state untuk face registration modal
+    const faceRegState = {
+        faceLandmarker: null,
+        video: null,
+        canvas: null,
+        canvasCtx: null,
+        runningMode: "IMAGE",
+        webcamRunning: false,
+        blinkVerified: false,
+        mouthVerified: false,
+        autoCaptured: false,
+        stream: null
+    };
+
+    // Buka modal register wajah
+    function openFaceModal() {
+        document.getElementById('faceModal').classList.remove('hidden');
+        resetFaceRegistration();
+    }
+
+    // Tutup modal
+    function closeModal() {
+        document.getElementById('faceModal').classList.add('hidden');
+        stopFaceRegistration();
+    }
+
+    // Reset semua state face registration
+    function resetFaceRegistration() {
+        const results = document.getElementById('results');
+        const controls = document.getElementById('controls');
+        const instruction = document.getElementById('liveness-instruction');
+        const startBtn = document.getElementById('startLivenessBtn');
+        const faceControls = document.getElementById('faceControls');
+
+        // Reset UI
+        results.classList.add('hidden');
+        faceControls.style.display = 'none';
+        startBtn.style.display = 'inline-block';
+        startBtn.textContent = 'Mulai Verifikasi';
+
+        // Reset state
+        faceRegState.blinkVerified = false;
+        faceRegState.mouthVerified = false;
+        faceRegState.autoCaptured = false;
+        faceRegState.webcamRunning = false;
+
+        // Clear form inputs
+        document.getElementById('faceData').value = '';
+        document.getElementById('livenessPassed').value = '0';
+
+        // Update instruction
+        instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-black rounded-full bg-opacity-70">Tekan "Mulai Verifikasi" untuk memulai</div>';
+
+        // Stop any existing stream
+        if (faceRegState.stream) {
+            faceRegState.stream.getTracks().forEach(track => track.stop());
+            faceRegState.stream = null;
+        }
+    }
+
+    // Stop face registration (stop camera)
+    function stopFaceRegistration() {
+        faceRegState.webcamRunning = false;
+
+        if (faceRegState.stream) {
+            faceRegState.stream.getTracks().forEach(track => track.stop());
+            faceRegState.stream = null;
+        }
+
+        const video = document.getElementById('video');
+        if (video) video.srcObject = null;
+    }
+
+    // Initialize MediaPipe Face Landmarker untuk face registration
+    async function initFaceRegistrationLandmarker() {
+        const vision = await import("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3");
+        const {
+            FaceLandmarker,
+            FilesetResolver
+        } = vision;
+
+        const filesetResolver = await FilesetResolver.forVisionTasks(
+            "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
+        );
+
+        faceRegState.faceLandmarker = await FaceLandmarker.createFromOptions(filesetResolver, {
+            baseOptions: {
+                modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+                delegate: "GPU"
+            },
+            outputFaceBlendshapes: true,
+            runningMode: faceRegState.runningMode,
+            numFaces: 1
+        });
+
+        console.log('Face Landmarker initialized for registration');
+    }
+
+    // Mulai verifikasi liveness untuk face registration
+    async function startLiveness() {
+        const video = document.getElementById('video');
+        const overlay = document.getElementById('overlay');
+        const instruction = document.getElementById('liveness-instruction');
+        const startBtn = document.getElementById('startLivenessBtn');
+        const results = document.getElementById('results');
+        const faceControls = document.getElementById('faceControls');
+
+        // Initialize Face Landmarker jika belum
+        if (!faceRegState.faceLandmarker) {
+            await initFaceRegistrationLandmarker();
+        }
+
+        try {
+            // Akses webcam
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    width: {
+                        ideal: 640
+                    },
+                    height: {
+                        ideal: 480
+                    },
+                    facingMode: "user"
+                }
+            });
+
+            faceRegState.stream = stream;
+            video.srcObject = stream;
+            faceRegState.webcamRunning = true;
+
+            // Setup canvas
+            video.addEventListener('loadeddata', () => {
+                overlay.width = video.videoWidth;
+                overlay.height = video.videoHeight;
+                faceRegState.canvasCtx = overlay.getContext('2d');
+            });
+
+            // Update UI
+            instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-black rounded-full bg-opacity-70">Silakan hadapkan wajah ke kamera</div>';
+            startBtn.textContent = 'Mendeteksi...';
+            startBtn.disabled = true;
+
+            // Reset state
+            faceRegState.blinkVerified = false;
+            faceRegState.mouthVerified = false;
+            faceRegState.autoCaptured = false;
+
+            // Mulai prediction loop
+            predictRegistrationWebcam();
+
+        } catch (error) {
+            console.error('Error accessing webcam:', error);
+            instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-red-500 rounded-full bg-opacity-90">Gagal mengakses kamera</div>';
+            startBtn.disabled = false;
+        }
+    }
+
+    // Prediction loop untuk face registration
+    async function predictRegistrationWebcam() {
+        if (!faceRegState.webcamRunning || !faceRegState.faceLandmarker) return;
+
+        const video = document.getElementById('video');
+        const instruction = document.getElementById('liveness-instruction');
+
+        if (!video || video.readyState !== 4) {
+            requestAnimationFrame(predictRegistrationWebcam);
+            return;
+        }
+
+        // Switch ke VIDEO mode jika perlu
+        if (faceRegState.runningMode === "IMAGE") {
+            faceRegState.runningMode = "VIDEO";
+            await faceRegState.faceLandmarker.setOptions({
+                runningMode: faceRegState.runningMode
+            });
+        }
+
+        // Detect face landmarks
+        const results = faceRegState.faceLandmarker.detectForVideo(video, performance.now());
+
+        // Process results
+        if (results.faceBlendshapes && results.faceBlendshapes.length > 0) {
+            const blend = results.faceBlendshapes[0].categories;
+            const jaw = blend.find(s => s.categoryName === "jawOpen")?.score || 0;
+            const blinkL = blend.find(s => s.categoryName === "eyeBlinkLeft")?.score || 0;
+            const blinkR = blend.find(s => s.categoryName === "eyeBlinkRight")?.score || 0;
+
+            // Update instruction berdasarkan progress
+            if (!faceRegState.blinkVerified) {
+                instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-blue-500 rounded-full bg-opacity-90">Silakan berkedip</div>';
+            } else if (!faceRegState.mouthVerified) {
+                instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-blue-500 rounded-full bg-opacity-90">Sekarang buka mulut</div>';
+            }
+
+            // Check for blink
+            if (!faceRegState.blinkVerified && blinkL > 0.5 && blinkR > 0.5) {
+                faceRegState.blinkVerified = true;
+                instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-green-500 rounded-full bg-opacity-90">✓ Berkedip terdeteksi!</div>';
+            }
+
+            // Check for mouth open
+            if (faceRegState.blinkVerified && !faceRegState.mouthVerified && jaw > 0.35) {
+                faceRegState.mouthVerified = true;
+                instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-green-500 rounded-full bg-opacity-90">✓ Mulut terbuka terdeteksi!</div>';
+
+                // Capture photo setelah delay
+                setTimeout(() => {
+                    captureRegistrationPhoto();
+                }, 500);
+            }
+        }
+
+        // Continue loop
+        if (faceRegState.webcamRunning) {
+            requestAnimationFrame(predictRegistrationWebcam);
+        }
+    }
+
+    // Capture foto untuk registration
+    async function captureRegistrationPhoto() {
+        const video = document.getElementById('video');
+        const overlay = document.getElementById('overlay');
+        const snapshotResult = document.getElementById('snapshotResult');
+        const results = document.getElementById('results');
+        const faceControls = document.getElementById('faceControls');
+        const instruction = document.getElementById('liveness-instruction');
+
+        // Buat canvas untuk capture (tanpa mirror)
+        const captureCanvas = document.createElement('canvas');
+        const captureCtx = captureCanvas.getContext('2d');
+
+        captureCanvas.width = video.videoWidth;
+        captureCanvas.height = video.videoHeight;
+
+        // Capture frame (tanpa mirror)
+        captureCtx.drawImage(video, 0, 0);
+
+        // Get base64 data
+        const dataURL = captureCanvas.toDataURL('image/jpeg', 0.8);
+
+        // Tampilkan hasil
+        snapshotResult.innerHTML = `<img src="${dataURL}" class="w-full h-auto rounded" alt="Foto Wajah">`;
+
+        // Simpan ke form input
+        document.getElementById('faceData').value = dataURL;
+
+
+        // Extract face descriptor menggunakan face-api.js
+        const descriptor = await extractRegistrationFaceDescriptor(captureCanvas);
+        document.getElementById('livenessPassed').value = descriptor;
+
+        if (descriptor) {
+            // Tambahkan descriptor ke form (buat input hidden baru)
+            let descriptorInput = document.getElementById('faceDescriptor');
+            if (!descriptorInput) {
+                descriptorInput = document.createElement('input');
+                descriptorInput.type = 'hidden';
+                descriptorInput.id = 'faceDescriptor';
+                descriptorInput.name = 'Karyawan[face_descriptor]';
+                document.getElementById('face-form').appendChild(descriptorInput);
+            }
+            descriptorInput.value = JSON.stringify(Array.from(descriptor));
+        }
+
+        // Update UI
+        results.classList.remove('hidden');
+        faceControls.style.display = 'flex';
+        instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-green-500 rounded-full bg-opacity-90">✓ Verifikasi berhasil!</div>';
+        document.getElementById('video-canvas').style.display = 'none';
+        document.getElementById('controls').style.display = 'none';
+        document.getElementById('title-controls').style.display = 'none';
+        // Stop camera
+        stopFaceRegistration();
+
+        // Cleanup
+        captureCanvas.remove();
+    }
+    // Load face-api.js models (tambahkan di bagian atas)
+    async function loadFaceApiModels() {
+        if (typeof faceapi === 'undefined') {
+            console.error('face-api.js belum diload!');
+            return false;
+        }
+
+        try {
+            await faceapi.nets.tinyFaceDetector.loadFromUri('<?= Yii::getAlias("@root"); ?>/panel/models');
+            await faceapi.nets.faceLandmark68Net.loadFromUri('<?= Yii::getAlias("@root"); ?>/panel/models');
+            await faceapi.nets.faceRecognitionNet.loadFromUri('<?= Yii::getAlias("@root"); ?>/panel/models');
+            return true;
+        } catch (error) {
+            console.error('Error loading face-api models:', error);
+            return false;
+        }
+    }
+    // Extract face descriptor untuk registration
+    async function extractRegistrationFaceDescriptor(canvasElement) {
+        try {
+            // Load face-api models jika belum
+            const modelsLoaded = await loadFaceApiModels();
+            if (!modelsLoaded) {
+                alert('Gagal memuat model deteksi wajah');
+                return null;
+            }
+
+            // Detect face
+            const detection = await faceapi.detectSingleFace(
+                canvasElement,
+                new faceapi.TinyFaceDetectorOptions()
+            ).withFaceLandmarks().withFaceDescriptor();
+            console.info(detection);
+            if (!detection) {
+                alert('Wajah tidak terdeteksi dalam foto. Silakan coba lagi.');
+                return null;
+            }
+
+            return detection.descriptor;
+
+        } catch (error) {
+            console.error('Error extracting face descriptor:', error);
+            alert('Error saat mendeteksi wajah. Silakan coba lagi.');
+            return null;
+        }
+    }
+
+    // Handle form submission untuk face registration
+    function handleSubmit() {
+        const form = document.getElementById('face-form');
+        const buttonText = document.getElementById('buttonText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const submitButton = document.getElementById('submitButton');
+
+        // Validasi
+        const faceData = document.getElementById('faceData').value;
+        const livenessPassed = document.getElementById('livenessPassed').value;
+
+        if (!faceData || !livenessPassed) {
+            alert('Silakan selesaikan verifikasi wajah terlebih dahulu!');
+            return false;
+        }
+
+        // Tampilkan loading
+        buttonText.textContent = 'Menyimpan...';
+        loadingSpinner.classList.remove('hidden');
+        submitButton.disabled = true;
+
+        // Submit form
+        form.submit();
+    }
+
+    // Reset camera view (untuk ambil ulang)
+    function resetCameraView() {
+        const results = document.getElementById('results');
+        const faceControls = document.getElementById('faceControls');
+        const startBtn = document.getElementById('startLivenessBtn');
+
+        results.classList.add('hidden');
+        faceControls.style.display = 'none';
+        startBtn.style.display = 'inline-block';
+        startBtn.disabled = false;
+        startBtn.textContent = 'Mulai Verifikasi';
+
+        // Reset state
+        faceRegState.blinkVerified = false;
+        faceRegState.mouthVerified = false;
+        faceRegState.autoCaptured = false;
+
+        // Clear inputs
+        document.getElementById('faceData').value = '';
+        document.getElementById('livenessPassed').value = '0';
+
+        // Mulai ulang camera
+        startLiveness();
+    }
+
+    // Event listener untuk modal
+    document.addEventListener('DOMContentLoaded', function() {
+        // Close modal dengan ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Close modal ketika klik di luar
+        document.getElementById('faceModal').addEventListener('click', function(e) {
+            if (e.target.id === 'faceModal') {
+                closeModal();
+            }
+        });
+    });
 </script>
