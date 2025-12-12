@@ -1184,8 +1184,12 @@ input:checked + .toggle-bg {
   top: 0.75rem;
 }
 
-.top-4 {
-  top: 1rem;
+.top-8 {
+  top: 2rem;
+}
+
+.top-6 {
+  top: 1.5rem;
 }
 
 .z-10 {
@@ -3016,6 +3020,11 @@ input:checked + .toggle-bg {
   padding-bottom: 2rem;
 }
 
+.px-0 {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
 .pb-1 {
   padding-bottom: 0.25rem;
 }
@@ -3788,6 +3797,11 @@ input:checked + .toggle-bg {
   background-color: rgb(251 213 213 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-red-400:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(249 128 128 / var(--tw-bg-opacity));
+}
+
 .hover\:bg-red-50:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(253 242 242 / var(--tw-bg-opacity));
@@ -3836,11 +3850,6 @@ input:checked + .toggle-bg {
 .hover\:bg-yellow-50:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(253 253 234 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-red-400:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(249 128 128 / var(--tw-bg-opacity));
 }
 
 .hover\:from-amber-500:hover {
@@ -4658,6 +4667,10 @@ input:checked + .toggle-bg {
 
   .md\:p-6 {
     padding: 1.5rem;
+  }
+
+  .md\:p-4 {
+    padding: 1rem;
   }
 
   .md\:px-5 {

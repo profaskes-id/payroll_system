@@ -52,7 +52,7 @@ $this->title = 'Expirience';
     }
 </style>
 
-<div class="container relative mx-auto px-3 lg:px-5 min-h-[90dvh] z-50">
+<div class="container relative mx-auto px-0 lg:px-5 min-h-[90dvh] z-50">
     <?= $this->render('@backend/views/components/_header', ['link' => '/panel/home', 'title' => 'Data & Riwayat']); ?>
     <section>
         <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
@@ -89,7 +89,7 @@ $this->title = 'Expirience';
             </ul>
         </div>
         <div id="default-styled-tab-content">
-            <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-karyawan" role="tabpanel" aria-labelledby="karyawan-tab">
+            <div class="hidden p-0 rounded-lg md:p-4 bg-gray-50 dark:bg-gray-800" id="styled-karyawan" role="tabpanel" aria-labelledby="karyawan-tab">
                 <h2 class="font-semibold text-gray-900 ">Data Personal </h2>
                 <?php if (!empty($karyawan)) : ?>
                     <div class="grid grid-cols-1 mt-2 gap-y-3">
@@ -675,7 +675,7 @@ $this->title = 'Expirience';
 
             </div>
         </div>
-        <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="styled-kesehatan" role="tabpanel" aria-labelledby="kesehatan-tab">
+        <div class="hidden p-1 rounded-lg md:p-4 bg-gray-50 dark:bg-gray-800" id="styled-kesehatan" role="tabpanel" aria-labelledby="kesehatan-tab">
 
             <h2 class="font-semibold text-gray-900 ">Riwayat Kesehatan <span class="bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300"><?= count($RiwayatKesehatan) ?></span> </h2>
             <a href="/panel/home/riwayat-kesehatan-create" class="flex items-center justify-center w-full px-4 py-1 my-3 text-sm font-medium text-white bg-blue-400 border border-transparent rounded-lg gap-x-2 hover:bg-blue-400 focus:outline-none focus:bg-blue-400">+ Add New</a>
