@@ -50,7 +50,6 @@ $form = ActiveForm::begin(); ?>
             'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5',
         ])->label(false) ?>
         <p class="m-0 -mt-1 text-xs text-gray-700">Anda dapat memilih beberapa tanggal sekaligus.</p>
-
     </div>
 
     <p class="hidden mb-5 -mt-1 text-sm text-red-500 capitalize" id="error-year"></p>
@@ -81,6 +80,7 @@ $form = ActiveForm::begin(); ?>
     flatpickr("#tanggal-multi", {
         mode: "multiple",
         dateFormat: "Y-m-d",
+        minDate: "today",
         maxDate: new Date().fp_incr(365), // 1 tahun ke depan
         onChange: function(selectedDates, dateStr, instance) {
             let sisa = parseInt($('#sisa_hari').val()?.split(' ')[0]) || 0;

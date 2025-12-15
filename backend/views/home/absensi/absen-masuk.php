@@ -128,6 +128,18 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                             </button>
                         </div>
                     </div>
+
+                    <div id="process-indicator" class="hidden mt-4 space-y-2 text-sm ">
+                        <div class="flex items-center space-x-2" id="status-base64">
+                            <span class="w-5 text-center">⏳</span>
+                            <span>Konversi foto ke Base64</span>
+                        </div>
+
+                        <div class="flex items-center space-x-2" id="status-descriptor">
+                            <span class="w-5 text-center">⏳</span>
+                            <span>Membuat face descriptor</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

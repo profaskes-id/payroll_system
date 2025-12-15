@@ -206,7 +206,8 @@ $this->title = 'Expirience';
                                             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
                                             <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                                                 <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
-                                                    <h3 id="title-controls" class="mb-4 text-lg font-medium leading-6 text-gray-900">Register Wajah</h3>
+                                                    <h3 id="title-controls" class="mb-1 text-lg font-medium leading-6 text-gray-900">Register Wajah</h3>
+                                                    <p class="mb-4 text-sm capitalize">kami menyarankan latar belakang polos</p>
                                                     <div class="mb-4">
                                                         <div class="relative" id="video-canvas">
                                                             <video id="video" class="block w-full mx-auto mb-4 bg-gray-200 rounded" autoplay playsinline muted></video>
@@ -222,6 +223,7 @@ $this->title = 'Expirience';
                                                             <button onclick="closeModal()" class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600">Tutup</button>
                                                         </div>
                                                     </div>
+
                                                     <div id="results" class="hidden">
                                                         <p class="mb-2 font-medium">Hasil Foto:</p>
                                                         <div id="snapshotResult" class="mx-auto mb-4 overflow-hidden bg-gray-200 rounded"></div>
@@ -234,6 +236,7 @@ $this->title = 'Expirience';
                                                         <?= $form->field($model, 'kode_karyawan')->hiddenInput(['value' => $karyawan->kode_karyawan])->label(false) ?>
                                                         <?= $form->field($model, 'wajah')->hiddenInput(['id' => 'faceData'])->label(false) ?>
                                                         <?= $form->field($model, 'liveness_passed')->hiddenInput(['id' => 'livenessPassed', 'value' => '0'])->label(false) ?>
+
 
                                                         <div class="flex justify-end space-x-2" id="faceControls" style="display:none;">
                                                             <button type="button" onclick="window.location.reload();" class="px-4 py-2 text-gray-700 bg-gray-300 rounded hover:bg-gray-400">Ambil Ulang</button>
@@ -250,6 +253,17 @@ $this->title = 'Expirience';
                                                         </div>
                                                         <?php yii\widgets\ActiveForm::end(); ?>
                                                     </div>
+                                                    <div id="process-indicator" class="hidden mt-4 space-y-2 text-sm ">
+                                                        <div class="flex items-center space-x-2" id="status-base64">
+                                                            <span class="w-5 text-center">⏳</span>
+                                                            <span>Konversi foto ke Base64</span>
+                                                        </div>
+
+                                                        <div class="flex items-center space-x-2" id="status-descriptor">
+                                                            <span class="w-5 text-center">⏳</span>
+                                                            <span>Membuat face descriptor</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -258,7 +272,7 @@ $this->title = 'Expirience';
 
                                 </div>
                                 <div class="w-full col-span-12 p-2 border border-gray-300 lg:col-span-6">
-                                    <p>Alamat Sesuai Identitas</p>
+                                    Sesuai Identitas</p>
                                     <div>
                                         <table class="w-full text-left table-fixed ">
                                             <tr class="border-b border-gray-300 ">
@@ -849,9 +863,6 @@ $this->title = 'Expirience';
 
 <script>
     const MODEL_URL = '<?= Yii::getAlias('@root'); ?>/panel/models';
-    // face js
-    // Global variable untuk face-api models
-    // Global state untuk face registration modal
     const faceRegState = {
         faceLandmarker: null,
         video: null,
@@ -1056,10 +1067,9 @@ $this->title = 'Expirience';
                 faceRegState.mouthVerified = true;
                 instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-green-500 rounded-full bg-opacity-90">✓ Mulut terbuka terdeteksi!</div>';
 
-                // Capture photo setelah delay
-                setTimeout(() => {
-                    captureRegistrationPhoto();
-                }, 500);
+                // Capture photo setelah coundown
+                startCountdownAndCapture();
+
             }
         }
 
@@ -1069,65 +1079,110 @@ $this->title = 'Expirience';
         }
     }
 
-    // Capture foto untuk registration
+    function startCountdownAndCapture() {
+        const instruction = document.getElementById('liveness-instruction');
+        let count = 3;
+
+        const interval = setInterval(() => {
+            instruction.innerHTML = `
+            <div class="inline-block px-4 py-2 text-lg font-bold text-white bg-yellow-500 rounded-full bg-opacity-90">
+                📸 Foto diambil dalam ${count}
+            </div>
+        `;
+
+            count--;
+
+            if (count < 0) {
+                clearInterval(interval);
+                instruction.innerHTML = `
+                <div class="inline-block px-4 py-2 text-lg font-bold text-white bg-green-600 rounded-full bg-opacity-90">
+                    📸 Mengambil foto...
+                </div>
+            `;
+                captureRegistrationPhoto();
+            }
+        }, 1000);
+    }
+
+    function showProcessIndicator() {
+        const box = document.getElementById('process-indicator');
+        box.classList.remove('hidden');
+        setStatus('status-base64', 'loading');
+        setStatus('status-descriptor', 'loading');
+    }
+
+
+    function setStatus(id, status) {
+        const el = document.querySelector(`#${id} span:first-child`);
+
+        if (status === 'loading') el.textContent = '⏳';
+        if (status === 'success') el.textContent = '✅';
+        if (status === 'error') el.textContent = '❌';
+    }
+
+
     async function captureRegistrationPhoto() {
+        showProcessIndicator();
+
         const video = document.getElementById('video');
-        const overlay = document.getElementById('overlay');
         const snapshotResult = document.getElementById('snapshotResult');
-        const results = document.getElementById('results');
-        const faceControls = document.getElementById('faceControls');
         const instruction = document.getElementById('liveness-instruction');
 
-        // Buat canvas untuk capture (tanpa mirror)
         const captureCanvas = document.createElement('canvas');
-        const captureCtx = captureCanvas.getContext('2d');
-
         captureCanvas.width = video.videoWidth;
         captureCanvas.height = video.videoHeight;
 
-        // Capture frame (tanpa mirror)
-        captureCtx.drawImage(video, 0, 0);
+        const ctx = captureCanvas.getContext('2d');
+        ctx.drawImage(video, 0, 0);
 
-        // Get base64 data
+        // ================= BASE64 =================
         const dataURL = captureCanvas.toDataURL('image/jpeg', 0.8);
 
-        // Tampilkan hasil
-        snapshotResult.innerHTML = `<img src="${dataURL}" class="w-full h-auto rounded" alt="Foto Wajah">`;
-
-        // Simpan ke form input
-        document.getElementById('faceData').value = dataURL;
-
-
-        // Extract face descriptor menggunakan face-api.js
-        const descriptor = await extractRegistrationFaceDescriptor(captureCanvas);
-        document.getElementById('livenessPassed').value = descriptor;
-
-        if (descriptor) {
-            // Tambahkan descriptor ke form (buat input hidden baru)
-            let descriptorInput = document.getElementById('faceDescriptor');
-            if (!descriptorInput) {
-                descriptorInput = document.createElement('input');
-                descriptorInput.type = 'hidden';
-                descriptorInput.id = 'faceDescriptor';
-                descriptorInput.name = 'Karyawan[face_descriptor]';
-                document.getElementById('face-form').appendChild(descriptorInput);
-            }
-            descriptorInput.value = JSON.stringify(Array.from(descriptor));
+        if (!dataURL) {
+            setStatus('status-base64', 'error');
+            return;
         }
 
-        // Update UI
-        results.classList.remove('hidden');
-        faceControls.style.display = 'flex';
-        instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-green-500 rounded-full bg-opacity-90">✓ Verifikasi berhasil!</div>';
+        setStatus('status-base64', 'success');
+        document.getElementById('faceData').value = dataURL;
+        snapshotResult.innerHTML = `<img src="${dataURL}" class="w-full rounded">`;
+
+        // ================= DESCRIPTOR =================
+        instruction.innerHTML = `
+        <div class="inline-flex items-center px-4 py-2 text-sm text-white bg-blue-600 rounded-full">
+            <svg class="w-4 h-4 mr-2 animate-spin" viewBox="0 0 24 24"></svg>
+            🧠 Memproses data wajah...
+        </div>
+    `;
+
+        setStatus('status-descriptor', 'loading');
+
+        const descriptor = await extractRegistrationFaceDescriptor(captureCanvas);
+
+        if (!descriptor) {
+            setStatus('status-descriptor', 'error');
+            return;
+        }
+
+        setStatus('status-descriptor', 'success');
+        document.getElementById('livenessPassed').value = descriptor;
+
+        // ================= FINAL UI =================
+        document.getElementById('results').classList.remove('hidden');
+        document.getElementById('faceControls').style.display = 'flex';
         document.getElementById('video-canvas').style.display = 'none';
         document.getElementById('controls').style.display = 'none';
-        document.getElementById('title-controls').style.display = 'none';
-        // Stop camera
-        stopFaceRegistration();
 
-        // Cleanup
+        instruction.innerHTML = `
+        <div class="inline-block px-3 py-1 text-sm text-white bg-green-600 rounded-full">
+            ✅ Verifikasi berhasil
+        </div>
+    `;
+
+        stopFaceRegistration();
         captureCanvas.remove();
     }
+
     // Load face-api.js models (tambahkan di bagian atas)
     async function loadFaceApiModels() {
         if (typeof faceapi === 'undefined') {
@@ -1160,12 +1215,11 @@ $this->title = 'Expirience';
                 canvasElement,
                 new faceapi.TinyFaceDetectorOptions()
             ).withFaceLandmarks().withFaceDescriptor();
-            console.info(detection);
+
             if (!detection) {
-                alert('Wajah tidak terdeteksi dalam foto. Silakan coba lagi.');
+                alert('Wajah tidak terdeteksi. Coba lagi.');
                 return null;
             }
-
             return detection.descriptor;
 
         } catch (error) {
@@ -1219,7 +1273,7 @@ $this->title = 'Expirience';
 
         // Clear inputs
         document.getElementById('faceData').value = '';
-        document.getElementById('livenessPassed').value = '0';
+        document.getElementById('livenessPassed').value = '';
 
         // Mulai ulang camera
         startLiveness();

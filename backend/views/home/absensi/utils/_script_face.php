@@ -362,9 +362,7 @@
                 statusText.style.color = 'green';
 
                 // Capture photo after a delay
-                setTimeout(() => {
-                    capturePhoto(modalId);
-                }, 1000);
+                await startCountdown(modalId);;
             }
         }
 
@@ -375,6 +373,18 @@
     }
 
     async function capturePhoto(modalId) {
+        // tampilkan process indicator
+        document.getElementById('process-indicator').classList.remove('hidden');
+
+        // Base64 mulai
+        setStatus('status-base64', 'loading');
+        await delay(300);
+        setStatus('status-base64', 'success');
+
+        // Descriptor mulai
+        setStatus('status-descriptor', 'loading');
+        await delay(300);
+
         const state = livenessState[modalId];
         if (!state) return;
 
@@ -424,8 +434,15 @@
         state.autoCaptured = true;
 
         // Extract face descriptor menggunakan face-api.js
-        // Gunakan canvas capture (tidak mirror) untuk ekstraksi descriptor
-        await extractFaceDescriptor(captureCanvas, modalId);
+        await delay(100); // kasih waktu DOM update
+        const descriptor = await extractFaceDescriptor(captureCanvas, modalId);
+
+        if (descriptor) {
+            setStatus('status-descriptor', 'success');
+        } else {
+            setStatus('status-descriptor', 'error');
+        }
+
 
         // Stop webcam
         stopLivenessVerification(modalId);
@@ -494,4 +511,48 @@
         // Handle form submission
 
     });
+
+
+
+    function showProcessIndicator() {
+        const box = document.getElementById('process-indicator');
+        box.classList.remove('hidden');
+        setStatus('status-base64', 'loading');
+        setStatus('status-descriptor', 'loading');
+    }
+
+
+    function setStatus(id, status) {
+        const el = document.querySelector(`#${id} span:first-child`);
+
+        if (status === 'loading') el.textContent = '⏳';
+        if (status === 'success') el.textContent = '✅';
+        if (status === 'error') el.textContent = '❌';
+    }
+
+    async function startCountdown(modalId) {
+        const statusText = document.getElementById(`status-${modalId}`);
+
+        for (let i = 3; i > 0; i--) {
+            statusText.innerHTML = `
+            <span class="text-xl font-bold text-yellow-500">
+                📸 Foto diambil dalam ${i}
+            </span>
+        `;
+            await delay(1000);
+        }
+
+        statusText.innerHTML = `
+        <span class="font-semibold text-green-600">
+            📸 Mengambil foto...
+        </span>
+    `;
+
+        await delay(500);
+        await capturePhoto(modalId);
+    }
+
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 </script>
