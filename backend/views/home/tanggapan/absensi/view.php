@@ -87,7 +87,7 @@ $tanggalFormater = new Tanggal();
                     </tr>
                     <tr>
                         <td class="px-6 py-4 text-sm font-medium text-gray-900 capitalize whitespace-nowrap">Tanggal Absen</td>
-                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= ($model['tanggal_absen']) ?></td>
+                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= date('d-m-Y', strtotime($model['tanggal_absen'])) ?></td>
                     </tr>
                     <tr>
                         <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Jam Masuk</td>

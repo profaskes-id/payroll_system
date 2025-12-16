@@ -140,13 +140,8 @@ use yii\widgets\ActiveForm;
 
             echo $form->field($model, 'status')->radioList($data, [
                 'item' => function ($index, $label, $name, $checked, $value) use ($model) {
-                    // Tentukan apakah radio button untuk value 1 harus checked
 
-                    if ($model->isNewRecord) {
-                        $isChecked = $value == 1 ? true : $checked;
-                    } else {
-                        $isChecked = $checked;
-                    }
+                    $isChecked = $value == 1 ? true : $checked;
 
                     return Html::radio($name, $isChecked, [
                         'value' => $value,
@@ -164,6 +159,7 @@ use yii\widgets\ActiveForm;
             <div class="col-span-2">
                 <?= $form->field($model, 'catatan_admin')->textarea([
                     'rows' => 2,
+                    'placeholder' => 'Catatan Admin',
                     'class' => 'w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500'
                 ]) ?>
             </div>
@@ -232,6 +228,7 @@ use yii\widgets\ActiveForm;
     });
 </script>
 
+</div>
 
 <script>
     // Contoh JavaScript untuk menangani pembaruan lokasi
@@ -262,4 +259,3 @@ use yii\widgets\ActiveForm;
         src="https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed"></iframe>`;
     }
 </script>
-</div>

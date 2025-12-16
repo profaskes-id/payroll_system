@@ -1,4 +1,5 @@
 <?php
+
 use backend\models\helpers\KaryawanHelper;
 use kartik\select2\Select2;
 use yii\helpers\Html;
@@ -15,20 +16,20 @@ use yii\widgets\ActiveForm;
         <?php $form = ActiveForm::begin(['options' => ['class' => 'space-y-4']]); ?>
 
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div class="">
-            <p class="block text-sm font-medium text-gray-900 capitalize ">Karyawan</p>
-            <?php
-            $data = \yii\helpers\ArrayHelper::map(KaryawanHelper::getKaryawanData(), 'id_karyawan', 'nama');
-            echo $form->field($model, 'id_karyawan')->dropDownList(
-                $data,
-                [
-                    'disabled' => true,
-                    'prompt' => 'Pilih Karyawan ...',
-                    'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '
-                ]
-            )->label(false);
-            ?>
-        </div>
+            <div class="">
+                <p class="block text-sm font-medium text-gray-900 capitalize ">Karyawan</p>
+                <?php
+                $data = \yii\helpers\ArrayHelper::map(KaryawanHelper::getKaryawanData(), 'id_karyawan', 'nama');
+                echo $form->field($model, 'id_karyawan')->dropDownList(
+                    $data,
+                    [
+                        'disabled' => true,
+                        'prompt' => 'Pilih Karyawan ...',
+                        'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '
+                    ]
+                )->label(false);
+                ?>
+            </div>
 
             <div>
                 <?= $form->field($model, 'tanggal')->input('date', [
@@ -46,22 +47,29 @@ use yii\widgets\ActiveForm;
                             1 => 'Approve'
                         ],
                         [
+                            'value' => 1, // default Approve
                             'item' => function ($index, $label, $name, $checked, $value) {
                                 $id = 'status_pengajuan_' . $index;
                                 $checked = $checked ? 'checked' : '';
                                 $color = $value == 1 ? 'text-green-600' : 'text-yellow-600';
 
                                 return "
-                                <div class='flex items-center space-x-2'>
-                                    <input class='h-4 w-4 border-gray-300 $color focus:ring-$color' type='radio' name='{$name}' id='{$id}' value='{$value}' {$checked}>
-                                    <label class='text-sm font-medium text-gray-700' for='{$id}'>
-                                        {$label}
-                                    </label>
-                                </div>
-                            ";
+            <div class='flex items-center space-x-2'>
+                <input class='h-4 w-4 border-gray-300 $color focus:ring-$color'
+                    type='radio'
+                    name='{$name}'
+                    id='{$id}'
+                    value='{$value}'
+                    {$checked}>
+                <label class='text-sm font-medium text-gray-700' for='{$id}'>
+                    {$label}
+                </label>
+            </div>
+            ";
                             }
                         ]
                     )->label('Status Pengajuan', ['class' => 'block text-sm font-medium text-gray-700']) ?>
+
                 </div>
 
                 <div>
@@ -115,7 +123,7 @@ use yii\widgets\ActiveForm;
                                                     $id = 'status_pengajuan_detail_' . $index . '_' . $value;
                                                     $checked = $checked ? 'checked' : '';
                                                     $color = $value == 1 ? 'text-green-600' : 'text-red-600';
-                                                    
+
                                                     return "
                                                     <div class='flex items-center space-x-2'>
                                                         <input class='h-4 w-4 border-gray-300 $color focus:ring-$color' type='radio' name='{$name}' id='{$id}' value='{$value}' {$checked}>
@@ -168,7 +176,7 @@ use yii\widgets\ActiveForm;
         $('#add-detail').click(function() {
             var index = $('.detail-item').length;
             var uniqueId = Date.now() + index; // Membuat ID unik
-            
+
             var html = `
                 <div class="p-4 bg-white rounded-lg shadow detail-item" data-index="\${index}">
                     <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -219,7 +227,7 @@ use yii\widgets\ActiveForm;
             `;
             $('#detail-container').append(html);
         });
-    
+
 
 
         // Remove detail item
@@ -229,7 +237,7 @@ use yii\widgets\ActiveForm;
             if (confirm('Apakah Anda yakin ingin menghapus detail ini?')) {
                 var index = $(this).data('index');
                 var item = $('.detail-item[data-index="' + index + '"]');
-                
+
                 // Jika item sudah ada di database (ada input hidden _id), kita perlu menandainya untuk dihapus
                 var idInput = item.find('input[name*="[id]"]');
                 if (idInput.length > 0) {
@@ -242,31 +250,31 @@ use yii\widgets\ActiveForm;
                     // Jika baru dibuat (belum ada di database), hapus langsung
                     item.remove();
                 }
-                
+
                 // Reindex remaining items
                 reindexDetailItems();
             }
         });
-        
+
         // Function to reindex all detail items
         function reindexDetailItems() {
             var newIndex = 0;
             $('.detail-item:visible').each(function() {
                 var oldIndex = $(this).data('index');
                 $(this).attr('data-index', newIndex);
-                
+
                 // Update all input names to use new index
                 $(this).find('[name*="DetailTugasLuar"]').each(function() {
                     var name = $(this).attr('name').replace(/DetailTugasLuar\[(\d+)\]/, 'DetailTugasLuar[' + newIndex + ']');
                     $(this).attr('name', name);
-                    
+
                     // Update ID jika ada
                     var id = $(this).attr('id');
                     if (id) {
                         $(this).attr('id', id.replace(/DetailTugasLuar(\d+)/, 'DetailTugasLuar' + newIndex));
                     }
                 });
-                
+
                 // Update labels for attributes
                 $(this).find('label').each(function() {
                     var forAttr = $(this).attr('for');
@@ -274,10 +282,10 @@ use yii\widgets\ActiveForm;
                         $(this).attr('for', forAttr.replace(/DetailTugasLuar(\d+)/, 'DetailTugasLuar' + newIndex));
                     }
                 });
-                
+
                 // Update the remove button's data-index
                 $(this).find('.remove-detail').data('index', newIndex);
-                
+
                 newIndex++;
             });
         }

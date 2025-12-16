@@ -110,10 +110,7 @@ $tanggalFormater = new Tanggal();
                         <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Catatan Approver</td>
                         <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['catatan_approver'] ?? 'Tidak ada catatan') ?></td>
                     </tr>
-                    <tr>
-                        <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Catatan Approver</td>
-                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['catatan_approver'] ?? 'Tidak ada catatan') ?></td>
-                    </tr>
+
                     <tr>
                         <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Dibuat Pada</td>
                         <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">

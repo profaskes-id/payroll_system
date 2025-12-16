@@ -86,8 +86,11 @@ $tanggalFormater = new Tanggal();
                     </tr>
                     <tr>
                         <td class="px-6 py-4 text-sm font-medium text-gray-900">Tanggal</td>
-                        <td class="px-6 py-4 text-sm text-gray-700"><?= Html::encode($model->tanggal) ?></td>
+                        <td class="px-6 py-4 text-sm text-gray-700">
+                            <?= date('d-m-Y', strtotime($model->tanggal)) ?>
+                        </td>
                     </tr>
+
                     <tr>
                         <td class="px-6 py-4 text-sm font-medium text-gray-900">Alasan</td>
                         <td class="px-6 py-4 text-sm text-gray-700"><?= Html::encode($model->alasan ?? '-') ?></td>

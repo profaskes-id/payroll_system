@@ -102,13 +102,9 @@ use yii\widgets\ActiveForm;
 
             echo $form->field($model, 'status')->radioList($data, [
                 'item' => function ($index, $label, $name, $checked, $value) use ($model) {
-                    // Tentukan apakah radio button untuk value 1 harus checked
 
-                    if ($model->isNewRecord) {
-                        $isChecked = $value == 1 ? true : $checked;
-                    } else {
-                        $isChecked = $checked;
-                    }
+                    $isChecked = $value == 1 ? true : $checked;
+
 
                     return Html::radio($name, $isChecked, [
                         'value' => $value,

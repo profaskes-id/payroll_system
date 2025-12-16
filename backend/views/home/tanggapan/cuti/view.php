@@ -120,9 +120,17 @@ $sisa_cuti = ((int) ($jatahCuti['jatah_hari_cuti'] ?? 0)) - ((int) ($detailCuti[
 
 
                     <tr>
-                        <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Ditanggapi Pada</td>
-                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= Html::encode($model['ditanggapi_pada'] ?? 'Belum ditanggapi') ?></td>
+                        <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
+                            Ditanggapi Pada
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
+                            <?= $model['ditanggapi_pada']
+                                ? Yii::$app->formatter->asDate($model['ditanggapi_pada'], 'php:d-m-Y')
+                                : 'Belum ditanggapi'
+                            ?>
+                        </td>
                     </tr>
+
                     <tr>
                         <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Ditanggapi Oleh</td>
                         <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">

@@ -73,7 +73,9 @@ $tanggalFormater = new Tanggal();
                         </a>
                     </td>
                     <td class="px-6 py-4"><?= $item->karyawan->nama ?? '-' ?></td>
-                    <td class="px-6 py-4"><?= $item->tanggal ?? '-' ?></td>
+                    <td class="px-6 py-4">
+                        <?= $item->tanggal ? date('d-m-Y', strtotime($item->tanggal)) : '-' ?>
+                    </td>
                     <td class="px-6 py-4"><?= nl2br(Html::encode($item->alasan)) ?></td>
                     <td class="px-6 py-4 <?= $statusClass ?>"><?= $statusText ?></td>
                     <td class="px-6 py-4"><?= $item->disetujui_pada ? Yii::$app->formatter->asDatetime($item->disetujui_pada) : '-' ?></td>

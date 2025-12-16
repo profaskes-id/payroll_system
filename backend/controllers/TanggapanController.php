@@ -29,6 +29,7 @@ use DateTime;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
 
 class TanggapanController extends Controller
 {
@@ -396,51 +397,6 @@ class TanggapanController extends Controller
         return $this->render('/home/tanggapan/cuti/index', compact('pengajuanCutiList', 'model', 'karyawanBawahanAdmin', 'tgl_mulai', 'tgl_selesai'));
     }
 
-    public function actionCutiCreate()
-    {
-        $this->layout = 'mobile-main';
-        $id_admin = Yii::$app->user->identity->id_karyawan;
-
-
-        $karyawanBawahanAdmin = AtasanKaryawan::find()
-            ->where(['id_atasan' => $id_admin])
-            ->asArray()
-            ->all();
-
-        $model = new PengajuanCuti();
-
-        if ($this->request->isPost) {
-
-            if ($model->load($this->request->post())) {
-                $tanggalArray = [];
-                $startDate = new DateTime($model->tanggal_mulai);
-                $endDate = new DateTime($model->tanggal_selesai);
-
-                while ($startDate <= $endDate) {
-                    $tanggalArray[] = $startDate->format('Y-m-d');
-                    $startDate->modify('+1 day');
-                }
-
-                $model->tanggal_array = json_encode($tanggalArray);
-                if ($model->save()) {
-
-
-
-                    Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
-
-
-                    return $this->redirect(['/tanggapan/cuti']);
-                } else {
-
-                    Yii::$app->session->setFlash('error', 'Gagal Membuat Pengajuan');
-                    return $this->redirect(['/tanggapan/cuti']);
-                }
-            }
-        }
-
-
-        return $this->render('/home/tanggapan/cuti/create', compact('model', 'karyawanBawahanAdmin'));
-    }
 
     public function actionCutiView($id_pengajuan_cuti)
     {
@@ -452,111 +408,102 @@ class TanggapanController extends Controller
     {
         $id_admin = Yii::$app->user->identity->id_karyawan;
 
-
         $karyawanBawahanAdmin = AtasanKaryawan::find()
             ->where(['id_atasan' => $id_admin])
             ->asArray()
             ->all();
 
-        $pengajuanCuti = PengajuanCuti::find()->where(['id_pengajuan_cuti' => $id_pengajuan_cuti])->one();
+        $model = PengajuanCuti::findOne($id_pengajuan_cuti);
+        if (!$model) {
+            throw new NotFoundHttpException('Pengajuan Cuti tidak ditemukan.');
+        }
 
-        $model = PengajuanCuti::find()->where(['id_pengajuan_cuti' => $id_pengajuan_cuti])->one();
-        if ($this->request->isPost) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
 
-            if ($model->load($this->request->post())) {
+            $model->sisa_hari = 0;
+            $model->ditanggapi_pada = date('Y-m-d H:i:s');
+            $model->ditanggapi_oleh = Yii::$app->user->identity->id;
 
+            if ($model->save()) {
 
-                $model->sisa_hari = 0;
-                $model->ditanggapi_pada = date('Y-m-d H:i:s');
-                $model->ditanggapi_oleh = Yii::$app->user->identity->id;
+                $existingDetails = DetailCuti::find()
+                    ->where(['id_pengajuan_cuti' => $model->id_pengajuan_cuti])
+                    ->indexBy('tanggal') // index by tanggal supaya mudah cek
+                    ->all();
 
-                if ($model->save()) {
+                $postDetails = Yii::$app->request->post('DetailCuti', []);
+                $approvedCount = 0;
+                $submittedDates = [];
 
-                    $existingDetails = DetailCuti::find()
-                        ->where(['id_pengajuan_cuti' => $model->id_pengajuan_cuti])
-                        ->indexBy('id_detail_cuti')
-                        ->all();
-
-                    $postDetails = Yii::$app->request->post('DetailCuti', []);
-                    $usedIds = [];
-                    $approvedCount = 0;
-
-                    foreach ($postDetails as $key => $data) {
-                        if (!empty($data['id_detail_cuti']) && isset($existingDetails[$data['id_detail_cuti']])) {
-                            // Update
-                            $detail = $existingDetails[$data['id_detail_cuti']];
-                            $detail->load($data, '');
-                            $detail->save();
-                            $usedIds[] = $data['id_detail_cuti'];
-                        } else {
-                            // New
-                            $detail = new DetailCuti();
-                            $detail->id_pengajuan_cuti = $model->id_pengajuan_cuti;
-                            $detail->load($data, '');
-                            $detail->save();
-                        }
-
-                        if (isset($data['status']) && $data['status'] == 1) {
-                            $approvedCount++;
-                        }
+                foreach ($postDetails as $data) {
+                    if (empty($data['tanggal'])) {
+                        continue; // skip jika tanggal kosong
                     }
 
-                    // Delete yang dihapus di form
-                    foreach ($existingDetails as $id => $detail) {
-                        if (!in_array($id, $usedIds)) {
-                            $detail->delete();
-                        }
+                    $submittedDates[] = $data['tanggal'];
+
+                    if (isset($existingDetails[$data['tanggal']])) {
+                        // Update existing detail -> Disetujui
+                        $detail = $existingDetails[$data['tanggal']];
+                        $detail->status = 1; // disetujui
+                        $detail->save(false);
+                    } else {
+                        // Tambah detail baru -> Disetujui
+                        $detail = new DetailCuti();
+                        $detail->id_pengajuan_cuti = $model->id_pengajuan_cuti;
+                        $detail->tanggal = $data['tanggal'];
+                        $detail->status = 1;
+                        $detail->save(false);
                     }
 
-
-
-
-                    if ($model->status == Yii::$app->params['disetujui']) {
-                        $rekapan = RekapCuti::find()->where(['id_karyawan' => $model->id_karyawan, 'id_master_cuti' => $model->jenis_cuti, 'tahun' => date('Y')])->one();
-                        if ($rekapan) {
-                            $rekapan->total_hari_terpakai += $approvedCount;
-                            $rekapan->save();
-                        } else {
-
-                            $NewrekapAsensi = new RekapCuti();
-                            $NewrekapAsensi->id_karyawan = $model->id_karyawan;
-                            $NewrekapAsensi->id_master_cuti = $model->jenis_cuti;
-                            $NewrekapAsensi->total_hari_terpakai = $approvedCount;
-                            $NewrekapAsensi->tahun = date('Y');
-                            $NewrekapAsensi->save();
-                        }
-                    }
-
-
-                    $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
-                    $sender = Yii::$app->user->identity->id;
-
-                    $params = [
-                        'judul' => 'Pengajuan cuti',
-                        'deskripsi' => 'Pengajuan cuti Anda telah ditanggapi oleh atasan.',
-                        'nama_transaksi' => "/panel/pengajuan/cuti-detail?id",
-                        'id_transaksi' => $model['id_pengajuan_cuti'],
-                    ];
-
-                    // $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan cuti Baru Dari " . $model->karyawan->nama);
-                    return $this->redirect(['/tanggapan/cuti-view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti,]);
-                } else {
-
-                    Yii::$app->session->setFlash('error', 'Gagal Mengupdate Pengajuan');
-                    return $this->redirect(['/tanggapan/cuti']);
+                    $approvedCount++;
                 }
+
+                // Set detail yang tidak dikirim jadi Ditolak
+                foreach ($existingDetails as $tanggal => $detail) {
+                    if (!in_array($tanggal, $submittedDates)) {
+                        $detail->status = 2; // ditolak
+                        $detail->save(false);
+                    }
+                }
+
+                // Update RekapCuti jika status pengajuan disetujui
+                if ($model->status == Yii::$app->params['disetujui']) {
+                    $rekapan = RekapCuti::find()->where([
+                        'id_karyawan' => $model->id_karyawan,
+                        'id_master_cuti' => $model->jenis_cuti,
+                        'tahun' => date('Y')
+                    ])->one();
+
+                    if ($rekapan) {
+                        $rekapan->total_hari_terpakai += $approvedCount;
+                        $rekapan->save(false);
+                    } else {
+                        $rekapan = new RekapCuti();
+                        $rekapan->id_karyawan = $model->id_karyawan;
+                        $rekapan->id_master_cuti = $model->jenis_cuti;
+                        $rekapan->total_hari_terpakai = $approvedCount;
+                        $rekapan->tahun = date('Y');
+                        $rekapan->save(false);
+                    }
+                }
+
+                // Redirect setelah sukses
+                return $this->redirect(['/tanggapan/cuti-view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]);
+            } else {
+                Yii::$app->session->setFlash('error', 'Gagal Mengupdate Pengajuan');
+                return $this->redirect(['/tanggapan/cuti']);
             }
         }
 
-
-
         $this->layout = 'mobile-main';
         return $this->render('/home/tanggapan/cuti/update', [
-            'model' => $pengajuanCuti,
+            'model' => $model,
             'karyawanBawahanAdmin' => $karyawanBawahanAdmin,
-
         ]);
     }
+
+
 
 
     public function actionCutiDelete()
@@ -631,53 +578,6 @@ class TanggapanController extends Controller
         return $this->render('/home/tanggapan/dinas/index', compact('pengajuanDinasList', 'model', 'tgl_mulai', 'tgl_selesai'));
     }
 
-    public function actionDinasCreate()
-    {
-        $this->layout = 'mobile-main';
-        $id_admin = Yii::$app->user->identity->id_karyawan;
-
-
-        $karyawanBawahanAdmin = AtasanKaryawan::find()
-            ->where(['id_atasan' => $id_admin])
-            ->asArray()
-            ->all();
-
-        $model = new PengajuanDinas();
-
-        if ($this->request->isPost) {
-
-            if ($model->load($this->request->post())) {
-                $tanggalArray = [];
-                $startDate = new DateTime($model->tanggal_mulai);
-                $endDate = new DateTime($model->tanggal_selesai);
-
-                while ($startDate <= $endDate) {
-                    $tanggalArray[] = $startDate->format('Y-m-d');
-                    $startDate->modify('+1 day');
-                }
-
-                $model->tanggal_array = json_encode($tanggalArray);
-                if ($model->save()) {
-
-
-
-                    Yii::$app->session->setFlash('success', 'Berhasil Membuat Pengajuan');
-
-
-                    return $this->redirect(['/tanggapan/dinas']);
-                } else {
-
-                    Yii::$app->session->setFlash('error', 'Gagal Membuat Pengajuan');
-                    return $this->redirect(['/tanggapan/dinas']);
-                }
-            }
-        }
-
-
-        return $this->render('/home/tanggapan/dinas/create', compact('model', 'karyawanBawahanAdmin'));
-    }
-
-
     public function actionDinasView($id_pengajuan_dinas)
     {
         $this->layout = 'mobile-main';
@@ -693,14 +593,20 @@ class TanggapanController extends Controller
             ->asArray()
             ->all();
 
-        $pengajuanDinas = PengajuanDinas::find()->where(['id_pengajuan_dinas' => $id])->one();
-        $detailModels = DetailDinas::find()->where(['id_pengajuan_dinas' => $id])->all();
-
         $model = PengajuanDinas::findOne($id);
+        if (!$model) {
+            throw new NotFoundHttpException('Pengajuan Dinas tidak ditemukan.');
+        }
+
+        // Ambil detail lama
+        $existingDetails = DetailDinas::find()
+            ->where(['id_pengajuan_dinas' => $id])
+            ->indexBy('tanggal')
+            ->all();
 
         if ($this->request->isPost && $model->load($this->request->post())) {
 
-            // Set data persetujuan jika status disetujui
+            // Set data persetujuan jika pengajuan disetujui
             if ($model->status == Yii::$app->params['disetujui']) {
                 $model->disetujui_oleh = Yii::$app->user->identity->id;
                 $model->disetujui_pada = date('Y-m-d H:i:s');
@@ -709,50 +615,59 @@ class TanggapanController extends Controller
 
             $transaction = Yii::$app->db->beginTransaction();
             try {
-
                 if ($model->save()) {
-                    $postData = Yii::$app->request->post();
 
+                    $postDetails = Yii::$app->request->post('DetailDinas', []);
+                    $submittedDates = [];
 
-                    // Simpan detail dinas baru
-                    if (isset($postData['DetailDinas']) && is_array($postData['DetailDinas'])) {
-                        foreach ($postData['DetailDinas'] as $detailData) {
-                            // Skip jika tanggal kosong
-                            if (empty($detailData['tanggal'])) {
-                                continue;
-                            }
+                    // Set semua detail lama menjadi ditolak terlebih dahulu
+                    foreach ($existingDetails as $detail) {
+                        $detail->status = 2; // ditolak
+                        $detail->save(false);
+                    }
 
-                            $detailModel = new DetailDinas();
-                            $detailModel->id_pengajuan_dinas = $model->id_pengajuan_dinas;
-                            $detailModel->tanggal = $detailData['tanggal'];
-                            $detailModel->keterangan = $detailData['keterangan'] ?? '';
-                            $detailModel->status = $detailData['status'];
+                    // Proses tanggal yang dikirim -> disetujui
+                    foreach ($postDetails as $data) {
+                        if (empty($data['tanggal'])) continue;
 
-                            if ($detailModel->save()) {
-                                // Jika status pengajuan disetujui DAN status detail = 1 (Disetujui), buat data absensi
-                                if ($model->status == Yii::$app->params['disetujui'] && $detailModel->status == 1) {
-                                    $this->createAbsensiDinas($model->id_karyawan, $detailModel->tanggal);
-                                }
-                            } else {
-                                throw new \Exception('Gagal menyimpan detail dinas: ' . json_encode($detailModel->errors));
-                            }
+                        $submittedDates[] = $data['tanggal'];
+
+                        if (isset($existingDetails[$data['tanggal']])) {
+                            // Update detail lama -> disetujui
+                            $detail = $existingDetails[$data['tanggal']];
+                            $detail->keterangan = $data['keterangan'] ?? $detail->keterangan;
+                            $detail->status = 1;
+                            $detail->save(false);
+                        } else {
+                            // Tambah detail baru -> disetujui
+                            $detail = new DetailDinas();
+                            $detail->id_pengajuan_dinas = $model->id_pengajuan_dinas;
+                            $detail->tanggal = $data['tanggal'];
+                            $detail->keterangan = $data['keterangan'] ?? '';
+                            $detail->status = 1;
+                            $detail->save(false);
+                        }
+
+                        // Jika pengajuan disetujui -> buat absensi untuk tanggal ini
+                        if ($model->status == Yii::$app->params['disetujui'] && $detail->status == 1) {
+                            $this->createAbsensiDinas($model->id_karyawan, $detail->tanggal);
                         }
                     }
 
                     $transaction->commit();
-                    Yii::$app->session->setFlash('success', 'Berhasil Mengupdate Data');
+                    Yii::$app->session->setFlash('success', 'Berhasil Mengupdate Pengajuan Dinas');
 
                     // Kirim notifikasi
                     $adminUsers = User::find()->where(['id_karyawan' => $model->id_karyawan])->all();
                     $sender = Yii::$app->user->identity->id;
 
                     $params = [
-                        'judul' => 'Pengajuan dinas',
-                        'deskripsi' => 'Pengajuan Dinas luar Anda Telah Ditanggapi Oleh Atasan.',
+                        'judul' => 'Pengajuan Dinas',
+                        'deskripsi' => 'Pengajuan Dinas Anda Telah Ditanggapi Oleh Atasan.',
                         'nama_transaksi' => "/panel/pengajuan/dinas-detail?id",
                         'id_transaksi' => $model->id_pengajuan_dinas,
                     ];
-                    $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan dinas ");
+                    $this->sendNotif($params, $sender, $model, $adminUsers, "Pengajuan dinas");
 
                     return $this->redirect(['/tanggapan/dinas-view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]);
                 } else {
@@ -766,11 +681,12 @@ class TanggapanController extends Controller
 
         $this->layout = 'mobile-main';
         return $this->render('/home/tanggapan/dinas/update', [
-            'model' => $pengajuanDinas,
-            'detailModels' => $detailModels,
+            'model' => $model,
+            'detailModels' => $existingDetails,
             'karyawanBawahanAdmin' => $karyawanBawahanAdmin,
         ]);
     }
+
 
 
 

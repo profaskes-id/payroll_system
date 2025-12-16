@@ -42,8 +42,13 @@ use backend\models\MasterKode;
             ]) ?>
         </div>
 
+
         <!-- Status + Catatan Admin (Hanya saat Update) -->
         <?php if (!$model->isNewRecord): ?>
+
+            <?php
+            $model->status = 1; // Disetujui
+            ?>
             <div class="md:col-span-2">
                 <?php
                 $statusOptions = [

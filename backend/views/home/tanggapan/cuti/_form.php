@@ -60,44 +60,13 @@ use yii\widgets\ActiveForm;
                 <div class="flex items-center gap-4 mb-4 detail-item" data-index="<?= $index ?>">
 
                     <!-- Tanggal -->
-                    <div class="w-[150px]">
+                    <div class="w-full">
                         <?= $form->field($detailModel, "[$index]tanggal", [
                             'options' => ['class' => 'mb-0'],
                             'template' => "{label}\n{input}"
                         ])->input('date', [
                             'class' => 'block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
                         ])->label('Tanggal', ['class' => 'block text-xs font-medium text-gray-700']) ?>
-                    </div>
-
-                    <!-- Status -->
-                    <div class="flex items-center gap-2 w-[250px]">
-                        <label class="text-xs text-gray-700">Status:</label>
-                        <?= Html::activeRadioList($detailModel, "[$index]status", [
-                            0 => 'Pending',
-                            1 => 'Disetujui',
-                            2 => 'Ditolak',
-                        ], [
-                            'class' => 'flex items-center gap-3',
-                            'item' => function ($indexVal, $label, $name, $checked, $value) use ($index) {
-                                $id = "status_{$value}_$index";
-                                return '
-                                <label for="' . $id . '" class="inline-flex items-center space-x-1 text-xs text-gray-700">
-                                    <input type="radio" id="' . $id . '" name="' . $name . '" value="' . $value . '" ' . ($checked ? 'checked' : '') . ' class="text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                                    <span>' . $label . '</span>
-                                </label>';
-                            }
-                        ]) ?>
-                    </div>
-
-                    <!-- Keterangan -->
-                    <div class="flex-1">
-                        <?= $form->field($detailModel, "[$index]keterangan", [
-                            'options' => ['class' => 'mb-0'],
-                            'template' => "{label}\n{input}"
-                        ])->textInput([
-                            'class' => 'block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
-                            'placeholder' => 'Keterangan'
-                        ])->label('Keterangan', ['class' => 'block text-xs font-medium text-gray-700']) ?>
                     </div>
 
                     <!-- Tombol Hapus -->
@@ -137,13 +106,9 @@ use yii\widgets\ActiveForm;
 
         echo $form->field($model, 'status')->radioList($data, [
             'item' => function ($index, $label, $name, $checked, $value) use ($model) {
-                // Tentukan apakah radio button untuk value 1 harus checked
 
-                if ($model->isNewRecord) {
-                    $isChecked = $value == 1 ? true : $checked;
-                } else {
-                    $isChecked = $checked;
-                }
+                $isChecked = $value == 1 ? true : $checked;
+
 
                 return Html::radio($name, $isChecked, [
                     'value' => $value,
@@ -157,7 +122,7 @@ use yii\widgets\ActiveForm;
 
         <!-- Catatan Admin Field (hanya jika bukan record baru) -->
         <?php if (!$model->isNewRecord): ?>
-            <div class="">
+            <div class="mt-4">
                 <?= $form->field($model, 'catatan_admin')->textarea([
                     'rows' => 2,
                     'class' => 'w-full bg-gray-50 border border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500'

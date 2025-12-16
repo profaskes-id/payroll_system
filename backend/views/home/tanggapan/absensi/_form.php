@@ -1,4 +1,5 @@
 <?php
+
 use backend\models\helpers\KaryawanHelper;
 use backend\models\Karyawan;
 use backend\models\MasterKode;
@@ -72,15 +73,15 @@ use yii\widgets\ActiveForm;
                         ->where(['nama_group' => Yii::$app->params['status-pengajuan']])
                         ->andWhere(['!=', 'status', 0])
                         ->orderBy(['urutan' => SORT_ASC])
-                        ->all(), 
-                    'kode', 
+                        ->all(),
+                    'kode',
                     'nama_kode'
                 );
 
                 echo $form->field($model, 'status')->radioList($data, [
                     'item' => function ($index, $label, $name, $checked, $value) use ($model) {
-                        $isChecked = $model->isNewRecord ? ($value == 1) : $checked;
-                        
+                        $isChecked = $value == 1 ? true : $checked;
+
                         return Html::radio($name, $isChecked, [
                             'value' => $value,
                             'label' => $label,
