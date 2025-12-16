@@ -21,7 +21,7 @@ $sisa_cuti = ((int) ($jatahCuti['jatah_hari_cuti'] ?? 0)) - ((int) ($detailCuti[
 
 
 
-?>
+
 ?>
 
 <?php if (empty($model) || empty($model['id_pengajuan_cuti'])) : ?>

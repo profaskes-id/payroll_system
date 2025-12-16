@@ -89,9 +89,7 @@ $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:
                         <p>
                             Kami mohon agar pengajuan ini dapat diproses secepatnya.
                             Terima kasih atas perhatian Anda. </p>
-
-
-                        <p>Hormat kami,<br />System Profaskes</p>
+                        <p>Hormat kami,<br /><?= Yii::$app->params['APPLICATION_ADMIN'] ?></p>
                     </div>
                 </div>
             </div>

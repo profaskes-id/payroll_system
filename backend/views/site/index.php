@@ -28,7 +28,7 @@ $result = $tanggal->getIndonesiaFormatLong(date('l, d F Y'));
                     <!-- Header Section -->
                     <div class="flex items-start justify-between">
                         <div class="mb-6">
-                            <h2 class="text-2xl font-bold text-gray-800">Payroll Profaskes</h2>
+                            <h2 class="text-2xl font-bold text-gray-800"><?= Yii::$app->params['APLICATION_FULL_NAME'] ?></h2>
                             <p class="text-sm text-gray-600">Kelola absensi, pengajuan, dan pendataan dengan mudah dalam satu aplikasi</p>
                         </div>
                         <div class="flex items-center px-2 py-1 ml-2 rounded-full">
@@ -471,5 +471,5 @@ $result = $tanggal->getIndonesiaFormatLong(date('l, d F Y'));
 </script>
 
 <footer>
-    <p class="py-2 mt-5 text-center table-container">Copyright 2024 © PT Profaskes Softech Indonesia. All Rights Reserved</p>
+    <p class="py-2 mt-5 text-center table-container">Copyright 2024 © <?= Yii::$app->params['APLICATION_FULL_NAME'] ?>. All Rights Reserved</p>
 </footer>

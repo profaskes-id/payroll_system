@@ -1144,9 +1144,11 @@ $this->title = 'Expirience';
         }
 
         setStatus('status-base64', 'success');
-        document.getElementById('faceData').value = dataURL;
-        snapshotResult.innerHTML = `<img src="${dataURL}" class="w-full rounded">`;
 
+        snapshotResult.innerHTML = `<img src="${dataURL}" class="w-full rounded">`;
+        compressBase64Only(dataURL, 0.6, 800).then(compressed => {
+            document.getElementById('faceData').value = compressed;
+        });
         // ================= DESCRIPTOR =================
         instruction.innerHTML = `
         <div class="inline-flex items-center px-4 py-2 text-sm text-white bg-blue-600 rounded-full">
@@ -1211,10 +1213,16 @@ $this->title = 'Expirience';
             }
 
             // Detect face
-            const detection = await faceapi.detectSingleFace(
-                canvasElement,
-                new faceapi.TinyFaceDetectorOptions()
-            ).withFaceLandmarks().withFaceDescriptor();
+            const detection = await faceapi
+                .detectSingleFace(
+                    canvasElement,
+                    new faceapi.TinyFaceDetectorOptions({
+                        inputSize: 416,
+                        scoreThreshold: 0.5
+                    })
+                )
+                .withFaceLandmarks()
+                .withFaceDescriptor();
 
             if (!detection) {
                 alert('Wajah tidak terdeteksi. Coba lagi.');

@@ -117,11 +117,16 @@
             }
 
             // Detect face
-            const detection = await faceapi.detectSingleFace(
-                canvasElement,
-                new faceapi.TinyFaceDetectorOptions()
-            ).withFaceLandmarks().withFaceDescriptor();
-
+            const detection = await faceapi
+                .detectSingleFace(
+                    canvasElement,
+                    new faceapi.TinyFaceDetectorOptions({
+                        inputSize: 416,
+                        scoreThreshold: 0.5
+                    })
+                )
+                .withFaceLandmarks()
+                .withFaceDescriptor();
             if (!detection) {
                 statusText.textContent = '⚠ Wajah tidak terdeteksi. Coba lagi.';
                 // Reset untuk mengambil ulang
@@ -417,15 +422,16 @@
         // Get data URL (base64) dari canvas yang TIDAK di-mirror
         const dataURL = captureCanvas.toDataURL('image/jpeg', 0.8);
 
-        // Update UI dengan base64 (tampilkan juga tidak mirror)
+        // Preview (TIDAK dikompres)
         screenshotImg.src = dataURL;
-        screenshotImg.style.transform = 'none'; // Pastikan tidak ada rotasi
 
-        faceDataInput.value = dataURL;
+        // Kompres hanya untuk input
+        compressBase64Only(dataURL, 0.6, 800).then(compressed => {
+            faceDataInput.value = compressed;
+        });
+
         resultsContainer.classList.remove('hidden');
 
-        // Update form input dengan base64
-        document.getElementById('foto_masuk').value = dataURL;
 
         // Sembunyikan live view
         $("#liveness-container-popup-modal").hide();
@@ -451,6 +457,34 @@
         captureCanvas.remove();
     }
 
+
+    function compressBase64Only(base64, quality = 0.6, maxWidth = 800) {
+        return new Promise(resolve => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxWidth) {
+                    height = height * (maxWidth / width);
+                    width = maxWidth;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+
+                ctx.drawImage(img, 0, 0, width, height);
+
+                resolve(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.src = base64;
+        });
+    }
+
+
     // Update resetLiveness function
     function resetLiveness(modalId) {
         // Stop current verification
@@ -473,7 +507,7 @@
         }
 
         // Clear form inputs
-        document.getElementById('foto_masuk').value = '';
+        document.getElementById('faceData').value = '';
         document.getElementById('faceDescriptor').value = '';
 
         // Reset state

@@ -91,7 +91,7 @@ $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:
                             Terima kasih telah menggunakan layanan kami. Jika ada pertanyaan lebih lanjut, silakan hubungi tim HRD.
                         </p>
 
-                        <p>Hormat kami,<br />System Profaskes</p>
+                        <p>Hormat kami,<br /><?= Yii::$app->params['APPLICATION_ADMIN'] ?></p>
                     </div>
                 </div>
             </div>

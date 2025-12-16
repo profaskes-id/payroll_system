@@ -93,7 +93,6 @@ return [
         ],
         'urlManagerFrontEnd' => [
             'class' => 'yii\web\urlManager',
-            // 'baseUrl' => 'https://payroll.profaskes.id',
             'baseUrl' => 'https://localhost:8000',
             'enablePrettyUrl' => true,
             'showScriptName' => false,

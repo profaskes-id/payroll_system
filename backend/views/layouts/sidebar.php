@@ -18,10 +18,10 @@ $jumlahPulangCepatToday = IzinPulangCepat::find()->where(['tanggal' => date('Y-m
         <!-- Sidebar user panel (optional) -->
         <div class="pb-3 mt-3 mb-3 user-panel d-flex align-items-center justify-content-center">
             <div class="image">
-                <img src="<?= Yii::getAlias('@root') ?>/images/logo.svg" alt="Profaskes Logo" class="brand-image img-circle " style="width: 60px; ">
+                <img src="<?= Yii::getAlias('@root') ?>/images/logo.svg" alt="Logo" class="brand-image img-circle " style="width: 60px; ">
             </div>
             <div class="info">
-                <a href="#" style="font-size: 17.8px;" class="text-white d-block fw-bold">Profaskes</a>
+                <a href="#" style="font-size: 17.8px;" class="text-white d-block fw-bold"><?= Yii::$app->params['APPLICATION_BUSINESS'] ?></a>
                 <a href="#" style="font-size:14px" class="d-block">Payroll System</a>
             </div>
         </div>

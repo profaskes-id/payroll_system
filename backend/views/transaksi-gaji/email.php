@@ -9,4 +9,4 @@ use yii\helpers\Html;
 <p>Silakan periksa lampiran PDF untuk detail gaji Anda.</p>
 
 <p>Terima kasih,<br>
-    Tim Payroll Profaskes</p>
+    <?= Yii::$app->params['APPLICATION_ADMIN'] ?></p>

@@ -384,10 +384,12 @@ class HomeController extends Controller
                             ->limit(1)
                             ->one();
 
-                        if ($absensiKeduaTerakhir && !empty($absensiKeduaTerakhir->foto_masuk)) {
+                        if ($absensiKeduaTerakhir) {
                             $absensiKeduaTerakhir->foto_masuk = null;
+                            $absensiKeduaTerakhir->liveness_passed = null;
                             $absensiKeduaTerakhir->save(false);
                         }
+
 
                         Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil dengan kemiripan wajah sebesar ' . $similar . '%');
                         return true;
@@ -412,8 +414,9 @@ class HomeController extends Controller
                                 ->limit(1)
                                 ->one();
 
-                            if ($absensiKeduaTerakhir && !empty($absensiKeduaTerakhir->foto_masuk)) {
+                            if ($absensiKeduaTerakhir) {
                                 $absensiKeduaTerakhir->foto_masuk = null;
+                                $absensiKeduaTerakhir->liveness_passed = null;
                                 $absensiKeduaTerakhir->save(false);
                             }
 
@@ -597,11 +600,12 @@ class HomeController extends Controller
                                 ->limit(1)  // Ambil 1 data (yaitu yang ke-2 terbaru)
                                 ->one();
 
-
-                            if ($absensiKeduaTerakhir && !empty($absensiKeduaTerakhir->foto_masuk)) {
+                            if ($absensiKeduaTerakhir) {
                                 $absensiKeduaTerakhir->foto_masuk = null;
-                                $absensiKeduaTerakhir->save(false); // Simpan tanpa validasi
+                                $absensiKeduaTerakhir->liveness_passed = null;
+                                $absensiKeduaTerakhir->save(false);
                             }
+
 
                             Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil  dengan    kemiripan wajah sebesar ' . $similarPercentage . '%');
                         }
@@ -627,10 +631,12 @@ class HomeController extends Controller
                                     ->one();
 
 
-                                if ($absensiKeduaTerakhir && !empty($absensiKeduaTerakhir->foto_masuk)) {
+                                if ($absensiKeduaTerakhir) {
                                     $absensiKeduaTerakhir->foto_masuk = null;
-                                    $absensiKeduaTerakhir->save(false); // Simpan tanpa validasi
+                                    $absensiKeduaTerakhir->liveness_passed = null;
+                                    $absensiKeduaTerakhir->save(false);
                                 }
+
 
                                 Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil  dengan    kemiripan wajah sebesar ' . $similarPercentage . '%');
                             }
@@ -779,10 +785,12 @@ class HomeController extends Controller
                                 ->one();
 
 
-                            if ($absensiKeduaTerakhir && !empty($absensiKeduaTerakhir->foto_masuk)) {
+                            if ($absensiKeduaTerakhir) {
                                 $absensiKeduaTerakhir->foto_masuk = null;
-                                $absensiKeduaTerakhir->save(false); // Simpan tanpa validasi
+                                $absensiKeduaTerakhir->liveness_passed = null;
+                                $absensiKeduaTerakhir->save(false);
                             }
+
 
                             Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil  dengan    kemiripan wajah sebesar ' . $similarPercentage . '%');
                         }
@@ -807,11 +815,12 @@ class HomeController extends Controller
                                     ->limit(1)  // Ambil 1 data (yaitu yang ke-2 terbaru)
                                     ->one();
 
-
-                                if ($absensiKeduaTerakhir && !empty($absensiKeduaTerakhir->foto_masuk)) {
+                                if ($absensiKeduaTerakhir) {
                                     $absensiKeduaTerakhir->foto_masuk = null;
-                                    $absensiKeduaTerakhir->save(false); // Simpan tanpa validasi
+                                    $absensiKeduaTerakhir->liveness_passed = null;
+                                    $absensiKeduaTerakhir->save(false);
                                 }
+
 
                                 Yii::$app->session->setFlash('success', 'Absen Masuk Berhasil  dengan    kemiripan wajah sebesar ' . $similarPercentage . '%');
                             }

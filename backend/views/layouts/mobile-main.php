@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajak Absen Payroll System</title>
+    <title><?= Yii::$app->params['APLICATION_FULL_NAME'] ?></title>
 
     <link href="<?= Yii::getAlias('@root') . '/css/tailwind_output.css' ?>" rel="stylesheet">
     <link href="<?= Yii::getAlias('@root') . '/node_modules/flowbite/dist/flowbite.min.css' ?>" rel="stylesheet">

@@ -193,7 +193,7 @@ class KaryawanController extends Controller
         $msgToCheck = $this->renderPartial('@backend/views/karyawan/email_verif', compact('model', 'ciphertext'));
         $sendMsgToCheck = Yii::$app->mailer->compose()
             ->setTo($model->email)
-            ->setSubject('Akses Payroll Profaskes')
+            ->setSubject('Akses ' . Yii::$app->params['APLICATION_FULL_NAME'])
             ->setHtmlBody($msgToCheck);
         if ($sendMsgToCheck->send()) {
             Yii::$app->session->setFlash(

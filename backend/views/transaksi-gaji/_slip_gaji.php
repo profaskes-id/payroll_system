@@ -9,7 +9,7 @@
 
         <!-- Logo Kiri -->
         <div style="flex:0 0 60px;">
-            <h6 style="margin: 0; padding: 0; color: #fff;">Payroll Profaskes</h6>
+            <h6 style="margin: 0; padding: 0; color: #fff;"><?= Yii::$app->params['APLICATION_FULL_NAME'] ?></h6>
         </div>
 
         <!-- Info Slip di Kanan -->

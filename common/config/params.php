@@ -1,8 +1,22 @@
 <?php
 return [
+    'APLICATION_FULL_NAME' => 'Payroll Profaskes',
+    'APLICATION_SHORT_NAME' => 'Payroll',
+    'APPLICATION_DOMAIN' => 'profaskes.id',
+    'APPLICATION_ADMIN' => 'Admin Profaskes',
+    'APPLICATION_BUSINESS' => 'Profaskes',
+
     'base_parent_url' => 'https://payroll.profaskes.id',
     'base_url' => 'https://payroll.profaskes.id',
-    'api_url_fr' => "https://face.athenateknologi.com",
+
+
+
+
+
+
+
+
+
     'minimal_kemiripan_fr' => 60,
     // "cluster_fr" => "absensi_fr",
     "cluster_fr" => "test",

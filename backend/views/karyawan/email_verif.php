@@ -74,7 +74,7 @@ $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:
 <body>
     <div class="center-card">
         <div class="card-header">
-            Akses Payroll Profaskes
+            Akses <?= Yii::$app->params['APLICATION_FULL_NAME'] ?>
         </div>
         <picture>
             <source media="(max-width: 768px)" srcset="https://www.profaskes.id/images/others/email-phone.jpg">
@@ -86,7 +86,7 @@ $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:
             <div class="card-body">
                 <p>Yth. Pengguna,</p>
 
-                <p>Anda telah didaftarkan dalam sistem payroll <strong>Profaskes.id</strong>. Berikut adalah tautan untuk mengakses akun Anda:</p>
+                <p>Anda telah didaftarkan dalam sistem <?= Yii::$app->params['APLICATION_SHORT_NAME'] ?> <strong><?= Yii::$app->params['APPLICATION_DOMAIN'] ?></strong>. Berikut adalah tautan untuk mengakses akun Anda:</p>
 
                 <a class="login-link" href="<?= Yii::getAlias('@root') . '/panel/auto-login/login?token=' . $ciphertext . '&id=' . $model->kode_karyawan ?>">
                     Klik di sini untuk Login
@@ -96,7 +96,7 @@ $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:
 
                 <p>Terima kasih atas perhatian Anda.</p>
 
-                <p>Hormat kami,<br>Admin Profaskes</p>
+                <p>Hormat kami,<br><?= Yii::$app->params['APPLICATION_ADMIN'] ?></p>
             </div>
         </div>
     </div>
