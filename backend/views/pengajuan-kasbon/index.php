@@ -61,8 +61,18 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->karyawan->nama;
                     }
                 ],
-                'jumlah_kasbon',
-                'tanggal_pengajuan',
+                [
+                    'attribute' => 'jumlah_kasbon',
+                    'format' => ['decimal', 0], // 1.000.000 (tanpa desimal)
+                    'contentOptions' => ['style' => 'text-align:right;'],
+                    'headerOptions' => ['style' => 'text-align:right;'],
+                ],
+                [
+                    'attribute' => 'tanggal_pengajuan',
+                    'contentOptions' => ['style' => 'text-align:center;'],
+                    'headerOptions' => ['style' => 'text-align:center;'],
+                    'format' => ['date', 'php:d-M-Y'], // 16-12-2025
+                ],
 
                 [
                     'format' => 'raw',

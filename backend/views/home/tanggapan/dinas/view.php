@@ -118,7 +118,20 @@ $tanggalFormater = new Tanggal();
                                 <ul class="space-y-2 list-disc list-inside">
                                     <?php foreach ($model->detailDinas as $index => $detail): ?>
                                         <?php if ($detail instanceof \backend\models\DetailDinas): ?>
-                                            <li>
+                                            <?php
+                                            $status = $detail->status ?? null;
+                                            $statusClass = '';
+                                            $statusText = '';
+
+                                            if ($status == 1) {
+                                                $statusClass = 'text-green-600 font-medium';
+                                                $statusText = ' (Disetujui)';
+                                            } elseif ($status == 2) {
+                                                $statusClass = 'text-red-600 font-medium';
+                                                $statusText = ' (Ditolak)';
+                                            }
+                                            ?>
+                                            <li class="<?= $statusClass ?>">
                                                 <?php
                                                 $tanggal = $detail->tanggal ?? null;
                                                 if ($tanggal && !empty(trim($tanggal))) {
@@ -132,8 +145,8 @@ $tanggalFormater = new Tanggal();
                                                     echo ' - ' . htmlspecialchars($keterangan, ENT_QUOTES, 'UTF-8');
                                                 }
 
-                                                $status = $detail->status ?? null;
-
+                                                // Tampilkan status text
+                                                echo $statusText;
                                                 ?>
                                             </li>
                                         <?php endif; ?>

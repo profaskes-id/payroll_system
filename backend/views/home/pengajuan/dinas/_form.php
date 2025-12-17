@@ -23,9 +23,22 @@ $form = ActiveForm::begin(); ?>
         <input type="text" disabled class="disabled:bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" id="jumlah-hari-dinas">
     </div>
 
-    <div class="mb-5">
-        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">Estimasi Biaya</label>
-        <?= $form->field($model, 'estimasi_biaya')->textInput(['required' => true, 'type' => 'number', 'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '])->label(false) ?>
+    <div class="mb-2">
+        <label class="block mb-2 text-sm font-medium text-gray-900 capitalize">
+            Estimasi Biaya
+        </label>
+
+        <?= $form->field($model, 'estimasi_biaya')->textInput([
+            'required' => true,
+            'type' => 'number',
+            'min' => 0,
+            'step' => '1',
+            'id' => 'estimasi-biaya',
+            'class' => 'number-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'
+        ])->label(false) ?>
+
+        <!-- TERBILANG -->
+        <p id="terbilang-biaya" class="mt-1 text-xs italic text-gray-600"></p>
     </div>
 
     <div class="mb-5">
@@ -36,7 +49,7 @@ $form = ActiveForm::begin(); ?>
     <!-- Hidden field untuk menyimpan data detail dinas -->
     <input type="hidden" name="tanggal_dinas" id="tanggal-dinas-hidden">
 
-    <div class="absolute bottom-0 left-0 right-0 ">
+    <div class="">
         <div class="">
             <?= $this->render('@backend/views/components/element/_submit-button', ['text' => 'Submit']); ?>
         </div>
@@ -49,6 +62,33 @@ $form = ActiveForm::begin(); ?>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/terbilang-js@1.0.1/terbilang.min.js"></script>
+
+<script>
+    $(function() {
+
+        $('.number-input').each(function() {
+            const input = this;
+            const fieldKey = input.id.split('-').pop();
+            const output = document.getElementById('terbilang-' + fieldKey);
+            if (!output) return;
+
+            const updateText = () => {
+                const val = input.value;
+                if (val && val > 0) {
+                    output.textContent = terbilang(Math.floor(val)) + ' rupiah';
+                } else {
+                    output.textContent = '';
+                }
+            };
+
+            updateText();
+            input.addEventListener('input', updateText);
+        });
+
+    });
+</script>
+
 
 <script>
     $(document).ready(function() {

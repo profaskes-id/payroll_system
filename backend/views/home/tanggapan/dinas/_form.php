@@ -155,6 +155,37 @@ use yii\widgets\ActiveForm;
             </div>
         <?php endif; ?>
 
+        <!-- STATUS ABSENSI -->
+        <div class="pt-6 border-t border-gray-200">
+            <label class="block mb-2 text-sm font-medium text-gray-700">
+                Apakah absensi akan diisikan?
+            </label>
+
+            <div class="flex gap-6">
+                <label class="inline-flex items-center gap-2">
+                    <input type="radio"
+                        name="PengajuanDinas[isNewAbsen]"
+                        value="1"
+                        <?= $model->isNewRecord || $model->isNewAbsen == 1 ? 'checked' : '' ?>
+                        class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                    <span class="text-sm text-gray-700">Iya</span>
+                </label>
+
+                <label class="inline-flex items-center gap-2">
+                    <input type="radio"
+                        name="PengajuanDinas[isNewAbsen]"
+                        value="0"
+                        <?= !$model->isNewRecord && $model->isNewAbsen == 0 ? 'checked' : '' ?>
+                        class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                    <span class="text-sm text-gray-700">Tidak</span>
+                </label>
+            </div>
+
+            <p class="mt-1 text-xs italic text-gray-500">
+                Jika <b>Iya</b>, sistem akan otomatis membuat absensi berdasarkan tanggal dinas
+            </p>
+        </div>
+
 
 
         <!-- Submit Button -->
@@ -176,6 +207,51 @@ use yii\widgets\ActiveForm;
 
 <!-- Tambahkan FontAwesome jika diperlukan -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // ==============================
+        // TOGGLE ABSENSI
+        // ==============================
+        function isAbsenAktif() {
+            let checked = document.querySelector('input[name="PengajuanDinas[isNewAbsen]"]:checked');
+            return checked && checked.value === '1';
+        }
+
+        // ==============================
+        // MONITOR PERUBAHAN STATUS ABSEN
+        // ==============================
+        document.querySelectorAll('input[name="PengajuanDinas[isNewAbsen]"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+
+                if (!isAbsenAktif()) {
+                    console.log('Absensi dimatikan');
+                } else {
+                    console.log('Absensi diaktifkan');
+                }
+            });
+        });
+
+        // ==============================
+        // OVERRIDE GENERATE DETAIL
+        // ==============================
+        let originalGenerate = window.generateDetailFromDates;
+
+        window.generateDetailFromDates = function(datesArray) {
+
+            if (!isAbsenAktif()) {
+                alert('Absensi tidak diaktifkan. Aktifkan absensi untuk generate otomatis.');
+                return;
+            }
+
+            if (typeof originalGenerate === 'function') {
+                originalGenerate(datesArray);
+            }
+        };
+
+    });
+</script>
 
 <script>
     // ==============================

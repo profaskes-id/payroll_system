@@ -63,6 +63,7 @@ class PembayaranKasbon extends \yii\db\ActiveRecord
             'id_karyawan' => ' Karyawan',
             'id_kasbon' => ' Kasbon',
             'bulan' => 'Bulan',
+            'tahun' => 'Tahun',
             'jumlah_potong' => 'Jumlah Potong',
             'tanggal_potong' => 'Tanggal Potong',
             'angsuran' => 'Angsuran',

@@ -29,55 +29,38 @@ use yii\widgets\ActiveForm;
                         <?php foreach ($detailDinas as $detail): ?>
                             <?php
                             $tanggalFormatted = Yii::$app->formatter->asDate($detail->tanggal, 'php:d M Y');
+                            $status = $detail->status ?? null;
+
+                            // Tentukan class berdasarkan status
+                            if ($status == 1) {
+                                // Status 1 = Disetujui = Hijau
+                                $bgColor = 'bg-green-100';
+                                $textColor = 'text-green-800';
+                                $statusText = ' (Disetujui)';
+                            } elseif ($status == 2) {
+                                // Status 2 = Ditolak = Merah
+                                $bgColor = 'bg-red-100';
+                                $textColor = 'text-red-800';
+                                $statusText = ' (Ditolak)';
+                            } else {
+                                // Status lainnya atau belum ada status = Biru (default)
+                                $bgColor = 'bg-blue-100';
+                                $textColor = 'text-blue-800';
+                                $statusText = '';
+                            }
                             ?>
-                            <span class="inline-block px-2 py-1 text-xs text-blue-800 bg-blue-100 rounded-full">
-                                <?= $tanggalFormatted ?>
+                            <span class="inline-block px-2 py-1 text-xs <?= $textColor ?> <?= $bgColor ?> rounded-full font-medium">
+                                <?= $tanggalFormatted . $statusText ?>
                             </span>
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
             </div>
         </div>
-        <div class="relative inline-flex items-center justify-center w-full mb-4">
-            <hr class="w-64 h-px my-1 bg-gray-200 border-0 dark:bg-gray-700">
-        </div>
-        <?php if (!$model->dokumentasi == []): ?>
-            <div class="relative w-full p-2 mt-2 text-black bg-white rounded-md min-h-32">
-                <div class="flex items-center justify-between">
-                    <p class="font-semibold text-gray-500 capitalize">Dokumentasi Perjalanan</p>
-                    <?= Html::a('Delete All', ['pengajuan/delete-dokumentasi', 'id' => $model->id_pengajuan_dinas], ['class' => 'text-rose-500 rounded-md  p-1']) ?>
-                </div>
-
-                <?php
-                $data = json_decode($model->dokumentasi, true);
-                foreach ($data as $key => $item) : ?>
-                    <?php $key++ ?>
-                    <p class="my-1">
-                        <?= Html::a("Preview Dokumentasi {$key}", Yii::getAlias('@root') . '/panel/' . $item, ['target' => '_blank', 'class' => 'text-blue-500']) ?>
-                    </p>
-                <?php endforeach ?>
-            </div>
-        <?php endif; ?>
 
 
-
-
-        <div class="mt-5">
-            <?php
-
-            if ($model['status'] == '1'): ?>
-                <?php $form = ActiveForm::begin(['action' =>  'post', 'action' => ['pengajuan/upload-dokumentasi'], 'options' => ['enctype' => 'multipart/form-data']]); ?>
-                <?= $form->field($model, 'dokumentasi[]')->fileInput(['multiple' => true, 'accept' => 'image/*', 'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full '])->label('Upload Dokumentasi Perjalanan') ?>
-                <div class="absolute bottom-0 left-0 right-0 col-span-12">
-                    <div class="">
-                        <?= $this->render('@backend/views/components/element/_submit-button', ['text' => 'Submit']); ?>
-                    </div>
-                </div>
-                <?php ActiveForm::end(); ?>
-            <?php endif ?>
-
-
-        </div>
+        <!-- dokumentasi
+         -->
     </div>
 
 </section>

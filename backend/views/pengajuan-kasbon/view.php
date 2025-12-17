@@ -52,13 +52,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'label' => 'Tanggal Pengajuan',
                     'value' => function ($model) {
-                        return Yii::$app->formatter->asDate($model->tanggal_pengajuan, 'php:d-m-Y');
+                        return Yii::$app->formatter->asDate($model->tanggal_pengajuan, 'php:d-M-Y');
                     }
                 ],
                 [
                     'label' => 'Tanggal Pencairan',
                     'value' => function ($model) {
-                        return $model->tanggal_pencairan ? Yii::$app->formatter->asDate($model->tanggal_pencairan, 'php:d-m-Y') : '-';
+                        return $model->tanggal_pencairan ? Yii::$app->formatter->asDate($model->tanggal_pencairan, 'php:d-M-Y') : '-';
                     }
                 ],
                 [
@@ -76,14 +76,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'label' => 'Tanggal Mulai Potong',
                     'value' => function ($model) {
-                        return $model->tanggal_mulai_potong ? Yii::$app->formatter->asDate($model->tanggal_mulai_potong, 'php:d-m-Y') : '-';
+                        return $model->tanggal_mulai_potong ? Yii::$app->formatter->asDate($model->tanggal_mulai_potong, 'php:d-M-Y') : '-';
                     }
                 ],
                 'keterangan:ntext',
                 [
                     'label' => 'Tanggal Disetujui',
                     'value' => function ($model) {
-                        return $model->tanggal_disetujui ? Yii::$app->formatter->asDate($model->tanggal_disetujui, 'php:d-m-Y') : '-';
+                        return $model->tanggal_disetujui ? Yii::$app->formatter->asDate($model->tanggal_disetujui, 'php:d-M-Y') : '-';
                     }
                 ],
 
@@ -96,7 +96,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'label' => 'Created At',
                     'value' => function ($model) {
-                        return $model->created_at ? date('d-m-Y H:i', $model->created_at) : '-';
+                        return $model->created_at ? date('d-M-Y H:i', $model->created_at) : '-';
                     }
                 ],
                 [
@@ -113,7 +113,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'label' => 'Updated At',
                     'value' => function ($model) {
-                        return $model->updated_at ? date('d-m-Y H:i', $model->updated_at) : '-';
+                        return $model->updated_at ? date('d-M-Y H:i', $model->updated_at) : '-';
                     }
                 ],
                 [
