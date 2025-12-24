@@ -32,92 +32,39 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
 
-        <!-- Container untuk detail dinas -->
-        <div class="col-12">
-            <h5>Detail Dinas</h5>
-            <div id="detail-container">
-
-
-
-                <?php if (!empty($detailModels)): ?>
-                    <?php foreach ($detailModels as $index => $detailModel): ?>
-                        <div class="mb-3 row detail-item" data-index="<?= $index ?>">
-                            <div class="col-md-4">
-                                <?= $form->field($detailModel, "[$index]tanggal")->input('date', ['class' => 'form-control form-control-sm'])->label('Tanggal') ?>
-                            </div>
-
-
-                            <div class="col-md-5">
-
-                                <label class="d-block ">Status</label>
-                                <div class="justify-content-around d-flex ">
-
-                                    <div class="form-check">
-                                        <?= Html::radio("DetailDinas[$index][status]", $detailModel->status == 0, [
-                                            'value' => 1,
-                                            'class' => 'form-check-input',
-                                            'id' => "status_pending_$index",
-                                            'label' => 'Pending'
-                                        ]) ?>
-                                    </div>
-                                    <div class="form-check">
-                                        <?= Html::radio("DetailDinas[$index][status]", $detailModel->status == 1, [
-                                            'value' => 1,
-                                            'class' => 'form-check-input',
-                                            'id' => "status_approved_$index",
-                                            'label' => 'Disetujui'
-                                        ]) ?>
-                                    </div>
-                                    <div class="form-check">
-                                        <?= Html::radio("DetailDinas[$index][status]", $detailModel->status == 2, [
-                                            'value' => 2,
-                                            'class' => 'form-check-input',
-                                            'id' => "status_rejected_$index",
-                                            'label' => 'Ditolak'
-                                        ]) ?>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-1 d-flex align-items-end">
-                                <button type="button" class="btn btn-danger btn-sm remove-detail" data-index="<?= $index ?>">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <!-- Detail pertama yang sudah ada (kosong) -->
-                    <div class="mb-3 row detail-item" data-index="0">
-                        <div class="col-md-4">
-                            <label for="detaildinas-0-tanggal">Tanggal</label>
-                            <input type="date" id="detaildinas-0-tanggal" name="DetailDinas[0][tanggal]" class="form-control form-control-sm" />
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="d-block">Status</label>
-
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="DetailDinas[0][status]" id="status_pending_0" value="0" checked>
-                                <label class="form-check-label" for="status_pending_0">Pending</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="DetailDinas[0][status]" id="status_approved_0" value="1">
-                                <label class="form-check-label" for="status_approved_0">Disetujui</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="DetailDinas[0][status]" id="status_rejected_0" value="2">
-                                <label class="form-check-label" for="status_rejected_0">Ditolak</label>
-                            </div>
-                        </div>
-                        <div class="col-md-1 d-flex align-items-end">
-                            <button type="button" class="btn btn-danger btn-sm remove-detail" data-index="0">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
+  <!-- Container untuk detail dinas -->
+<div class="col-12">
+    <h5>Detail Dinas</h5>
+    <div id="detail-container">
+        <?php if (!empty($detailModels)): ?>
+            <?php foreach ($detailModels as $index => $detailModel): ?>
+                <div class="mb-3 row detail-item" data-index="<?= $index ?>">
+                    <div class="col-11">
+                        <?= $form->field($detailModel, "[$index]tanggal")->input('date', ['class' => 'form-control form-control-sm'])->label('Tanggal') ?>
                     </div>
-                <?php endif; ?>
+                    <div  class="col-1 d-flex align-items-end">
+                        <button type="button" class="btn btn-danger btn-sm remove-detail" data-index="<?= $index ?>">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <!-- Detail pertama yang sudah ada (kosong) -->
+            <div class="mb-3 row detail-item" data-index="0">
+                <div class="col-11">
+                    <label for="detaildinas-0-tanggal">Tanggal</label>
+                    <input type="date" id="detaildinas-0-tanggal" name="DetailDinas[0][tanggal]" class="form-control form-control-sm" />
+                </div>
+                <div class="col-1 d-flex align-items-end">
+                    <button type="button" class="btn btn-danger btn-sm remove-detail" data-index="0">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
             </div>
-        </div>
+        <?php endif; ?>
+    </div>
+</div>
 
         <div class="col-12">
             <button type="button" id="add-detail" class="btn btn-primary btn-sm">
@@ -211,27 +158,11 @@ $('#add-detail').click(function() {
     let index = $('.detail-item').length;
     let html = `
     <div class="mb-3 row detail-item" data-index="\${index}">
-        <div class="col-md-4">
+        <div class="col-11">
             <label for="detaildinas-\${index}-tanggal">Tanggal</label>
             <input type="date" id="detaildinas-\${index}-tanggal" name="DetailDinas[\${index}][tanggal]" class="form-control form-control-sm" />
         </div>
-      
-        <div class="col-md-3">
-            <label class="d-block">Status</label>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="DetailDinas[\${index}][status]" id="status_pending_\${index}" value="0" checked>
-                <label class="form-check-label" for="status_pending_\${index}">Pending</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="DetailDinas[\${index}][status]" id="status_approved_\${index}" value="1">
-                <label class="form-check-label" for="status_approved_\${index}">Disetujui</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="DetailDinas[\${index}][status]" id="status_rejected_\${index}" value="2">
-                <label class="form-check-label" for="status_rejected_\${index}">Ditolak</label>
-            </div>
-        </div>
-        <div class="col-md-1 d-flex align-items-end">
+        <div class="col-1 d-flex align-items-end">
             <button type="button" class="btn btn-danger btn-sm remove-detail" data-index="\${index}">
                 <i class="fas fa-trash"></i>
             </button>
@@ -249,9 +180,11 @@ $(document).on('click', '.remove-detail', function() {
         // Reindex items
         $('.detail-item').each(function(i) {
             $(this).attr('data-index', i);
-            $(this).find('input, label').each(function() {
+            $(this).find('input, label, button').each(function() {
                 let attrFor = $(this).attr('for');
                 let name = $(this).attr('name');
+                let dataIndex = $(this).data('index');
+                
                 if(attrFor) {
                     let newFor = attrFor.replace(/\d+/, i);
                     $(this).attr('for', newFor);
@@ -263,6 +196,9 @@ $(document).on('click', '.remove-detail', function() {
                 if($(this).attr('id')) {
                     let newId = $(this).attr('id').replace(/\d+/, i);
                     $(this).attr('id', newId);
+                }
+                if(dataIndex !== undefined) {
+                    $(this).data('index', i);
                 }
             });
         });

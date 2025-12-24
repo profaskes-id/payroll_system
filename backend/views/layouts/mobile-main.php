@@ -257,41 +257,62 @@
         <!-- Main Content Area -->
         <div class="col-span-12 pb-20 xl:col-span-9 xl:pb-0">
             <!-- Alert Container (centered and properly sized) -->
-            <?php if (Yii::$app->session->hasFlash('success') || Yii::$app->session->hasFlash('error')): ?>
-                <div class="alert-container">
-                    <?php if (Yii::$app->session->hasFlash('success')): ?>
-                        <div id="alert-success" class="flex items-center p-4 mb-4 text-green-800 rounded-lg bg-green-50" role="alert">
-                            <svg class="flex-shrink-0 w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+            <?php if ($flashes = Yii::$app->session->getAllFlashes()): ?>
+                <div class="col-span-12 pb-4 xl:col-span-9">
+                    <?php foreach ($flashes as $type => $message): ?>
+
+                        <?php
+                        // Mapping warna berdasarkan tipe flash
+                        $colors = [
+                            'success' => 'text-green-800 bg-green-50',
+                            'error'   => 'text-red-800 bg-red-50',
+                            'warning' => 'text-yellow-800 bg-yellow-50',
+                            'info'    => 'text-blue-800 bg-blue-50',
+                        ];
+
+                        $iconColors = [
+                            'success' => 'text-green-500',
+                            'error'   => 'text-red-500',
+                            'warning' => 'text-yellow-500',
+                            'info'    => 'text-blue-500',
+                        ];
+
+                        $alertClass = $colors[$type] ?? 'text-gray-800 bg-gray-50';
+                        $iconClass  = $iconColors[$type] ?? 'text-gray-500';
+                        ?>
+
+                        <div class="flex items-center p-4 mb-4 rounded-lg <?= $alertClass ?>" role="alert">
+                            <!-- Icon -->
+                            <svg class="flex-shrink-0 w-5 h-5 <?= $iconClass ?>" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3
+                    1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1
+                    1 1v4h1a1 1 0 0 1 0 2Z" />
                             </svg>
+
+                            <!-- Message -->
                             <div class="ml-3 text-sm font-medium">
-                                <?= Yii::$app->session->getFlash('success') ?>
+                                <?= $message ?>
                             </div>
-                            <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-green-50 text-green-500 rounded-lg p-1.5 hover:bg-green-200 inline-flex items-center justify-center h-8 w-8" data-dismiss-target="#alert-success" aria-label="Close">
+
+                            <!-- Close button -->
+                            <button type="button"
+                                class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 hover:bg-opacity-25 inline-flex items-center justify-center h-8 w-8"
+                                onclick="this.parentElement.remove()">
                                 <span class="sr-only">Close</span>
-                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                <svg class="w-3 h-3" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                    <path stroke="currentColor" stroke-linecap="round"
+                                        stroke-linejoin="round" stroke-width="2"
+                                        d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                                 </svg>
                             </button>
                         </div>
-                    <?php elseif (Yii::$app->session->hasFlash('error')): ?>
-                        <div id="alert-error" class="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50" role="alert">
-                            <svg class="flex-shrink-0 w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                            </svg>
-                            <div class="ml-3 text-sm font-medium">
-                                <?= Yii::$app->session->getFlash('error') ?>
-                            </div>
-                            <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg p-1.5 hover:bg-red-200 inline-flex items-center justify-center h-8 w-8" data-dismiss-target="#alert-error" aria-label="Close">
-                                <span class="sr-only">Close</span>
-                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                                </svg>
-                            </button>
-                        </div>
-                    <?php endif; ?>
+
+                    <?php endforeach; ?>
                 </div>
             <?php endif; ?>
+
 
             <!-- Main Content -->
             <div class="p-4 xl:p-6 z-[99]">

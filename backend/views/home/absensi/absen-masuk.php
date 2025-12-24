@@ -47,6 +47,8 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <section class="min-h-[90dvh] relative overflow-x-hidden z-50">
+
+
     <!-- Confirmation Modals -->
     <div id="popup-modal" tabindex="-1"
         class="fixed inset-0 z-50 flex items-center justify-center hidden w-full h-full bg-gray-100/50">
@@ -62,13 +64,13 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
 
                 <div class="p-3 text-center">
 
-                                <p class="mb-3 -mt-3 text-sm text-gray-500">Mohon menghadap ke arah cahaya agar wajah terlihat jelas dan terang saat difoto.</p>
+                    <p class="mb-3 -mt-3 text-sm text-gray-500">Mohon menghadap ke arah cahaya agar wajah terlihat jelas dan terang saat difoto.</p>
 
                     <!-- MediaPipe Liveness Container -->
                     <div id="liveness-container-popup-modal" class="liveness-container">
                         <div class="relative liveness-video-container">
                             <!-- Video untuk webcam -->
-                            <img src="<?= Yii::getAlias('@root/images/wajah.png', );  ?>" alt="Panduan Wajah" width="200" height="200" class="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 opacity-80">
+                            <img src="<?= Yii::getAlias('@root/images/wajah.png',);  ?>" alt="Panduan Wajah" width="200" height="200" class="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 opacity-80">
                             <video id="webcam-popup-modal" class="liveness-video" autoplay playsinline></video>
                             <!-- Canvas untuk overlay -->
                             <canvas id="output_canvas-popup-modal" class="liveness-canvas"></canvas>

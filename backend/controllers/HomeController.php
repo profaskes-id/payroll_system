@@ -19,12 +19,10 @@ use backend\models\JadwalShift;
 
 use backend\models\JamKerjaKaryawan;
 use backend\models\Karyawan;
-use backend\models\MasterHaribesar;
 use backend\models\MasterKode;
 use backend\models\Message;
 use backend\models\MessageReceiver;
 
-use backend\models\PengajuanLembur;
 use backend\models\PengajuanShift;
 use backend\models\PengajuanWfh;
 use backend\models\PengalamanKerja;
@@ -37,7 +35,6 @@ use backend\models\SettinganUmum;
 use backend\models\ShiftKerja;
 use backend\service\CekPengajuanKaryawanService;
 use backend\service\JamKerjaKaryawanService;
-use Exception;
 use InvalidArgumentException;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -916,13 +913,11 @@ class HomeController extends Controller
     //============================================END ABSEN REGULAR============================================
 
 
+
     protected function calculateFaceSimilarity($descriptor1, $descriptor2)
     {
-
-
         $apiUrl = 'http://face-recognation.profaskes.id/compare';
 
-        // Format descriptor sebagai string comma-separated
         $postData = [
             'descriptor1' => is_array($descriptor1) ? implode(',', $descriptor1) : $descriptor1,
             'descriptor2' => is_array($descriptor2) ? implode(',', $descriptor2) : $descriptor2
@@ -940,17 +935,45 @@ class HomeController extends Controller
         ]);
 
         $response = curl_exec($ch);
+
+        // Tangkap error curl (network, timeout, dll)
+        if ($response === false) {
+            $error = curl_error($ch);
+            curl_close($ch);
+
+            Yii::$app->session->setFlash(
+                'error',
+                'Gagal menghubungi server face recognition: ' . $error
+            );
+
+            return 0;
+        }
+
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        if ($httpCode !== 200) {
-            throw new Exception("API error: HTTP $httpCode");
+
+        // Jika status bukan 200
+        if ($httpCode != 200) {
+            $message = match ($httpCode) {
+                0   => 'Koneksi ke server face recognition gagal , Cek koneksi internet Anda. atau hubungi admin.',
+                400 => 'Permintaan tidak valid ke server face recognition.',
+                500 => 'Terjadi kesalahan pada server face recognition.',
+                default => 'Gagal memproses face recognition. Status: ' . $httpCode
+            };
+
+            Yii::$app->session->setFlash('warning', $message);
+            return 0;
         }
 
         $result = json_decode($response, true);
 
         if (!isset($result['similarity'])) {
-            throw new Exception('Invalid API response');
+            Yii::$app->session->setFlash(
+                'warning',
+                'Response dari server face recognition tidak valid.'
+            );
+            return 0;
         }
 
         return (float) $result['similarity'];

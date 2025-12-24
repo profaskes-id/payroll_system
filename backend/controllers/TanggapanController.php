@@ -404,104 +404,147 @@ class TanggapanController extends Controller
         $model = PengajuanCuti::find()->where(['id_pengajuan_cuti' => $id_pengajuan_cuti])->one();
         return $this->render('/home/tanggapan/cuti/view', compact('model'));
     }
-    public function actionCutiUpdate($id_pengajuan_cuti)
-    {
-        $id_admin = Yii::$app->user->identity->id_karyawan;
+ public function actionCutiUpdate($id_pengajuan_cuti)
+{
+    $id_admin = Yii::$app->user->identity->id_karyawan;
 
-        $karyawanBawahanAdmin = AtasanKaryawan::find()
-            ->where(['id_atasan' => $id_admin])
-            ->asArray()
-            ->all();
+    $karyawanBawahanAdmin = AtasanKaryawan::find()
+        ->where(['id_atasan' => $id_admin])
+        ->asArray()
+        ->all();
 
-        $model = PengajuanCuti::findOne($id_pengajuan_cuti);
-        if (!$model) {
-            throw new NotFoundHttpException('Pengajuan Cuti tidak ditemukan.');
-        }
+    $model = PengajuanCuti::findOne($id_pengajuan_cuti);
+    if (!$model) {
+        throw new NotFoundHttpException('Pengajuan Cuti tidak ditemukan.');
+    }
 
-        if ($this->request->isPost && $model->load($this->request->post())) {
+    if ($this->request->isPost && $model->load($this->request->post())) {
+        $model->sisa_hari = 0;
+        $model->ditanggapi_pada = date('Y-m-d H:i:s');
+        $model->ditanggapi_oleh = Yii::$app->user->identity->id;
 
-            $model->sisa_hari = 0;
-            $model->ditanggapi_pada = date('Y-m-d H:i:s');
-            $model->ditanggapi_oleh = Yii::$app->user->identity->id;
+        if ($model->save()) {
+            $existingDetails = DetailCuti::find()
+                ->where(['id_pengajuan_cuti' => $model->id_pengajuan_cuti])
+                ->indexBy('tanggal') // index by tanggal supaya mudah cek
+                ->all();
 
-            if ($model->save()) {
+            $postDetails = Yii::$app->request->post('DetailCuti', []);
+            $approvedCount = 0;
+            $submittedDates = [];
 
-                $existingDetails = DetailCuti::find()
-                    ->where(['id_pengajuan_cuti' => $model->id_pengajuan_cuti])
-                    ->indexBy('tanggal') // index by tanggal supaya mudah cek
+            foreach ($postDetails as $data) {
+                if (empty($data['tanggal'])) {
+                    continue; // skip jika tanggal kosong
+                }
+
+                $submittedDates[] = $data['tanggal'];
+
+                if (isset($existingDetails[$data['tanggal']])) {
+                    // Update existing detail -> Disetujui
+                    $detail = $existingDetails[$data['tanggal']];
+                    $detail->status = 1; // disetujui
+                    $detail->save(false);
+                } else {
+                    // Tambah detail baru -> Disetujui
+                    $detail = new DetailCuti();
+                    $detail->id_pengajuan_cuti = $model->id_pengajuan_cuti;
+                    $detail->tanggal = $data['tanggal'];
+                    $detail->status = 1;
+                    $detail->save(false);
+                }
+
+                $approvedCount++;
+            }
+
+            // Set detail yang tidak dikirim jadi Ditolak
+            foreach ($existingDetails as $tanggal => $detail) {
+                if (!in_array($tanggal, $submittedDates)) {
+                    $detail->status = 2; // ditolak
+                    $detail->save(false);
+                }
+            }
+
+            // ===== TAMBAHKAN LOGIKA ABSENSI DI SINI =====
+            // Hapus absensi lama yang terkait dengan cuti ini
+            Absensi::deleteAll([
+                'id_karyawan' => $model->id_karyawan,
+                'kode_status_hadir' => 'C',
+                'tanggal' => $submittedDates
+            ]);
+
+            // Jika status pengajuan = Disetujui, buat data absensi
+            if ($model->status == Yii::$app->params['disetujui']) {
+                // Siapkan data untuk batch insert ke Absensi
+                $absensiData = [];
+
+                // Ambil semua detail dengan status = 1 (Disetujui)
+                $approvedDetails = DetailCuti::find()
+                    ->where(['id_pengajuan_cuti' => $model->id_pengajuan_cuti, 'status' => 1])
                     ->all();
 
-                $postDetails = Yii::$app->request->post('DetailCuti', []);
-                $approvedCount = 0;
-                $submittedDates = [];
+                // Cek dan buat data absensi untuk setiap detail yang disetujui
+                foreach ($approvedDetails as $detail) {
+                    // Cek apakah sudah ada absensi untuk tanggal ini (untuk menghindari duplikat)
+                    $existingAbsensi = Absensi::find()
+                        ->where(['id_karyawan' => $model->id_karyawan])
+                        ->andWhere(['tanggal' => $detail->tanggal])
+                        ->exists();
 
-                foreach ($postDetails as $data) {
-                    if (empty($data['tanggal'])) {
-                        continue; // skip jika tanggal kosong
-                    }
-
-                    $submittedDates[] = $data['tanggal'];
-
-                    if (isset($existingDetails[$data['tanggal']])) {
-                        // Update existing detail -> Disetujui
-                        $detail = $existingDetails[$data['tanggal']];
-                        $detail->status = 1; // disetujui
-                        $detail->save(false);
-                    } else {
-                        // Tambah detail baru -> Disetujui
-                        $detail = new DetailCuti();
-                        $detail->id_pengajuan_cuti = $model->id_pengajuan_cuti;
-                        $detail->tanggal = $data['tanggal'];
-                        $detail->status = 1;
-                        $detail->save(false);
-                    }
-
-                    $approvedCount++;
-                }
-
-                // Set detail yang tidak dikirim jadi Ditolak
-                foreach ($existingDetails as $tanggal => $detail) {
-                    if (!in_array($tanggal, $submittedDates)) {
-                        $detail->status = 2; // ditolak
-                        $detail->save(false);
+                    if (!$existingAbsensi) {
+                        $absensiData[] = [
+                            $model->id_karyawan,
+                            '00:00:00',
+                            '00:00:00',
+                            $detail->tanggal,
+                            'C', // Kode status hadir untuk Cuti
+                        ];
                     }
                 }
 
-                // Update RekapCuti jika status pengajuan disetujui
-                if ($model->status == Yii::$app->params['disetujui']) {
-                    $rekapan = RekapCuti::find()->where([
-                        'id_karyawan' => $model->id_karyawan,
-                        'id_master_cuti' => $model->jenis_cuti,
-                        'tahun' => date('Y')
-                    ])->one();
-
-                    if ($rekapan) {
-                        $rekapan->total_hari_terpakai += $approvedCount;
-                        $rekapan->save(false);
-                    } else {
-                        $rekapan = new RekapCuti();
-                        $rekapan->id_karyawan = $model->id_karyawan;
-                        $rekapan->id_master_cuti = $model->jenis_cuti;
-                        $rekapan->total_hari_terpakai = $approvedCount;
-                        $rekapan->tahun = date('Y');
-                        $rekapan->save(false);
-                    }
+                // Lakukan batch insert ke tabel Absensi
+                if (!empty($absensiData)) {
+                    Yii::$app->db->createCommand()->batchInsert(
+                        'absensi',
+                        ['id_karyawan', 'jam_masuk', 'jam_pulang', 'tanggal', 'kode_status_hadir'],
+                        $absensiData
+                    )->execute();
                 }
 
-                // Redirect setelah sukses
-                return $this->redirect(['/tanggapan/cuti-view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]);
-            } else {
-                Yii::$app->session->setFlash('error', 'Gagal Mengupdate Pengajuan');
-                return $this->redirect(['/tanggapan/cuti']);
+                // Update RekapCuti
+                $rekapan = RekapCuti::find()->where([
+                    'id_karyawan' => $model->id_karyawan,
+                    'id_master_cuti' => $model->jenis_cuti,
+                    'tahun' => date('Y')
+                ])->one();
+
+                if ($rekapan) {
+                    $rekapan->total_hari_terpakai += $approvedCount;
+                    $rekapan->save(false);
+                } else {
+                    $rekapan = new RekapCuti();
+                    $rekapan->id_karyawan = $model->id_karyawan;
+                    $rekapan->id_master_cuti = $model->jenis_cuti;
+                    $rekapan->total_hari_terpakai = $approvedCount;
+                    $rekapan->tahun = date('Y');
+                    $rekapan->save(false);
+                }
             }
-        }
 
-        $this->layout = 'mobile-main';
-        return $this->render('/home/tanggapan/cuti/update', [
-            'model' => $model,
-            'karyawanBawahanAdmin' => $karyawanBawahanAdmin,
-        ]);
+            // Redirect setelah sukses
+            return $this->redirect(['/tanggapan/cuti-view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]);
+        } else {
+            Yii::$app->session->setFlash('error', 'Gagal Mengupdate Pengajuan');
+            return $this->redirect(['/tanggapan/cuti']);
+        }
     }
+
+    $this->layout = 'mobile-main';
+    return $this->render('/home/tanggapan/cuti/update', [
+        'model' => $model,
+        'karyawanBawahanAdmin' => $karyawanBawahanAdmin,
+    ]);
+}
 
 
 

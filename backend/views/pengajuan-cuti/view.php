@@ -1,6 +1,8 @@
 <?php
 
 use amnah\yii2\user\models\User;
+use backend\models\JatahCutiKaryawan;
+use backend\models\RekapCuti;
 use backend\models\Tanggal;
 use yii\grid\GridView;
 use yii\helpers\Html;
@@ -100,6 +102,26 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                     },
                 ],
+                [
+                    'label' => 'Sisa Cuti <small>(akan berubah jika anda menyetujui pengajuan ini)</small>',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+
+                        $jatahcutitahunini = JatahCutiKaryawan::find()->where(['id_master_cuti' => $model->jenis_cuti, 'id_karyawan' => $model->id_karyawan])->one();
+                        $terpakai = RekapCuti::find()->where(['id_karyawan' => $model->id_karyawan])->one();
+
+
+                        if (!$jatahcutitahunini) {
+                            return "Data Jatah Cuti Tahun Ini Tidak Ditemukan,<a target='_blank' href='/panel/jatah-cuti-karyawan/index'> Set Disini</a>";
+                        }
+
+                        if ($jatahcutitahunini['jatah_hari_cuti'] == 0) {
+                            return "jatah cuti tahun ini 0 (Telah Habis)";
+                        }
+
+                        return '<a target="_blank" href="/panel/rekap-cuti/index">' . ($jatahcutitahunini['jatah_hari_cuti']  - $terpakai['total_hari_terpakai'] ?? 0) . " Hari" . '</a>';
+                    }
+                ]
             ],
         ]); ?>
 
