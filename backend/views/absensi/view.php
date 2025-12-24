@@ -135,11 +135,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 [
                     'attribute' => 'created_at',
-                    'format' => ['date', 'php:d M Y  / H:i:s']
+                    'format' => ['date', 'php:d M Y ']
                 ],
                 [
                     'attribute' => 'updated_at',
-                    'format' => ['date', 'php:d M Y / H:i:s']
+                    'format' => ['date', 'php:d M Y']
                 ],
                 [
                     'label' => 'Diupdate Oleh',

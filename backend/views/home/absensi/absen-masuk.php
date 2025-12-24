@@ -61,11 +61,14 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                 </button>
 
                 <div class="p-3 text-center">
-                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Verifikasi Wajah untuk Absen Masuk</h3>
+
+                                <p class="mb-3 -mt-3 text-sm text-gray-500">Mohon menghadap ke arah cahaya agar wajah terlihat jelas dan terang saat difoto.</p>
+
                     <!-- MediaPipe Liveness Container -->
                     <div id="liveness-container-popup-modal" class="liveness-container">
-                        <div class="liveness-video-container">
+                        <div class="relative liveness-video-container">
                             <!-- Video untuk webcam -->
+                            <img src="<?= Yii::getAlias('@root/images/wajah.png', );  ?>" alt="Panduan Wajah" width="200" height="200" class="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 opacity-80">
                             <video id="webcam-popup-modal" class="liveness-video" autoplay playsinline></video>
                             <!-- Canvas untuk overlay -->
                             <canvas id="output_canvas-popup-modal" class="liveness-canvas"></canvas>
@@ -132,12 +135,12 @@ $iconButtonStyles = 'w-[60px] h-[60px] border bg-red-50 border-gray rounded-full
                     <div id="process-indicator" class="hidden mt-4 space-y-2 text-sm ">
                         <div class="flex items-center space-x-2" id="status-base64">
                             <span class="w-5 text-center">⏳</span>
-                            <span>Konversi foto ke Base64</span>
+                            <span>Menyimpan foto</span>
                         </div>
 
                         <div class="flex items-center space-x-2" id="status-descriptor">
                             <span class="w-5 text-center">⏳</span>
-                            <span>Membuat face descriptor</span>
+                            <span>Mendeteksi Pola Wajah</span>
                         </div>
                     </div>
                 </div>

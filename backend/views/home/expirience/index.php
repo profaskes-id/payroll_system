@@ -16,7 +16,7 @@ $this->title = 'Expirience';
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.7);
+        /* background: rgba(0, 0, 0, 0.7); */
         display: none;
         z-index: 1000;
         align-items: center;
@@ -39,7 +39,7 @@ $this->title = 'Expirience';
         position: absolute;
         top: -15px;
         right: -15px;
-        background: #333;
+        /* background: #333; */
         color: white;
         width: 30px;
         height: 30px;
@@ -204,14 +204,15 @@ $this->title = 'Expirience';
                                                 <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
                                             </div>
                                             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                            <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                                            <div class="inline-block text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                                                 <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
                                                     <h3 id="title-controls" class="mb-1 text-lg font-medium leading-6 text-gray-900">Register Wajah</h3>
                                                     <p class="mb-4 text-sm capitalize">kami menyarankan latar belakang polos</p>
-                                                    <div class="mb-4">
-                                                        <div class="relative" id="video-canvas">
-                                                            <video id="video" class="block w-full mx-auto mb-4 bg-gray-200 rounded" autoplay playsinline muted></video>
-                                                            <canvas id="overlay" class="absolute top-0 left-0 w-full h-full pointer-events-none"></canvas>
+                                                    <div class="">
+                                                        <div class="relative w-full h-[500px] bg-white" id="video-canvas">
+                                                        <video id="video" class="block w-full mx-auto mb-4 bg-gray-200 rounded" autoplay playsinline muted></video>
+                                                        <img src="<?= Yii::getAlias('@root/images/wajah.png', );  ?>" id="indikator-wajah" alt="Panduan Wajah" width="200" height="200" class="absolute hidden -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 opacity-80">    
+                                                        <canvas id="overlay" class="absolute top-0 left-0 w-full h-full pointer-events-none"></canvas>
                                                             <div id="liveness-instruction" class="absolute left-0 right-0 text-center top-2">
                                                                 <div class="inline-block px-3 py-1 text-sm text-white bg-black rounded-full bg-opacity-70">
                                                                     Tekan "Mulai Verifikasi" untuk memulai
@@ -794,15 +795,12 @@ $this->title = 'Expirience';
     .liveness-video-container {
         position: relative;
         width: 100%;
-        background: #000;
+        height: 300px;
         border-radius: 8px;
-        overflow: hidden;
     }
 
     .liveness-video {
         width: 100%;
-        height: auto;
-
         display: block;
     }
 
@@ -827,7 +825,6 @@ $this->title = 'Expirience';
     .liveness-status {
         padding: 8px 12px;
         border-radius: 20px;
-        background: rgba(0, 0, 0, 0.7);
         color: white;
         font-size: 12px;
         display: inline-block;
@@ -853,7 +850,7 @@ $this->title = 'Expirience';
 
     #screenshotResult {
         width: 100%;
-        max-height: 200px;
+        max-height: 300px;
         object-fit: contain;
         border: 1px solid #ddd;
         border-radius: 4px;
@@ -962,6 +959,7 @@ $this->title = 'Expirience';
 
     // Mulai verifikasi liveness untuk face registration
     async function startLiveness() {
+        const wajahGuide = document.getElementById('indikator-wajah');
         const video = document.getElementById('video');
         const overlay = document.getElementById('overlay');
         const instruction = document.getElementById('liveness-instruction');
@@ -998,18 +996,19 @@ $this->title = 'Expirience';
                 overlay.height = video.videoHeight;
                 faceRegState.canvasCtx = overlay.getContext('2d');
             });
-
+            
             // Update UI
             instruction.innerHTML = '<div class="inline-block px-3 py-1 text-sm text-white bg-black rounded-full bg-opacity-70">Silakan hadapkan wajah ke kamera</div>';
             startBtn.textContent = 'Mendeteksi...';
             startBtn.disabled = true;
-
+            
             // Reset state
             faceRegState.blinkVerified = false;
             faceRegState.mouthVerified = false;
             faceRegState.autoCaptured = false;
-
+            
             // Mulai prediction loop
+            wajahGuide.classList.remove('hidden');
             predictRegistrationWebcam();
 
         } catch (error) {
@@ -1120,70 +1119,108 @@ $this->title = 'Expirience';
         if (status === 'error') el.textContent = '❌';
     }
 
+     function compressBase64Only(base64, quality = 0.6, maxWidth = 800) {
+        return new Promise(resolve => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
 
-    async function captureRegistrationPhoto() {
-        showProcessIndicator();
+                let width = img.width;
+                let height = img.height;
 
-        const video = document.getElementById('video');
-        const snapshotResult = document.getElementById('snapshotResult');
-        const instruction = document.getElementById('liveness-instruction');
+                if (width > maxWidth) {
+                    height = height * (maxWidth / width);
+                    width = maxWidth;
+                }
 
-        const captureCanvas = document.createElement('canvas');
-        captureCanvas.width = video.videoWidth;
-        captureCanvas.height = video.videoHeight;
+                canvas.width = width;
+                canvas.height = height;
 
-        const ctx = captureCanvas.getContext('2d');
-        ctx.drawImage(video, 0, 0);
+                ctx.drawImage(img, 0, 0, width, height);
 
-        // ================= BASE64 =================
-        const dataURL = captureCanvas.toDataURL('image/jpeg', 0.8);
-
-        if (!dataURL) {
-            setStatus('status-base64', 'error');
-            return;
-        }
-
-        setStatus('status-base64', 'success');
-
-        snapshotResult.innerHTML = `<img src="${dataURL}" class="w-full rounded">`;
-        compressBase64Only(dataURL, 0.6, 800).then(compressed => {
-            document.getElementById('faceData').value = compressed;
+                resolve(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.src = base64;
         });
-        // ================= DESCRIPTOR =================
-        instruction.innerHTML = `
-        <div class="inline-flex items-center px-4 py-2 text-sm text-white bg-blue-600 rounded-full">
-            <svg class="w-4 h-4 mr-2 animate-spin" viewBox="0 0 24 24"></svg>
-            🧠 Memproses data wajah...
-        </div>
-    `;
-
-        setStatus('status-descriptor', 'loading');
-
-        const descriptor = await extractRegistrationFaceDescriptor(captureCanvas);
-
-        if (!descriptor) {
-            setStatus('status-descriptor', 'error');
-            return;
-        }
-
-        setStatus('status-descriptor', 'success');
-        document.getElementById('livenessPassed').value = descriptor;
-
-        // ================= FINAL UI =================
-        document.getElementById('results').classList.remove('hidden');
-        document.getElementById('faceControls').style.display = 'flex';
-        document.getElementById('video-canvas').style.display = 'none';
-        document.getElementById('controls').style.display = 'none';
-
-        instruction.innerHTML = `
-        <div class="inline-block px-3 py-1 text-sm text-white bg-green-600 rounded-full">
-            ✅ Verifikasi berhasil
-        </div>
-    `;
-
-        stopFaceRegistration();
-        captureCanvas.remove();
     }
+
+  async function captureRegistrationPhoto() {
+    showProcessIndicator();
+
+    const video = document.getElementById('video');
+    const snapshotResult = document.getElementById('snapshotResult');
+    const instruction = document.getElementById('liveness-instruction');
+
+    const captureCanvas = document.createElement('canvas');
+    captureCanvas.width = video.videoWidth;
+    captureCanvas.height = video.videoHeight;
+
+    const ctx = captureCanvas.getContext('2d');
+    ctx.drawImage(video, 0, 0);
+
+    // ================= BASE64 =================
+    const dataURL = captureCanvas.toDataURL('image/jpeg', 0.8);
+
+    if (!dataURL) {
+        setStatus('status-base64', 'error');
+        return;
+    }
+
+    snapshotResult.innerHTML = `<img src="${dataURL}" class="w-full rounded">`;
+    setStatus('status-base64', 'success');
+
+    // Tampilkan gambar hasil capture (bukan video)
+    
+    // Simpan base64 yang sudah dikompresi
+    compressBase64Only(dataURL, 0.6, 800).then(compressed => {
+        document.getElementById('faceData').value = compressed;
+    });
+
+    // ================= DESCRIPTOR =================
+    instruction.innerHTML = `
+    <div class="inline-flex items-center px-4 py-2 text-sm text-white bg-blue-600 rounded-full">
+        <svg class="w-4 h-4 mr-2 animate-spin" viewBox="0 0 24 24"></svg>
+        🧠 Memproses data wajah...
+    </div>
+    `;
+
+    setStatus('status-descriptor', 'loading');
+
+    const descriptor = await extractRegistrationFaceDescriptor(captureCanvas);
+
+    if (!descriptor) {
+        setStatus('status-descriptor', 'error');
+        return;
+    }
+
+    setStatus('status-descriptor', 'success');
+    document.getElementById('livenessPassed').value = descriptor;
+
+    // ================= FINAL UI =================
+    document.getElementById('results').classList.remove('hidden');
+    document.getElementById('faceControls').style.display = 'flex';
+    
+    // Sembunyikan video dan canvas overlay
+    document.getElementById('video-canvas').style.display = 'none';
+    document.getElementById('video').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+    
+    // Jangan tampilkan controls lagi
+    document.getElementById('controls').style.display = 'none';
+
+    instruction.innerHTML = `
+    <div class="inline-block px-3 py-1 text-sm text-white bg-green-600 rounded-full">
+        ✅ Verifikasi berhasil
+    </div>
+    `;
+
+    // Hentikan webcam
+    stopFaceRegistration();
+    
+    // Clear memory
+    captureCanvas.remove();
+}
 
     // Load face-api.js models (tambahkan di bagian atas)
     async function loadFaceApiModels() {
@@ -1217,7 +1254,7 @@ $this->title = 'Expirience';
                 .detectSingleFace(
                     canvasElement,
                     new faceapi.TinyFaceDetectorOptions({
-                        inputSize: 416,
+                        inputSize: 224,
                         scoreThreshold: 0.5
                     })
                 )
@@ -1264,28 +1301,39 @@ $this->title = 'Expirience';
 
     // Reset camera view (untuk ambil ulang)
     function resetCameraView() {
-        const results = document.getElementById('results');
-        const faceControls = document.getElementById('faceControls');
-        const startBtn = document.getElementById('startLivenessBtn');
+    const results = document.getElementById('results');
+    const faceControls = document.getElementById('faceControls');
+    const startBtn = document.getElementById('startLivenessBtn');
+    const videoCanvas = document.getElementById('video-canvas');
+    const video = document.getElementById('video');
+    const overlay = document.getElementById('overlay');
 
-        results.classList.add('hidden');
-        faceControls.style.display = 'none';
-        startBtn.style.display = 'inline-block';
-        startBtn.disabled = false;
-        startBtn.textContent = 'Mulai Verifikasi';
+    results.classList.add('hidden');
+    faceControls.style.display = 'none';
+    startBtn.style.display = 'inline-block';
+    startBtn.disabled = false;
+    startBtn.textContent = 'Mulai Verifikasi';
 
-        // Reset state
-        faceRegState.blinkVerified = false;
-        faceRegState.mouthVerified = false;
-        faceRegState.autoCaptured = false;
+    // Tampilkan kembali video dan canvas
+    videoCanvas.style.display = 'block';
+    video.style.display = 'block';
+    overlay.style.display = 'block';
 
-        // Clear inputs
-        document.getElementById('faceData').value = '';
-        document.getElementById('livenessPassed').value = '';
+    // Reset state
+    faceRegState.blinkVerified = false;
+    faceRegState.mouthVerified = false;
+    faceRegState.autoCaptured = false;
 
-        // Mulai ulang camera
-        startLiveness();
-    }
+    // Clear inputs
+    document.getElementById('faceData').value = '';
+    document.getElementById('livenessPassed').value = '';
+
+    // Clear snapshot result
+    document.getElementById('snapshotResult').innerHTML = '';
+
+    // Mulai ulang camera
+    startLiveness();
+}
 
     // Event listener untuk modal
     document.addEventListener('DOMContentLoaded', function() {

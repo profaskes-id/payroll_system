@@ -50,7 +50,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'Karyawan',
 
                     'value' => function ($model) {
-                        // dd($model);
                         return $model['nama'];
                     }
                 ],
@@ -68,14 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         $dates = array_map(function ($dataPekerjaan) {
                             return $dataPekerjaan->dari;
                         }, $dataPekerjaan);
-
-
-
-
-
                         $earliestDate = min($dates);
-
-
                         $startDate = new DateTime($earliestDate);
                         $endDate = new DateTime(); // Tanggal hari ini
 
@@ -105,7 +97,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
                     'value' => function ($model) {
-                        // dd($model);
                         return $model['tahun'] ?? "-";
                     }
                 ],

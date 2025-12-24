@@ -46,7 +46,7 @@
             icon: 'error',
             title: 'Error',
             confirmButtonColor: "#3085d6",
-            text: 'Gagal mendapatkan lokasi: ' + error.message
+            text: 'Gagal mendapatkan lokasi, pastikan izin lokasi diaktifkan!'
         });
     }, {
         enableHighAccuracy: true,

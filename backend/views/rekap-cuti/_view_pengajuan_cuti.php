@@ -16,25 +16,33 @@ if (empty($pengajuanCuti)): ?>
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($pengajuanCuti as $cuti):
+           <?php foreach ($pengajuanCuti as $cuti): ?>
 
-            ?>
-                <tr>
-                    <td>
-                        <ul>
-                            <?php foreach ($cuti->detailCuti as $detail): ?>
-                                <?php if ($detail->status == 1) : ?>
-                                    <?php ++$approveCount; ?>
-                                    <li><?= Yii::$app->formatter->asDate($detail->tanggal) ?></li>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </ul>
-                    </td>
-                    <td style="text-align: center;"><?= Html::encode($cuti->jenisCuti->jenis_cuti) ?></td>
-                    <td style="width: 30%; text-align: center"><?php echo $approveCount ?></td>
-                </tr>
-                <?php $approveCount = 0 ?>
-            <?php endforeach; ?>
+    <?php if ($cuti->status != 1) continue; ?>
+
+    <tr>
+        <td>
+            <ul>
+                <?php foreach ($cuti->detailCuti as $detail): ?>
+                    <?php if ($detail->status == 1): ?>
+                        <?php ++$approveCount; ?>
+                        <li><?= Yii::$app->formatter->asDate($detail->tanggal) ?></li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </ul>
+        </td>
+        <td style="text-align: center;">
+            <?= Html::encode($cuti->jenisCuti->jenis_cuti) ?>
+        </td>
+        <td style="width: 30%; text-align: center;">
+            <?= $approveCount ?>
+        </td>
+    </tr>
+
+    <?php $approveCount = 0; ?>
+
+<?php endforeach; ?>
+
         </tbody>
     </table>
 <?php endif; ?>

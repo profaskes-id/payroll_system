@@ -186,12 +186,17 @@ $pathInfo = Yii::$app->request->getPathInfo();
         </div>
 
 
-        <div class="col-6">
+        <div class="col-12 col-md-6">
             <?= $form->field($model, 'alasan_terlambat')->textarea(['rows' => 1, 'maxlength' => true, "class" => "form-control", "placeholder" => "Alasan Terlambat "]) ?>
         </div>
-        <div class="col-4">
-            <?= $form->field($model, 'lama_terlambat')->textInput(['type' => 'time',  'maxlength' => true, "class" => "form-control",]) ?>
-        </div>
+    <div class="col-md-6 col-12">
+    <?= $form->field($model, 'lama_terlambat')->textInput([
+        'type' => 'time',
+        'step' => '1',        // aktifkan detik
+        'lang' => 'id',       // paksa format Indonesia (24 jam)
+        'class' => 'form-control',
+    ]) ?>
+</div>
 
 
 

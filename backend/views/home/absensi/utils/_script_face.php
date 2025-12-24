@@ -16,7 +16,7 @@
 
     .liveness-video {
         width: 100%;
-        height: auto;
+        height: 300px;
 
         display: block;
     }
@@ -90,7 +90,6 @@
             await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
             await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
             await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
-            await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
 
             faceApiModelsLoaded = true;
             console.log('Face-api.js models loaded successfully');
@@ -109,6 +108,10 @@
         const statusText = document.getElementById(`status-${modalId}`);
 
         try {
+//    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    const inputSize = 224; // Lebih kecil untuk mobile
+
             // Load models jika belum
             const modelsLoaded = await loadFaceApiModels();
             if (!modelsLoaded) {
@@ -121,7 +124,7 @@
                 .detectSingleFace(
                     canvasElement,
                     new faceapi.TinyFaceDetectorOptions({
-                        inputSize: 416,
+                        inputSize: inputSize,
                         scoreThreshold: 0.5
                     })
                 )
