@@ -72,6 +72,20 @@
                                             'method' => 'post',
                                         ],
                                     ]) ?>
+                                    <?= Html::a(
+                                        'Invite Ulang',
+                                        ['invite', 'id_karyawan' => $model->id_karyawan],
+                                        [
+                                            'class' => 'tambah-button',
+                                            'title' => 'Invite',
+                                            'data-pjax' => '0',
+                                            'data' => [
+                                                'confirm' => 'Apakah Anda mau invite ulang karyawan ini?',
+                                                'method' => 'post',
+                                            ],
+                                        ]
+                                    ) ?>
+
                                 </p>
                                 <div class="row">
                                     <div class="col-md-6">

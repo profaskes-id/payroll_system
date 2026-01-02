@@ -35,6 +35,7 @@ class AutoLoginController extends Controller
         $password = Yii::$app->request->post('password');
 
         if (Yii::$app->request->isPost) {
+
             // Cari karyawan berdasarkan kode_karyawan
             $model = Karyawan::find()
                 ->select(['id_karyawan', 'email', 'nama', 'nomer_identitas'])
@@ -54,7 +55,8 @@ class AutoLoginController extends Controller
             $passwordHasher = $factory->getPasswordHasher('common');
 
             if (!$passwordHasher->verify($params['token'], $kode_karyawan)) {
-                throw new BadRequestHttpException('Token tidak valid.');
+                Yii::$app->session->setFlash('info', 'Token tidak valid. Kemungkinan anda sudah pernah melakukan registrasi. Silakan login menggunakan akun Anda.');
+                return $this->redirect(['/user/login']);
             }
 
             // Simpan user ke database utama (db)

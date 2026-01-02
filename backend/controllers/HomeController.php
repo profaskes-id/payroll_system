@@ -153,7 +153,7 @@ class HomeController extends Controller
 
         $user = User::find()->where(['id' => $id_user])->one();
         if (!$user) {
-            throw new NotFoundHttpException('The requested page does not exist.');
+            throw new NotFoundHttpException('Halaman yang anda cari tidak ditemukan . karena  data user tidak ditemukan');
         }
         $karyawan = Karyawan::find()->select('id_karyawan')->where(['email' => $user->email])->asArray()->one();
         $tanggalSatuBulanLalu = (new \DateTime())->modify('-1 month')->format('Y-m-d');
@@ -956,7 +956,7 @@ class HomeController extends Controller
         // Jika status bukan 200
         if ($httpCode != 200) {
             $message = match ($httpCode) {
-                0   => 'Koneksi ke server face recognition gagal , Cek koneksi internet Anda. atau hubungi admin.',
+                0   => 'Koneksi ke server face recognition gagal , Cek koneksi internet Anda. atau hubungi admin. atau silahkan ulangi lagi',
                 400 => 'Permintaan tidak valid ke server face recognition.',
                 500 => 'Terjadi kesalahan pada server face recognition.',
                 default => 'Gagal memproses face recognition. Status: ' . $httpCode

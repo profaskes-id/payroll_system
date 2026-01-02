@@ -25,38 +25,38 @@ $columns[] = [
 <div class="assignment-index ">
 
 
-        <div class="table-container table-responsive">
+    <div class="table-container table-responsive">
 
 
-    <?php Pjax::begin(); ?>
-    <?=
-    GridView::widget([
-        'dataProvider' => $dataProvider,
+        <?php Pjax::begin(); ?>
+        <?=
+        GridView::widget([
+            'dataProvider' => $dataProvider,
 
-        'filterModel' => $searchModel,
-        'columns' =>  [
-            [
-                'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-                'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
-                'class' => 'yii\grid\SerialColumn'
+            'filterModel' => $searchModel,
+            'columns' =>  [
+                [
+                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'contentOptions' => ['style' => 'width: 5%; text-align: center;'],
+                    'class' => 'yii\grid\SerialColumn'
+                ],
+                [
+                    'class' => ActionColumn::className(),
+                    'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
+                    'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
+                ],
+
+                [
+                    'attribute' => $usernameField,
+                    'value' => function ($model) {
+                        return   $model->emailprofile->full_name ?? $model->username ?? $model->email;
+                    }
+                ]
             ],
-            [
-                'class' => ActionColumn::className(),
-                'header' => Html::img(Yii::getAlias('@root') . '/images/icons/grid.svg', ['alt' => 'grid']),
-                'headerOptions' => ['style' => 'width: 5%; text-align: center;'],
-            ],
+        ]);
+        ?>
+        <?php Pjax::end(); ?>
 
-            [
-                'attribute' => $usernameField,
-                'value' => function ($model) {
-                    return  $model->username ?? $model->profile->full_name  ;
-                }
-            ]
-        ],
-    ]);
-    ?>
-    <?php Pjax::end(); ?>
-
-        </div>
+    </div>
 
 </div>

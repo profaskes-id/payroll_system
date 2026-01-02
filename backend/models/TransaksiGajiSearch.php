@@ -9,7 +9,7 @@ use backend\models\TransaksiGaji;
 use DateTime;
 use Yii;
 use yii\data\ArrayDataProvider;
-
+use yii\web\BadRequestHttpException;
 
 class TransaksiGajiSearch extends TransaksiGaji
 {
@@ -86,6 +86,17 @@ class TransaksiGajiSearch extends TransaksiGaji
         $tahun = $tahun ?? date('Y');   // default ke tahun sekarang (4 digit)
 
         $periodeGajiObject = $this->getPerioderGajiSekarang($bulan, $tahun);
+        if (!$periodeGajiObject) {
+            // throw new BadRequestHttpException('Periode gaji untuk bulan dan tahun yang dipilih tidak ditemukan.');
+            // pesan flash dan return data kosong
+            Yii::$app->session->setFlash('error', 'Periode gaji untuk bulan dan tahun yang dipilih tidak ditemukan. <a style="color:blue; text-decoration:underline important" terget="_blank" href="/panel/periode-gaji/index">klik untuk Tambah Periode Gaji</a> ');
+            return new ArrayDataProvider([
+                'allModels' => [],
+                'pagination' => [
+                    'pageSize' => 20,
+                ],
+            ]);
+        }
         $id_periode_penggajian = $periodeGajiObject->id_periode_gaji;
         $getToleranceTerlambat = MasterKode::findOne(['nama_group' => Yii::$app->params['toleransi-keterlambatan']])['nama_kode'];;
 

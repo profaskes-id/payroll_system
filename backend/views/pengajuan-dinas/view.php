@@ -102,27 +102,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->catatan_admin ?? '-';
                     }
                 ],
-                [
-                    'label' => 'Dokumentasi',
-                    'format' => 'raw',
-                    'value' => function ($model) {
-                        if ($model->status != 0) {
-                            if ($model->dokumentasi != null) {
-                                $files = json_decode($model->dokumentasi, true);
-                                if ($files) {
-                                    $output = '<ul>';
-                                    foreach ($files as $key => $file) {
-                                        $key++;
-                                        $output .= '<li>' . Html::a("Dokumentasi {$key}",  '/panel/' . $file, ['target' => '_blank']) . '</li>';
-                                    }
-                                    $output .= '</ul>';
-                                    return $output; // Kembalikan output yang sudah diformat
-                                }
-                            }
-                        }
-                        return ''; // Kembalikan string kosong jika tidak ada file
-                    }
-                ]
+
             ],
         ]) ?>
 

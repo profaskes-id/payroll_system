@@ -23,7 +23,7 @@ class KaryawanSearch extends Karyawan
     public function rules()
     {
         return [
-            [['id_karyawan', 'jenis_identitas', 'kode_jenis_kelamin', 'status_nikah', 'is_current_domisili'], 'integer'],
+            [['id_karyawan', 'jenis_identitas', 'kode_jenis_kelamin', 'status_nikah', 'is_current_domisili', 'is_aktif'], 'integer'],
             [['kode_karyawan', 'nama', 'nomer_identitas', 'tempat_lahir', 'tanggal_lahir', 'agama', 'suku', 'email', 'nomer_telepon', 'foto', 'ktp', 'cv', 'ijazah_terakhir', 'kode_negara', 'kode_provinsi_identitas', 'kode_kabupaten_kota_identitas', 'kode_kecamatan_identitas', 'desa_lurah_identitas', 'alamat_identitas', 'rt_identitas', 'rw_identitas', 'kode_post_identitas', 'kode_provinsi_domisili', 'kode_kabupaten_kota_domisili', 'kode_kecamatan_domisili', 'desa_lurah_domisili', 'alamat_domisili', 'rt_domisili', 'rw_domisili', 'kode_post_domisili', 'informasi_lain'], 'safe'],
         ];
     }
@@ -96,6 +96,10 @@ class KaryawanSearch extends Karyawan
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
+        }
+
+        if ($this->is_aktif !== '' && $this->is_aktif !== null) {
+            $query->andWhere(['is_aktif' => $this->is_aktif]);
         }
 
         // grid filtering conditions

@@ -135,8 +135,12 @@ use yii\helpers\Html; ?>
                             <?php else: ?>
                                 <button class="flex items-center justify-center w-8 h-8 transition-all rounded-full shadow-sm sm:w-12 sm:h-12 check-in-btn bg-gradient-to-br from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 hover:shadow-md"
                                     data-id="<?= $detail->id_detail ?>">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white sm:w-6 sm:h-6" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clip-rule="evenodd" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                        <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                            <path d="M12 2a6 6 0 0 0-6 6c0 1.419.302 2.348 1.125 3.375L12 17l4.875-5.625C17.698 10.348 18 9.419 18 8a6 6 0 0 0-6-6" />
+                                            <path d="M5 15.143C3.149 15.87 2 16.881 2 18c0 2.21 4.477 4 10 4s10-1.79 10-4c0-1.119-1.149-2.13-3-2.857" />
+                                            <circle cx="12" cy="8" r="1" />
+                                        </g>
                                     </svg>
                                 </button>
                             <?php endif; ?>
