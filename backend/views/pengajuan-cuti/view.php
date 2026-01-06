@@ -106,10 +106,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'label' => 'Sisa Cuti <small>(akan berubah jika anda menyetujui pengajuan ini)</small>',
                     'format' => 'raw',
                     'value' => function ($model) {
+                        $tahun = date('Y', strtotime($model->tanggal_pengajuan));
+                        $jatahcutitahunini = JatahCutiKaryawan::find()->where(['id_master_cuti' => $model->jenis_cuti, 'id_karyawan' => $model->id_karyawan, 'tahun' => $tahun ?? date('Y')])->one();
+                        $terpakai = RekapCuti::find()->where(['id_karyawan' => $model->id_karyawan, 'tahun' => $tahun ?? date('Y')])->one();
 
-                        $jatahcutitahunini = JatahCutiKaryawan::find()->where(['id_master_cuti' => $model->jenis_cuti, 'id_karyawan' => $model->id_karyawan])->one();
-                        $terpakai = RekapCuti::find()->where(['id_karyawan' => $model->id_karyawan])->one();
-
+                        if (!$terpakai) {
+                            return '<a target="_blank" href="/panel/rekap-cuti/index">' . ($jatahcutitahunini['jatah_hari_cuti']  - 0 ) . " Hari" . '</a>';
+                        }
 
                         if (!$jatahcutitahunini) {
                             return "Data Jatah Cuti Tahun Ini Tidak Ditemukan,<a target='_blank' href='/panel/jatah-cuti-karyawan/index'> Set Disini</a>";

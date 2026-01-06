@@ -14,9 +14,10 @@ $this->title = 'Pengajuan Cuti ';
 $this->params['breadcrumbs'][] = ['label' => 'Pengajuan Cuti', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->karyawan->nama, 'url' => ['view', 'id_pengajuan_cuti' => $model->id_pengajuan_cuti]];
 $this->params['breadcrumbs'][] = 'Tanggapan';
+$tahun = date('Y', strtotime($model->tanggal_pengajuan));                        $jatahcutitahunini = JatahCutiKaryawan::find()->where(['id_master_cuti' => $model->jenis_cuti, 'id_karyawan' => $model->id_karyawan , 'tahun' => date('Y')])->one();
 
-$jatahcutitahunini = JatahCutiKaryawan::find()->where(['id_master_cuti' => $model->jenis_cuti, 'id_karyawan' => $model->id_karyawan])->one();
-$terpakai = RekapCuti::find()->where(['id_karyawan' => $model->id_karyawan])->one();
+$jatahcutitahunini = JatahCutiKaryawan::find()->where(['id_master_cuti' => $model->jenis_cuti, 'id_karyawan' => $model->id_karyawan , 'tahun' => $tahun ?? date('Y')])->one();
+$terpakai = RekapCuti::find()->where(['id_karyawan' => $model->id_karyawan, 'tahun' => $tahun ?? date('Y')])->one();
 
 
 ?>
@@ -44,6 +45,7 @@ $terpakai = RekapCuti::find()->where(['id_karyawan' => $model->id_karyawan])->on
                 <h6 class="capitalize fw-bold ">JENIS CUTI : <?= $model->jenisCuti->jenis_cuti ?></h6>
                 <p>JATAH CUTI TERSISA :
                     <?php
+
                     if (!$jatahcutitahunini) {
                         echo '<span class="text-warning">Data Jatah Cuti Tahun Ini Tidak Ditemukan, <a target="_blank" href="/panel/jatah-cuti-karyawan/index">Set Disini</a></span>';
                     } else if ($jatahcutitahunini['jatah_hari_cuti'] == 0) {

@@ -12,9 +12,10 @@ use yii\helpers\Url;
 
 $tanggalFormater = new Tanggal();
 
+$tahun = date('Y', strtotime($model->tanggal_pengajuan));                        $jatahcutitahunini = JatahCutiKaryawan::find()->where(['id_master_cuti' => $model->jenis_cuti, 'id_karyawan' => $model->id_karyawan , 'tahun' => date('Y')])->one();
 
-$jatahCuti = JatahCutiKaryawan::find()->where(['id_karyawan' => $model['id_karyawan']])->one();
-$detailCuti = RekapCuti::find()->where(['id_karyawan' => $model['id_karyawan']])->one();
+$jatahCuti = JatahCutiKaryawan::find()->where(['id_karyawan' => $model['id_karyawan'] , 'tahun' => $tahun ?? date('Y')])->one();
+$detailCuti = RekapCuti::find()->where(['id_karyawan' => $model['id_karyawan'] , 'tahun' => $tahun ?? date('Y')])->one();
 
 
 $sisa_cuti = ((int) ($jatahCuti['jatah_hari_cuti'] ?? 0)) - ((int) ($detailCuti['total_hari_terpakai'] ?? 0));

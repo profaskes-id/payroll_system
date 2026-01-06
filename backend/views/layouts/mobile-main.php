@@ -258,7 +258,7 @@
         <div class="col-span-12 pb-20 xl:col-span-9 xl:pb-0">
             <!-- Alert Container (centered and properly sized) -->
             <?php if ($flashes = Yii::$app->session->getAllFlashes()): ?>
-                <div class="col-span-12 pb-4 xl:col-span-9">
+                <div class="col-span-12 pb-4 xl:col-span-9 relative z-[100]">
                     <?php foreach ($flashes as $type => $message): ?>
 
                         <?php
