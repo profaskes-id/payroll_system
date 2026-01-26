@@ -175,14 +175,14 @@ class Absensi extends \yii\db\ActiveRecord
                 'bg.nama_bagian',
                 'dp.jabatan',
                 'mk.nama_kode as jabatan',
-                'thk.total_hari',
+                // 'thk.total_hari',
                 'jk.nama_jam_kerja',
                 'jkk.is_shift',
             ])
             ->asArray()
             ->where(['karyawan.is_aktif' => 1])
             ->leftJoin('jam_kerja_karyawan jkk', 'jkk.id_karyawan = karyawan.id_karyawan')
-            ->leftJoin('total_hari_kerja thk', 'thk.id_jam_kerja = jkk.id_jam_kerja ')
+            // ->leftJoin('total_hari_kerja thk', 'thk.id_jam_kerja = jkk.id_jam_kerja ')
             ->leftJoin('jam_kerja jk', 'jk.id_jam_kerja = jkk.id_jam_kerja')
             ->leftJoin('{{%data_pekerjaan}} dp', 'karyawan.id_karyawan = dp.id_karyawan')
             ->leftJoin('{{%bagian}} bg', 'dp.id_bagian = bg.id_bagian')

@@ -1654,6 +1654,7 @@ class TransaksiGajiController extends Controller
 
             $nominalGaji = $gajiKaryawan->nominal_gaji;
             $potonganwfhsehari = MasterKode::findOne(['nama_group' => Yii::$app->params['potongan-persen-wfh']])['nama_kode'];
+            // dd($potonganwfhsehari);
             $totalPotonganAbsensi = ($gaji_perhari * $total_alfa_range) + ($gaji_perhari * $jumlah_wfh * ($potonganwfhsehari / 100));
 
 
@@ -1662,10 +1663,11 @@ class TransaksiGajiController extends Controller
                 'nominal_gaji' => $nominalGaji,
                 'total_alfa_range' => (int)$total_alfa_range,
                 'potongan_per_alfa' => $gaji_perhari,
-                'total_potongan_absensi' => $totalPotonganAbsensi,
+                'total_potongan_absensi' => (int) $total_alfa_range * $gaji_perhari,
                 'jumlah_wfh' => $jumlah_wfh,
                 'potonganwfhsehari' => (int)$potonganwfhsehari,
                 'gaji_perhari' => $gaji_perhari,
+                'total_all' => $totalPotonganAbsensi
             ];
         } catch (\Exception $e) {
             return [

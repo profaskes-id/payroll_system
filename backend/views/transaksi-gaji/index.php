@@ -387,6 +387,16 @@
                                     );
                                 }
                             ],
+                            [
+                                'attribute' => 'hari_kerja_efektif',
+                                'label' => 'Hari Kerja Efektif',
+                                'format' => 'raw',
+                                'headerOptions' => ['class' => 'text-end align-middle'],
+                                'contentOptions' => ['class' => 'text-end align-middle'],
+                                'value' => function ($model) {
+                                    return $model['hari_kerja_efektif'] ?? 0;
+                                }
+                            ],
 
 
                             [

@@ -51,21 +51,31 @@ class RekapCutiController extends Controller
      * @return string
      */
 
-    public function actionViewPengajuanCuti($id_karyawan, $id_master_cuti)
-    {
-
-
-        $pengajuanCuti = PengajuanCuti::find()
-            ->where([
-                'id_karyawan' => $id_karyawan,
-                'jenis_cuti' => $id_master_cuti,
-            ])->all();
-
-
-        return $this->renderAjax('_view_pengajuan_cuti', [
-            'pengajuanCuti' => $pengajuanCuti,
-        ]);
+public function actionViewPengajuanCuti($id_karyawan, $id_master_cuti, $tahun)
+{
+    // Jika $tahun kosong, pakai tahun sekarang
+    if (!$tahun) {
+        $tahun = date('Y');
     }
+
+    // Tentukan range tanggal dari 1 Januari sampai 31 Desember
+    $awalTahun = "$tahun-01-01";
+    $akhirTahun = "$tahun-12-31";
+
+    $pengajuanCuti = PengajuanCuti::find()
+        ->where([
+            'id_karyawan' => $id_karyawan,
+            'jenis_cuti' => $id_master_cuti,
+        ])
+        ->andWhere(['between', 'tanggal_pengajuan', $awalTahun, $akhirTahun]) // filter range
+        ->all();
+
+    return $this->renderAjax('_view_pengajuan_cuti', [
+        'pengajuanCuti' => $pengajuanCuti,
+    ]);
+}
+
+
 
 
 

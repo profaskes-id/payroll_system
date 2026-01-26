@@ -146,6 +146,19 @@ class TransaksiGajiSearch extends TransaksiGaji
         // Ambil absensi nested
         foreach ($dataKaryawan as &$karyawan) {
             $totalAbsensi = (new \yii\db\Query())
+                ->select([
+                    'id_absensi',
+                    'id_karyawan',
+                    'tanggal',
+                    'jam_masuk',
+                    'jam_pulang',
+                    'kode_status_hadir',
+                    'is_lembur',
+                    'is_wfh',
+                    'is_terlambat',
+                    'lama_terlambat',
+                    'id_shift'
+                ])
                 ->from('absensi')
                 ->where([
                     'id_karyawan' => $karyawan['id_karyawan']
@@ -166,6 +179,7 @@ class TransaksiGajiSearch extends TransaksiGaji
                     ];
                 }
             }
+
 
             $karyawan['total_absensi'] = count($totalAbsensi);
             $karyawan['terlambat'] = $terlambatList;
@@ -203,12 +217,17 @@ class TransaksiGajiSearch extends TransaksiGaji
         // Tambahkan data gaji, potongan, tunjangan, lembur, dll
         foreach ($dataKaryawan as &$karyawan) {
             $id = $karyawan['id_karyawan'];
+            // $id = 15;
 
             $karyawan['nominal_gaji'] = $this->getNominalGajiKaryawan($id);
             $karyawan['potongan_karyawan'] = $this->getPotonganKaryawan($id, $karyawan['nominal_gaji']);
             $karyawan['tunjangan_karyawan'] = $this->getTunjanganKaryawan($id, $karyawan['nominal_gaji']);
 
+
             $kasbon = $this->getKasbonKaryawan($id, $karyawan['nominal_gaji']);
+
+            $karyawan['hari_kerja_efektif'] = $this->getHariKerjaEfektif($id, $periodeGajiObject);
+
             $karyawan['kasbon_karyawan'] =  $kasbon['total_angsuran_terakhir'] ?? 0;
             $karyawan['gaji_perhari'] = $this->getGajiKaryawanPerHari($karyawan['nominal_gaji'], $id, $periodeGajiObject);
             $lemburData = $this->getLemburKaryawan($id, $karyawan['nominal_gaji'], $periodeGajiObject);
@@ -258,6 +277,7 @@ class TransaksiGajiSearch extends TransaksiGaji
                     'tunjangan_karyawan',
                     'jam_lembur',
                     'kasbon_karyawan',
+                    'hari_kerja_efektif',
                     'total_pendapatan_lembur',
                     'gaji_bersih',
                     'dinas_luar_belum_terbayar',
@@ -268,11 +288,31 @@ class TransaksiGajiSearch extends TransaksiGaji
         // Filter form search
         $this->load($params);
 
+
         if (!$this->validate()) {
             return $dataProvider;
         }
 
+
         return $dataProvider;
+    }
+
+
+
+    public function getHariKerjaEfektif($id_karyawan, $periode_gaji)
+    {
+        $tanggalAwal = new \DateTime($periode_gaji['tanggal_awal']);
+        $tanggalAkhir = new \DateTime($periode_gaji['tanggal_akhir']);
+        $interval = $tanggalAwal->diff($tanggalAkhir);
+        $countRangeTanggal = $interval->days + 1;
+        $masterHariLibur = (new \yii\db\Query())
+            ->from('master_haribesar')
+            ->where(['between', 'tanggal', $periode_gaji['tanggal_awal'], $periode_gaji['tanggal_akhir']])
+            ->count();
+
+
+        $liburCount = $this->countLiburInRange($id_karyawan, $periode_gaji['tanggal_awal'], $periode_gaji['tanggal_akhir']);
+        return $countRangeTanggal - $masterHariLibur - $liburCount;
     }
 
 
@@ -441,9 +481,6 @@ class TransaksiGajiSearch extends TransaksiGaji
     }
 
 
-
-
-
     public function getLemburKaryawan($id_karyawan, $gajiKaryawan, $periodeGajiObject)
     {
 
@@ -508,27 +545,10 @@ class TransaksiGajiSearch extends TransaksiGaji
             ];
         }
 
-        $bulan = date('n'); // bulan sekarang (1-12)
-        $tahun = date('Y'); // tahun sekarang (4 digit)
 
-        $totalHari = cal_days_in_month(CAL_GREGORIAN, $bulan, $tahun);
-        // Ambil dari cache
-        $setting = $this->_settingGajiPerJam;
 
-        $liburCount = $this->countLiburInRange($id_karyawan, $periode_gaji['tanggal_awal'], $periode_gaji['tanggal_akhir']);
+        // $liburCount = $this->countLiburInRange($id_karyawan, $periode_gaji['tanggal_awal'], $periode_gaji['tanggal_akhir']);
 
-        $tanggalAwal = new \DateTime($periode_gaji['tanggal_awal']);
-        $tanggalAkhir = new \DateTime($periode_gaji['tanggal_akhir']);
-        $interval = $tanggalAwal->diff($tanggalAkhir);
-
-        // Total hari antara tanggalAwal dan tanggalAkhir (termasuk keduanya)
-        $countRangeTanggal = $interval->days + 1;
-
-        // Hitung jumlah hari libur nasional (master_haribesar) di antara tanggal_awal dan tanggal_akhir
-        $masterHariLibur = (new \yii\db\Query())
-            ->from('master_haribesar')
-            ->where(['between', 'tanggal', $periode_gaji['tanggal_awal'], $periode_gaji['tanggal_akhir']])
-            ->count();
 
 
         // if (
@@ -572,33 +592,10 @@ class TransaksiGajiSearch extends TransaksiGaji
         return $query->sum('biaya_yang_disetujui') ?? 0;
     }
 
-
-
     protected function getTotalAlfaRange($id_karyawan, $periode_gaji, $absen = 0)
     {
-        // Ambil id_jam_kerja dari jam_kerja_karyawan
-
-        $tanggalAwal = new \DateTime($periode_gaji['tanggal_awal']);
-        $tanggalAkhir = new \DateTime($periode_gaji['tanggal_akhir']);
-        $interval = $tanggalAwal->diff($tanggalAkhir);
-
-        // Total hari antara tanggalAwal dan tanggalAkhir (termasuk keduanya)
-        $countRangeTanggal = $interval->days + 1;
-        $idJamKerja = (new \yii\db\Query())
-            ->select('id_jam_kerja')
-            ->from('jam_kerja_karyawan')
-            ->where(['id_karyawan' => $id_karyawan])
-            ->scalar();
-
-        if (!$idJamKerja) {
-            return $countRangeTanggal; // Kalau tidak punya jadwal kerja, tidak bisa hitung
-        }
-
-        // Hitung libur menggunakan fungsi terpisah
-        $liburCount = $this->countLiburInRange($id_karyawan, $periode_gaji['tanggal_awal'], $periode_gaji['tanggal_akhir']);
-
-
-        return $countRangeTanggal - $absen - $liburCount;
+        $hariKerjaEfektif = $this->getHariKerjaEfektif($id_karyawan, $periode_gaji);
+        return $hariKerjaEfektif - $absen;
     }
 
     protected function countLiburInRange($id_karyawan, $tanggal_awal, $tanggal_akhir)
@@ -610,12 +607,13 @@ class TransaksiGajiSearch extends TransaksiGaji
             ->where(['id_karyawan' => $id_karyawan])
             ->scalar();
 
+
         if (!$idJamKerja) {
             return 0;
         }
 
         // Ambil hari kerja resmi (unik)
-        $hariKerjaResmi = array_unique(
+        $hariKerjaKaryawan = array_unique(
             (new \yii\db\Query())
                 ->select('nama_hari')
                 ->from('jadwal_kerja')
@@ -623,8 +621,10 @@ class TransaksiGajiSearch extends TransaksiGaji
                 ->column()
         );
 
+
         // normalisasi ke string untuk perbandingan
-        $hariKerjaResmi = array_map('strval', $hariKerjaResmi);
+        $hariKerjaKaryawan = array_map('strval', $hariKerjaKaryawan);
+
 
         $tanggalAwalObj = new \DateTime($tanggal_awal);
         $tanggalAkhirObj = new \DateTime($tanggal_akhir);
@@ -632,9 +632,10 @@ class TransaksiGajiSearch extends TransaksiGaji
         $liburCount = 0;
         $tanggalIterasi = clone $tanggalAwalObj;
 
+
         while ($tanggalIterasi <= $tanggalAkhirObj) {
             $namaHari = $tanggalIterasi->format('N'); // 1 (Mon) .. 7 (Sun)
-            if (!in_array((string)$namaHari, $hariKerjaResmi, true)) {
+            if (!in_array((string)$namaHari, $hariKerjaKaryawan, true)) {
                 $liburCount++;
             }
             $tanggalIterasi->modify('+1 day');
@@ -645,10 +646,12 @@ class TransaksiGajiSearch extends TransaksiGaji
 
     protected function getPotonganAbsensi($id_karyawan, $gajiPerhari = 0, $total_alfa = 0, $periode_gaji = null)
     {
+
         // fallback ke periode sekarang jika tidak diberikan
         if ($periode_gaji === null) {
             $periode_gaji = $this->getPerioderGajiSekarang();
         }
+
 
         // jika tidak ada gaji per jam atau tidak ada alfa, tidak ada potongan
         if (empty($gajiPerhari)) {
@@ -667,7 +670,6 @@ class TransaksiGajiSearch extends TransaksiGaji
                 'status' => 1, // hanya yang disetujui
             ])
             ->column();
-
 
         // Gabungkan semua tanggal dari array
         $wfhDates = [];
@@ -697,9 +699,7 @@ class TransaksiGajiSearch extends TransaksiGaji
             $dataPotonganPersenWfh / 100 : 0;
 
 
-
         $data =  ($gajiPerhari * ($pengajuanWfhCount * $potongan)) + ($gajiPerhari * $total_alfa);
-
         return [
             'jumlah_wfh' => $pengajuanWfhCount ?? 0,
             'allpotongan' => $data ?? 0

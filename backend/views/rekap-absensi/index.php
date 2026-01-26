@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\MasterHaribesar;
 use backend\models\Tanggal;
 use yii\helpers\Html;
 
@@ -60,7 +61,33 @@ function formatJamDesimal($decimalHours)
         left: 100px;
         /* sesuaikan dengan lebar kolom pertama */
     }
+
+    .minggu {
+        background: #ababab;
+        color: white;
+    }
+
+    .sabtu {
+        background: #c2a17a;
+        color: white;
+    }
+
+    .libur {
+        background: #ffc0cb;
+        /* merah muda tipis */
+        color: black;
+    }
 </style>
+
+
+<?php
+$liburNasional = MasterHaribesar::find()->select(['kode', 'tanggal', 'nama_hari'])->where(['libur_nasional' => 1])->asArray()->all();
+$liburDates = array_column($liburNasional, 'tanggal');
+
+?>
+
+
+
 <div class="absensi-index position-relative">
     <div class="row">
         <div class="col-12 col-md-8">
@@ -112,88 +139,130 @@ function formatJamDesimal($decimalHours)
         <p class="text-xs text-muted text-capitalize">jika data karyawan tidak ada, silahkan tambahkan data jam kerja karyawan</p>
         <table class="table table-bordered table-responsive">
             <thead>
-
                 <tr>
-                    <th style="padding: 0; margin:0;" rowspan="3" class="text-center sticky-col first-col">Nama dan Kode Karyawan</th>
-                    <th style="padding: 0; margin:0;" rowspan="3" class="text-center sticky-col second-col">Bagian & Jabatan</th>
-                </tr>
-                <tr>
-                    <th class="text-center" colspan="<?= count($tanggal_bulanan) + 6 - 1  ?>">
-                        <h3>
-                            Rekapan Absensi
-                        </h3>
+                    <!-- kolom kiri -->
+                    <th rowspan="2" class="text-center sticky-col first-col">
+                        Nama dan Kode Karyawan
                     </th>
-                </tr>
-                <tr class="text-center" style="vertical-align: middle;">
-                    <?php foreach ($tanggal_bulanan as $key => $item) : ?>
+                    <th rowspan="2" class="text-center sticky-col second-col">
+                        Bagian & Jabatan
+                    </th>
+
+                    <!-- hari -->
+                    <?php foreach ($tanggal_bulanan as $item) : ?>
                         <?php
-                        $day_of_week = 1; // default: Senin
-                        if (isset($tanggal_bulanan[$key]) && !empty($tanggal_bulanan[$key])) {
-                            $date = date_create($tanggal_bulanan[$key]);
-                            if ($date) {
-                                $day_of_week = (int) date_format($date, 'w');
-                            }
+                        $date = new DateTime($item);
+                        $hari = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+
+                        // Tentukan class
+                        $class = '';
+                        if (in_array($date->format('Y-m-d'), $liburDates)) {
+                            $class = 'libur'; // prioritas libur nasional
+                        } elseif ($date->format('w') == 0) {
+                            $class = 'minggu';
+                        } elseif ($date->format('w') == 6) {
+                            $class = 'sabtu';
                         }
-
-
                         ?>
-                        <td <?php if ($day_of_week == 0) echo 'style="background-color: #ababab; color:white;"'; ?>>
-                            <?= $item ?>
+                        <td class="text-center <?= $class ?>">
+                            <p class="text-sm"><?= $hari[(int)$date->format('w')] ?></p>
                         </td>
                     <?php endforeach ?>
-                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Total Hadir <span class="text-sm">(Hari)</span></td>
-                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Jumlah Terlambat <span class="text-sm">(X)</span></td>
-                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Total Telambat <span class="text-sm">(Jam)</span></td>
-                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Total Lembur (X)</td>
-                    <td style="background-color: #f8f9fa; font-weight: bold; border: 1px solid #dee2e6;">Lama Lembur (jam)</td>
+
+                    <!-- kolom total -->
+                    <th rowspan="2">Total Hadir<br><small>(Hari)</small></th>
+                    <th rowspan="2">Jumlah Terlambat<br><small>(X)</small></th>
+                    <th rowspan="2">Total Terlambat<br><small>(Jam)</small></th>
+                    <th rowspan="2">Total Lembur<br><small>(X)</small></th>
+                    <th rowspan="2">Lama Lembur<br><small>(Jam)</small></th>
+                </tr>
+
+                <!-- BARIS KE-2: TANGGAL -->
+                <tr>
+                    <?php foreach ($tanggal_bulanan as $item) : ?>
+                        <?php
+                        $date = new DateTime($item);
+                        $bulan = [
+                            1 => 'Jan',
+                            'Feb',
+                            'Mar',
+                            'Apr',
+                            'Mei',
+                            'Jun',
+                            'Jul',
+                            'Agu',
+                            'Sep',
+                            'Okt',
+                            'Nov',
+                            'Des'
+                        ];
+                        $tanggal = $date->format('d') . '-' . $bulan[(int)$date->format('m')] . '-' . $date->format('Y');
+
+                        // Tentukan class sama seperti baris hari
+                        $class = '';
+                        if (in_array($date->format('Y-m-d'), $liburDates)) {
+                            $class = 'libur';
+                        } elseif ($date->format('w') == 0) {
+                            $class = 'minggu';
+                        } elseif ($date->format('w') == 6) {
+                            $class = 'sabtu';
+                        }
+                        ?>
+                        <td class="text-center <?= $class ?>">
+                            <p class="p-0 text-xs"><?= $tanggal ?></p>
+                        </td>
+                    <?php endforeach ?>
                 </tr>
             </thead>
+
 
             <tbody>
                 <?php foreach ($hasil as $karyawan) : ?>
                     <tr style="vertical-align: middle;">
                         <?php foreach ($karyawan as $key => $data) : ?>
 
-
                             <?php if ($key == 0) : ?>
-                                <td class="sticky-col first-col ">
+                                <!-- Nama dan Kode Karyawan -->
+                                <td class="sticky-col first-col">
                                     <?php $text  = strtolower($data['nama']); ?>
-                                    <div class=" d-flex flex-column">
-                                        <p style="margin: 0; padding:0;  text-transform: capitalize;  font-weight: bold; font-size: 12px; "><?= $text ?></p>
-
-                                        <p style="margin: 0; padding:0;  text-transform: capitalize; font-size:11px"><?= $data['kode_karyawan'] ?></p>
+                                    <div class="d-flex flex-column">
+                                        <p style="margin:0; padding:0; text-transform: capitalize; font-weight:bold; font-size:12px;"><?= $text ?></p>
+                                        <p style="margin:0; padding:0; text-transform: capitalize; font-size:11px"><?= $data['kode_karyawan'] ?></p>
                                     </div>
                                 </td>
+
+                                <!-- Bagian & Jabatan -->
                                 <td class="sticky-col second-col" style="background-color: <?= $data['color'] ?>;">
-                                    <div class="">
-                                        <p style=" margin: 0; padding:0;  text-transform: capitalize; font-size:10px; "><?= $data['bagian'] ?></p>
+                                    <div>
+                                        <p style="margin:0; padding:0; text-transform: capitalize; font-size:10px;"><?= $data['bagian'] ?></p>
                                         <hr style="margin:2px 0; padding:0;">
-                                        <p style="margin: 0; padding:0;  text-transform: capitalize; font-size:10px;"><?= $data['jabatan'] ?></p>
+                                        <p style="margin:0; padding:0; text-transform: capitalize; font-size:10px;"><?= $data['jabatan'] ?></p>
                                     </div>
                                 </td>
-
 
                             <?php else : ?>
 
                                 <?php
-
-                                $day_of_week = 1; // default: Senin
-                                if (isset($tanggal_bulanan[$key - 1]) && !empty($tanggal_bulanan[$key - 1])) {
-                                    $date = date_create($tanggal_bulanan[$key - 1]);
-                                    if ($date) {
-                                        $day_of_week = (int) date_format($date, 'w');
-                                    }
+                                // Cek tanggal untuk setiap kolom
+                                if (isset($tanggal_bulanan[$key - 1])) {
+                                    $date = new DateTime($tanggal_bulanan[$key - 1]);
                                 }
 
-
-
+                                // Tentukan class warna seperti header
+                                $class = '';
+                                if (in_array($date->format('Y-m-d'), $liburDates)) {
+                                    $class = 'libur';
+                                } elseif ($date->format('w') == 0) {
+                                    $class = 'minggu';
+                                } elseif ($date->format('w') == 6) {
+                                    $class = 'sabtu';
+                                }
                                 ?>
 
-                                <td <?php if ($day_of_week == 0) echo 'style="  background-color: #aaa; color:white;"'; ?>>
-                                    <p style=" width: 50px; padding:0;   text-align: center; vertical-align: middle;">
-
-                                        <!-- bagian akhir rekap absensi -->
+                                <td class="text-center <?= $class ?>">
+                                    <p style="width:50px; padding:0; text-align:center; vertical-align:middle;">
                                         <?php
+                                        // Bagian akhir rekap absensi
                                         $lastIndex = count($karyawan);
                                         switch ($key) {
                                             case $lastIndex - 5:
@@ -206,8 +275,7 @@ function formatJamDesimal($decimalHours)
                                                 $jam = floor($data['detik_terlambat'] / 3600);
                                                 $menit = floor(($data['detik_terlambat'] % 3600) / 60);
                                                 $detik = $data['detik_terlambat'] % 60;
-                                                $formattedTime = sprintf('%02d:%02d:%02d', $jam, $menit, $detik);
-                                                echo "<span style='font-weight:600; text-align:center;'>$formattedTime</span>";
+                                                echo sprintf('<span style="font-weight:600">%02d:%02d:%02d</span>', $jam, $menit, $detik);
                                                 break;
                                             case $lastIndex - 2:
                                                 echo $data['total_lembur'];
@@ -215,52 +283,39 @@ function formatJamDesimal($decimalHours)
                                             case $lastIndex - 1:
                                                 echo formatJamDesimal($data['jumlah_jam_lembur']);
                                                 break;
+                                            default:
+                                                if ($data !== null && $data['status_hadir'] !== null && $data['jam_masuk_karyawan'] !== null):
+                                                    $jamKerjakaryawan = $data['jam_masuk_karyawan'];
+                                                    $jamKerjaKantor = $data['jam_masuk_kantor'] ?? '08:00:00';
+                                                    $karyawan_absen_pada = strtotime($jamKerjakaryawan);
+                                                    $jam_kantor_masuk = strtotime($jamKerjaKantor);
+
+                                                    if ($data['is_lembur'] == 1):
+                                                        echo "<span style='color:black'>{$data['status_hadir']}</span><br><span style='color:black'>Lembur</span>";
+                                                    elseif ($data['is_wfh'] == 1):
+                                                        echo "<span style='color:blue; font-weight:700'>{$data['status_hadir']}</span><br><span style='color:blue; font-weight:700'>WFH</span>";
+                                                    elseif ($data['is_24jam'] == 1):
+                                                        echo "<span style='color:green; font-weight:700'>{$data['status_hadir']}</span><br><span style='color:green; font-weight:700'>24 Jam</span>";
+                                                    elseif ($data['is_terlambat'] == 1):
+                                                        $lama = isset($data['lama_terlambat']) && $data['lama_terlambat'] ? date('H:i', strtotime($data['lama_terlambat'])) : '00:00';
+                                                        echo "<span style='color:red'>{$data['status_hadir']}</span><br><span style='color:red'>{$lama}</span>";
+                                                    else:
+                                                        echo "<span style='color:black'>{$data['status_hadir']}</span>";
+                                                    endif;
+                                                endif;
+                                                break;
                                         }
                                         ?>
-
-
-
-                                        <?php if ($data !== null && $data['status_hadir'] !== null && $data['jam_masuk_karyawan'] !== null): ?>
-                                            <?php
-                                            $jamKerjakaryawan = $data['jam_masuk_karyawan']; //karyawan masuj
-                                            $jamKerjaKantor = $data['jam_masuk_kantor']; // jam kantor
-                                            $karyawan_absen_pada = strtotime($jamKerjakaryawan);
-
-                                            $jam_kantor_masuk = strtotime($jamKerjaKantor ?? "08:00:00");
-                                            ?>
-
-                                            <?php if ($data['is_lembur'] == 1) : ?>
-                                                <span style='color: black;'><?= $data['status_hadir'] ?></span><br />
-                                                <span style='color: black;'>Lembur</span><br />
-
-                                            <?php elseif ($data['is_wfh'] == 1) : ?>
-                                                <span style='color: blue; font-weight:700;'><?= $data['status_hadir'] ?></span><br />
-                                                <span style='color: blue; font-weight:700;'>WFH</span><br />
-
-                                            <?php elseif ($data['is_24jam'] == 1) : ?>
-                                                <span style='color: green; font-weight:700;'><?= $data['status_hadir'] ?></span><br />
-                                                <span style='color: green; font-weight:700;'>24 Jam</span><br />
-
-
-                                            <?php elseif ($data['is_terlambat'] == 1) : ?>
-                                                <span style='color: red;'><?= $data['status_hadir'] ?></span><br />
-                                                <span style='color: red;'>
-                                                    <?= isset($data['lama_terlambat']) && $data['lama_terlambat'] ? date('H:i', strtotime($data['lama_terlambat'])) : '00:00' ?>
-                                                </span><br />
-
-                                            <?php else : ?>
-                                                <span style='color: black;'><?= $data['status_hadir'] ?></span>
-                                            <?php endif; ?>
-                                        <?php else : ?>
-                                        <?php endif; ?>
                                     </p>
-                                <?php endif ?>
                                 </td>
 
-                            <?php endforeach ?>
+                            <?php endif; ?>
+
+                        <?php endforeach ?>
                     </tr>
                 <?php endforeach ?>
             </tbody>
+
 
 
             <!-- Footer Section -->

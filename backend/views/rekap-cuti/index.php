@@ -154,7 +154,11 @@ Modal::end();
 ?>
 
 
+
+
 <?php
+
+$tahun = $searchModel->tahun ?? date('Y');
 $viewUrl = \yii\helpers\Url::to(['rekap-cuti/view-pengajuan-cuti']);
 $js = <<<JS
 $('#cutiModal').on('show.bs.modal', function (event) {
@@ -170,7 +174,8 @@ $('#cutiModal').on('show.bs.modal', function (event) {
         type: 'GET',
         data: {
             id_karyawan: idKaryawan,
-            id_master_cuti: idMasterCuti
+            id_master_cuti: idMasterCuti,
+            tahun: $tahun
         },
         success: function(data) {
             modal.find('#modalContent').html(data);
