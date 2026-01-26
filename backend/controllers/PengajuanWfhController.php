@@ -56,15 +56,15 @@ class PengajuanWfhController extends Controller
         if ($tanggalSekarang < $tanggalAwalInt) {
             // Jika tanggal sekarang < tanggalAwal (misal: sekarang tgl 15, tanggalAwal = 20)
             // tgl_mulai = tanggalAwal+1 + bulan lalu + tahun ini
-            $tgl_mulai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang - 1, $tanggalAwalInt + 1, $tahunSekarang));
+            $tgl_mulai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang - 1, $tanggalAwalInt, $tahunSekarang));
             // tgl_selesai = tanggalAwal + bulan sekarang + tahun ini
-            $tgl_selesai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt, $tahunSekarang));
+            $tgl_selesai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt - 1, $tahunSekarang));
         } else {
             // Jika tanggal sekarang >= tanggalAwal (misal: sekarang tgl 25, tanggalAwal = 20)
             // tgl_mulai = tanggalAwal+1 + bulan sekarang + tahun ini
-            $tgl_mulai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt + 1, $tahunSekarang));
+            $tgl_mulai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt, $tahunSekarang));
             // tgl_selesai = tanggalAwal + bulan depan + tahun menyesuaikan
-            $tgl_selesai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang + 1, $tanggalAwalInt, $tahunSekarang));
+            $tgl_selesai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt - 1, $tahunSekarang));
         }
 
         // Jika ada parameter GET, gunakan nilai dari GET
@@ -76,6 +76,7 @@ class PengajuanWfhController extends Controller
         }
         $searchModel = new PengajuanWfhSearch();
         $dataProvider = $searchModel->search($this->request->queryParams, $tgl_mulai, $tgl_selesai);
+
 
 
 

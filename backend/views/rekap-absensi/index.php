@@ -215,10 +215,12 @@ $liburDates = array_column($liburNasional, 'tanggal');
                 </tr>
             </thead>
 
-
+            <?php $no = 1; ?>
             <tbody>
                 <?php foreach ($hasil as $karyawan) : ?>
-                    <tr style="vertical-align: middle;">
+                    <tr style="vertical-align: middle;
+        background-color: <?= ($no % 2 == 0) ? '#e1e1e1' : 'transparent'; ?>">
+
                         <?php foreach ($karyawan as $key => $data) : ?>
 
                             <?php if ($key == 0) : ?>
@@ -313,6 +315,8 @@ $liburDates = array_column($liburNasional, 'tanggal');
 
                         <?php endforeach ?>
                     </tr>
+                    </tr>
+                    <?php $no++; ?>
                 <?php endforeach ?>
             </tbody>
 

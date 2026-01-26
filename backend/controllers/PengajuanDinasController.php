@@ -55,17 +55,16 @@ class PengajuanDinasController extends Controller
         if ($tanggalSekarang < $tanggalAwalInt) {
             // Jika tanggal sekarang < tanggalAwal (misal: sekarang tgl 15, tanggalAwal = 20)
             // tgl_mulai = tanggalAwal+1 + bulan lalu + tahun ini
-            $tgl_mulai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang - 1, $tanggalAwalInt + 1, $tahunSekarang));
+            $tgl_mulai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang - 1, $tanggalAwalInt, $tahunSekarang));
             // tgl_selesai = tanggalAwal + bulan sekarang + tahun ini
-            $tgl_selesai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt, $tahunSekarang));
+            $tgl_selesai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt - 1, $tahunSekarang));
         } else {
             // Jika tanggal sekarang >= tanggalAwal (misal: sekarang tgl 25, tanggalAwal = 20)
             // tgl_mulai = tanggalAwal+1 + bulan sekarang + tahun ini
-            $tgl_mulai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt + 1, $tahunSekarang));
+            $tgl_mulai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt, $tahunSekarang));
             // tgl_selesai = tanggalAwal + bulan depan + tahun menyesuaikan
-            $tgl_selesai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang + 1, $tanggalAwalInt, $tahunSekarang));
+            $tgl_selesai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt - 1, $tahunSekarang));
         }
-
         // Jika ada parameter GET, gunakan nilai dari GET
         if (!empty(Yii::$app->request->get()['PengajuanDinasSearch']['tanggal_mulai'])) {
             $tgl_mulai = Yii::$app->request->get()['PengajuanDinasSearch']['tanggal_mulai'];
@@ -156,140 +155,139 @@ class PengajuanDinasController extends Controller
         ]);
     }
 
- public function actionUpdate($id_pengajuan_dinas)
-{
-    $model = $this->findModel($id_pengajuan_dinas);
-    
-    // Ambil detail yang sudah ada dan index by tanggal
-    $existingDetails = DetailDinas::find()
-        ->where(['id_pengajuan_dinas' => $id_pengajuan_dinas])
-        ->indexBy('tanggal')
-        ->all();
+    public function actionUpdate($id_pengajuan_dinas)
+    {
+        $model = $this->findModel($id_pengajuan_dinas);
 
-    if ($this->request->isPost && $model->load($this->request->post())) {
-        $transaction = Yii::$app->db->beginTransaction();
+        // Ambil detail yang sudah ada dan index by tanggal
+        $existingDetails = DetailDinas::find()
+            ->where(['id_pengajuan_dinas' => $id_pengajuan_dinas])
+            ->indexBy('tanggal')
+            ->all();
 
-        try {
-            // Set data persetujuan jika status disetujui
-            if ($model->status == Yii::$app->params['disetujui']) {
-                $model->disetujui_oleh = Yii::$app->user->identity->id;
-                $model->disetujui_pada = date('Y-m-d H:i:s');
-                $model->biaya_yang_disetujui = $model->estimasi_biaya;
-            } else {
-                $model->disetujui_oleh = null;
-                $model->disetujui_pada = null;
-                $model->biaya_yang_disetujui = null;
-            }
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $transaction = Yii::$app->db->beginTransaction();
 
-            // Simpan model utama
-            if (!$model->save()) {
-                throw new \Exception('Gagal menyimpan pengajuan dinas: ' . json_encode($model->errors));
-            }
-
-            // Proses detail dinas dari POST
-            $postDetails = Yii::$app->request->post('DetailDinas', []);
-            $submittedDates = [];
-
-            foreach ($postDetails as $row) {
-                if (empty($row['tanggal'])) {
-                    continue;
-                }
-
-                $tanggal = $row['tanggal'];
-                $submittedDates[] = $tanggal;
-
-                // Cek apakah detail sudah ada
-                if (isset($existingDetails[$tanggal])) {
-                    $detail = $existingDetails[$tanggal];
-                    // Update detail yang sudah ada
-                    $detail->status = 1; // Selalu set status = 1 untuk yang aktif
+            try {
+                // Set data persetujuan jika status disetujui
+                if ($model->status == Yii::$app->params['disetujui']) {
+                    $model->disetujui_oleh = Yii::$app->user->identity->id;
+                    $model->disetujui_pada = date('Y-m-d H:i:s');
+                    $model->biaya_yang_disetujui = $model->estimasi_biaya;
                 } else {
-                    // Buat detail baru
-                    $detail = new DetailDinas();
-                    $detail->id_pengajuan_dinas = $model->id_pengajuan_dinas;
-                    $detail->tanggal = $tanggal;
-                    $detail->status = 1;
+                    $model->disetujui_oleh = null;
+                    $model->disetujui_pada = null;
+                    $model->biaya_yang_disetujui = null;
                 }
 
-                $detail->keterangan = $row['keterangan'] ?? null;
-
-                if (!$detail->save(false)) {
-                    throw new \Exception('Gagal menyimpan detail dinas: ' . json_encode($detail->errors));
+                // Simpan model utama
+                if (!$model->save()) {
+                    throw new \Exception('Gagal menyimpan pengajuan dinas: ' . json_encode($model->errors));
                 }
-            }
 
-            // Soft delete detail yang tidak ada di submitted dates
-            foreach ($existingDetails as $tanggal => $detail) {
-                if (!in_array($tanggal, $submittedDates)) {
-                    $detail->status = 2; // Status 2 = dihapus/ditolak
-                    $detail->save(false);
-                }
-            }
+                // Proses detail dinas dari POST
+                $postDetails = Yii::$app->request->post('DetailDinas', []);
+                $submittedDates = [];
 
-            // Hapus absensi lama yang terkait dengan dinas ini
-            Absensi::deleteAll([
-                'id_karyawan' => $model->id_karyawan,
-                'kode_status_hadir' => 'DL',
-            ]);
+                foreach ($postDetails as $row) {
+                    if (empty($row['tanggal'])) {
+                        continue;
+                    }
 
-            // Buat absensi baru hanya jika status pengajuan = DISETUJUI dan isNewAbsen = 1
-            if ($model->status == Yii::$app->params['disetujui']) {
-                $isNewAbsen = (int) $model->isNewAbsen;
-                
-                if ($isNewAbsen === 1) {
-                    foreach ($submittedDates as $tanggal) {
-                        $this->createAbsensiDinas($model->id_karyawan, $tanggal);
+                    $tanggal = $row['tanggal'];
+                    $submittedDates[] = $tanggal;
+
+                    // Cek apakah detail sudah ada
+                    if (isset($existingDetails[$tanggal])) {
+                        $detail = $existingDetails[$tanggal];
+                        // Update detail yang sudah ada
+                        $detail->status = 1; // Selalu set status = 1 untuk yang aktif
+                    } else {
+                        // Buat detail baru
+                        $detail = new DetailDinas();
+                        $detail->id_pengajuan_dinas = $model->id_pengajuan_dinas;
+                        $detail->tanggal = $tanggal;
+                        $detail->status = 1;
+                    }
+
+                    $detail->keterangan = $row['keterangan'] ?? null;
+
+                    if (!$detail->save(false)) {
+                        throw new \Exception('Gagal menyimpan detail dinas: ' . json_encode($detail->errors));
                     }
                 }
+
+                // Soft delete detail yang tidak ada di submitted dates
+                foreach ($existingDetails as $tanggal => $detail) {
+                    if (!in_array($tanggal, $submittedDates)) {
+                        $detail->status = 2; // Status 2 = dihapus/ditolak
+                        $detail->save(false);
+                    }
+                }
+
+                // Hapus absensi lama yang terkait dengan dinas ini
+                Absensi::deleteAll([
+                    'id_karyawan' => $model->id_karyawan,
+                    'kode_status_hadir' => 'DL',
+                ]);
+
+                // Buat absensi baru hanya jika status pengajuan = DISETUJUI dan isNewAbsen = 1
+                if ($model->status == Yii::$app->params['disetujui']) {
+                    $isNewAbsen = (int) $model->isNewAbsen;
+
+                    if ($isNewAbsen === 1) {
+                        foreach ($submittedDates as $tanggal) {
+                            $this->createAbsensiDinas($model->id_karyawan, $tanggal);
+                        }
+                    }
+                }
+
+                $transaction->commit();
+
+                Yii::$app->session->setFlash('success', 'Berhasil Mengupdate Data');
+
+                // Kirim notifikasi jika status berubah
+                // (Anda bisa menambahkan logika notifikasi di sini jika diperlukan)
+
+                return $this->redirect(['view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]);
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::$app->session->setFlash('error', 'Gagal Mengupdate Data: ' . $e->getMessage());
             }
-
-            $transaction->commit();
-
-            Yii::$app->session->setFlash('success', 'Berhasil Mengupdate Data');
-
-            // Kirim notifikasi jika status berubah
-            // (Anda bisa menambahkan logika notifikasi di sini jika diperlukan)
-
-            return $this->redirect(['view', 'id_pengajuan_dinas' => $model->id_pengajuan_dinas]);
-
-        } catch (\Exception $e) {
-            $transaction->rollBack();
-            Yii::$app->session->setFlash('error', 'Gagal Mengupdate Data: ' . $e->getMessage());
         }
+
+        return $this->render('update', [
+            'model' => $model,
+            'detailModels' => $existingDetails, // Kirim detail yang sudah ada
+        ]);
     }
 
-    return $this->render('update', [
-        'model' => $model,
-        'detailModels' => $existingDetails, // Kirim detail yang sudah ada
-    ]);
-}
+    /**
+     * Membuat data absensi untuk dinas
+     */
+    private function createAbsensiDinas($idKaryawan, $tanggal)
+    {
+        // Cek apakah sudah ada data absensi untuk karyawan dan tanggal tersebut
+        $existingAbsensi = Absensi::find()
+            ->where(['id_karyawan' => $idKaryawan])
+            ->andWhere(['tanggal' => $tanggal])
+            ->andWhere(['kode_status_hadir' => 'DL'])
+            ->exists();
 
-/**
- * Membuat data absensi untuk dinas
- */
-private function createAbsensiDinas($idKaryawan, $tanggal)
-{
-    // Cek apakah sudah ada data absensi untuk karyawan dan tanggal tersebut
-    $existingAbsensi = Absensi::find()
-        ->where(['id_karyawan' => $idKaryawan])
-        ->andWhere(['tanggal' => $tanggal])
-        ->andWhere(['kode_status_hadir' => 'DL'])
-        ->exists();
+        if (!$existingAbsensi) {
+            $absensi = new Absensi();
+            $absensi->id_karyawan = $idKaryawan;
+            $absensi->tanggal = $tanggal;
+            $absensi->kode_status_hadir = 'DL'; // Dinas Luar
+            $absensi->keterangan = 'Dinas Luar';
+            $absensi->created_at = date('Y-m-d H:i:s');
+            $absensi->created_by = Yii::$app->user->identity->id;
 
-    if (!$existingAbsensi) {
-        $absensi = new Absensi();
-        $absensi->id_karyawan = $idKaryawan;
-        $absensi->tanggal = $tanggal;
-        $absensi->kode_status_hadir = 'DL'; // Dinas Luar
-        $absensi->keterangan = 'Dinas Luar';
-        $absensi->created_at = date('Y-m-d H:i:s');
-        $absensi->created_by = Yii::$app->user->identity->id;
-
-        if (!$absensi->save()) {
-            throw new \Exception('Gagal membuat absensi dinas: ' . json_encode($absensi->errors));
+            if (!$absensi->save()) {
+                throw new \Exception('Gagal membuat absensi dinas: ' . json_encode($absensi->errors));
+            }
         }
     }
-}
 
     /**
      * Menghapus data absensi yang terkait dengan dinas

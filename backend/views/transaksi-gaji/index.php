@@ -455,19 +455,9 @@
                                 'value' => function ($model) {
 
                                     $potongan = $model['potongan_terlambat'] ?? 0;
-                                    $karyawanNama = $model['nama'] ?? 'Karyawan';
-                                    $karyawanBagian = $model['nama_bagian'] ?? '-';
 
                                     return '
-            <button type="button" 
-                    class="p-0 btn btn-link text-danger text-decoration-none btn-tunjangan-modal"
-                    data-bs-toggle="modal" 
-                    data-bs-target="#modalPotonganTerlambat"
-                    onclick="loadPotonganTerlambatData(' . $model['id_karyawan'] . ', \'' . addslashes($karyawanNama) . '\', \'' . addslashes($karyawanBagian) . '\')"
-                    title="Lihat Detail potongan terlambat">
-                <span class="fw-semibold">Rp ' . number_format($potongan, 0, ',', '.') . '</span>
-            </button>
-        ';
+                <span class="fw-semibold text-danger">Rp ' . number_format($potongan, 0, ',', '.') . '</span>';
                                 }
                             ],
 

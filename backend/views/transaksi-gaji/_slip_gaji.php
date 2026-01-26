@@ -43,7 +43,7 @@
                 <span>Rp <?= number_format($transaksiData["tunjangan_karyawan"], 0, ',', '.'); ?></span>
             </div>
             <div style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:1px 0;">
-                <span>Lembur (<?= $transaksiData["jam_lembur"] ?? 0 ?>j)</span>
+                <span>Lembur (<?= $transaksiData["jam_lembur"] ?? 0 ?> Jam)</span>
                 <span>Rp <?= number_format($transaksiData["total_pendapatan_lembur"] ?? 0, 0, ',', '.'); ?></span>
             </div>
             <div style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:1px 0;">
@@ -71,7 +71,7 @@
                 <span>Rp <?= number_format($transaksiData["potongan_terlambat"], 0, ',', '.'); ?></span>
             </div>
             <div style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:1px 0;">
-                <span>Absensi</span>
+                <span>Absensi & WFH</span>
                 <span>Rp <?= number_format($transaksiData["potongan_absensi"], 0, ',', '.'); ?></span>
             </div>
             <?php if ($transaksiData["potongan_kasbon"]): ?>
