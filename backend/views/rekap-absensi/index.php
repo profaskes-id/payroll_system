@@ -40,8 +40,6 @@ function formatJamDesimal($decimalHours)
 
     return $sign . sprintf("%02d:%02d", $hours, $minutes);
 }
-
-
 ?>
 
 <style>
@@ -68,14 +66,13 @@ function formatJamDesimal($decimalHours)
     }
 
     .sabtu {
-        background: #c2a17a;
+        background: #ababab;
         color: white;
     }
 
     .libur {
-        background: #ffc0cb;
-        /* merah muda tipis */
-        color: black;
+        background: rgb(255, 0, 0, 0.7);
+        color: white;
     }
 </style>
 

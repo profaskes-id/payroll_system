@@ -60,6 +60,8 @@ return [
     'penggajian_hari_kalender' => 'penggajian_hari_kalender',
     'potongan_hari_kerja_efektif' => 'potongan_hari_kerja_efektif',
     'penggajian_berbasis_jam_kerja' => 'penggajian_berbasis_jam_kerja',
+    'Part-Time' => 'Part-Time',
+    'Magang' => 'Magang',
 
 
     'minimum-menit-lembur' => 'minimum-menit-lembur',

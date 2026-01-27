@@ -16,6 +16,7 @@ class m241010_030246_create_master_gaji_table extends Migration
             'id_gaji' => $this->primaryKey(),
             'id_karyawan' => $this->integer()->notNull(),
             'nominal_gaji' => $this->decimal(10, 2)->notNull(),
+            'visiblity' => $this->smallInteger()->defaultValue(1),
         ]);
 
         $this->addForeignKey(

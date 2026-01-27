@@ -31,7 +31,7 @@ class MasterGaji extends \yii\db\ActiveRecord
         return [
             [['id_karyawan', 'nominal_gaji'], 'required'],
             [['id_karyawan'], 'integer'],
-            [['nominal_gaji'], 'number',],
+            [['nominal_gaji', 'visibility'], 'number',],
             [['id_karyawan'], 'exist', 'skipOnError' => true, 'targetClass' => Karyawan::class, 'targetAttribute' => ['id_karyawan' => 'id_karyawan']],
         ];
     }
@@ -45,6 +45,7 @@ class MasterGaji extends \yii\db\ActiveRecord
             'id_gaji' => 'Id Gaji',
             'id_karyawan' => 'Id Karyawan',
             'nominal_gaji' => 'Nominal Gaji',
+            'visibility' => 'Visibility',
         ];
     }
 

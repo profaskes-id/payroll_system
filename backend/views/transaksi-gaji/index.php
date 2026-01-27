@@ -88,19 +88,35 @@
 
     <?php
     // Include semua modal
-    echo $this->render('detail/_modal_potongan');
     echo $this->render('detail/_modal_kasbon');
     echo $this->render('detail/_modal_tunjangan');
+    echo $this->render('detail/_modal_potongan');
     echo $this->render('detail/_modal_potongan_absensi');
     echo $this->render('detail/_modal_potongan_terlambat');
     echo $this->render('detail/_modal_dinas');
     echo $this->render('detail/_modal_lembur');
+    echo $this->render('detail/_modal_pendapatan_lainnya');
+    echo $this->render('detail/_modal_potongan_lainnya');
+    // dd($karyawanID);
     ?>
 
 
-    <div style="width: 100%;">
-        <?= $this->render('_search', ['model' => $model]) ?>
+
+    <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+        <i class="fas fa-search"></i>
+        <span>
+            Search
+        </span>
+    </button>
+    <div style="margin-top: 10px;">
+        <div class="collapse width" id="collapseWidthExample">
+            <div class="" style="width: 100%;">
+                <?= $this->render('_search', ['model' => $model, 'karyawanID' => $karyawanID, 'id_bagian' => $id_bagian, 'jabatan' => $jabatan, 'status_pekerjaan' => $status_pekerjaan]) ?>
+            </div>
+        </div>
     </div>
+
+
     <div class="transaksi-gaji-index">
         <div class="card">
             <div class="bg-white card-header">
@@ -272,9 +288,9 @@
                             // Kolom untuk Bagian & Jabatan
                             [
                                 'attribute' => 'nama_bagian',
-                                'label' => "Bagian & Jabatan",
+                                'label' => "Bagian & Jabatan & status",
                                 'format' => 'raw',
-                                'headerOptions' => ['class' => 'align-middle', 'style' => 'width: 150px;'],
+                                'headerOptions' => ['class' => 'align-middle', 'style' => 'width: 200px;'],
                                 'contentOptions' => function ($model) {
                                     $color = $model['color'] ?? '#e9ecef';
                                     return [
@@ -285,12 +301,14 @@
                                 'value' => function ($model) {
                                     $bagian = $model['nama_bagian'] ?? '-';
                                     $jabatan = $model['jabatan'] ?? '-';
-
+                                    $status_pekerjaan = $model['status_pekerjaan'] ?? '-';
                                     return '
             <div>
                 <div class="fw-bold text-dark small">' . Html::encode($bagian) . '</div>
                 <hr class="mx-0 my-1" />
                 <div class=" small">' . Html::encode($jabatan) . '</div>
+                <hr class="mx-0 my-1" />
+                <div class=" small">' . Html::encode($status_pekerjaan) . '</div>
             </div>
         ';
                                 }
@@ -355,6 +373,89 @@
         ';
                                 }
                             ],
+
+
+
+
+
+
+
+
+
+
+                            [
+                                'attribute' => 'pendapatan_lainnya',
+                                'label' => "Pendapatan Lainnya",
+                                'format' => 'raw',
+                                'headerOptions' => ['class' => 'text-end align-middle'],
+                                'contentOptions' => ['class' => 'text-end align-middle'],
+                                'value' => function ($model) {
+
+                                    $pendapatan = $model['pendapatan_lainnya'] ?? 0;
+                                    $idKaryawan = $model['id_karyawan'] ?? '';
+                                    $bulan      = $model['bulan'] ?? '';
+                                    $tahun      = $model['tahun'] ?? '';
+
+                                    return '
+    <button type="button" 
+            class="p-0 btn btn-link text-success text-decoration-none btn-pendapatanlainnya-modal"
+            data-bs-toggle="modal" 
+            data-bs-target="#modalPendapatanlainnya"
+            onclick="loadPendapatanLainnyaData('
+                                        . (int)$pendapatan . ', '
+                                        . (int)$idKaryawan . ', \''
+                                        . addslashes($bulan) . '\', \''
+                                        . addslashes($tahun) . '\')"
+            title="Lihat Detail Pendapatanlainnya">
+        <span class="fw-semibold">Rp ' . number_format($pendapatan, 0, ',', '.') . '</span>
+    </button>
+';
+                                }
+                            ],
+
+                            [
+                                'attribute' => 'potongan_lainnya',
+                                'label' => "Potongan Lainnya",
+                                'format' => 'raw',
+                                'headerOptions' => ['class' => 'text-end align-middle'],
+                                'contentOptions' => ['class' => 'text-end align-middle'],
+                                'value' => function ($model) {
+
+                                    $potongan     = $model['potongan_lainnya'] ?? 0;
+                                    $idKaryawan   = $model['id_karyawan'] ?? '';
+                                    $bulan        = $model['bulan'] ?? '';
+                                    $tahun        = $model['tahun'] ?? '';
+
+                                    return '
+        <button type="button" 
+                class="p-0 btn btn-link text-danger text-decoration-none btn-potonganlainnya-modal"
+                data-bs-toggle="modal" 
+                data-bs-target="#modalPotonganlainnya"
+                onclick="loadPotonganLainnyaData('
+                                        . (int)$potongan . ', '
+                                        . (int)$idKaryawan . ', \''
+                                        . addslashes($bulan) . '\', \''
+                                        . addslashes($tahun) . '\')"
+                title="Lihat Detail Potongan Lainnya">
+            <span class="fw-semibold">Rp ' . number_format($potongan, 0, ',', '.') . '</span>
+        </button>
+        ';
+                                }
+                            ],
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                             [
                                 'attribute' => 'kasbon_karyawan',
                                 'label' => 'Bayar Kasbon',
@@ -446,6 +547,8 @@
                                 }
                             ],
 
+
+
                             [
                                 'attribute' => 'potongan_terlambat',
                                 'label' => "Potongan Terlambat",
@@ -522,10 +625,16 @@
                                 'headerOptions' => ['class' => 'text-end align-middle'],
                                 'contentOptions' => ['class' => 'text-end align-middle'],
                                 'value' => function ($model) {
-                                    $gajiBersih = $model['gaji_bersih'] ?? 0;
+                                    // Jika gaji_diterima ada dan tidak null, pakai itu, kalau tidak pakai gaji_bersih
+                                    $gajiBersih = isset($model['gaji_diterima']) && $model['gaji_diterima'] !== null
+                                        ? $model['gaji_diterima']
+                                        : ($model['gaji_bersih'] ?? 0); // fallback ke 0 kalau juga tidak ada
+
                                     $status = $gajiBersih > 0 ? 'success' : 'danger';
+
                                     return '<span class="text-' . $status . ' fw-bold">Rp ' . number_format($gajiBersih, 0, ',', '.') . '</span>';
                                 }
+
                             ],
 
                             [

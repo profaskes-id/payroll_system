@@ -1,24 +1,15 @@
 <?php
 
+use backend\models\Bagian;
 use backend\models\helpers\KaryawanHelper;
+use backend\models\MasterKode;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 
 
-// Ambil bulan dan tahun sekarang
-$bulanIni = date('m'); // Contoh: 10
-$tahunIni = date('Y'); // Contoh: 2025
 
-// Set default value jika belum ada
-if ($model->isNewRecord || empty($model->bulan)) {
-    $model->bulan = $bulanIni;
-}
-
-if ($model->isNewRecord || empty($model->tahun)) {
-    $model->tahun = $tahunIni;
-}
 ?>
 
 <?php
@@ -37,7 +28,11 @@ $bulanList = [
     '11' => 'November',
     '12' => 'Desember',
 ];
+
+
 ?>
+
+
 
 
 
@@ -46,6 +41,65 @@ $bulanList = [
 <div class="transaksi-gaji-search row">
 
 
+
+
+
+    <div class="col-12">
+        <?php
+        $data = \yii\helpers\ArrayHelper::map(Bagian::find()->all(), 'id_bagian', 'nama_bagian');
+        echo $form->field($model, 'id_bagian')->widget(Select2::classname(), [
+            'data' => $data,
+            'language' => 'id',
+            'options' => [
+                'placeholder' => 'Pilih Bagian ...',
+                'value' =>  $id_bagian,
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ])->label('Bagian');
+        ?>
+    </div>
+
+    <div class=" col-12">
+        <?php
+        $data = \yii\helpers\ArrayHelper::map(MasterKode::find()->where(['nama_group' => Yii::$app->params['jabatan']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all(), 'kode', 'nama_kode');
+        echo $form->field($model, 'jabatan')->widget(Select2::classname(), [
+            'data' => $data,
+            'language' => 'id',
+            'options' => [
+                'placeholder' => 'Pilih Jabatan ...',
+                'value' => $jabatan
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ])->label('Jabatan');
+
+        ?>
+    </div>
+
+
+    <div class="col-12">
+        <?php
+        $statusKode = MasterKode::find()->where(['nama_group' => 'status-pekerjaan'])->asArray()->all();
+        $data = \yii\helpers\ArrayHelper::map($statusKode, 'kode', 'nama_kode');
+
+        $value = Yii::$app->request->get('TransaksiGaji')['status_pekerjaan'] ?? $model->status_pekerjaan ?? null;
+
+        echo $form->field($model, 'status_pekerjaan')->widget(Select2::classname(), [
+            'data' => $data,
+            'language' => 'id',
+            'options' => [
+                'placeholder' => 'Pilih Status Pekerjaan ...',
+                'value' =>  $value,
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ])->label('Status Pekerjaan');
+        ?>
+    </div>
 
     <div class="col-md-3 col-12">
         <?php
@@ -57,7 +111,7 @@ $bulanList = [
             'language' => 'id',
             'options' => [
                 'placeholder' => 'Cari Karyawan ...',
-                'value' => $selectedKaryawan
+                'value' => $karyawanID ?? $selectedKaryawan
             ],
             'pluginOptions' => [
                 'tags' => true,

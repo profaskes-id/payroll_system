@@ -288,6 +288,16 @@ $dataKecamatan = \yii\helpers\ArrayHelper::map(\backend\models\MasterKec::find()
 
 
         <?= $form->field($model, 'is_atasan')->hiddenInput(['value' => 0])->label(false) ?>
+        <div class="col-12">
+            <div class="row">
+                <div class="col-6">
+                    <?= $form->field($model, 'nama_bank')->textInput(['class' => 'form-control']) ?>
+                </div>
+                <div class="col-6 ">
+                    <?= $form->field($model, 'nomer_rekening')->textInput(['class' => 'form-control']) ?>
+                </div>
+            </div> <!-- Tambahkan div untuk form resign yang bisa ditampilkan/disembunyikan -->
+        </div>
 
 
     </div>

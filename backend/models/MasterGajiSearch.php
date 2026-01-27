@@ -53,6 +53,7 @@ class MasterGajiSearch extends MasterGaji
                 'mk.nama_kode AS jabatan',
                 'COALESCE(mg.nominal_gaji, 0) AS nominal_gaji',
                 'mg.id_gaji AS id_gaji', // Tambahkan ini
+                'mg.visibility AS visibility',
             ])
             ->from('karyawan k')
             ->leftJoin('data_pekerjaan dp', 'dp.id_karyawan = k.id_karyawan AND dp.is_aktif = 1')

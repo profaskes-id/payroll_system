@@ -71,6 +71,9 @@ class m240731_070402_create_karyawan_table extends Migration
 
             'is_atasan' => $this->smallInteger()->notNull()->defaultValue(1),
             'wajah' => $this->mediumText()->null(),
+
+            'nama_bank' => $this->string()->null(),
+            'nomer_rekening' => $this->string()->null(),
         ]);
     }
 

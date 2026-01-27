@@ -7,6 +7,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use backend\models\TransaksiGaji;
 use DateTime;
+use Mpdf\Tag\I;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\web\BadRequestHttpException;
@@ -24,10 +25,11 @@ class TransaksiGajiSearch extends TransaksiGaji
     public function rules()
     {
         return [
-            [['created_by', 'updated_by'], 'default', 'value' => null],
-            [['id_karyawan', 'nama', 'id_bagian', 'nama_bagian', 'jabatan', 'bulan', 'tahun', 'tanggal_awal', 'tanggal_akhir', 'total_absensi', 'terlambat', 'total_alfa_range', 'nominal_gaji', 'gaji_perhari', 'tunjangan_karyawan', 'potongan_karyawan', 'potongan_terlambat', 'potongan_absensi', 'jam_lembur', 'total_pendapatan_lembur', 'dinas_luar_belum_terbayar'], 'required'],
-            [['id_karyawan', 'id_bagian', 'bulan', 'tahun', 'total_absensi', 'total_alfa_range', 'jam_lembur', 'created_by', 'updated_by'], 'integer'],
-            [['tanggal_awal', 'tanggal_akhir', 'terlambat', 'created_at', 'updated_at'], 'safe'],
+            [['created_by', 'updated_by', 'status_pekerjaan'], 'default', 'value' => null],
+            // [['id_karyawan', 'nama', 'id_bagian', 'nama_bagian', 'jabatan', 'bulan', 'tahun', 'tanggal_awal', 'tanggal_akhir', 'total_absensi', 'terlambat', 'total_alfa_range', 'nominal_gaji', 'gaji_perhari', 'tunjangan_karyawan', 'potongan_karyawan', 'potongan_terlambat', 'potongan_absensi', 'jam_lembur', 'total_pendapatan_lembur', 'dinas_luar_belum_terbayar'], 'required'],
+            [['id_karyawan', 'id_bagian', 'bulan', 'tahun', 'total_absensi', 'total_alfa_range', 'jam_lembur', 'created_by', 'updated_by'], 'integer', 'skipOnEmpty' => true],
+
+            [['tanggal_awal', 'tanggal_akhir', 'terlambat', 'created_at', 'updated_at', 'hari_kerja_efektif', 'nama_bank', 'nomer_rekening', 'pendapatan_lainnya', 'potongan_lainnya'], 'safe'],
             [['nominal_gaji', 'gaji_perhari', 'tunjangan_karyawan', 'potongan_karyawan', 'potongan_terlambat', 'potongan_absensi', 'total_pendapatan_lembur', 'dinas_luar_belum_terbayar'], 'number'],
             [['nama', 'nama_bagian', 'jabatan'], 'string', 'max' => 255],
         ];
@@ -80,7 +82,7 @@ class TransaksiGajiSearch extends TransaksiGaji
         return $periode_gaji;
     }
 
-    public function search($params, $id_karyawan, $bulan = null, $tahun = null)
+    public function search($params, $id_karyawan, $bulan = null, $tahun = null, $jabatan = null, $id_bagian = null, $status_pekerjaan = null)
     {
         $bulan = $bulan ?? date('m');   // default ke bulan sekarang
         $tahun = $tahun ?? date('Y');   // default ke tahun sekarang (4 digit)
@@ -105,6 +107,9 @@ class TransaksiGajiSearch extends TransaksiGaji
             ->select([
                 'karyawan.id_karyawan',
                 'karyawan.nama',
+                'karyawan.nama_bank',
+                'mks.nama_kode AS status_pekerjaan',
+                'karyawan.nomer_rekening',
                 'bg.id_bagian',
                 'bg.nama_bagian',
                 'mk.nama_kode AS jabatan',
@@ -118,12 +123,14 @@ class TransaksiGajiSearch extends TransaksiGaji
             ->leftJoin('data_pekerjaan dp', 'dp.id_karyawan = karyawan.id_karyawan AND dp.is_aktif = 1')
             ->leftJoin('bagian bg', 'dp.id_bagian = bg.id_bagian')
             ->leftJoin('master_kode mk', 'mk.nama_group = "jabatan" AND dp.jabatan = mk.kode')
+            ->leftJoin('master_kode mks', 'mks.nama_group = "status-pekerjaan" AND dp.status = mks.kode')
             ->where(['karyawan.is_aktif' => 1])
             ->groupBy([
                 'karyawan.id_karyawan',
                 'karyawan.nama',
                 'bg.id_bagian',
                 'bg.nama_bagian',
+                'mks.nama_kode',
                 'mk.nama_kode',
                 'pg.tanggal_awal',
                 'pg.tanggal_akhir',
@@ -136,9 +143,23 @@ class TransaksiGajiSearch extends TransaksiGaji
             ])
             ->addParams([':periode_gaji_id' => $id_periode_penggajian]);
 
+        // Filter dinamis
         if ($id_karyawan) {
             $query->andWhere(['karyawan.id_karyawan' => $id_karyawan]);
         }
+
+        if ($id_bagian) {
+            $query->andWhere(['bg.id_bagian' => $id_bagian]);
+        }
+
+        if ($jabatan) {
+            $query->andWhere(['mk.kode' => $jabatan]); // atau ['mk.nama_kode' => $jabatan] jika ingin berdasarkan nama jabatan
+        }
+
+        if ($status_pekerjaan) {
+            $query->andWhere(['mks.kode' => $status_pekerjaan]); // filter berdasarkan kode status
+        }
+
 
 
         $dataKaryawan = $query->all();
@@ -220,9 +241,10 @@ class TransaksiGajiSearch extends TransaksiGaji
             // $id = 15;
 
             $karyawan['nominal_gaji'] = $this->getNominalGajiKaryawan($id);
+            $karyawan['visibility'] = $this->getVisibility($id);
+
             $karyawan['potongan_karyawan'] = $this->getPotonganKaryawan($id, $karyawan['nominal_gaji']);
             $karyawan['tunjangan_karyawan'] = $this->getTunjanganKaryawan($id, $karyawan['nominal_gaji']);
-
 
             $kasbon = $this->getKasbonKaryawan($id, $karyawan['nominal_gaji']);
 
@@ -243,6 +265,11 @@ class TransaksiGajiSearch extends TransaksiGaji
             $karyawan['potongan_absensi'] = $potonganAndwfh['allpotongan'];
             $karyawan['dinas_luar_belum_terbayar'] = $this->getDinasLuarBelumTerbayar($id, $periodeGajiObject);
 
+
+            $karyawan['pendapatan_lainnya'] = $this->getPendapatanLainnya($id, $periodeGajiObject);
+            $karyawan['potongan_lainnya'] = $this->getPotonganLainnya($id, $periodeGajiObject);
+
+
             $karyawan['gaji_bersih'] = $karyawan['nominal_gaji']
                 + $karyawan['tunjangan_karyawan']
                 + $karyawan['dinas_luar_belum_terbayar']
@@ -250,7 +277,9 @@ class TransaksiGajiSearch extends TransaksiGaji
                 - $karyawan['potongan_karyawan']
                 - $karyawan['kasbon_karyawan']
                 - $karyawan['potongan_absensi']
-                - $karyawan['potongan_terlambat'];
+                - $karyawan['potongan_terlambat']
+                +   $karyawan['pendapatan_lainnya']
+                -   $karyawan['potongan_lainnya'];
         }
         unset($karyawan);
 
@@ -264,6 +293,8 @@ class TransaksiGajiSearch extends TransaksiGaji
                 'attributes' => [
                     'id_karyawan',
                     'nama',
+                    'nama_bank',
+                    'nomer_rekening',
                     'nama_bagian' => [
                         'asc' => ['nama_bagian' => SORT_ASC, 'jabatan' => SORT_ASC],
                         'desc' => ['nama_bagian' => SORT_DESC, 'jabatan' => SORT_DESC],
@@ -281,6 +312,8 @@ class TransaksiGajiSearch extends TransaksiGaji
                     'total_pendapatan_lembur',
                     'gaji_bersih',
                     'dinas_luar_belum_terbayar',
+                    'potongan_lainnya',
+                    'pendapatan_lainnya',
                 ],
             ],
         ]);
@@ -298,6 +331,27 @@ class TransaksiGajiSearch extends TransaksiGaji
     }
 
 
+
+
+    protected function getPendapatanLainnya($id_karyawan, $periode_gaji)
+    {
+        $data = PendapatanPotonganLainnya::find()->where(['id_karyawan' => $id_karyawan, "bulan" => $periode_gaji['bulan'], "tahun" => $periode_gaji['tahun'], 'is_pendapatan' => 1, 'is_potongan' => 0])->asArray()->all();
+        $count = 0;
+        foreach ($data as $item) {
+            $count += $item['jumlah'];
+        }
+        return $count;
+    }
+    protected function getPotonganLainnya($id_karyawan, $periode_gaji)
+    {
+        $data = PendapatanPotonganLainnya::find()->where(['id_karyawan' => $id_karyawan, "bulan" => $periode_gaji['bulan'], "tahun" => $periode_gaji['tahun'], 'is_pendapatan' => 0, 'is_potongan' => 1])->asArray()->all();
+
+        $count = 0;
+        foreach ($data as $item) {
+            $count += $item['jumlah'];
+        }
+        return $count;
+    }
 
     public function getHariKerjaEfektif($id_karyawan, $periode_gaji)
     {
@@ -372,6 +426,15 @@ class TransaksiGajiSearch extends TransaksiGaji
             ->scalar();
 
         return $nominal ?: 0;
+    }
+    public function getVisibility($id_karyawan)
+    {
+        $data = MasterGaji::find()->where(['id_karyawan' => $id_karyawan])->asArray()->one();
+        if (!$data) {
+            return 0;
+        }
+
+        return $data['visibility'] ?: 0;
     }
 
     /**
@@ -594,6 +657,12 @@ class TransaksiGajiSearch extends TransaksiGaji
 
     protected function getTotalAlfaRange($id_karyawan, $periode_gaji, $absen = 0)
     {
+
+        $dataPekerjaan = DataPekerjaan::find()->where(['id_karyawan' => $id_karyawan])->one();
+        if (isset($dataPekerjaan->statusPekerjaan) &&  $dataPekerjaan->statusPekerjaan->nama_kode == Yii::$app->params['Part-Time']) {
+            return 0;
+        }
+
         $hariKerjaEfektif = $this->getHariKerjaEfektif($id_karyawan, $periode_gaji);
         return $hariKerjaEfektif - $absen;
     }
@@ -645,7 +714,19 @@ class TransaksiGajiSearch extends TransaksiGaji
     }
 
     protected function getPotonganAbsensi($id_karyawan, $gajiPerhari = 0, $total_alfa = 0, $periode_gaji = null)
+
     {
+
+
+
+        $dataPekerjaan = DataPekerjaan::find()->where(['id_karyawan' => $id_karyawan])->one();
+        if (isset($dataPekerjaan->statusPekerjaan) &&  $dataPekerjaan->statusPekerjaan->nama_kode == Yii::$app->params['Part-Time']) {
+            return [
+                'jumlah_wfh' => 0,
+                'allpotongan' => 0
+            ];
+        }
+
 
         // fallback ke periode sekarang jika tidak diberikan
         if ($periode_gaji === null) {

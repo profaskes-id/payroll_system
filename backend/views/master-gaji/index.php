@@ -104,6 +104,19 @@ $this->params['breadcrumbs'][] = $this->title;
                         return Terbilang::toTerbilang($model['nominal_gaji'] ?? '0') . ' Rupiah';
                     }
                 ],
+                [
+                    'attribute' => 'visibility',
+                    'label' => 'Tampilkan Di Penggajian',
+                    'value' => function ($model) {
+                        if ($model['visibility'] == 1) {
+                            return 'Ya';
+                        } else {
+                            return 'Tidak';
+                        }
+                    },
+                    'contentOptions' => ['style' => 'text-align: left;'], // Align text ke kanan
+                ],
+
             ],
         ]); ?>
 

@@ -40,9 +40,21 @@ use yii\widgets\ActiveForm;
 
         <div class="col-12">
             <?= $form->field($model, 'nominal_gaji')->textInput(['maxlength' => true, 'type' => 'number', 'class' => 'form-control nominal-gaji']) ?>
-
         </div>
 
+
+        <div class="col-12">
+            <?= $form->field($model, 'visibility')->radioList(
+                [
+                    0 => 'tidak',
+                    1 => 'ya',
+                ],
+                [
+                    'class' => 'selama',
+                    'itemOptions' => ['labelOptions' => ['style' => 'margin-right: 20px;']]
+                ]
+            )->label('Tampilkan di menu penggajian') ?>
+        </div>
 
         <div class="form-group">
             <button class="add-button" type="submit">

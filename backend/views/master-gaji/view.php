@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="costume-container">
         <p class="">
-            <?= Html::a('<i class="svgIcon fa  fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+            <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
         </p>
     </div>
 
@@ -54,7 +54,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         $terbilang = Terbilang::toTerbilang($model->nominal_gaji) . ' Rupiah';
                         return $terbilang;
                     }
-                ]
+                ],
+                [
+                    'attribute' => 'visibility',
+                    'format' => 'currency',
+                    'contentOptions' => ['style' => 'text-align: left;'], // Align text ke kanan
+                ],
+
             ],
         ]) ?>
 

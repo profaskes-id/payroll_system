@@ -9,6 +9,7 @@ use backend\models\LemburGaji;
 use backend\models\MasterGaji;
 use backend\models\MasterKode;
 use backend\models\PembayaranKasbon;
+use backend\models\PendapatanPotonganLainnya;
 use backend\models\PendingKasbon;
 use backend\models\PengajuanDinas;
 use backend\models\PeriodeGaji;
@@ -74,20 +75,45 @@ class TransaksiGajiController extends Controller
         $periode_gaji = new PeriodeGaji();
         $karyawanID = null;
         $periode_gajiID = PeriodeGajiHelper::getPeriodeGajiBulanIni();
+        $id_bagian =  $params['TransaksiGaji']['id_bagian'] ?? null;
+        $jabatan =  $params['TransaksiGaji']['jabatan'] ?? null;
+        $status_pekerjaan =  $params['TransaksiGaji']['status_pekerjaan'] ?? null;
 
         // Ambil semua dari search (data lengkap dengan gaji_bersih)
-        $allDataFromSearch = $searchModel->search($this->request->queryParams, $id_karyawan, $bulan, $tahun)->getModels();
+        $allDataFromSearch = $searchModel->search($this->request->queryParams, $id_karyawan, $bulan, $tahun, $jabatan, $id_bagian, $status_pekerjaan)->getModels();
+
         // Indexing data search berdasarkan ID karyawan
         $searchIndexed = [];
         foreach ($allDataFromSearch as $item) {
-            $searchIndexed[$item['id_karyawan']] = $item;
+            if ($item['visibility'] == 1) {
+                $searchIndexed[$item['id_karyawan']] = $item;
+            }
         }
+
 
         // Ambil data dari tabel transaksi_gaji
         $existsDataTransaksi = TransaksiGaji::find()
-            ->where(['bulan' => $bulan, 'tahun' => $tahun])
-            ->asArray()
-            ->all();
+            ->where(['bulan' => $bulan, 'tahun' => $tahun]);
+        $query = TransaksiGaji::find()->where(['bulan' => $bulan, 'tahun' => $tahun]);
+
+        if ($id_bagian) {
+            $query->andWhere(['id_bagian' => $id_bagian]);
+        }
+
+        if ($jabatan) {
+            $query->andWhere(['jabatan' => $jabatan]);
+        }
+
+        if ($id_karyawan) {
+            $query->andWhere(['id_karyawan' => $id_karyawan]);
+        }
+
+        if ($status_pekerjaan) {
+            $query->andWhere(['status_pekerjaan' => $status_pekerjaan]);
+        }
+        $existsDataTransaksi = $query->asArray()->all();
+
+
 
         // Proses data yang sudah ada di DB
         $finalData = [];
@@ -120,6 +146,8 @@ class TransaksiGajiController extends Controller
 
                     'id_karyawan',
                     'nama',
+                    'jabatan',
+                    'id_bagian',
                     'nama_bagian' => [
                         'asc' => ['nama_bagian' => SORT_ASC, 'jabatan' => SORT_ASC],
                         'desc' => ['nama_bagian' => SORT_DESC, 'jabatan' => SORT_DESC],
@@ -161,7 +189,10 @@ class TransaksiGajiController extends Controller
             'bulan' => $bulan,
             'tahun' => $tahun,
             'model' => $model,
+            'status_pekerjaan' => $status_pekerjaan,
             'karyawanID' => $karyawanID,
+            'id_bagian' => $id_bagian,
+            'jabatan' => $jabatan,
             'periode_gajiID' => $periode_gajiID
         ]);
     }
@@ -317,6 +348,13 @@ class TransaksiGajiController extends Controller
                     'created_by' => $userId,
                     'updated_by' => $userId,
                     'status' => 1,
+                    'hari_kerja_efektif' => $modelData['hari_kerja_efektif'],
+                    'nama_bank' =>  $modelData['nama_bank'],
+                    'nomer_rekening' => $modelData['nomer_rekening'],
+                    'pendapatan_lainnya' => $modelData['pendapatan_lainnya'],
+                    'potongan_lainnya' => $modelData['potongan_lainnya'],
+                    'gaji_diterima' => $modelData['gaji_bersih'],
+                    'status_pekerjaan' => $modelData['status_pekerjaan']
                 ];
 
                 // Simpan data untuk rekap_gaji_karyawan_pertransaksi
@@ -456,6 +494,13 @@ class TransaksiGajiController extends Controller
                         'created_by',
                         'updated_by',
                         'status',
+                        'hari_kerja_efektif',
+                        'nama_bank',
+                        'nomer_rekening',
+                        'pendapatan_lainnya',
+                        'potongan_lainnya',
+                        'gaji_diterima',
+                        'status_pekerjaan'
                     ], $rows)
                     ->execute();
             }
@@ -683,7 +728,8 @@ class TransaksiGajiController extends Controller
             return $this->redirect(['index', 'TransaksiGaji' => ['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun]]);
         }
 
-        $modelData = reset($models);
+
+        $modelData = reset($models);;
         $now = date('Y-m-d H:i:s');
         $userId = Yii::$app->user->id;
 
@@ -776,7 +822,16 @@ class TransaksiGajiController extends Controller
             'created_by' => $userId,
             'updated_by' => $userId,
             'status' => 1,
+            'hari_kerja_efektif' => $modelData['hari_kerja_efektif'],
+            'nama_bank' =>  $modelData['nama_bank'],
+            'nomer_rekening' => $modelData['nomer_rekening'],
+            'pendapatan_lainnya' => $modelData['pendapatan_lainnya'],
+            'potongan_lainnya' => $modelData['potongan_lainnya'],
+            'gaji_diterima' => $modelData['gaji_bersih'],
+            'status_pekerjaan' => $modelData['status_pekerjaan']
         ];
+
+
 
         // Data rekap gaji
         $rekapGajiRows[] = [
@@ -931,6 +986,13 @@ class TransaksiGajiController extends Controller
                         'created_by',
                         'updated_by',
                         'status',
+                        'hari_kerja_efektif',
+                        'nama_bank',
+                        'nomer_rekening',
+                        'pendapatan_lainnya',
+                        'potongan_lainnya',
+                        'gaji_diterima',
+                        'status_pekerjaan',
                     ], $rows)
                     ->execute();
             }
@@ -1126,6 +1188,11 @@ class TransaksiGajiController extends Controller
         return $this->redirect(['index', 'TransaksiGaji' => ['id_karyawan' => '', 'bulan' => $bulan, 'tahun' => $tahun]]);
     }
 
+
+
+
+
+
     // * =============Slip Gaji & Email========================
     public function actionEmailGaji($id_transaksi_gaji, $id_karyawan)
     {
@@ -1297,6 +1364,8 @@ class TransaksiGajiController extends Controller
             ->asArray()
             ->one();
 
+
+
         if (!$transaksiData) {
             throw new \yii\web\NotFoundHttpException("Data slip gaji tidak ditemukan.");
         }
@@ -1331,35 +1400,74 @@ class TransaksiGajiController extends Controller
     public function actionReport($bulan = null, $tahun = null)
     {
         $model = new TransaksiGaji();
-        $bulan =  $bulan ?? date('m');
+        $bulan = $bulan ?? date('m');
         $tahun = $tahun ?? date('Y');
-        $searchModel = new TransaksiGajiSearch();
 
+        $searchModel = new TransaksiGajiSearch();
         $periode_gaji = new PeriodeGaji();
         $karyawanID = null;
         $periode_gajiID = PeriodeGajiHelper::getPeriodeGajiBulanIni();
 
-        // // Ambil semua dari search (data lengkap dengan gaji_bersih)
-        // $allDataFromSearch = $searchModel->search($this->request->queryParams, null)->getModels();
+        /**
+         * 1. Ambil semua data dari SEARCH
+         * (data lengkap + gaji_bersih)
+         */
+        $allDataFromSearch = $searchModel
+            ->search([], null, $bulan, $tahun, null, null, null)
+            ->getModels();
 
-        // // Indexing data search berdasarkan ID karyawan
-        // $searchIndexed = [];
-        // foreach ($allDataFromSearch as $item) {
-        //     $searchIndexed[$item['id_karyawan']] = $item;
-        // }
+        // Indexing berdasarkan id_karyawan
+        $searchIndexed = [];
+        foreach ($allDataFromSearch as $item) {
+            if (($item['visibility'] ?? 1) == 1) {
+                $searchIndexed[$item['id_karyawan']] = $item;
+            }
+        }
 
-        // Ambil data dari tabel transaksi_gaji
+        /**
+         * 2. Ambil data TRANSAKSI yang sudah exist
+         */
         $existsDataTransaksi = TransaksiGaji::find()
             ->where(['bulan' => $bulan, 'tahun' => $tahun])
             ->asArray()
             ->all();
 
-        // dd($existsDataTransaksi);
+        /**
+         * 3. Gabungkan (prioritas transaksi)
+         */
+        $finalData = [];
+
+        foreach ($existsDataTransaksi as $transaksi) {
+            $idKaryawan = $transaksi['id_karyawan'];
+
+            $dataSearch = $searchIndexed[$idKaryawan] ?? [];
+
+            $merged = array_merge($dataSearch, $transaksi);
+
+            // ⬇️ TAMBAHKAN INI
+            $merged['status_laporan'] = 'fix';
+
+            $finalData[] = $merged;
+
+            unset($searchIndexed[$idKaryawan]);
+        }
 
 
-        // Render partial view untuk content PDF
+
+        // sisa dari search (belum ada transaksi)
+        foreach ($searchIndexed as $sisa) {
+            // ⬇️ TAMBAHKAN INI
+            $sisa['status_laporan'] = 'draft';
+
+            $finalData[] = $sisa;
+        }
+
+
+        /**
+         * 4. Render PDF
+         */
         $content = $this->renderPartial('_report', [
-            'finalData' => $existsDataTransaksi,
+            'finalData' => $finalData,
             'searchModel' => $searchModel,
             'periode_gaji' => $periode_gaji,
             'bulan' => $bulan,
@@ -1370,37 +1478,23 @@ class TransaksiGajiController extends Controller
         ]);
 
         $pdf = new Pdf([
-            // set to use core fonts only
             'mode' => Pdf::MODE_CORE,
             'format' => Pdf::FORMAT_A4,
             'orientation' => Pdf::ORIENT_LANDSCAPE,
             'destination' => Pdf::DEST_BROWSER,
             'content' => $content,
             'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
-            // any css to be embedded if required
-            'cssInline' => '
-            .kv-heading-1{font-size:18px}
-            table {width: 100%; border-collapse: collapse; font-size: 10px;}
-            th, td {border: 1px solid #ddd; padding: 6px; text-align: left;}
-            th {background-color: #f2f2f2; font-weight: bold;}
-            .text-right {text-align: right;}
-            .text-center {text-align: center;}
-            .header {text-align: center; margin-bottom: 20px;}
-            .title {font-size: 16px; font-weight: bold;}
-            .subtitle {font-size: 14px;}
-        ',
-            // set mPDF properties on the fly
+            'cssInline' => '...',
             'options' => ['title' => 'Laporan Transaksi Gaji'],
-            // call mPDF methods on the fly
             'methods' => [
                 'SetHeader' => ['Laporan Transaksi Gaji'],
                 'SetFooter' => ['{PAGENO}'],
             ]
         ]);
 
-        // Return the pdf object as response
         return $pdf->render();
     }
+
 
 
 
@@ -1654,7 +1748,7 @@ class TransaksiGajiController extends Controller
 
             $nominalGaji = $gajiKaryawan->nominal_gaji;
             $potonganwfhsehari = MasterKode::findOne(['nama_group' => Yii::$app->params['potongan-persen-wfh']])['nama_kode'];
-            // dd($potonganwfhsehari);
+
             $totalPotonganAbsensi = ($gaji_perhari * $total_alfa_range) + ($gaji_perhari * $jumlah_wfh * ($potonganwfhsehari / 100));
 
 
@@ -1834,5 +1928,31 @@ class TransaksiGajiController extends Controller
                 'total_pendapatan_lembur' => 0
             ];
         }
+    }
+
+
+
+
+    public function actionGetPendapatanPotonganLainnya()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $data = PendapatanPotonganLainnya::find()
+            ->where([
+                'id_karyawan' => Yii::$app->request->get('id_karyawan'),
+                'bulan' => Yii::$app->request->get('bulan'),
+                'tahun' => Yii::$app->request->get('tahun'),
+                'is_pendapatan' => Yii::$app->request->get('is_pendapatan') ?? 0,
+                'is_potongan' => Yii::$app->request->get('is_potongan') ?? 0,
+
+            ])
+            ->orderBy(['created_at' => SORT_ASC])
+            ->asArray()
+            ->all();
+
+        return [
+            'success' => true,
+            'data' => $data
+        ];
     }
 }

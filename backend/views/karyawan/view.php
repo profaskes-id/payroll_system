@@ -412,6 +412,64 @@
                                         </div>
 
                                     </div>
+                                    <div class="col-12 row">
+
+                                        <div class="col-6">
+
+                                            <?= DetailView::widget([
+                                                'model' => $model,
+                                                'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                                                'attributes' => [
+                                                    [
+                                                        'format' => 'raw',
+                                                        'attribute' => 'Nama Bank',
+                                                        'value' => function ($model) {
+                                                            if ($model->nama_bank != null) {
+                                                                return '<p>' .  $model->nama_bank .  '<p>';
+                                                            }
+                                                            return '<p>Belum Di Set<p>';
+                                                        }
+                                                    ],
+
+                                                ],
+                                            ]) ?>
+
+                                        </div>
+                                        <div class="col-6">
+
+                                            <?= DetailView::widget([
+                                                'model' => $model,
+                                                'template' => '<tr><th>{label}</th><td>{value}</td></tr>',
+                                                'attributes' => [
+                                                    [
+                                                        'label' => 'Nomor Rekening',
+                                                        'format' => 'raw',
+                                                        'value' => function ($model) {
+                                                            if (!$model->nomer_rekening) {
+                                                                return '<p>Belum Di Set</p>';
+                                                            }
+
+                                                            return '
+                    <span 
+                        class="rekening-mask" 
+                        data-value="' . $model->nomer_rekening . '">
+                        ****** 
+                    </span>
+                    <a href="javascript:void(0)" 
+                       class="toggle-rekening" 
+                       style="margin-left:10px;">
+                        👁️
+                    </a>
+                ';
+                                                        },
+                                                    ],
+                                                ],
+                                            ]) ?>
+
+
+                                        </div>
+
+                                    </div>
                                 </div>
 
                                 <div style="display: flex !important; align-items: center; justify-content: space-between ;margin-block: 20px 10px" style="gap: 10px;">
@@ -749,3 +807,20 @@
 
 
     </div>
+
+    <?php
+    $this->registerJs("
+    $('.toggle-rekening').on('click', function () {
+        let span = $(this).siblings('.rekening-mask');
+        let realValue = span.data('value');
+
+        if (span.text().trim() === '******') {
+            span.text(realValue);
+            $(this).text('😎');
+        } else {
+            span.text('******');
+            $(this).text('👁️');
+        }
+    });
+");
+    ?>

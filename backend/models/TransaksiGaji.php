@@ -52,12 +52,13 @@ class TransaksiGaji extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['created_by', 'updated_by'], 'default', 'value' => null],
-            [['nama', 'id_bagian', 'nama_bagian', 'jabatan', 'bulan', 'tahun', 'tanggal_awal', 'tanggal_akhir', 'total_absensi', 'terlambat', 'total_alfa_range', 'nominal_gaji', 'gaji_perhari', 'tunjangan_karyawan', 'potongan_karyawan', 'potongan_terlambat', 'potongan_absensi', 'jam_lembur', 'total_pendapatan_lembur', 'dinas_luar_belum_terbayar'], 'required'],
-            [['id_karyawan', 'id_bagian', 'bulan', 'tahun', 'total_absensi', 'total_alfa_range', 'jam_lembur', 'created_by', 'updated_by', 'status'], 'integer'],
-            [['tanggal_awal', 'tanggal_akhir', 'terlambat', 'created_at', 'updated_at'], 'safe'],
-            [['nominal_gaji', 'gaji_perhari', 'tunjangan_karyawan', 'potongan_karyawan', 'potongan_terlambat', 'potongan_absensi', 'total_pendapatan_lembur', 'dinas_luar_belum_terbayar'], 'number'],
-            [['nama', 'nama_bagian', 'jabatan'], 'string', 'max' => 255],
+            [['id_bagian', 'nama_bagian', 'jabatan', 'bulan', 'tahun', 'tanggal_awal', 'tanggal_akhir', 'total_absensi', 'terlambat', 'total_alfa_range', 'nominal_gaji', 'gaji_perhari', 'tunjangan_karyawan', 'potongan_karyawan', 'potongan_kasbon', 'potongan_terlambat', 'potongan_absensi', 'jam_lembur', 'total_pendapatan_lembur', 'dinas_luar_belum_terbayar', 'created_by', 'updated_by', 'nama_bank', 'nomer_rekening', 'pendapatan_lainnya', 'potongan_lainnya'], 'default', 'value' => null],
+            [['hari_kerja_efektif', 'gaji_diterima', 'status_pekerjaan'], 'default', 'value' => 0],
+            // [['id_karyawan', 'nama'], 'required'],
+            [['id_karyawan', 'id_bagian', 'bulan', 'tahun', 'total_absensi', 'total_alfa_range', 'jam_lembur', 'created_by', 'updated_by', 'status', 'hari_kerja_efektif'], 'integer'],
+            [['tanggal_awal', 'tanggal_akhir', 'terlambat', 'created_at', 'updated_at', 'nama_bank', 'nomer_rekening'], 'safe'],
+            [['nominal_gaji', 'gaji_perhari', 'tunjangan_karyawan', 'potongan_karyawan', 'potongan_kasbon', 'potongan_terlambat', 'potongan_absensi', 'total_pendapatan_lembur', 'dinas_luar_belum_terbayar', 'pendapatan_lainnya', 'potongan_lainnya'], 'number'],
+            [['nama', 'nama_bagian', 'jabatan', 'nama_bank', 'nomer_rekening'], 'string', 'max' => 255],
         ];
     }
 
@@ -71,6 +72,7 @@ class TransaksiGaji extends \yii\db\ActiveRecord
             'id_karyawan' => 'Id Karyawan',
             'nama' => 'Nama',
             'id_bagian' => 'Id Bagian',
+            'status_pekerjaan' => 'Status Pekerjaan',
             'nama_bagian' => 'Nama Bagian',
             'jabatan' => 'Jabatan',
             'bulan' => 'Bulan',
@@ -94,6 +96,13 @@ class TransaksiGaji extends \yii\db\ActiveRecord
             'created_by' => 'Created By',
             'updated_by' => 'Updated By',
             'status' => 'status',
+            'hari_kerja_efektif' => 'Hari Kerja Efektif',
+            'nama_bank' => 'Nama Bank',
+            'nomer_rekening' => 'Nomer Rekening',
+            'pendapatan_lainnya' => 'Pendapatan Lainnya',
+            'potongan_lainnya' => 'Potongan Lainnya',
+            'gaji_diterima' => 'Gaji Diterima',
+
         ];
     }
 }
