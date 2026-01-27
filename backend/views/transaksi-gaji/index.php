@@ -446,16 +446,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
                             [
                                 'attribute' => 'kasbon_karyawan',
                                 'label' => 'Bayar Kasbon',
@@ -495,10 +485,9 @@
                                 'headerOptions' => ['class' => 'text-end align-middle'],
                                 'contentOptions' => ['class' => 'text-end align-middle'],
                                 'value' => function ($model) {
-                                    return $model['hari_kerja_efektif'] ?? 0;
+                                    return ($model['hari_kerja_efektif'] ?? 0) == 0 ? '-' : $model['hari_kerja_efektif'];
                                 }
                             ],
-
 
                             [
                                 'attribute' => 'total_absensi',
@@ -506,7 +495,7 @@
                                 'headerOptions' => ['class' => 'text-center align-middle'],
                                 'contentOptions' => ['class' => 'text-center align-middle'],
                                 'value' => function ($model) {
-                                    return $model['total_absensi'] ?? 0;
+                                    return ($model['total_absensi'] ?? 0) == 0 ? '-' : $model['total_absensi'];
                                 }
                             ],
 
@@ -516,9 +505,10 @@
                                 'headerOptions' => ['class' => 'text-center align-middle'],
                                 'contentOptions' => ['class' => 'text-center align-middle'],
                                 'value' => function ($model) {
-                                    return $model['total_alfa_range'] ?? 0;
+                                    return ($model['total_alfa_range'] ?? 0) == 0 ? '-' : $model['total_alfa_range'];
                                 }
                             ],
+
 
                             [
                                 'attribute' => 'potongan_absensi',

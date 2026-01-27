@@ -202,7 +202,13 @@ class TransaksiGajiSearch extends TransaksiGaji
             }
 
 
+            $dataPekerjaan = DataPekerjaan::find()->where(['id_karyawan' => $karyawan['id_karyawan'], 'is_aktif' => '1'])->one();
+
+            if (isset($dataPekerjaan->statusPekerjaan) &&  $dataPekerjaan->statusPekerjaan->nama_kode == Yii::$app->params['Part-Time']) {
+                $totalAbsensi = [];
+            }
             $karyawan['total_absensi'] = count($totalAbsensi);
+
             $karyawan['terlambat'] = $terlambatList;
             $karyawan['terlambat_with_date'] = $terlambatWithDate;
         }
@@ -355,6 +361,13 @@ class TransaksiGajiSearch extends TransaksiGaji
 
     public function getHariKerjaEfektif($id_karyawan, $periode_gaji)
     {
+
+        $dataPekerjaan = DataPekerjaan::find()->where(['id_karyawan' => $id_karyawan, 'is_aktif' => '1'])->one();
+
+        if (isset($dataPekerjaan->statusPekerjaan) &&  $dataPekerjaan->statusPekerjaan->nama_kode == Yii::$app->params['Part-Time']) {
+            return 0;
+        }
+
         $tanggalAwal = new \DateTime($periode_gaji['tanggal_awal']);
         $tanggalAkhir = new \DateTime($periode_gaji['tanggal_akhir']);
         $interval = $tanggalAwal->diff($tanggalAkhir);
@@ -657,8 +670,8 @@ class TransaksiGajiSearch extends TransaksiGaji
 
     protected function getTotalAlfaRange($id_karyawan, $periode_gaji, $absen = 0)
     {
+        $dataPekerjaan = DataPekerjaan::find()->where(['id_karyawan' => $id_karyawan, 'is_aktif' => '1'])->one();
 
-        $dataPekerjaan = DataPekerjaan::find()->where(['id_karyawan' => $id_karyawan])->one();
         if (isset($dataPekerjaan->statusPekerjaan) &&  $dataPekerjaan->statusPekerjaan->nama_kode == Yii::$app->params['Part-Time']) {
             return 0;
         }
@@ -714,12 +727,11 @@ class TransaksiGajiSearch extends TransaksiGaji
     }
 
     protected function getPotonganAbsensi($id_karyawan, $gajiPerhari = 0, $total_alfa = 0, $periode_gaji = null)
-
     {
 
 
 
-        $dataPekerjaan = DataPekerjaan::find()->where(['id_karyawan' => $id_karyawan])->one();
+        $dataPekerjaan = DataPekerjaan::find()->where(['id_karyawan' => $id_karyawan, 'is_aktif' => '1'])->one();
         if (isset($dataPekerjaan->statusPekerjaan) &&  $dataPekerjaan->statusPekerjaan->nama_kode == Yii::$app->params['Part-Time']) {
             return [
                 'jumlah_wfh' => 0,

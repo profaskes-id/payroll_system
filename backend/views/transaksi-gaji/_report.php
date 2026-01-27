@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\MasterKode;
 use yii\helpers\Html;
 
 $namaBulan = [
@@ -23,13 +24,76 @@ $bulanFormatted = str_pad($bulan, 2, '0', STR_PAD_LEFT);
 // Ambil nama bulan dari array
 $bulanNama = $namaBulan[$bulanFormatted] ?? $bulan;
 
+
 // Format akhir
 $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bulan Ini";
+
+$tanggalAwal = MasterKode::find()
+    ->where(['nama_group' => 'tanggal-cut-of'])
+    ->one();
+
+$tanggalCutOff = (int) $tanggalAwal->nama_kode; // contoh: 20 atau 3
+
+$bulan = (int) Yii::$app->request->get('bulan');
+$tahun = (int) Yii::$app->request->get('tahun');
+
+/**
+ * Tanggal awal  = cut-off bulan sebelumnya
+ * Tanggal akhir = cut-off + 1 bulan sekarang
+ */
+
+// bulan sebelumnya
+$bulanSebelumnya = $bulan - 1;
+$tahunAwal = $tahun;
+
+if ($bulanSebelumnya == 0) {
+    $bulanSebelumnya = 12;
+    $tahunAwal--;
+}
+
+// tanggal_awal
+$tanggal_awal = date(
+    'Y-m-d',
+    strtotime(sprintf('%04d-%02d-%02d', $tahunAwal, $bulanSebelumnya, $tanggalCutOff))
+);
+
+// tanggal_akhir = cut-off + 1 hari di bulan sekarang
+$tanggal_akhir = date(
+    'Y-m-d',
+    strtotime(sprintf('%04d-%02d-%02d -1 day', $tahun, $bulan, $tanggalCutOff))
+);
+
+
+
+function tanggalIndo($tanggal)
+{
+    $bulan = [
+        1 => 'Januari',
+        'Februari',
+        'Maret',
+        'April',
+        'Mei',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'Desember'
+    ];
+
+    $explode = explode('-', $tanggal);
+
+    return intval($explode[2]) . ' ' . $bulan[intval($explode[1])] . ' ' . $explode[0];
+}
+
+
+
 ?>
 
 <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px;">
     <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">LAPORAN TRANSAKSI GAJI KARYAWAN</div>
-    <div style="font-size: 14px; margin-bottom: 5px;"><?= $periodeText ?></div>
+    <div style="font-size: 14px; margin-bottom: 5px;"><?= $periodeText ?> ( <?= tanggalIndo($tanggal_awal) ?> - <?= tanggalIndo($tanggal_akhir) ?> )</div>
     <div>Tanggal Cetak: <?= date('d/m/Y H:i:s') ?></div>
 </div>
 
@@ -40,20 +104,20 @@ $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bula
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center; width: 30px;">Status Laporan</th>
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Nama Karyawan</th>
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Bagian & Jabatan</th>
-            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Gaji Pokok</th>
-            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Tunjangan</th>
-            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Potongan</th>
-            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Pendapatan Lain</th>
-            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Potongan lain</th>
-            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Kasbon</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Gaji Pokok (Rp) </th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Tunjangan (Rp)</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Potongan (Rp)</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Pendapatan Lain (Rp)</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Potongan lain (Rp)</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Kasbon (Rp)</th>
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Hari Kerja Efektif</th>
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Total Hadir</th>
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Total Tidak Hadir</th>
-            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Potongan Absensi</th>
-            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Potongan Terlambat</th>
-            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Total Lembur</th>
-            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Dinas Luar Belum Terbayar</th>
-            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Gaji Diterima</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Potongan Absensi (Rp)</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Potongan Terlambat (Rp)</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Total Lembur (Rp)</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Dinas Luar Belum Terbayar (Rp)</th>
+            <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;">Gaji Diterima (Rp)</th>
             <th style="background-color: #343a40; color: white; font-weight: bold; padding: 8px 4px; border: 1px solid #444; text-align: center;"> Bank</th>
         </tr>
     </thead>
@@ -131,7 +195,7 @@ $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bula
                 </td>
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($gajiPokok, 0, ',', '.') ?></td>
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($tunjangan, 0, ',', '.') ?></td>
-                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($totalPotonganKaryawan, 0, ',', '.') ?></td>
+                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($potonganKaryawan, 0, ',', '.') ?></td>
 
 
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($pendapatan_lainnya, 0, ',', '.') ?></td>
@@ -139,9 +203,18 @@ $periodeText = $periode_gaji ? "Periode: {$bulanNama} {$tahun}" : "Periode: Bula
 
 
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($kasbonKaryawan, 0, ',', '.') ?></td>
-                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: center;"><?= $hari_kerja_efektif ?> hari</td>
-                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: center;"><?= $totalHadir ?> hari</td>
-                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: center;"><?= $totalTidakHadir ?> hari</td>
+                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: center;">
+                    <?= ($hari_kerja_efektif ?? 0) == 0 ? '-' : $hari_kerja_efektif . ' hari' ?>
+                </td>
+
+                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: center;">
+                    <?= ($totalHadir ?? 0) == 0 ? '-' : $totalHadir . ' hari' ?>
+                </td>
+
+                <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: center;">
+                    <?= ($totalTidakHadir ?? 0) == 0 ? '-' : $totalTidakHadir . ' hari' ?>
+                </td>
+
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($potonganAbsensi, 0, ',', '.') ?></td>
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($potonganTerlambat, 0, ',', '.') ?></td>
                 <td style="padding: 6px 4px; border: 1px solid #ddd; text-align: right;"><?= number_format($lembur, 0, ',', '.') ?></td>
