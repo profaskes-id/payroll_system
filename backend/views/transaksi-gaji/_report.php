@@ -147,7 +147,9 @@ function tanggalIndo($tanggal)
             $gajiPokok = floatval($data['nominal_gaji'] ?? 0);
             $tunjangan = floatval($data['tunjangan_karyawan'] ?? 0);
             $potonganKaryawan = floatval($data['potongan_karyawan'] ?? 0);
-            $kasbonKaryawan = floatval($data['potongan_kasbon'] ?? 0); // Perbaikan: kasbon_karyawan -> potongan_kasbon
+
+            $kasbonKaryawan = floatval($data['kasbon_karyawan'] ?? 0); // Perbaikan: kasbon_karyawan -> potongan_kasbon
+
             $potonganAbsensi = floatval($data['potongan_absensi'] ?? 0);
             $potonganTerlambat = floatval($data['potongan_terlambat'] ?? 0);
             $totalPotonganKaryawan = $potonganKaryawan + $potonganAbsensi + $potonganTerlambat;

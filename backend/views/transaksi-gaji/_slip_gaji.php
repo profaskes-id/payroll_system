@@ -112,7 +112,7 @@
     <!-- Gaji Bersih -->
     <div style="padding:6px 10px;background:#f3f6f8;text-align:right;">
         <?php $gajiBersih = $totalPendapatan - $totalPotongan; ?>
-        <div style="font-size:11px;color:#333;">Gaji Diterma:</div>
+        <div style="font-size:11px;color:#333;">Gaji Diterima:</div>
         <div style="font-size:16px;font-weight:bold;color:#2d5a7b;">Rp <?= number_format($transaksiData['gaji_diterima'], 0, ',', '.'); ?></div>
         <!-- <div style="font-size:10px;color:#888;">Dibayar: <?= date('d/m/Y'); ?></div> -->
     </div>
