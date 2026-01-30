@@ -73,7 +73,14 @@ $tanggalFormater = new Tanggal();
                     }
                 ],
 
-                'nama',
+                [
+
+                    'label' => 'Nama',
+                    'attribute' => 'nama',
+                    'value' => function ($model) {
+                        return $model['nama'];
+                    }
+                ],
                 [
                     'headerOptions' => ['style' => 'width: 10%; text-align: center;'],
                     'contentOptions' => ['style' => 'width: 10%; text-align: center;'],

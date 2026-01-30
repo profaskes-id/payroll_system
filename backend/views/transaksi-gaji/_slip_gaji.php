@@ -1,4 +1,18 @@
-<?php // Slip Gaji Ringkas A5 
+<?php // 
+
+use backend\models\PembayaranKasbon;
+
+$dataSisaKasbon = PembayaranKasbon::find()
+    ->where([
+        'id_karyawan' => $transaksiData['id_karyawan'],
+        'status_potongan' => 0,
+        'bulan' => $transaksiData['bulan'],
+        'tahun' => $transaksiData['tahun'],
+    ])
+    ->orderBy(['created_at' => SORT_DESC])
+    ->one();
+
+
 ?>
 
 <div style="font-family:'Segoe UI',Tahoma,sans-serif;max-width:600px;margin:0 auto;border:1px solid #ccc;font-size:11px;line-height:1.4;">
@@ -86,16 +100,26 @@
             </div>
 
 
-            <?php if ($transaksiData["potongan_kasbon"]): ?>
-                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:1px 0;">
-                    <span>Kasbon</span>
-                    <span>Rp <?= number_format($transaksiData["potongan_kasbon"], 0, ',', '.'); ?></span>
+            <?php if ($transaksiData["potongan_kasbon"] && $transaksiData["potongan_kasbon"] > 0):
+            ?>
+                <div style=" display:flex;justify-content:space-between; width:100%; border-bottom:1px solid #eee;padding:1px 0;">
+                    <div>
+
+                        <span>Kasbon</span>
+                        <span>Rp <?= number_format($transaksiData["potongan_kasbon"], 0, ',', '.'); ?> <small>( Sisa Kasbon Rp <?= number_format($dataSisaKasbon['sisa_kasbon'] ?? 0, 0, ',', '.'); ?>)</small></span>
+                    </div>
+                    <div>
+
+
+                    </div>
+
                 </div>
-            <?php endif; ?>
+
+            <?php endif;
+            ?>
 
             <?php
 
-            // dd($transaksiData);
             $totalPotongan = $transaksiData["potongan_karyawan"]
                 + $transaksiData["potongan_terlambat"]
                 + $transaksiData["potongan_absensi"]
@@ -106,6 +130,7 @@
                 <span>Total Potongan</span>
                 <span>Rp <?= number_format($totalPotongan, 0, ',', '.'); ?></span>
             </div>
+
         </div>
     </div>
 
@@ -114,6 +139,5 @@
         <?php $gajiBersih = $totalPendapatan - $totalPotongan; ?>
         <div style="font-size:11px;color:#333;">Gaji Diterima:</div>
         <div style="font-size:16px;font-weight:bold;color:#2d5a7b;">Rp <?= number_format($transaksiData['gaji_diterima'], 0, ',', '.'); ?></div>
-        <!-- <div style="font-size:10px;color:#888;">Dibayar: <?= date('d/m/Y'); ?></div> -->
     </div>
 </div>

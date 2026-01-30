@@ -142,8 +142,10 @@ class TransaksiGajiController extends Controller
                 'pageSize' => 20,
             ],
             'sort' => [
+                'defaultOrder' => [
+                    'nama' => SORT_ASC,
+                ],
                 'attributes' => [
-
                     'id_karyawan',
                     'nama',
                     'jabatan',
@@ -198,6 +200,71 @@ class TransaksiGajiController extends Controller
     }
 
 
+
+    public function actionView($id_karyawan)
+    {
+        $params = Yii::$app->request->get();
+        $bulan = $params['bulan'] ?? date('m');
+        $tahun = $params['tahun'] ?? date('Y');
+
+
+        // 2. Ambil data karyawan
+        $searchModel = new TransaksiGajiSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams, $id_karyawan, $bulan, $tahun);
+        $models = $dataProvider->getModels();
+
+        if (empty($models)) {
+            Yii::$app->session->setFlash('warning', "Tidak ada data perhitungan gaji untuk karyawan ID {$id_karyawan}.");
+            return $this->redirect(['index', 'TransaksiGaji' => ['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun]]);
+        }
+
+
+        $data = reset($models);
+        $model = new PendapatanPotonganLainnya();
+        $dataPendapatanKarywan = PendapatanPotonganLainnya::find()->where(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun, 'is_pendapatan' => 1])->all();
+        $dataPotonganKarywan = PendapatanPotonganLainnya::find()->where(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun, 'is_potongan' => 1])->all();
+
+        $dataPendapatanProvider = new ArrayDataProvider([
+            'allModels' => $dataPendapatanKarywan,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'sort' => [
+                'attributes' => [
+                    'keterangan',
+                    'jumlah',
+                    'bulan',
+                    'tahun',
+                    'created_at',
+                ],
+            ],
+        ]);
+        $dataPotonganProvider = new ArrayDataProvider([
+            'allModels' => $dataPotonganKarywan,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'sort' => [
+                'attributes' => [
+                    'keterangan',
+                    'jumlah',
+                    'bulan',
+                    'tahun',
+                    'created_at',
+                ],
+            ],
+        ]);
+
+        return $this->render('view', [
+            'data' => $data,
+            'model' => $model,
+            'dataPendapatanProvider' => $dataPendapatanProvider,
+            'dataPotonganProvider' => $dataPotonganProvider
+        ]);
+    }
+
+
+
     // ? ==================Generate==================
     public function actionGenerateGaji()
     {
@@ -226,7 +293,11 @@ class TransaksiGajiController extends Controller
                 $nominalGaji = $modelData['nominal_gaji'];
                 $tunjanganList = TunjanganDetail::getTunjanganKaryawan($idKaryawan, $nominalGaji);
                 $potonganList = PotonganDetail::getPotonganKaryawan($idKaryawan, $nominalGaji);
-                $kasbonList = $searchModel->getKasbonKaryawan($idKaryawan);
+                $periode_gaji = [
+                    'bulan' => $bulan,
+                    'tahun' => $tahun,
+                ];
+                $kasbonList = $searchModel->getKasbonKaryawan($idKaryawan, $periode_gaji);
 
 
                 $periode_gaji = PeriodeGaji::findOne(['bulan' => $bulan, 'tahun' => $tahun]);
@@ -335,6 +406,7 @@ class TransaksiGajiController extends Controller
                     'nominal_gaji' => $modelData['nominal_gaji'],
                     'potongan_karyawan' => $modelData['potongan_karyawan'],
                     'potongan_kasbon' => $pendingKasbon ? 0 : $modelData['kasbon_karyawan'],
+                    'sisa_kasbon' => $pendingKasbon ? 0 : $modelData['sisa_kasbon'],
                     'tunjangan_karyawan' => $modelData['tunjangan_karyawan'],
                     'gaji_perhari' => $modelData['gaji_perhari'],
                     'jam_lembur' => $total_hitungan_jam,
@@ -423,11 +495,9 @@ class TransaksiGajiController extends Controller
                         'jumlah_kasbon' => $kasbonList['data_terakhir']['jumlah_kasbon'] ?? 0,
                         'jumlah_potong' => $angsuran,
                         'tanggal_potong' => date('Y-m-d'),
-                        'angsuran' => $angsuran,
                         'status_potongan' => $kasbonList['data_terakhir']['status_potongan'] ?? 0,
                         'sisa_kasbon' => $sisaKasbonBaru,
                         'created_at' => time(),
-                        'autodebt' => 1,
                         'deskripsi' => 'Pembayaran Kasbon',
                     ];
 
@@ -481,6 +551,7 @@ class TransaksiGajiController extends Controller
                         'nominal_gaji',
                         'potongan_karyawan',
                         'potongan_kasbon',
+                        'sisa_kasbon',
                         'tunjangan_karyawan',
                         'gaji_perhari',
                         'jam_lembur',
@@ -594,11 +665,9 @@ class TransaksiGajiController extends Controller
                         $row['tahun'],
                         $row['jumlah_potong'],
                         $row['tanggal_potong'],
-                        $row['angsuran'],
                         $row['status_potongan'],
                         $row['sisa_kasbon'],
                         $row['created_at'],
-                        $row['autodebt'],
                         $row['deskripsi'],
                         $row['jumlah_kasbon'],
                     ];
@@ -614,11 +683,9 @@ class TransaksiGajiController extends Controller
                             'tahun',
                             'jumlah_potong',
                             'tanggal_potong',
-                            'angsuran',
                             'status_potongan',
                             'sisa_kasbon',
                             'created_at',
-                            'autodebt',
                             'deskripsi',
                             'jumlah_kasbon',
                         ], $rowsToInsert)
@@ -709,6 +776,20 @@ class TransaksiGajiController extends Controller
 
         return $this->redirect(['index', 'TransaksiGaji' => ['id_karyawan' => '', 'bulan' => $bulan, 'tahun' => $tahun]]);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function actionGenerateGajiOne($id_karyawan)
     {
         $params = Yii::$app->request->get();
@@ -729,7 +810,7 @@ class TransaksiGajiController extends Controller
         }
 
 
-        $modelData = reset($models);;
+        $modelData = reset($models);
         $now = date('Y-m-d H:i:s');
         $userId = Yii::$app->user->id;
 
@@ -748,7 +829,8 @@ class TransaksiGajiController extends Controller
         $nominalGaji = $modelData['nominal_gaji'];
         $tunjanganList = TunjanganDetail::getTunjanganKaryawan($id_karyawan, $nominalGaji);
         $potonganList = PotonganDetail::getPotonganKaryawan($id_karyawan, $nominalGaji);
-        $kasbonList = $searchModel->getKasbonKaryawan($id_karyawan);
+        $periode_gaji = ['bulan' => $bulan, 'tahun' => $tahun];
+        $kasbonList = $searchModel->getKasbonKaryawan($id_karyawan, $periode_gaji);
 
         $periode_gaji = PeriodeGaji::findOne(['bulan' => $bulan, 'tahun' => $tahun]);
         $tanggal_awal_periode = $periode_gaji->tanggal_awal;
@@ -792,8 +874,8 @@ class TransaksiGajiController extends Controller
             $modelData['jumlah_wfh'] ?? 0
         );
 
-        // 4. Siapkan data untuk batch insert
-        // Data transaksi_gaji
+
+
         $rows[] = [
             'id_karyawan' => $modelData['id_karyawan'],
             'nama' => $modelData['nama'],
@@ -809,6 +891,7 @@ class TransaksiGajiController extends Controller
             'nominal_gaji' => $modelData['nominal_gaji'],
             'potongan_karyawan' => $modelData['potongan_karyawan'],
             'potongan_kasbon' => $pendingKasbon ? 0 : ($kasbonList['data_terakhir']['angsuran'] ?? 0),
+            'sisa_kasbon' => $pendingKasbon ? 0 : ($kasbonList['data_terakhir']['sisa_kasbon'] ?? 0),
             'tunjangan_karyawan' => $modelData['tunjangan_karyawan'],
             'gaji_perhari' => $modelData['gaji_perhari'],
             'jam_lembur' => $total_hitungan_jam,
@@ -917,11 +1000,9 @@ class TransaksiGajiController extends Controller
                 'jumlah_kasbon' => $kasbonList['data_terakhir']['jumlah_kasbon'] ?? 0,
                 'jumlah_potong' => $angsuran,
                 'tanggal_potong' => date('Y-m-d'),
-                'angsuran' => $angsuran,
                 'status_potongan' => $kasbonList['data_terakhir']['status_potongan'] ?? 0,
                 'sisa_kasbon' => $sisaKasbonBaru,
                 'created_at' => time(),
-                'autodebt' => 1,
                 'deskripsi' => 'Pembayaran Kasbon',
             ];
         }
@@ -973,6 +1054,7 @@ class TransaksiGajiController extends Controller
                         'nominal_gaji',
                         'potongan_karyawan',
                         'potongan_kasbon',
+                        'sisa_kasbon',
                         'tunjangan_karyawan',
                         'gaji_perhari',
                         'jam_lembur',
@@ -1097,9 +1179,6 @@ class TransaksiGajiController extends Controller
             // Simpan kasbon
             if (!empty($kasbonRekapRows)) {
                 Yii::$app->db->createCommand()
-                    ->delete('{{%pembayaran_kasbon}}', ['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun])
-                    ->execute();
-                Yii::$app->db->createCommand()
                     ->batchInsert('{{%pembayaran_kasbon}}', [
                         'id_karyawan',
                         'id_kasbon',
@@ -1108,11 +1187,10 @@ class TransaksiGajiController extends Controller
                         'jumlah_kasbon',
                         'jumlah_potong',
                         'tanggal_potong',
-                        'angsuran',
                         'status_potongan',
                         'sisa_kasbon',
                         'created_at',
-                        'autodebt',
+
                         'deskripsi',
                     ], $kasbonRekapRows)
                     ->execute();
@@ -1162,7 +1240,7 @@ class TransaksiGajiController extends Controller
             }
 
             $transaction->commit();
-            Yii::$app->session->setFlash('success', "Gaji untuk karyawan ID {$id_karyawan} berhasil digenerate.");
+            Yii::$app->session->setFlash('success', "Gaji untuk karyawan  berhasil digenerate.");
         } catch (\Exception $e) {
             $transaction->rollBack();
             Yii::error("Gagal generate gaji untuk karyawan ID {$id_karyawan}: " . $e->getMessage(), 'gaji');
@@ -1171,6 +1249,20 @@ class TransaksiGajiController extends Controller
 
         return $this->redirect(['index', 'TransaksiGaji' => ['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun]]);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // ~ ========Delete=================
     public function actionDeleteAllData()
@@ -1547,7 +1639,7 @@ class TransaksiGajiController extends Controller
             $table::deleteAll(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun]);
         }
         PembayaranKasbon::deleteAll(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun, 'deskripsi' => 'Pembayaran Kasbon']);
-        PendingKasbon::deleteAll(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun]);
+        // PendingKasbon::deleteAll(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun]);
     }
     // delete All
     public function removeAll($bulan, $tahun)
@@ -1559,7 +1651,7 @@ class TransaksiGajiController extends Controller
         DinasDetailGaji::deleteAll(['bulan' => $bulan, 'tahun' => $tahun]);
         RekapGajiKaryawanPertransaksi::deleteAll(['bulan' => $bulan, 'tahun' => $tahun]);
         PotonganAlfaAndWfhPenggajian::deleteAll(['bulan' => $bulan, 'tahun' => $tahun]);
-        PembayaranKasbon::deleteAll(['bulan' => $bulan, 'tahun' => $tahun, 'deskripsi' => 'Pembayaran Kasbon']);
+        // PembayaranKasbon::deleteAll(['bulan' => $bulan, 'tahun' => $tahun, 'deskripsi' => 'Pembayaran Kasbon']);
         return;
     }
     public function actionGetTunjanganKaryawan($id_karyawan)
@@ -1854,7 +1946,7 @@ class TransaksiGajiController extends Controller
 
         $data = PembayaranKasbon::find()
             ->where(['id_karyawan' => $id_karyawan])
-            ->andWhere(['status_potongan' => 0, 'autodebt' => 1])
+            ->andWhere(['status_potongan' => 0,])
             ->asArray()
             ->orderBy(['id_pembayaran_kasbon' => SORT_DESC])
             ->one();
@@ -1866,11 +1958,15 @@ class TransaksiGajiController extends Controller
     }
     private function getLemburData($id_karyawan, $bulan, $tahun, $tanggal_awal, $tanggal_akhir)
     {
+
+
         try {
             $jenisPengambilanLembur = SettinganUmum::find()
                 ->where(['kode_setting' => Yii::$app->params['ajukan_lembur']])
                 ->one();
 
+
+            $jam_lembur = [];
             if ($jenisPengambilanLembur && $jenisPengambilanLembur->nilai_setting == '0') {
                 // Lembur tidak diajukan, ambil dari rekap langsung
                 $jam_lembur = (new \yii\db\Query())
@@ -1894,7 +1990,12 @@ class TransaksiGajiController extends Controller
             $total_hitungan_jam = 0;
 
             foreach ($jam_lembur as $lembur) {
-                $hitungan_jam = floatval($lembur['hitungan_jam'] ?? 0);
+
+                if ($jenisPengambilanLembur && $jenisPengambilanLembur->nilai_setting == '0') {
+                    $hitungan_jam = floatval($lembur['jam_total'] ?? 0);
+                } else {
+                    $hitungan_jam = floatval($lembur['hitungan_jam'] ?? 0);
+                }
 
                 // Format durasi dari hitungan_jam
                 $jam = floor($hitungan_jam);

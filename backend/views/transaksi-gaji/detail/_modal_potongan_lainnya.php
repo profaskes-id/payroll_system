@@ -30,20 +30,12 @@ use yii\helpers\Url;
 
                 <!-- Content -->
                 <div id="contentPotonganLainya">
-                    <div class="mb-3 d-flex justify-content-end">
-                        <a href="#" id="btnAddPotongan" class="btn btn-sm btn-danger">
-                            <i class="fas fa-plus me-1"></i> Tambah Potongan Lainnya
-                        </a>
-                    </div>
 
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped">
                             <thead class="table-danger">
                                 <tr>
                                     <th width="5%">#</th>
-                                    <th width="5%" class="text-center">
-                                        <img src="<?= Yii::getAlias('@root') ?>/images/icons/grid.svg" alt="grid">
-                                    </th>
 
                                     <th width="30%">Keterangan</th>
                                     <th width="30%" class="text-end">Nominal</th>
@@ -138,11 +130,7 @@ use yii\helpers\Url;
                     $('#tabelPotonganLainnyaBody').append(`
         <tr>
             <td>${i + 1}</td>
-            <td class="text-center">
-                <button class="btn btn-sm btn-danger btn-delete-potongan-lainnya" data-id="${item.id_ppl}">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </td>
+
             <td>${item.keterangan ?? '-'}</td>
             <td class="text-end fw-semibold">Rp ${jumlah.toLocaleString('id-ID')}</td>
 
@@ -161,27 +149,4 @@ use yii\helpers\Url;
         });
 
     }
-
-    $(document).on('click', '.btn-delete-potongan-lainnya', function() {
-        const idPpl = $(this).data('id');
-
-        if (!confirm('Yakin ingin menghapus potongan ini?')) return;
-
-        $.ajax({
-            url: `/panel/pendapatan-potongan-lainnya/delete?id_ppl=${idPpl}`,
-            type: 'POST',
-            dataType: 'json',
-            success: function(res) {
-                if (res.success) {
-                    alert(res.message);
-                    window.location.href = '/panel/transaksi-gaji/index';
-                } else {
-                    alert('Gagal menghapus data');
-                }
-            },
-            error: function() {
-                alert('Gagal menghapus data');
-            }
-        });
-    });
 </script>

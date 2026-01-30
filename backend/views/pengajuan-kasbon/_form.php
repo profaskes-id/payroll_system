@@ -122,36 +122,7 @@ if (!empty($model->tanggal_mulai_potong)) {
                 ]) ?>
             </div>
 
-            <!-- Tipe Potongan -->
-            <div class="col-12">
-                <?= $form->field($model, 'tipe_potongan')->radioList(
-                    [
-                        0 => 'Off',
-                        1 => 'On',
-                    ],
-                    [
-                        'item' => function ($index, $label, $name, $checked, $value) {
-                            $descriptions = [
-                                0 => 'Harus diinputkan secara manual saat penggajian.',
-                                1 => 'Akan dipotong otomatis saat penggajian.',
-                            ];
-                            return '
-                        <div class="mb-2 form-check">
-                        ' . Html::radio($name, $checked, [
-                                'value' => $value,
-                                'id' => 'tipe_potongan_' . $value,
-                                'class' => 'form-check-input',
-                            ]) . '
-                            <label class="form-check-label" for="tipe_potongan_' . $value . '">
-                            <strong>' . Html::encode($label) . '</strong><br>
-                            <small class="text-muted">' . Html::encode($descriptions[$value]) . '</small>
-                            </label>
-                            </div>';
-                        },
-                        'class' => 'd-flex flex-column gap-1',
-                    ]
-                ) ?>
-            </div>
+
         <?php endif ?>
 
         <!-- Tombol -->

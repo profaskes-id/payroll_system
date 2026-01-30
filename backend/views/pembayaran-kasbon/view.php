@@ -3,7 +3,8 @@
 use backend\models\helpers\KaryawanHelper;
 use yii\grid\GridView;
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use yii\bootstrap5\Modal;
+use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var backend\models\PembayaranKasbon $model */
@@ -11,12 +12,17 @@ use yii\widgets\DetailView;
 $nama = KaryawanHelper::getKaryawanById($model->id_karyawan)[0]['nama'];
 
 
-$this->title = 'Pembayaran Kasbon  ';
+$this->title = 'Pembayaran Kasbon Manual  ';
 $this->params['breadcrumbs'][] = ['label' => 'Pembayaran Kasbon', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $nama;
 \yii\web\YiiAsset::register($this);
 ?>
+<script src="https://cdn.jsdelivr.net/npm/terbilang-js@1.0.1/terbilang.min.js"></script>
+
 <div class="pembayaran-kasbon-view">
+
+
+
 
     <div class="costume-container">
         <p class="">
@@ -25,6 +31,21 @@ $this->params['breadcrumbs'][] = $nama;
     </div>
 
     <div class="table-container table-responsive">
+
+
+        <p style="
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 12px 16px;
+    border: 1px solid #ffeeba;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+">
+            <strong>Perhatian:</strong> Pembayaran kasbon manual <strong>tidak memotong gaji karyawan</strong> dan
+            <strong>tidak tercantum dalam slip gaji</strong>. Pembayaran dilakukan
+            <strong>langsung oleh karyawan</strong> dan <strong>akan mengurangi sisa kasbon</strong>.
+        </p>
 
         <p class="d-flex justify-content-start " style="gap: 10px;">
             <?= Html::a('Bayar', ['create-new-payment', 'id_pembayaran_kasbon' => $model->id_pembayaran_kasbon], ['class' => 'add-button']) ?>
@@ -56,11 +77,33 @@ $this->params['breadcrumbs'][] = $nama;
 
         <!-- Tampilkan di tag <p> -->
 
-        <div class="mt-5 row">
 
-            <p class="col-12 col-md-4"><strong>Jumlah Kasbon:</strong> <?= rupiah($model['jumlah_kasbon']) ?></p>
-            <p class="col-12 col-md-4"><strong>Status Potongan:</strong> <?= $statusText ?></p>
-            <p class="col-12 col-md-4"><strong>Sisa Kasbon:</strong> <?= rupiah($model['sisa_kasbon']) ?></p>
+
+        <div class="mt-5 row">
+            <div class="col-12 col-md-6">
+
+                <p><strong>Jumlah Kasbon:</strong> <?= rupiah($model['jumlah_kasbon']) ?></p>
+                <p class="gap-2 d-flex align-items-center">
+                    <strong class="me-2">Angsuran Kasbon Setiap Bulan:</strong>
+                    <?= rupiah($model->kasbon->angsuran_perbulan ?? 0) ?>
+
+                    <button
+                        type="button"
+                        class="p-0 btn btn-sm btn-link ms-2"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalEditAngsuran"
+                        title="Edit Angsuran">
+                        <!-- SVG pencil icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#0d6efd" viewBox="0 0 16 16">
+                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706l-1.439 1.439-2.122-2.122 1.439-1.439a.5.5 0 0 1 .707 0l1.415 1.415z" />
+                            <path d="M14.061 4.085 11.94 1.964 4.5 9.404V11.5h2.096l7.465-7.415z" />
+                            <path fill-rule="evenodd" d="M1 13.5A.5.5 0 0 1 1.5 13H11a.5.5 0 0 1 0 1H1.5a.5.5 0 0 1-.5-.5z" />
+                        </svg>
+                    </button>
+                </p>
+            </div>
+            <p class="col-12 col-md-3"><strong>Sisa Kasbon:</strong> <?= rupiah($model['sisa_kasbon']) ?> </p>
+            <p class="col-12 col-md-3"><strong>Status Potongan:</strong> <?= $statusText ?></p>
         </div>
 
         <?= GridView::widget([
@@ -120,11 +163,64 @@ $this->params['breadcrumbs'][] = $nama;
                     }
                 ],
 
-
-
-
             ],
             'tableOptions' => ['class' => 'table table-striped table-bordered'],
         ]); ?>
 
     </div>
+
+
+
+
+    <?php
+    Modal::begin([
+        'id' => 'modalEditAngsuran',
+        'title' => 'Edit Angsuran Kasbon',
+        'size' => Modal::SIZE_DEFAULT,
+    ]);
+    ?>
+
+    <?php $form = ActiveForm::begin([
+        'action' => ['pembayaran-kasbon/update-angsuran', 'id_pengajuan_kasbon' => $model->kasbon->id_pengajuan_kasbon],
+        'method' => 'post',
+    ]); ?>
+
+    <?= $form->field($model->kasbon, 'angsuran_perbulan')->textInput([
+        'type' => 'number',
+        'min' => 0,
+        'placeholder' => 'Masukkan angsuran per bulan',
+        'class' => 'form-control number-input',
+    ]) ?>
+    <p id="terbilang-angsuran_perbulan" class="mt-1 text-muted"></p>
+    <div class="gap-2 d-flex justify-content-end">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Batal
+        </button>
+        <?= Html::submitButton('Simpan', ['class' => 'btn btn-primary']) ?>
+    </div>
+
+    <?php ActiveForm::end(); ?>
+
+    <?php Modal::end(); ?>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.number-input').forEach(function(input) {
+                const fieldKey = input.id.split('-').pop();
+                const output = document.getElementById('terbilang-' + fieldKey);
+                if (!output) return;
+
+                const updateText = function() {
+                    const val = input.value;
+                    output.textContent = (val && val > 0) ?
+                        terbilang(Math.floor(val)) + ' rupiah' :
+                        '';
+                };
+
+                updateText();
+                input.addEventListener('input', updateText);
+            });
+        });
+    </script>

@@ -1,5 +1,6 @@
 <?php
 
+use backend\models\Tanggal;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -45,7 +46,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         return $model->karyawan->nama;
                     },
                 ],
-                'tanggal',
+                [
+                    'label' => 'Tanggal',
+                    'value'  => function ($model) {
+                        $Formats = new Tanggal();
+                        return  $Formats->getIndonesiaFormatLong($model->tanggal);
+                    },
+                ],
                 'jam_total',
             ],
         ]) ?>

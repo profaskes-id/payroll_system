@@ -223,13 +223,15 @@ class KaryawanController extends Controller
             $foto = UploadedFile::getInstance($model, 'foto');
             $lampiranFileIjazah = UploadedFile::getInstance($model, 'ijazah_terakhir');
             if ($model->load($this->request->post())) {
+
                 $lampiranFileKtp != null ? $this->saveImage($model, $lampiranFileKtp, 'ktp') : $model->ktp = null;
                 $lampiranFileCv != null ? $this->saveImage($model, $lampiranFileCv, 'cv') : $model->cv = null;
                 $foto != null ? $this->saveImage($model, $foto, 'foto') : $model->foto = null;
                 $lampiranFileIjazah != null ? $this->saveImage($model, $lampiranFileIjazah, 'ijazah_terakhir') : $model->ijazah_terakhir = null;
                 $model->kode_negara = 'indonesia';
                 $model->kode_karyawan = Yii::$app->request->post('Karyawan')['kode_karyawan'] ?? $model->generateAutoCode();
-                $model->nama = strtoupper($model->nama);
+                $model->nama = strtoupper(trim($model->nama));
+
                 if ($model->is_aktif == 0) {
                     $suratPengunduranDiri = UploadedFile::getInstance($model, 'surat_pengunduran_diri') ?? null;
                     $data = [
@@ -242,6 +244,7 @@ class KaryawanController extends Controller
                         }
                     }
                 }
+                dd($model);
                 if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Menamabahkan  Data');
                     return $this->redirect(['index']);

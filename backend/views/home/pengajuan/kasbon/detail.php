@@ -81,13 +81,9 @@ use yii\helpers\Html;
             ?>
 
             <p><?= $namaPenanggap ?></p>
-            <hr class="my-2">
 
 
-            <p class="mb-1 text-sm text-gray-500 capitalize">Tipe Potongan</p>
-            <p>
-                <?= $model['tipe_potongan'] == 0 ? 'manua' : ($model['tipe_potongan'] == 1 ? 'Potong Gaji' : 'Lainnya') ?>
-            </p>
+
         </div>
     </div>
 </section>

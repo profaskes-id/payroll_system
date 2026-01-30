@@ -51,8 +51,13 @@ class KaryawanSearch extends Karyawan
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort' => [
+                'defaultOrder' => ['nama' => SORT_ASC],
                 'attributes' => [
-                    'nama',
+                    'nama' => [
+                        'asc' => ['karyawan.nama' => SORT_ASC],
+                        'desc' => ['karyawan.nama' => SORT_DESC],
+                        'label' => 'Nama',
+                    ],
                     'kode_karyawan',
                     'kode_jenis_kelamin',
                     'bagian' => [
@@ -163,6 +168,7 @@ class KaryawanSearch extends Karyawan
                 'k.nama AS nama_karyawan',
                 'MAX(dp.id_data_pekerjaan) AS id_data_pekerjaan',
                 'MAX(dp.id_bagian) AS id_bagian',
+                'MAX(mks.nama_kode) AS status_karyawan',
                 'MAX(a.id_absensi) AS id_absensi',
                 'a.tanggal AS tanggal_absensi',
                 'MAX(a.jam_masuk) AS jam_masuk',
@@ -199,129 +205,138 @@ class KaryawanSearch extends Karyawan
             ->leftJoin('{{%atasan_karyawan}} atsk', 'k.id_karyawan = atsk.id_karyawan')
             ->leftJoin('{{%master_lokasi}} msl', 'atsk.id_master_lokasi = msl.id_master_lokasi')
             ->leftJoin('{{%master_kode}} mk', 'j.jenis_shift = mk.kode and mk.nama_group = "jenis-shift"')
+            ->leftJoin('{{%master_kode}} mks', 'dp.status = mks.kode and mks.nama_group = "status-pekerjaan"')
             ->groupBy('k.id_karyawan')
+            ->indexBy('nama_karyawan')
+            ->orderBy(['k.nama' => SORT_ASC])
             ->addParams([':tanggal' => $tanggalSet]); // Menambahkan parameter tanggal
 
         $results = $query->all();
-        $result = [];
 
+        $result = [];
         $currentDate = $tanggalSet; // Gunakan tanggalSet
         // Mendapatkan hari saat ini (1 = Senin, 0 = Minggu, dst.)
         $currentDayOfWeek = date('w'); // 0 (Minggu) sampai 6 (Sabtu)
         $currentDayOfWeek = $currentDayOfWeek == 0 ? 7 : $currentDayOfWeek; // Mengubah Minggu (0) menjadi 7
 
         foreach ($results as $row) {
-            // Inisialisasi entri karyawan
-            if (!isset($result[$row['id_karyawan']])) {
-                $result[$row['id_karyawan']] = [
-                    'karyawan' => [
-                        'id_karyawan' => $row['id_karyawan'],
-                        'kode_karyawan' => $row['kode_karyawan'],
-                        'nama' => $row['nama_karyawan'],
-                    ],
-                    'data_pekerjaan' => null,
-                    'absensi' => [],
-                    'jam_kerja' => [],
-                    'jadwal_kerja' => []
-                ];
-            }
 
-            // Tambah data pekerjaan
-            if ($row['id_data_pekerjaan'] && !$result[$row['id_karyawan']]['data_pekerjaan']) {
-                $result[$row['id_karyawan']]['data_pekerjaan'] = [
-                    'id_data_pekerjaan' => $row['id_data_pekerjaan'],
-                    'id_bagian' => $row['id_bagian'],
-                ];
-            }
-
-            // Tambah absensi
-            if ($row['id_absensi'] && $row['tanggal_absensi'] == $currentDate) {
-                $result[$row['id_karyawan']]['absensi'] = [
-                    'id_absensi' => $row['id_absensi'],
-                    'tanggal_absensi' => $row['tanggal_absensi'],
-                    'jam_masuk' => $row['jam_masuk'],
-                    'long' => $row['long'],
-                    'lat' => $row['lat'],
-                    'penempatan_long' => $row['penempatan_longtitude'],
-                    'penempatan_lat' => $row['penempatan_latitude'],
-                    'jam_pulang' => $row['jam_pulang'],
-                    'kode_status_hadir' => $row['kode_status_hadir'],
-                    'is_terlambat' => $row['is_terlambat'],
-                ];
-            }
-
-            // Hanya proses jam kerja dan jadwal jika manual_shift == 1
-            if ($manual_shift == 1) {
-                if ($row['id_jam_kerja_karyawan']) {
-                    if (!isset($result[$row['id_karyawan']]['jam_kerja']) || empty($result[$row['id_karyawan']]['jam_kerja'])) {
-                        $result[$row['id_karyawan']]['jam_kerja'] = [
-                            'id_jam_kerja_karyawan' => $row['id_jam_kerja_karyawan'],
-                            'id_jam_kerja' => $row['id_jam_kerja'],
-                            'max_terlambat' => $row['max_terlambat'],
-                            'nama_jam_kerja' => $row['nama_jam_kerja'],
-                            'jenis_shift' => $row['jenis_shift'],
-                        ];
-                    }
-                }
-
-                if ($row['jenis_shift'] == null) {
-                    continue;
-                }
-
-                if (strtolower($row['jenis_shift']) == 'shift') {
-                    $dataShif = [
-                        'jam_masuk' => "",
-                        'jam_keluar' => "",
-                        'jumlah_jam' => ""
+            if ($row['status_karyawan'] == Yii::$app->params['Part-Time']) {
+                continue;
+            } else {
+                // Inisialisasi entri karyawan
+                if (!isset($result[$row['id_karyawan']])) {
+                    $result[$row['id_karyawan']] = [
+                        'karyawan' => [
+                            'id_karyawan' => $row['id_karyawan'],
+                            'kode_karyawan' => $row['kode_karyawan'],
+                            'nama' => $row['nama_karyawan'],
+                        ],
+                        'data_pekerjaan' => null,
+                        'absensi' => [],
+                        'jam_kerja' => [],
+                        'jadwal_kerja' => []
                     ];
+                }
 
-                    if ($row['is_shift'] == 1) {
-                        $tanggalHariIni = date('Y-m-d');
-                        $jadwalShiftHariIni = JadwalShift::find()
-                            ->where(['id_karyawan' => $row['id_karyawan'], 'tanggal' => $tanggalHariIni])
-                            ->asArray()
-                            ->one();
-                        if ($jadwalShiftHariIni) {
-                            $shift = $shifKerja->getShiftKerjaById($jadwalShiftHariIni['id_shift_kerja']);
-                            if ($shift) {
-                                $dataShif = [
-                                    'jam_masuk' => $shift['jam_masuk'] ?? "",
-                                    'jam_keluar' => $shift['jam_keluar'] ?? "",
-                                    'jumlah_jam' => $shift['jumlah_jam'] ?? ""
-                                ];
+                // Tambah data pekerjaan
+                if ($row['id_data_pekerjaan'] && !$result[$row['id_karyawan']]['data_pekerjaan']) {
+                    $result[$row['id_karyawan']]['data_pekerjaan'] = [
+                        'id_data_pekerjaan' => $row['id_data_pekerjaan'],
+                        'id_bagian' => $row['id_bagian'],
+                        'status_karyawan' => $row['status_karyawan'],
+                    ];
+                }
+
+                // Tambah absensi
+                if ($row['id_absensi'] && $row['tanggal_absensi'] == $currentDate) {
+                    $result[$row['id_karyawan']]['absensi'] = [
+                        'id_absensi' => $row['id_absensi'],
+                        'tanggal_absensi' => $row['tanggal_absensi'],
+                        'jam_masuk' => $row['jam_masuk'],
+                        'long' => $row['long'],
+                        'lat' => $row['lat'],
+                        'penempatan_long' => $row['penempatan_longtitude'],
+                        'penempatan_lat' => $row['penempatan_latitude'],
+                        'jam_pulang' => $row['jam_pulang'],
+                        'kode_status_hadir' => $row['kode_status_hadir'],
+                        'is_terlambat' => $row['is_terlambat'],
+                    ];
+                }
+
+                // Hanya proses jam kerja dan jadwal jika manual_shift == 1
+                if ($manual_shift == 1) {
+                    if ($row['id_jam_kerja_karyawan']) {
+                        if (!isset($result[$row['id_karyawan']]['jam_kerja']) || empty($result[$row['id_karyawan']]['jam_kerja'])) {
+                            $result[$row['id_karyawan']]['jam_kerja'] = [
+                                'id_jam_kerja_karyawan' => $row['id_jam_kerja_karyawan'],
+                                'id_jam_kerja' => $row['id_jam_kerja'],
+                                'max_terlambat' => $row['max_terlambat'],
+                                'nama_jam_kerja' => $row['nama_jam_kerja'],
+                                'jenis_shift' => $row['jenis_shift'],
+                            ];
+                        }
+                    }
+
+                    if ($row['jenis_shift'] == null) {
+                        continue;
+                    }
+
+                    if (strtolower($row['jenis_shift']) == 'shift') {
+                        $dataShif = [
+                            'jam_masuk' => "",
+                            'jam_keluar' => "",
+                            'jumlah_jam' => ""
+                        ];
+
+                        if ($row['is_shift'] == 1) {
+                            $tanggalHariIni = date('Y-m-d');
+                            $jadwalShiftHariIni = JadwalShift::find()
+                                ->where(['id_karyawan' => $row['id_karyawan'], 'tanggal' => $tanggalHariIni])
+                                ->asArray()
+                                ->one();
+                            if ($jadwalShiftHariIni) {
+                                $shift = $shifKerja->getShiftKerjaById($jadwalShiftHariIni['id_shift_kerja']);
+                                if ($shift) {
+                                    $dataShif = [
+                                        'jam_masuk' => $shift['jam_masuk'] ?? "",
+                                        'jam_keluar' => $shift['jam_keluar'] ?? "",
+                                        'jumlah_jam' => $shift['jumlah_jam'] ?? ""
+                                    ];
+                                } else {
+                                    Yii::$app->session->setFlash('warning', "Data shift kerja tidak ditemukan untuk ID shift: {$jadwalShiftHariIni['id_shift_kerja']}");
+                                }
                             } else {
-                                Yii::$app->session->setFlash('warning', "Data shift kerja tidak ditemukan untuk ID shift: {$jadwalShiftHariIni['id_shift_kerja']}");
+                                Yii::$app->session->setFlash('warning', "Tidak ada jadwal shift hari ini untuk karyawan {$row['nama_karyawan']}");
                             }
                         } else {
-                            Yii::$app->session->setFlash('warning', "Tidak ada jadwal shift hari ini untuk karyawan {$row['nama_karyawan']}");
+                            Yii::$app->session->setFlash('warning', "Data shift kerja tidak ada pada nama {$row['nama_karyawan']}");
+                        }
+
+                        if ($row['id_jadwal_kerja']) {
+                            $existingJadwal = $result[$row['id_karyawan']]['jadwal_kerja'] ?? null;
+                            if (!$existingJadwal) {
+                                $result[$row['id_karyawan']]['jadwal_kerja'] = [
+                                    'id_jadwal_kerja' => $row['id_jadwal_kerja'],
+                                    'nama_hari' => $row['nama_hari'],
+                                    'jam_masuk' => $dataShif['jam_masuk'],
+                                    'jam_keluar' => $dataShif['jam_keluar'],
+                                    'jumlah_jam' => $dataShif['jumlah_jam'],
+                                ];
+                            }
                         }
                     } else {
-                        Yii::$app->session->setFlash('warning', "Data shift kerja tidak ada pada nama {$row['nama_karyawan']}");
-                    }
-
-                    if ($row['id_jadwal_kerja']) {
-                        $existingJadwal = $result[$row['id_karyawan']]['jadwal_kerja'] ?? null;
-                        if (!$existingJadwal) {
-                            $result[$row['id_karyawan']]['jadwal_kerja'] = [
-                                'id_jadwal_kerja' => $row['id_jadwal_kerja'],
-                                'nama_hari' => $row['nama_hari'],
-                                'jam_masuk' => $dataShif['jam_masuk'],
-                                'jam_keluar' => $dataShif['jam_keluar'],
-                                'jumlah_jam' => $dataShif['jumlah_jam'],
-                            ];
-                        }
-                    }
-                } else {
-                    if ($row['id_jadwal_kerja']) {
-                        $existingJadwal = $result[$row['id_karyawan']]['jadwal_kerja'] ?? null;
-                        if (!$existingJadwal) {
-                            $result[$row['id_karyawan']]['jadwal_kerja'] = [
-                                'id_jadwal_kerja' => $row['id_jadwal_kerja'],
-                                'nama_hari' => $row['nama_hari'],
-                                'jam_masuk' => $row['jam_masuk_jadwal'],
-                                'jam_keluar' => $row['jam_keluar_jadwal'],
-                                'jumlah_jam' => $row['jumlah_jam'],
-                            ];
+                        if ($row['id_jadwal_kerja']) {
+                            $existingJadwal = $result[$row['id_karyawan']]['jadwal_kerja'] ?? null;
+                            if (!$existingJadwal) {
+                                $result[$row['id_karyawan']]['jadwal_kerja'] = [
+                                    'id_jadwal_kerja' => $row['id_jadwal_kerja'],
+                                    'nama_hari' => $row['nama_hari'],
+                                    'jam_masuk' => $row['jam_masuk_jadwal'],
+                                    'jam_keluar' => $row['jam_keluar_jadwal'],
+                                    'jumlah_jam' => $row['jumlah_jam'],
+                                ];
+                            }
                         }
                     }
                 }
@@ -334,7 +349,27 @@ class KaryawanSearch extends Karyawan
             'pagination' => [
                 'pageSize' => 10,
             ],
+            'sort' => [
+                'defaultOrder' => ['nama' => SORT_ASC], // Default order ketika pertama kali di-load
+                'attributes' => [
+                    'nama' => [
+                        'asc' => ['nama' => SORT_ASC],
+                        'desc' => ['nama' => SORT_DESC],
+                        'default' => SORT_ASC, // Default sort untuk nama
+                    ],
+                    'jabatan' => [
+                        'asc' => ['jabatan' => SORT_ASC],
+                        'desc' => ['jabatan' => SORT_DESC],
+                    ],
+                    'bagian' => [
+                        'asc' => ['bagian' => SORT_ASC],
+                        'desc' => ['bagian' => SORT_DESC],
+                    ],
+                ],
+            ]
         ]);
+
+
 
         return $dataProvider;
     }

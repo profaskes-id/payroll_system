@@ -29,13 +29,7 @@ use yii\helpers\Url; ?>
 
                 <!-- Content -->
                 <div id="contentPendapatan" class="d-none">
-                    <div class="mb-3 d-flex justify-content-end">
-                        <a href="#"
-                            id="btnAddPendapatan"
-                            class="btn btn-sm btn-success">
-                            <i class="fas fa-plus me-1"></i> Tambah Pendapatan Lainnya
-                        </a>
-                    </div>
+
 
 
                     <div class="table-responsive">
@@ -43,9 +37,6 @@ use yii\helpers\Url; ?>
                             <thead class="table-primary">
                                 <tr>
                                     <th width="5%">#</th>
-                                    <th width="5%" class="text-center">
-                                        <img src="<?= Yii::getAlias('@root') ?>/images/icons/grid.svg" alt="grid">
-                                    </th>
 
                                     <th width="30%">Keterangan</th>
                                     <th width="30%" class="text-end">Nominal</th>
@@ -137,13 +128,7 @@ use yii\helpers\Url; ?>
                     $('#tabelPendapatanBody').append(`
                     <tr>
                         <td>${i + 1}</td>
-                        <td class="text-center">
-                            <button
-                                class="btn btn-sm btn-danger btn-delete-pendapatan"
-                                data-id="${item.id_ppl}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
+                     
                         <td>${item.keterangan ?? '-'}</td>
                         <td class="text-end fw-semibold">
                             Rp ${jumlah.toLocaleString('id-ID')}
@@ -162,33 +147,4 @@ use yii\helpers\Url; ?>
             }
         });
     }
-
-
-
-
-    $(document).on('click', '.btn-delete-pendapatan', function() {
-        const idPpl = $(this).data('id');
-
-        if (!confirm('Yakin ingin menghapus pendapatan ini?')) {
-            return;
-        }
-
-        $.ajax({
-            url: `/panel/pendapatan-potongan-lainnya/delete?id_ppl=${idPpl}`,
-            type: 'POST',
-            dataType: 'json', // penting
-            success: function(res) {
-                if (res.success) {
-                    alert(res.message);
-                    window.location.href = '/panel/transaksi-gaji/index';
-                } else {
-                    alert('Gagal menghapus data');
-                }
-            },
-            error: function() {
-                alert('Gagal menghapus data');
-            }
-        });
-
-    });
 </script>

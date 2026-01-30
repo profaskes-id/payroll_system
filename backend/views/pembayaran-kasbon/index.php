@@ -1,7 +1,6 @@
 <?php
 
-use backend\models\MasterKode;
-use backend\models\PembayaranKasbon;
+
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -15,14 +14,7 @@ $this->title = 'Pembayaran Kasbon';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="pembayaran-kasbon-index">
-    <!-- 
 
-    <div class="costume-container">
-        <p class="">
-            <?php //Html::a('<i class="svgIcon fa fa-regular fa-plus"></i> Add New', ['create'], ['class' => 'costume-btn']) 
-            ?>
-        </p>
-    </div> -->
 
     <button style="width: 100%;" class="add-button" type="submit" data-toggle="collapse" data-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
         <i class="fas fa-search"></i>

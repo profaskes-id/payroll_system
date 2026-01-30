@@ -475,7 +475,7 @@
                                 <div style="display: flex !important; align-items: center; justify-content: space-between ;margin-block: 20px 10px" style="gap: 10px;">
                                     <div>
                                         <p style="font-weight: 700; font-size: 20px">Data Pekerjaan</p>
-                                        <p style="margin-top: -10px;" class="text-muted">Hanya 1 Data Pekerjaan Yang Boleh Aktif</p>
+                                        <p style="margin-top: -10px; font-weight: 800; font-size: 12px" class="text-danger ">Hanya 1 Data Pekerjaan Yang Boleh Aktif</p>
                                     </div>
                                     <?= Html::a('Add new', ['/data-pekerjaan/create', 'id_karyawan' => $model->id_karyawan], ['class' => 'tambah-button']) ?>
                                 </div>

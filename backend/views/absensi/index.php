@@ -73,7 +73,7 @@ $today = date('Y-m-d');
 
     <?php $form = ActiveForm::begin(['method' => 'get', 'id' => 'my-form',   'action' => ['absensi/index']]); ?>
     <div class="table-container table-responsive">
-        <div class="mb-2 row">
+        <div class="mb-2 row ">
 
             <div class="col-lg-4 col-12">
                 <?= $form->field($absensi, 'tanggal')->textInput(['type' => 'date',  'value' => $tanggalSet ?? $today])->label(false); ?>
@@ -95,7 +95,7 @@ $today = date('Y-m-d');
 
             </div>
 
-            <div class="col-lg-3 d-flex justify-content-start " style="gap: 10px;">
+            <div class="col-lg-3 d-flex justify-content-start " style="gap: 50px;">
 
                 <div class="">
                     <button class="add-button" type="submit">
@@ -111,6 +111,8 @@ $today = date('Y-m-d');
                 </div>
             </div>
         </div>
+
+
         <?php ActiveForm::end(); ?>
 
         <?= GridView::widget([

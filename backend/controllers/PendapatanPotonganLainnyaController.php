@@ -71,6 +71,7 @@ class PendapatanPotonganLainnyaController extends Controller
         $model = new PendapatanPotonganLainnya();
 
         if ($model->load(Yii::$app->request->post())) {
+
             // Ambil data array
             $jumlahArray = Yii::$app->request->post('PendapatanPotonganLainnya')['jumlah'] ?? [];
             $keteranganArray = Yii::$app->request->post('PendapatanPotonganLainnya')['keterangan'] ?? [];
@@ -106,7 +107,7 @@ class PendapatanPotonganLainnyaController extends Controller
                 }
             }
 
-            return $this->redirect(['/transaksi-gaji/index']);
+            return $this->redirect(['/transaksi-gaji/view', 'id_karyawan' => $idKaryawan, 'bulan' => $newModel->bulan, 'tahun' => $newModel->tahun]);
         }
 
         return $this->render('create', [
@@ -193,13 +194,15 @@ class PendapatanPotonganLainnyaController extends Controller
      */
     public function actionDelete($id_ppl)
     {
-        $this->findModel($id_ppl)->delete();
+        $model =  $this->findModel($id_ppl);
 
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        return [
-            'success' => true,
-            'message' => 'Data berhasil dihapus'
-        ];
+        if ($model->delete()) {
+            // flash berhasil di haspu
+            Yii::$app->session->setFlash('success', 'Data berhasil dihapus');
+        } else {
+            Yii::$app->session->setFlash('error', 'Data gagal dihapus');
+        }
+        return $this->redirect(['transaksi-gaji/view', 'id_karyawan' => $model->id_karyawan, 'bulan' => $model->bulan, 'tahun' => $model->tahun]);
     }
 
     /**

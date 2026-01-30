@@ -856,6 +856,7 @@ class HomeController extends Controller
         $model = Absensi::find()->where(['id_karyawan' => $karyawan['id_karyawan'], 'tanggal' => date('Y-m-d')])->one();
         $settinganUmumlembur = SettinganUmum::find()->where(['kode_setting' => Yii::$app->params['ajukan_lembur']])->asArray()->one();
 
+        $kelebihanWaktu = 0;
         // Check if overtime requests are allowed
         if ($settinganUmumlembur && $settinganUmumlembur['nilai_setting'] == 0) {
             $jamSekarang = date('H:i:s');
@@ -872,6 +873,8 @@ class HomeController extends Controller
         // Handle post request to save the absence record
         if ($this->request->isPost) {
             $model->jam_pulang = date('H:i:s');
+
+
             $model->kelebihan_jam_pulang = $kelebihanWaktu ?? null;
 
             // Convert "03:00" to total minutes
@@ -881,6 +884,7 @@ class HomeController extends Controller
             } else {
                 $totalMinutes = 0;
             }
+
 
 
             if ($totalMinutes >  (int) $MinimumMinuteLembur['nama_kode']) {

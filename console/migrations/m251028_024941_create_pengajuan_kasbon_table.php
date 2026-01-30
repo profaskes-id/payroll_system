@@ -22,7 +22,6 @@ class m251028_024941_create_pengajuan_kasbon_table extends Migration
             'keterangan' => $this->text()->null(),
             'tanggal_disetujui' => $this->date()->null(),
             'disetujui_oleh' => $this->integer()->null(),
-            'tipe_potongan' => $this->smallInteger()->defaultValue(0),
             'created_at' => $this->integer()->null(),
             'created_by' => $this->integer()->null(),
             'updated_at' => $this->integer()->null(),

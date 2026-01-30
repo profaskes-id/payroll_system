@@ -87,12 +87,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                 ],
 
-                [
-                    'label' => 'Auto Debt',
-                    'value' => function ($model) {
-                        return $model->tipe_potongan == 0 ? 'Off' : 'On';
-                    }
-                ],
+
                 [
                     'label' => 'Created At',
                     'value' => function ($model) {

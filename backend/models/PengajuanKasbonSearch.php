@@ -17,7 +17,7 @@ class PengajuanKasbonSearch extends PengajuanKasbon
     public function rules()
     {
         return [
-            [['id_pengajuan_kasbon', 'id_karyawan', 'lama_cicilan', 'disetujui_oleh', 'tipe_potongan', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['id_pengajuan_kasbon', 'id_karyawan', 'lama_cicilan', 'disetujui_oleh', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['gaji_pokok', 'jumlah_kasbon', 'angsuran_perbulan'], 'number'],
             [['tanggal_pengajuan', 'tanggal_pencairan', 'tanggal_mulai_potong', 'keterangan', 'tanggal_disetujui'], 'safe'],
         ];
@@ -71,7 +71,6 @@ class PengajuanKasbonSearch extends PengajuanKasbon
             'tanggal_mulai_potong' => $this->tanggal_mulai_potong,
             'tanggal_disetujui' => $this->tanggal_disetujui,
             'disetujui_oleh' => $this->disetujui_oleh,
-            'tipe_potongan' => $this->tipe_potongan,
             'created_at' => $this->created_at,
             'created_by' => $this->created_by,
             'updated_at' => $this->updated_at,

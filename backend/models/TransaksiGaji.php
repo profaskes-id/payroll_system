@@ -56,7 +56,7 @@ class TransaksiGaji extends \yii\db\ActiveRecord
             [['hari_kerja_efektif', 'gaji_diterima', 'status_pekerjaan'], 'default', 'value' => 0],
             // [['id_karyawan', 'nama'], 'required'],
             [['id_karyawan', 'id_bagian', 'bulan', 'tahun', 'total_absensi', 'total_alfa_range', 'jam_lembur', 'created_by', 'updated_by', 'status', 'hari_kerja_efektif'], 'integer'],
-            [['tanggal_awal', 'tanggal_akhir', 'terlambat', 'created_at', 'updated_at', 'nama_bank', 'nomer_rekening'], 'safe'],
+            [['tanggal_awal', 'tanggal_akhir', 'terlambat', 'created_at', 'updated_at', 'nama_bank', 'nomer_rekening', 'sisa_kasbon'], 'safe'],
             [['nominal_gaji', 'gaji_perhari', 'tunjangan_karyawan', 'potongan_karyawan', 'potongan_kasbon', 'potongan_terlambat', 'potongan_absensi', 'total_pendapatan_lembur', 'dinas_luar_belum_terbayar', 'pendapatan_lainnya', 'potongan_lainnya'], 'number'],
             [['nama', 'nama_bagian', 'jabatan', 'nama_bank', 'nomer_rekening'], 'string', 'max' => 255],
         ];
@@ -102,6 +102,8 @@ class TransaksiGaji extends \yii\db\ActiveRecord
             'pendapatan_lainnya' => 'Pendapatan Lainnya',
             'potongan_lainnya' => 'Potongan Lainnya',
             'gaji_diterima' => 'Gaji Diterima',
+            'potongan_kasbon' => 'Potongan Kasbon',
+            'sisa_kasbon' => 'Sisa Kasbon',
 
         ];
     }

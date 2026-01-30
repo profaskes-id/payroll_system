@@ -1,0 +1,272 @@
+<div class="transaksi-gaji-view">
+    <div class="costume-container">
+        <p>
+            <?= Html::a('<i class="svgIcon fa fa-reply"></i> Back', ['index'], ['class' => 'costume-btn']) ?>
+        </p>
+    </div>
+
+    <div class="table-container table-responsive">
+
+        <!-- Data Karyawan & Pekerjaan -->
+        <div class="row">
+            <div class="col-md-4">
+                <?= DetailView::widget([
+                    'model' => $data,
+                    'options' => ['class' => 'table table-striped table-bordered detail-view mb-0'],
+                    'attributes' => [
+                        [
+                            'label' => 'Nama Karyawan',
+                            'value' => isset($data['nama']) ? $data['nama'] : '-',
+                        ],
+                        [
+                            'label' => 'Bank',
+                            'value' => isset($data['nama_bank']) ? $data['nama_bank'] : '-',
+                        ],
+                        [
+                            'label' => 'No. Rekening',
+                            'value' => isset($data['nomer_rekening']) ? $data['nomer_rekening'] : '-',
+                        ],
+                        [
+                            'label' => 'Status Pekerjaan',
+                            'value' => isset($data['status_pekerjaan']) ? $data['status_pekerjaan'] : '-',
+                        ],
+                        [
+                            'label' => 'Bagian',
+                            'value' => isset($data['nama_bagian']) ? $data['nama_bagian'] : '-',
+                        ],
+                        [
+                            'label' => 'Jabatan',
+                            'value' => isset($data['jabatan']) ? $data['jabatan'] : '-',
+                        ],
+                        [
+                            'label' => 'Periode',
+                            'value' => function ($data) {
+                                if (!isset($data['tahun']) || !isset($data['bulan'])) return '-';
+                                return date('F Y', strtotime($data['tahun'] . '-' . $data['bulan'] . '-01'));
+                            },
+                        ],
+                        [
+                            'label' => 'Tanggal Periode',
+                            'value' => function ($data) {
+                                $awal = isset($data['tanggal_awal']) ? $data['tanggal_awal'] : '';
+                                $akhir = isset($data['tanggal_akhir']) ? $data['tanggal_akhir'] : '';
+                                if (empty($awal) || empty($akhir)) return '-';
+                                return formatTanggal($awal) . ' - ' . formatTanggal($akhir);
+                            },
+                        ],
+                        [
+                            'label' => 'Jumlah WFH',
+                            'value' => isset($data['jumlah_wfh']) ? $data['jumlah_wfh'] : '0',
+                        ],
+                        [
+                            'label' => 'Total Alfa',
+                            'value' => isset($data['total_alfa_range']) ? $data['total_alfa_range'] : '0',
+                        ],
+                        [
+                            'label' => 'Total Keterlambatan',
+                            'value' => isset($data['terlambat']) ? formatWaktu($data['terlambat']) : '-',
+                        ],
+                        [
+                            'label' => 'Jam Lembur',
+                            'value' => function ($data) {
+                                $jam = isset($data['jam_lembur']) ? $data['jam_lembur'] : 0;
+                                return $jam . ' jam';
+                            },
+                        ],
+                    ],
+                ]) ?>
+            </div>
+
+            <div class="row col-md-8">
+                <!-- Pendapatan -->
+                <div class="col-12">
+                    <?= DetailView::widget([
+                        'model' => $data,
+                        'options' => ['class' => 'table table-striped table-bordered detail-view mb-0'],
+                        'attributes' => [
+                            [
+                                'label' => 'Gaji Pokok',
+                                'format' => 'raw',
+                                'value' => function ($data) {
+                                    return formatRupiah(isset($data['nominal_gaji']) ? $data['nominal_gaji'] : 0);
+                                },
+                                'contentOptions' => ['style' => 'font-weight: bold;'],
+                            ],
+                            [
+                                'label' => 'Tunjangan',
+                                'format' => 'raw',
+                                'value' => function ($data) {
+                                    return formatRupiah(isset($data['tunjangan_karyawan']) ? $data['tunjangan_karyawan'] : 0);
+                                },
+                            ],
+                            [
+                                'label' => 'Pendapatan Lembur',
+                                'format' => 'raw',
+                                'value' => function ($data) {
+                                    return formatRupiah(isset($data['total_pendapatan_lembur']) ? $data['total_pendapatan_lembur'] : 0);
+                                },
+                            ],
+                            [
+                                'label' => 'Dinas Luar Belum Terbayar',
+                                'format' => 'raw',
+                                'value' => function ($data) {
+                                    return formatRupiah(isset($data['dinas_luar_belum_terbayar']) ? $data['dinas_luar_belum_terbayar'] : 0);
+                                },
+                            ],
+                            [
+                                'label' => 'Pendapatan Lainnya',
+                                'format' => 'raw',
+                                'value' => function ($data) {
+                                    return formatRupiah(isset($data['pendapatan_lainnya']) ? $data['pendapatan_lainnya'] : 0);
+                                },
+                            ],
+                            [
+                                'label' => 'Total Pendapatan',
+                                'format' => 'raw',
+                                'value' => function ($data) {
+                                    $gaji = isset($data['nominal_gaji']) ? $data['nominal_gaji'] : 0;
+                                    $tunjangan = isset($data['tunjangan_karyawan']) ? $data['tunjangan_karyawan'] : 0;
+                                    $lembur = isset($data['total_pendapatan_lembur']) ? $data['total_pendapatan_lembur'] : 0;
+                                    $lainnya = isset($data['pendapatan_lainnya']) ? $data['pendapatan_lainnya'] : 0;
+                                    $total = $gaji + $tunjangan + $lembur + $lainnya;
+                                    return '<span style="font-weight: bold; font-size: 16px;">' . formatRupiah($total) . '</span>';
+                                },
+                                'contentOptions' => ['style' => 'background-color: #e8f5e9;'],
+                            ],
+                        ],
+                    ]) ?>
+                </div>
+
+                <!-- Potongan -->
+                <div class="mt-2 col-12">
+                    <?= DetailView::widget([
+                        'model' => $data,
+                        'options' => ['class' => 'table table-striped table-bordered detail-view mb-0'],
+                        'attributes' => [
+                            [
+                                'label' => 'Potongan',
+                                'format' => 'raw',
+                                'value' => function ($data) {
+                                    return formatRupiah(isset($data['potongan_karyawan']) ? $data['potongan_karyawan'] : 0);
+                                },
+                            ],
+                            [
+                                'label' => 'Potongan Terlambat',
+                                'format' => 'raw',
+                                'value' => function ($data) {
+                                    return formatRupiah(isset($data['potongan_terlambat']) ? $data['potongan_terlambat'] : 0);
+                                },
+                            ],
+                            [
+                                'label' => 'Potongan Absensi',
+                                'format' => 'raw',
+                                'value' => function ($data) {
+                                    return formatRupiah(isset($data['potongan_absensi']) ? $data['potongan_absensi'] : 0);
+                                },
+                            ],
+                            [
+                                'label' => 'Kasbon',
+                                'format' => 'raw',
+                                'value' => function ($data) {
+                                    return formatRupiah(isset($data['kasbon_karyawan']) ? $data['kasbon_karyawan'] : 0);
+                                },
+                            ],
+                            [
+                                'label' => 'Sisa Kasbon',
+                                'format' => 'raw',
+                                'value' => function ($data) {
+                                    return formatRupiah(isset($data['sisa_kasbon']) ? $data['sisa_kasbon'] : 0);
+                                },
+                            ],
+                            [
+                                'label' => 'Potongan Lainnya',
+                                'format' => 'raw',
+                                'value' => function ($data) {
+                                    return formatRupiah(isset($data['potongan_lainnya']) ? $data['potongan_lainnya'] : 0);
+                                },
+                            ],
+                            [
+                                'label' => 'Total Potongan',
+                                'format' => 'raw',
+                                'value' => function ($data) {
+                                    $potongan = isset($data['potongan_karyawan']) ? $data['potongan_karyawan'] : 0;
+                                    $terlambat = isset($data['potongan_terlambat']) ? $data['potongan_terlambat'] : 0;
+                                    $absensi = isset($data['potongan_absensi']) ? $data['potongan_absensi'] : 0;
+                                    $kasbon = isset($data['kasbon_karyawan']) ? $data['kasbon_karyawan'] : 0;
+                                    $lainnya = isset($data['potongan_lainnya']) ? $data['potongan_lainnya'] : 0;
+                                    $dinas = isset($data['dinas_luar_belum_terbayar']) ? $data['dinas_luar_belum_terbayar'] : 0;
+                                    $total = $potongan + $terlambat + $absensi + $kasbon + $lainnya + $dinas;
+                                    return '<span style="font-weight: bold; font-size: 16px;">' . formatRupiah($total) . '</span>';
+                                },
+                                'contentOptions' => ['style' => 'background-color: #ffebee;'],
+                            ],
+                        ],
+                    ]) ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ringkasan Gaji -->
+        <div class="mt-4">
+            <div class="">
+                <?= DetailView::widget([
+                    'model' => $data,
+                    'options' => ['class' => 'table table-striped table-bordered detail-view mb-0'],
+                    'attributes' => [
+                        [
+                            'label' => 'Total Pendapatan',
+                            'format' => 'raw',
+                            'value' => function ($data) {
+                                $gaji = isset($data['nominal_gaji']) ? $data['nominal_gaji'] : 0;
+                                $tunjangan = isset($data['tunjangan_karyawan']) ? $data['tunjangan_karyawan'] : 0;
+                                $lembur = isset($data['total_pendapatan_lembur']) ? $data['total_pendapatan_lembur'] : 0;
+                                $lainnya = isset($data['pendapatan_lainnya']) ? $data['pendapatan_lainnya'] : 0;
+                                $total = $gaji + $tunjangan + $lembur + $lainnya;
+                                return formatRupiah($total);
+                            },
+                            'contentOptions' => ['style' => 'font-weight: bold; background-color: #e8f5e9;'],
+                        ],
+                        [
+                            'label' => 'Total Potongan',
+                            'format' => 'raw',
+                            'value' => function ($data) {
+                                $potongan = isset($data['potongan_karyawan']) ? $data['potongan_karyawan'] : 0;
+                                $terlambat = isset($data['potongan_terlambat']) ? $data['potongan_terlambat'] : 0;
+                                $absensi = isset($data['potongan_absensi']) ? $data['potongan_absensi'] : 0;
+                                $kasbon = isset($data['kasbon_karyawan']) ? $data['kasbon_karyawan'] : 0;
+                                $lainnya = isset($data['potongan_lainnya']) ? $data['potongan_lainnya'] : 0;
+                                $dinas = isset($data['dinas_luar_belum_terbayar']) ? $data['dinas_luar_belum_terbayar'] : 0;
+                                $total = $potongan + $terlambat + $absensi + $kasbon + $lainnya + $dinas;
+                                return formatRupiah($total);
+                            },
+                            'contentOptions' => ['style' => 'font-weight: bold; background-color: #ffebee;'],
+                        ],
+                        [
+                            'label' => 'GAJI BERSIH',
+                            'format' => 'raw',
+                            'value' => function ($data) {
+                                $pendapatan = isset($data['nominal_gaji']) ? $data['nominal_gaji'] : 0;
+                                $pendapatan += isset($data['tunjangan_karyawan']) ? $data['tunjangan_karyawan'] : 0;
+                                $pendapatan += isset($data['total_pendapatan_lembur']) ? $data['total_pendapatan_lembur'] : 0;
+                                $pendapatan += isset($data['pendapatan_lainnya']) ? $data['pendapatan_lainnya'] : 0;
+
+                                $potongan = isset($data['potongan_karyawan']) ? $data['potongan_karyawan'] : 0;
+                                $potongan += isset($data['potongan_terlambat']) ? $data['potongan_terlambat'] : 0;
+                                $potongan += isset($data['potongan_absensi']) ? $data['potongan_absensi'] : 0;
+                                $potongan += isset($data['kasbon_karyawan']) ? $data['kasbon_karyawan'] : 0;
+                                $potongan += isset($data['potongan_lainnya']) ? $data['potongan_lainnya'] : 0;
+                                $potongan += isset($data['dinas_luar_belum_terbayar']) ? $data['dinas_luar_belum_terbayar'] : 0;
+
+                                $gaji_bersih = $pendapatan - $potongan;
+                                $final_gaji_bersih = isset($data['gaji_bersih']) ? $data['gaji_bersih'] : $gaji_bersih;
+
+                                return '<span style="font-weight: bold; font-size: 20px; color: #2E7D32;">' . formatRupiah($final_gaji_bersih) . '</span>';
+                            },
+                            'contentOptions' => ['style' => 'background-color: #f1f8e9; border: 2px solid #2E7D32;'],
+                        ],
+                    ],
+                ]) ?>
+            </div>
+        </div>
+    </div>
+</div>

@@ -50,6 +50,7 @@ class AbsensiController extends Controller
         // Get the data provider using the default or GET parameters
         $dataProvider = $searchModel->searchAbsensi($queryParams, $tanggalSet);
 
+
         // Create new instances of Absensi and Bagian
         $absensi = new Absensi();
         $bagian = new Bagian();
@@ -87,7 +88,7 @@ class AbsensiController extends Controller
         ]);
     }
 
-   
+
 
     /**
      * Displays a single Absensi model.
@@ -134,10 +135,10 @@ class AbsensiController extends Controller
 
                 $model->created_at = date('Y-m-d H:i:s');
                 $model->created_by = Yii::$app->user->identity->id;
-                if($model->save()){
+                if ($model->save()) {
                     Yii::$app->session->setFlash('success', 'Berhasil Menambahkan Data Absensi');
                     return $this->redirect(['view', 'id_absensi' => $model->id_absensi]);
-                }else{
+                } else {
                     //flash error
                     Yii::$app->session->setFlash('error', 'Gagal Menambahkan Data Absensi');
                 }
@@ -167,13 +168,13 @@ class AbsensiController extends Controller
             $model->updated_at = date('Y-m-d H:i:s');
             $model->updated_by = Yii::$app->user->identity->id;
 
-                if($model->save()){
-                    Yii::$app->session->setFlash('success', 'Berhasil Memperbaraui Data Absensi');
-                    return $this->redirect(['view', 'id_absensi' => $model->id_absensi]);
-                }else{
-                    //flash error
-                    Yii::$app->session->setFlash('error', 'Gagal Memperbaraui Data Absensi');
-                }
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Berhasil Memperbaraui Data Absensi');
+                return $this->redirect(['view', 'id_absensi' => $model->id_absensi]);
+            } else {
+                //flash error
+                Yii::$app->session->setFlash('error', 'Gagal Memperbaraui Data Absensi');
+            }
 
             return $this->redirect(['index']);
         }

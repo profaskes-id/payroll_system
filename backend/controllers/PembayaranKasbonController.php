@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\PembayaranKasbon;
 use backend\models\PembayaranKasbonSearch;
+use backend\models\PengajuanKasbon;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -58,7 +59,7 @@ class PembayaranKasbonController extends Controller
     {
 
         $model = PembayaranKasbon::find()
-            ->where(['id_karyawan' => $id_karyawan, 'autodebt' => 0])
+            ->where(['id_karyawan' => $id_karyawan,])
             ->orderBy(['created_at' => SORT_DESC])
             ->one();
         if (!$model) {
@@ -66,7 +67,7 @@ class PembayaranKasbonController extends Controller
         }
         $data = PembayaranKasbon::find()
             ->where(['id_karyawan' => $id_karyawan])
-            ->andWhere(['autodebt' => 0])
+
             ->orderBy(['created_at' => SORT_DESC])
             ->all();
 
@@ -95,14 +96,13 @@ class PembayaranKasbonController extends Controller
         $model->id_kasbon = $oldModel->id_kasbon;
         $model->bulan = $oldModel->bulan;
         $model->tahun = $oldModel->tahun;
-        $model->angsuran = $oldModel->angsuran;
         $model->sisa_kasbon = $oldModel->sisa_kasbon;
-        $model->autodebt = $oldModel->autodebt;
         $model->tanggal_potong = date('Y-m-d'); // default tanggal hari ini
         $model->status_potongan = 0;
         $model->created_at = time();
         $model->jumlah_kasbon = $oldModel->jumlah_kasbon;
         $model->deskripsi = 'Pembayaran Kasbon';
+        $model->metode_bayar = 'manual';
         if ($this->request->isPost && $model->load($this->request->post())) {
 
 
@@ -111,15 +111,11 @@ class PembayaranKasbonController extends Controller
                 $model->sisa_kasbon = $this->cleanCurrencyFormat($model->sisa_kasbon);
             }
 
-            if (!empty($model->angsuran) && is_string($model->angsuran)) {
-                $model->angsuran = $this->cleanCurrencyFormat($model->jumlah_potong); // PERBAIKAN: ganti jumlah_potong jadi angsuran
-            }
+
 
             if (!empty($model->jumlah_potong) && is_string($model->jumlah_potong)) {
                 $model->jumlah_potong = $this->cleanCurrencyFormat($model->jumlah_potong);
             }
-
-
 
 
             try {
@@ -168,7 +164,7 @@ class PembayaranKasbonController extends Controller
     {
         // Ambil data terakhir berdasarkan created_at paling baru
         $model = PembayaranKasbon::find()
-            ->where(['id_karyawan' => $id_karyawan, 'autodebt' => 0])
+            ->where(['id_karyawan' => $id_karyawan,])
             ->orderBy(['created_at' => SORT_DESC])
             ->one();
 
@@ -207,6 +203,24 @@ class PembayaranKasbonController extends Controller
 
 
         return $this->redirect(['view', 'id_karyawan' => $id_karyawan]); // arahkan ke halaman daftar kasbon
+    }
+
+
+
+    public function actionUpdateAngsuran($id_pengajuan_kasbon)
+    {
+        $model = PengajuanKasbon::findOne($id_pengajuan_kasbon);
+
+        if ($model && $model->load(Yii::$app->request->post())) {
+
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Angsuran berhasil diperbarui');
+            } else {
+                Yii::$app->session->setFlash('error', 'Gagal memperbarui angsuran');
+            }
+        }
+
+        return $this->redirect(Yii::$app->request->referrer);
     }
 
 

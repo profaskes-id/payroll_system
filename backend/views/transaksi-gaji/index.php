@@ -266,6 +266,20 @@
                                                 'data-bs-placement' => 'top'
                                             ]
                                         );
+                                        $buttons .= Html::a(
+                                            '<i class="fas fa-edit"></i>',
+                                            ['view', 'id_karyawan' => $model['id_karyawan'], 'bulan' => $bulan, 'tahun' => $tahun],
+                                            [
+                                                'class' => 'btn btn-warning  btn-sm sweet-confirm',
+                                                'data-title' => 'Edit Data Penggajian',
+                                                // 'data-text' => 'Apakah Anda yakin ingin memproses gaji untuk ' . Html::encode($model['nama'] ?? 'Karyawan') . '?',
+                                                'data-confirm-button' => 'Ya, Proses!',
+                                                'data-cancel-button' => 'Batal',
+                                                'title' => 'Proses Gaji',
+                                                'data-bs-toggle' => 'tooltip',
+                                                'data-bs-placement' => 'top'
+                                            ]
+                                        );
                                     }
 
                                     $buttons .= '</div>';

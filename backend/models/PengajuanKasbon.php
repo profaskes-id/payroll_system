@@ -19,7 +19,6 @@ use Yii;
  * @property string|null $keterangan
  * @property string|null $tanggal_disetujui
  * @property int|null $disetujui_oleh
- * @property int|null $tipe_potongan
  * @property int|null $created_at
  * @property int|null $created_by
  * @property int|null $updated_at
@@ -50,9 +49,9 @@ class PengajuanKasbon extends \yii\db\ActiveRecord
         return [
             [['tanggal_pencairan', 'tanggal_mulai_potong', 'keterangan', 'tanggal_disetujui', 'disetujui_oleh', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'default', 'value' => null],
             [['angsuran_perbulan'], 'default', 'value' => 0.00],
-            [['tipe_potongan', 'status'], 'default', 'value' => 0],
+            [['status'], 'default', 'value' => 0],
             [['id_karyawan', 'tanggal_pengajuan'], 'required'],
-            [['id_karyawan', 'lama_cicilan', 'disetujui_oleh', 'tipe_potongan', 'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
+            [['id_karyawan', 'lama_cicilan', 'disetujui_oleh',  'created_at', 'created_by', 'updated_at', 'updated_by'], 'integer'],
             [['gaji_pokok', 'jumlah_kasbon', 'angsuran_perbulan'], 'number'],
             [['tanggal_pengajuan', 'tanggal_pencairan', 'tanggal_mulai_potong', 'tanggal_disetujui'], 'safe'],
             [['keterangan'], 'string'],
@@ -78,7 +77,6 @@ class PengajuanKasbon extends \yii\db\ActiveRecord
             'keterangan' => 'Keterangan',
             'tanggal_disetujui' => 'Tanggal Disetujui',
             'disetujui_oleh' => 'Disetujui Oleh',
-            'tipe_potongan' => 'Tipe Potongan',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',

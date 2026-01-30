@@ -65,7 +65,7 @@ use yii\widgets\ActiveForm;
         </div>
 
         <div class="col-12 col-md-4">
-            <?= $form->field($model, 'dari')->textInput(['type' => 'date', 'id' => 'dari',  'max' => '2100-12-31'])->label("Mulai Dari") ?>
+            <?= $form->field($model, 'dari')->textInput(['type' => 'date', 'id' => 'dari', 'max' => '2100-12-31'])->label("Mulai Dari") ?>
         </div>
 
         <div class="col-12 col-md-4">
@@ -74,38 +74,32 @@ use yii\widgets\ActiveForm;
                     1 => '3 Bulan',
                     2 => '6 Bulan',
                     3 => '1 Tahun',
+                    4 => '2 Tahun', // Ditambahkan opsi 2 tahun
                 ],
-                ['class' => 'selama', 'itemOptions' => ['labelOptions' => ['style' => 'margin-right: 20px;', 'max' => '2100-12-31']]] // Opsi tambahan, misalnya style
+                ['class' => 'selama', 'itemOptions' => ['labelOptions' => ['style' => 'margin-right: 20px;', 'max' => '2100-12-31']]]
             )->label("Selama") ?>
         </div>
 
 
         <div class="col-12 col-md-4 row align-items-center">
             <div class="p-1 col-12">
-                <?= $form->field($model, 'sampai')->textInput(['id' => 'kode_sampai', 'type' => 'date',])->label("Sampai Dengan ") ?>
-            </div>
-            <div class="mt-3 col-5">
-                <!-- <label for="manual_kode">
-                    <input type="checkbox" id="manual_kode" checked>
-                    <span style="font-size: 12px">Sampai Sekarang</span>
-                </label> -->
+                <?= $form->field($model, 'sampai')->textInput(['id' => 'kode_sampai', 'type' => 'date'])->label("Sampai Dengan ") ?>
             </div>
         </div>
 
 
-        <div class="col-12 col-md-6">
+        <div class="col-12 ">
             <?= $form->field($model, 'surat_lamaran_pekerjaan')->fileInput(['class' => 'form-control'])->label('Surat Lamaran Pekerjaan <sup>(opsional)<sup>') ?>
-
         </div>
 
-        <div class="col-12 col-md-6 ">
+        <div class="col-12 ">
             <?= $form->field($model, 'is_aktif')->radioList(
                 [
                     0 => 'Tidak Aktif',
                     1 => 'Aktif',
                 ],
-                ['class' => 'selama', 'itemOptions' => ['labelOptions' => ['style' => 'margin-right: 20px;',]]] // Opsi tambahan, misalnya style
-            )->label('Apakah Aktif ') ?>
+                ['class' => 'selama', 'itemOptions' => ['labelOptions' => ['style' => 'margin-right: 20px;']]]
+            )->label('Apakah Aktif <p class="text-danger">(Pastikan Hanya boleh 1 Data Pekerjaan Aktif)</p> ') ?>
         </div>
     </div>
 
@@ -127,43 +121,75 @@ use yii\widgets\ActiveForm;
 <script>
     const kode_sampai = document.querySelector('#kode_sampai');
     const dari = document.querySelector('#dari');
-    const sampai = document.querySelector('.selama');
+    const selamaRadios = document.querySelectorAll('.selama input[type="radio"]');
 
-    sampai.addEventListener('change', (e) => {
-        const startDate = new Date(dari.value);
-
-
-        let endDate;
-        if (e.target.value == 1) { // Tambah 3 bulan
-            endDate = addMonths(startDate, 3);
-        } else if (e.target.value == 2) { // Tambah 6 bulan
-            endDate = addMonths(startDate, 6);
-        } else if (e.target.value == 3) { // Tambah 1 tahun
-            endDate = addMonths(startDate, 12);
+    // Fungsi untuk menghitung tanggal akhir berdasarkan pilihan
+    function hitungTanggalSampai() {
+        if (!dari.value) {
+            alert('Silakan isi tanggal "Mulai Dari" terlebih dahulu');
+            return;
         }
 
-        // Menghitung akhir bulan dari endDate
+        const startDate = new Date(dari.value);
+        const selectedRadio = document.querySelector('.selama input[type="radio"]:checked');
+
+        if (!selectedRadio) {
+            return;
+        }
+
+        const value = parseInt(selectedRadio.value);
+        let endDate;
+
+        // Menyesuaikan dengan bulan mulai
+        if (value === 1) { // 3 bulan
+            endDate = addMonths(startDate, 3);
+        } else if (value === 2) { // 6 bulan
+            endDate = addMonths(startDate, 6);
+        } else if (value === 3) { // 1 tahun
+            endDate = addMonths(startDate, 12);
+        } else if (value === 4) { // 2 tahun
+            endDate = addMonths(startDate, 24);
+        }
+
+        // Mengatur ke tanggal terakhir bulan
         if (endDate) {
-            const month = endDate.getMonth() <= 0 ? 12 : endDate.getMonth();
-            console.log("🚀 ~ sampai.addEventListener ~ month:", month)
-            const year = month == 12 ? endDate.getFullYear() - 1 : endDate.getFullYear();
-            const lastDateOfMonth = new Date(year, month, 0).getDate();
-            kode_sampai.value = `${year}-${(month).toString().padStart(2, '0')}-${lastDateOfMonth}`;
+            endDate.setDate(0); // Mengatur ke tanggal terakhir bulan sebelumnya
+            const year = endDate.getFullYear();
+            const month = String(endDate.getMonth() + 1).padStart(2, '0');
+            const day = String(endDate.getDate()).padStart(2, '0');
+
+            kode_sampai.value = `${year}-${month}-${day}`;
+        }
+    }
+
+    // Menambahkan event listener ke semua radio button
+    selamaRadios.forEach(radio => {
+        radio.addEventListener('change', hitungTanggalSampai);
+    });
+
+    // Juga hitung ketika tanggal "dari" berubah
+    dari.addEventListener('change', () => {
+        const selectedRadio = document.querySelector('.selama input[type="radio"]:checked');
+        if (selectedRadio) {
+            hitungTanggalSampai();
         }
     });
 
     // Fungsi untuk menambah bulan
     function addMonths(date, months) {
-
         const newDate = new Date(date);
         // Menyimpan tanggal asli
         const originalDate = newDate.getDate();
 
+        // Tambah bulan
         newDate.setMonth(newDate.getMonth() + months);
 
-        // Memastikan tanggal tidak melampaui tanggal terakhir bulan baru
-        if (newDate.getDate() < originalDate) {
-            newDate.setDate(0); // Mengatur ke tanggal terakhir bulan sebelumnya
+        // Jika tanggal melebihi akhir bulan baru, set ke akhir bulan
+        const tempDate = new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0);
+        if (originalDate > tempDate.getDate()) {
+            newDate.setDate(tempDate.getDate());
+        } else {
+            newDate.setDate(originalDate);
         }
 
         return newDate;

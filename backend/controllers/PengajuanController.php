@@ -435,51 +435,51 @@ class PengajuanController extends \yii\web\Controller
     }
 
 
-   public function actionJenisCuti()
-{
-    $karyawan = Karyawan::find()
-        ->select(['id_karyawan', 'kode_jenis_kelamin'])
-        ->where(['email' => Yii::$app->user->identity->email])
-        ->one();
+    public function actionJenisCuti()
+    {
+        $karyawan = Karyawan::find()
+            ->select(['id_karyawan', 'kode_jenis_kelamin'])
+            ->where(['email' => Yii::$app->user->identity->email])
+            ->one();
 
-    $tahun = date('Y'); // Tahun sekarang
-    
-    // Ambil seluruh data jenis cuti dengan status aktif
-    $jenisCuti = MasterCuti::find()
-        ->alias('mc') // alias untuk master_cuti
-        ->select([
-            'mc.*', // semua kolom dari master_cuti
-            'jatah.jatah_hari_cuti',
-            'jatah.tahun',
-            'jatah.id_karyawan',
-            // Ubah total_hari_terpakai jadi 0 jika NULL
-            new \yii\db\Expression('COALESCE(rekap.total_hari_terpakai, 0) AS total_hari_terpakai'),
-            // Sisa cuti = jatah - terpakai (pastikan keduanya tidak NULL)
-            new \yii\db\Expression('COALESCE(jatah.jatah_hari_cuti, 0) - COALESCE(rekap.total_hari_terpakai, 0) AS sisa_cuti_tahun_ini'),
-        ])
-        ->leftJoin(
-            ['jatah' => 'jatah_cuti_karyawan'],
-            'jatah.id_master_cuti = mc.id_master_cuti 
+        $tahun = date('Y'); // Tahun sekarang
+
+        // Ambil seluruh data jenis cuti dengan status aktif
+        $jenisCuti = MasterCuti::find()
+            ->alias('mc') // alias untuk master_cuti
+            ->select([
+                'mc.*', // semua kolom dari master_cuti
+                'jatah.jatah_hari_cuti',
+                'jatah.tahun',
+                'jatah.id_karyawan',
+                // Ubah total_hari_terpakai jadi 0 jika NULL
+                new \yii\db\Expression('COALESCE(rekap.total_hari_terpakai, 0) AS total_hari_terpakai'),
+                // Sisa cuti = jatah - terpakai (pastikan keduanya tidak NULL)
+                new \yii\db\Expression('COALESCE(jatah.jatah_hari_cuti, 0) - COALESCE(rekap.total_hari_terpakai, 0) AS sisa_cuti_tahun_ini'),
+            ])
+            ->leftJoin(
+                ['jatah' => 'jatah_cuti_karyawan'],
+                'jatah.id_master_cuti = mc.id_master_cuti 
              AND jatah.tahun = :tahun 
              AND jatah.id_karyawan = :id_karyawan',
-            [':tahun' => $tahun, ':id_karyawan' => $karyawan->id_karyawan]
-        )
-        ->leftJoin(
-            ['rekap' => 'rekap_cuti'],
-            'rekap.id_master_cuti = mc.id_master_cuti 
+                [':tahun' => $tahun, ':id_karyawan' => $karyawan->id_karyawan]
+            )
+            ->leftJoin(
+                ['rekap' => 'rekap_cuti'],
+                'rekap.id_master_cuti = mc.id_master_cuti 
              AND rekap.id_karyawan = jatah.id_karyawan 
              AND rekap.tahun = :tahun',
-            [':tahun' => $tahun]
-        )
-        ->where([
-            'mc.status' => 1,
-        ])
-        ->orderBy(['mc.jenis_cuti' => SORT_ASC])
-        ->asArray()
-        ->all();
+                [':tahun' => $tahun]
+            )
+            ->where([
+                'mc.status' => 1,
+            ])
+            ->orderBy(['mc.jenis_cuti' => SORT_ASC])
+            ->asArray()
+            ->all();
 
-    return $this->asJson($jenisCuti);
-}
+        return $this->asJson($jenisCuti);
+    }
 
     public function actionCutiDetail($id)
     {

@@ -86,43 +86,7 @@ $defaultTanggalMulaiPotong = !empty($model->tanggal_mulai_potong)
             ]) ?>
         </div>
 
-        <!-- Status dan Tipe Potongan -->
-        <?php if (!$model->isNewRecord): ?>
-            <div class="md:col-span-2">
-                <h3 class="mb-2 font-semibold text-gray-700 text-md">Status Pengajuan</h3>
-                <?php
-                $data = \yii\helpers\ArrayHelper::map(
-                    MasterKode::find()->where(['nama_group' => Yii::$app->params['status-pengajuan']])
-                        ->andWhere(['!=', 'status', 0])
-                        ->orderBy(['urutan' => SORT_ASC])
-                        ->all(),
-                    'kode',
-                    'nama_kode'
-                );
-                echo $form->field($model, 'status')->radioList($data, [
-                    'item' => function ($index, $label, $name, $checked, $value) {
-                        return '<label class="inline-flex items-center mr-4">' .
-                            Html::radio($name, $checked, ['value' => $value, 'class' => 'mr-2']) .
-                            '<span>' . Html::encode($label) . '</span></label>';
-                    },
-                ])->label(false);
-                ?>
-            </div>
 
-            <!-- Tipe Potongan -->
-            <div class="md:col-span-2">
-                <?= $form->field($model, 'tipe_potongan')->radioList([
-                    0 => 'Off (manual input saat penggajian)',
-                    1 => 'On (otomatis dipotong setiap bulan)',
-                ], [
-                    'item' => function ($index, $label, $name, $checked, $value) {
-                        return '<label class="block mb-2">' .
-                            Html::radio($name, $checked, ['value' => $value, 'class' => 'mr-2']) .
-                            '<span>' . Html::encode($label) . '</span></label>';
-                    },
-                ])->label('Tipe Potongan') ?>
-            </div>
-        <?php endif; ?>
 
         <!-- Tombol Submit -->
         <div class="md:col-span-2">

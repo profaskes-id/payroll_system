@@ -123,18 +123,6 @@ $tanggalFormater = new Tanggal();
                         <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"><?= $model['tanggal_mulai_potong'] ? $tanggalFormater->getIndonesiaFormatTanggal($model['tanggal_mulai_potong']) : '-' ?></td>
                     </tr>
 
-                    <tr>
-                        <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Tipe Potongan</td>
-                        <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
-                            <?php
-                            if ($model['tipe_potongan'] == 0) {
-                                echo '<span class="text-blue-600">Otomatis (Potong Gaji)</span>';
-                            } else {
-                                echo '<span class="text-indigo-600">Manual</span>';
-                            }
-                            ?>
-                        </td>
-                    </tr>
 
                     <tr>
                         <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">Keterangan</td>

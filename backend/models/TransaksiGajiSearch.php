@@ -138,8 +138,8 @@ class TransaksiGajiSearch extends TransaksiGaji
                 'pg.tahun',
             ])
             ->orderBy([
+                'karyawan.nama' => SORT_ASC,
                 'bg.id_bagian' => SORT_DESC,
-                'karyawan.nama' => SORT_ASC
             ])
             ->addParams([':periode_gaji_id' => $id_periode_penggajian]);
 
@@ -252,11 +252,11 @@ class TransaksiGajiSearch extends TransaksiGaji
             $karyawan['potongan_karyawan'] = $this->getPotonganKaryawan($id, $karyawan['nominal_gaji']);
             $karyawan['tunjangan_karyawan'] = $this->getTunjanganKaryawan($id, $karyawan['nominal_gaji']);
 
-            $kasbon = $this->getKasbonKaryawan($id, $karyawan['nominal_gaji']);
-
+            $kasbon = $this->getKasbonKaryawan($id, $periodeGajiObject,);
             $karyawan['hari_kerja_efektif'] = $this->getHariKerjaEfektif($id, $periodeGajiObject);
 
             $karyawan['kasbon_karyawan'] =  $kasbon['total_angsuran_terakhir'] ?? 0;
+            $karyawan['sisa_kasbon'] =  $kasbon['sisa_kasbon'] ?? 0;
             $karyawan['gaji_perhari'] = $this->getGajiKaryawanPerHari($karyawan['nominal_gaji'], $id, $periodeGajiObject);
             $lemburData = $this->getLemburKaryawan($id, $karyawan['nominal_gaji'], $periodeGajiObject);
             $karyawan['jam_lembur'] = $lemburData['jam_lembur'];
@@ -512,15 +512,40 @@ class TransaksiGajiSearch extends TransaksiGaji
         return $total ?: 0;
     }
 
-    public function getKasbonKaryawan($id_karyawan)
+    public function getKasbonKaryawan($id_karyawan, $periode_gaji)
     {
-        // Ambil semua data kasbon aktif untuk karyawan tertentu
+
+
         $dataPengajuanKasbon = PembayaranKasbon::find()
-            ->where(['id_karyawan' => $id_karyawan])
-            ->andWhere(['autodebt' => 1])
+            ->alias('pk')
+            ->select(['pk.*', 'k.angsuran_perbulan as angsuran'])
+            ->leftJoin(
+                'pengajuan_kasbon k',
+                'k.id_pengajuan_kasbon = pk.id_kasbon AND k.id_karyawan = :id_karyawan',
+                [':id_karyawan' => $id_karyawan]
+            )
+            ->where(['pk.id_karyawan' => $id_karyawan])
+            ->orderBy(['pk.created_at' => SORT_DESC])
             ->asArray()
-            ->orderBy('created_at DESC')
             ->one();
+
+
+
+
+
+        if ($dataPengajuanKasbon) {
+            $dataPending = PendingKasbon::find()->where(['id_karyawan' => $id_karyawan, 'id_kasbon' => $dataPengajuanKasbon['id_kasbon'], 'bulan' => $periode_gaji['bulan'], 'tahun' => $periode_gaji['tahun']])->asArray()->one();
+
+
+            if ($dataPending) {
+                return [
+                    'data_terakhir' => null,
+                    'total_angsuran_terakhir' => 0,
+                ];
+            }
+        }
+
+
 
 
 
@@ -531,6 +556,7 @@ class TransaksiGajiSearch extends TransaksiGaji
                 'total_angsuran_terakhir' => 0,
             ];
         }
+
 
 
         if ($dataPengajuanKasbon && $dataPengajuanKasbon['status_potongan'] == 1 || $dataPengajuanKasbon['sisa_kasbon'] == 0) {
@@ -549,7 +575,9 @@ class TransaksiGajiSearch extends TransaksiGaji
             ? (float)$dataTerakhir['angsuran']
             : 0;
 
-        // Hasil akhir
+
+
+
         return [
             'data_terakhir' => $dataTerakhir,
             'total_angsuran_terakhir' => $totalAngsuran,
