@@ -48,8 +48,8 @@ class JadwalShift extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_jadwal_shift' => 'Id Jadwal Shift',
-            'id_karyawan' => 'Id Karyawan',
+            'id_jadwal_shift' => ' Jadwal Shift',
+            'id_karyawan' => 'Karyawan',
             'tanggal' => 'Tanggal',
             'id_shift_kerja' => 'Id Shift Kerja',
         ];

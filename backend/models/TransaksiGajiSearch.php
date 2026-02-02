@@ -625,6 +625,9 @@ class TransaksiGajiSearch extends TransaksiGaji
         }
 
 
+
+
+
         return [
             'jam_lembur' => $jam_lembur ?? 0,
             'total_pendapatan_lembur' => $jam_lembur * round($gajiKaryawan / 173, 2),

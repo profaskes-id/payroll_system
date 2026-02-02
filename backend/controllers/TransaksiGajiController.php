@@ -499,6 +499,7 @@ class TransaksiGajiController extends Controller
                         'sisa_kasbon' => $sisaKasbonBaru,
                         'created_at' => time(),
                         'deskripsi' => 'Pembayaran Kasbon',
+                        'metode_bayar' => 'potong-gaji',
                     ];
 
 
@@ -687,6 +688,7 @@ class TransaksiGajiController extends Controller
                             'sisa_kasbon',
                             'created_at',
                             'deskripsi',
+                            'metode_bayar',
                             'jumlah_kasbon',
                         ], $rowsToInsert)
                         ->execute();
@@ -1004,6 +1006,7 @@ class TransaksiGajiController extends Controller
                 'sisa_kasbon' => $sisaKasbonBaru,
                 'created_at' => time(),
                 'deskripsi' => 'Pembayaran Kasbon',
+                'metode_bayar' => 'potong-gaji',
             ];
         }
 
@@ -1192,6 +1195,7 @@ class TransaksiGajiController extends Controller
                         'created_at',
 
                         'deskripsi',
+                        'metode_bayar',
                     ], $kasbonRekapRows)
                     ->execute();
 
@@ -1638,7 +1642,7 @@ class TransaksiGajiController extends Controller
         foreach ($tables as $table) {
             $table::deleteAll(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun]);
         }
-        PembayaranKasbon::deleteAll(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun, 'deskripsi' => 'Pembayaran Kasbon']);
+        PembayaranKasbon::deleteAll(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun, 'metode_bayar' => 'potong-gaji']);
         // PendingKasbon::deleteAll(['id_karyawan' => $id_karyawan, 'bulan' => $bulan, 'tahun' => $tahun]);
     }
     // delete All
@@ -1651,7 +1655,7 @@ class TransaksiGajiController extends Controller
         DinasDetailGaji::deleteAll(['bulan' => $bulan, 'tahun' => $tahun]);
         RekapGajiKaryawanPertransaksi::deleteAll(['bulan' => $bulan, 'tahun' => $tahun]);
         PotonganAlfaAndWfhPenggajian::deleteAll(['bulan' => $bulan, 'tahun' => $tahun]);
-        // PembayaranKasbon::deleteAll(['bulan' => $bulan, 'tahun' => $tahun, 'deskripsi' => 'Pembayaran Kasbon']);
+        PembayaranKasbon::deleteAll(['bulan' => $bulan, 'tahun' => $tahun, 'metode_bayar' => 'potong-gaji']);
         return;
     }
     public function actionGetTunjanganKaryawan($id_karyawan)
@@ -1963,6 +1967,8 @@ class TransaksiGajiController extends Controller
     }
     private function getLemburData($id_karyawan, $bulan, $tahun, $tanggal_awal, $tanggal_akhir)
     {
+
+
 
 
 

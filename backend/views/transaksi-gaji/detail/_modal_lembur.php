@@ -57,6 +57,7 @@ use yii\helpers\Url;
                                     <th width="5%">#</th>
                                     <th width="25%">Tanggal</th>
 
+                                    <th width="15%" class="text-center">Jam Lembur</small></th>
                                     <th width="15%" class="text-center">Hitungan Jam <small>(telah di konversi)</small></th>
                                     <th width="20%" class="text-end">Pekerjaan</th>
                                 </tr>
@@ -67,6 +68,7 @@ use yii\helpers\Url;
                             <tfoot>
                                 <tr class="table-secondary fw-bold">
                                     <td class="text-end">Total:</td>
+                                    <td></td>
                                     <td></td>
                                     <td id="totalHitungan" class="text-center">0 jam</td>
                                     <td class="text-end">-</td>
@@ -301,11 +303,14 @@ use yii\helpers\Url;
                         </div>
                     </td>
                  
-                    
-                    <td class="text-center fw-bold text-warning">
+    
+                    <td class="text-center fw-bold ">
+                        ${item.jam_mulai} - ${item.jam_selesai}
+                    </td>
+                    <td class="text-center fw-bold text-primary">
                         ${hitunganJam} jam
                     </td>
-                    <td class="text-end">
+                    <td class="text-end" colspan="2">
                         <div class="text-start">
                             ${pekerjaanList.map(pekerjaan => `<div class="small">• ${pekerjaan}</div>`).join('')}
                             ${item.catatan_admin ? `<div class="mt-1"><small class="text-muted"><strong>Catatan:</strong> ${item.catatan_admin}</small></div>` : ''}
