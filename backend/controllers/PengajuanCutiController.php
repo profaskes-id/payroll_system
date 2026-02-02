@@ -51,32 +51,33 @@ class PengajuanCutiController extends Controller
     {
 
         $tanggalAwal = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one();
-        $tanggalAwalInt = intval($tanggalAwal->nama_kode); // Misalnya 20
+        $tanggalAwalInt = intval($tanggalAwal->nama_kode); // Misalnya 20 atau 21
         $tanggalSekarang = date('d');
         $bulanSekarang = date('m');
         $tahunSekarang = date('Y');
 
         if ($tanggalSekarang < $tanggalAwalInt) {
-            // Jika tanggal sekarang < tanggalAwal (misal: sekarang tgl 15, tanggalAwal = 20)
-            // tgl_mulai = tanggalAwal+1 + bulan lalu + tahun ini
+            // Jika tanggal sekarang < tanggalAwal (misal: sekarang tgl 15, tanggalAwal = 21)
+            // tgl_mulai = tanggalAwal + bulan lalu + tahun ini
             $tgl_mulai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang - 1, $tanggalAwalInt, $tahunSekarang));
-            // tgl_selesai = tanggalAwal + bulan sekarang + tahun ini
+            // tgl_selesai = (tanggalAwal - 1) + bulan sekarang + tahun ini
             $tgl_selesai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt - 1, $tahunSekarang));
         } else {
-            // Jika tanggal sekarang >= tanggalAwal (misal: sekarang tgl 25, tanggalAwal = 20)
-            // tgl_mulai = tanggalAwal+1 + bulan sekarang + tahun ini
+            // Jika tanggal sekarang >= tanggalAwal (misal: sekarang tgl 25, tanggalAwal = 21)
+            // tgl_mulai = tanggalAwal + bulan sekarang + tahun ini
             $tgl_mulai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt, $tahunSekarang));
-            // tgl_selesai = tanggalAwal + bulan depan + tahun menyesuaikan
-            $tgl_selesai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt - 1, $tahunSekarang));
+            // tgl_selesai = (tanggalAwal - 1) + bulan depan + tahun menyesuaikan
+            $tgl_selesai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang + 1, $tanggalAwalInt - 1, $tahunSekarang));
         }
 
-        // Jika ada parameter GET, gunakan nilai dari GET
+        // Override dengan input user jika ada
         if (!empty(Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_mulai'])) {
             $tgl_mulai = Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_mulai'];
         }
         if (!empty(Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_selesai'])) {
             $tgl_selesai = Yii::$app->request->get()['PengajuanCutiSearch']['tanggal_selesai'];
         }
+
         $searchModel = new PengajuanCutiSearch();
         $dataProvider = $searchModel->search($this->request->queryParams, $tgl_mulai, $tgl_selesai);
 

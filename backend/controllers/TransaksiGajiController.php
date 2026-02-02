@@ -1945,11 +1945,16 @@ class TransaksiGajiController extends Controller
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         $data = PembayaranKasbon::find()
-            ->where(['id_karyawan' => $id_karyawan])
-            ->andWhere(['status_potongan' => 0,])
+            ->alias('pembayaran_kasbon')
+            ->select(['pembayaran_kasbon.*', 'pengajuan_kasbon.angsuran_perbulan as angsuran'])
+            ->where(['pembayaran_kasbon.id_karyawan' => $id_karyawan])
+            ->andWhere(['pembayaran_kasbon.status_potongan' => 0,])
             ->asArray()
-            ->orderBy(['id_pembayaran_kasbon' => SORT_DESC])
+            ->leftJoin('pengajuan_kasbon', 'pembayaran_kasbon.id_kasbon = pengajuan_kasbon.id_pengajuan_kasbon')
+            ->orderBy(['pembayaran_kasbon.id_pembayaran_kasbon' => SORT_DESC])
             ->one();
+
+        // dd($data);
 
         return [
             'success' => true,
@@ -1958,6 +1963,7 @@ class TransaksiGajiController extends Controller
     }
     private function getLemburData($id_karyawan, $bulan, $tahun, $tanggal_awal, $tanggal_akhir)
     {
+
 
 
         try {

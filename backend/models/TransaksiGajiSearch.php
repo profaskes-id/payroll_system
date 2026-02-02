@@ -599,6 +599,12 @@ class TransaksiGajiSearch extends TransaksiGaji
 
 
 
+
+
+
+
+
+
         if ($jenisPengambilanLembur && $jenisPengambilanLembur->nilai_setting == '0') {
             // Lembur tidak diajukan, ambil dari rekap langsung
             $jam_lembur = (new \yii\db\Query())
