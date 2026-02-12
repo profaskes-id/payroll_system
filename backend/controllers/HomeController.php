@@ -18,11 +18,13 @@ use backend\models\JadwalKerja;
 use backend\models\JadwalShift;
 
 use backend\models\JamKerjaKaryawan;
+use backend\models\JatahCutiKaryawan;
 use backend\models\Karyawan;
 use backend\models\MasterKode;
 use backend\models\Message;
 use backend\models\MessageReceiver;
-
+use backend\models\PembayaranKasbon;
+use backend\models\PengajuanLembur;
 use backend\models\PengajuanShift;
 use backend\models\PengajuanWfh;
 use backend\models\PengalamanKerja;
@@ -41,6 +43,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\db\Query;
 
 use yii\web\UploadedFile;
 
@@ -170,6 +173,146 @@ class HomeController extends Controller
             'absensi' => $absensi,
         ]);
     }
+
+
+
+    public function actionHistory()
+    {
+        $id_karyawan = Yii::$app->user->identity->id_karyawan;
+
+        $this->layout = 'mobile-main';
+
+        $tahun = date('Y');
+        $tanggal_awal  = $tahun . '-01-01';
+        $tanggal_akhir = $tahun . '-12-31';
+
+        // =========================
+        // Data Cuti
+        // =========================
+        $dataCuti = (new Query())
+            ->select([
+                'm.jenis_cuti',
+                'j.jatah_hari_cuti',
+                'total_terpakai' => 'COUNT(dc.id_detail_cuti)'
+            ])
+            ->from(['j' => 'jatah_cuti_karyawan'])
+            ->leftJoin(
+                ['pc' => 'pengajuan_cuti'],
+                'pc.jenis_cuti = j.id_master_cuti 
+                AND pc.id_karyawan = j.id_karyawan 
+                AND pc.status = 1'
+            )
+            ->leftJoin(
+                ['dc' => 'detail_cuti'],
+                'dc.id_pengajuan_cuti = pc.id_pengajuan_cuti
+             AND dc.tanggal BETWEEN :awal AND :akhir'
+            )
+            ->where([
+                'j.id_karyawan' => $id_karyawan,
+                'j.tahun' => $tahun
+            ])
+            ->leftJoin(['m' => 'master_cuti'], 'm.id_master_cuti = j.id_master_cuti')
+            ->groupBy(['j.id_master_cuti', 'j.jatah_hari_cuti'])
+            ->addParams([
+                ':awal' => $tanggal_awal,
+                ':akhir' => $tanggal_akhir,
+            ])
+            ->all();
+
+        // Hitung sisa cuti
+        foreach ($dataCuti as &$cuti) {
+            $cuti['total_terpakai'] = (int)$cuti['total_terpakai'];
+            $cuti['sisa'] = $cuti['jatah_hari_cuti'] - $cuti['total_terpakai'];
+        }
+        unset($cuti);
+
+
+        // dd($dataCuti);
+        // =========================
+        // Hitung periode cut-off
+        // =========================
+        $tanggalAwal = MasterKode::find()->where(['nama_group' => "tanggal-cut-of"])->one();
+        $tanggalAwalInt = intval($tanggalAwal->nama_kode);
+        $tanggalSekarang = date('d');
+        $bulanSekarang = date('m');
+        $tahunSekarang = date('Y');
+
+        if ($tanggalSekarang < $tanggalAwalInt) {
+            $tgl_mulai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang - 1, $tanggalAwalInt, $tahunSekarang));
+            $tgl_selesai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt - 1, $tahunSekarang));
+        } else {
+            $tgl_mulai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang, $tanggalAwalInt, $tahunSekarang));
+            $tgl_selesai = date('Y-m-d', mktime(0, 0, 0, $bulanSekarang + 1, $tanggalAwalInt - 1, $tahunSekarang));
+        }
+
+        // Override dengan input user
+        $request = Yii::$app->request->get('PengajuanWfhSearch', []);
+        if (!empty($request['tanggal_mulai'])) {
+            $tgl_mulai = $request['tanggal_mulai'];
+        }
+        if (!empty($request['tanggal_selesai'])) {
+            $tgl_selesai = $request['tanggal_selesai'];
+        }
+
+        // =========================
+        // Data WFH
+        // =========================
+        $wfhRaw = PengajuanWfh::find()
+            ->where(['id_karyawan' => $id_karyawan, 'status' => 1])
+            ->asArray()
+            ->all();
+
+        $wfhData = [];
+        foreach ($wfhRaw as $row) {
+            $tanggalArray = json_decode($row['tanggal_array'], true);
+            if (!is_array($tanggalArray)) continue;
+
+            foreach ($tanggalArray as $tgl) {
+                if ($tgl >= $tgl_mulai && $tgl <= $tgl_selesai) {
+                    $wfhData[] = $row;
+                    break;
+                }
+            }
+        }
+
+        // =========================
+        // Data Lembur
+        // =========================
+        $totalJamLembur = PengajuanLembur::find()
+            ->where(['id_karyawan' => $id_karyawan, 'status' => 1])
+            ->andWhere(['between', 'tanggal', $tgl_mulai, $tgl_selesai])
+            ->sum('hitungan_jam');
+        $totalJamLembur = (float)$totalJamLembur;
+
+        // =========================
+        // Data Kasbon
+        // =========================
+        $kasbon = PembayaranKasbon::find()
+            ->where(['id_karyawan' => $id_karyawan])
+            ->orderBy(['created_at' => SORT_DESC])
+            ->asArray()
+            ->one();
+
+        // =========================
+        // Gabungkan semua ke variabel x
+        // =========================
+        $x = [
+            'cuti'   => $dataCuti,
+            'wfh'    => $wfhData,
+            'lembur' => $totalJamLembur,
+            'kasbon' => $kasbon,
+            'tgl_mulai' => $tgl_mulai,
+            'tgl_selesai' => $tgl_selesai,
+        ];
+
+        return $this->render('history', [
+            'x' => $x
+        ]);
+    }
+
+
+
+
 
     public function actionUpdate($id_absensi)
     {

@@ -46,8 +46,8 @@ use yii\widgets\ActiveForm;
         <div class="col-12">
             <?= $form->field($model, 'visibility')->radioList(
                 [
-                    0 => 'tidak',
-                    1 => 'ya',
+                    0 => 'Tidak',
+                    1 => 'Iya',
                 ],
                 [
                     'class' => 'selama',

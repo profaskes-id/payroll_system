@@ -289,6 +289,9 @@ class TransaksiGajiController extends Controller
 
         if (!empty($models)) {
             foreach ($models as $modelData) {
+                if (!$modelData['visibility']) {
+                    continue;
+                }
                 $idKaryawan = $modelData['id_karyawan'];
                 $nominalGaji = $modelData['nominal_gaji'];
                 $tunjanganList = TunjanganDetail::getTunjanganKaryawan($idKaryawan, $nominalGaji);
@@ -664,13 +667,14 @@ class TransaksiGajiController extends Controller
                         $row['id_kasbon'],
                         $row['bulan'],
                         $row['tahun'],
+                        $row['jumlah_kasbon'],
                         $row['jumlah_potong'],
                         $row['tanggal_potong'],
                         $row['status_potongan'],
                         $row['sisa_kasbon'],
                         $row['created_at'],
                         $row['deskripsi'],
-                        $row['jumlah_kasbon'],
+                        $row['metode_bayar'],
                     ];
                 }
 
@@ -682,6 +686,7 @@ class TransaksiGajiController extends Controller
                             'id_kasbon',
                             'bulan',
                             'tahun',
+                            'jumlah_kasbon',
                             'jumlah_potong',
                             'tanggal_potong',
                             'status_potongan',
@@ -689,7 +694,6 @@ class TransaksiGajiController extends Controller
                             'created_at',
                             'deskripsi',
                             'metode_bayar',
-                            'jumlah_kasbon',
                         ], $rowsToInsert)
                         ->execute();
 
@@ -1193,7 +1197,6 @@ class TransaksiGajiController extends Controller
                         'status_potongan',
                         'sisa_kasbon',
                         'created_at',
-
                         'deskripsi',
                         'metode_bayar',
                     ], $kasbonRekapRows)

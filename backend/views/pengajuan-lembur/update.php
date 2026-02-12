@@ -2,8 +2,6 @@
 
 use yii\helpers\Html;
 
-/** @var yii\web\View $this */
-/** @var backend\models\PengajuanLembur $model */
 
 $this->title = 'Pengajuan Lembur';
 $this->params['breadcrumbs'][] = ['label' => 'Pengajuan Lembur', 'url' => ['index']];

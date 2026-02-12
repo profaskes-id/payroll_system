@@ -1,0 +1,192 @@
+bd29cdb | 2026-02-02 | perbaikan lembur transaksi gaji
+4257fd1 | 2026-02-02 | rekap lembur diajukan
+d4f5aca | 2026-01-30 | perbaikan transaksi gaji detail input
+a3ccf94 | 2026-01-28 | typo slip gaji
+a1559ac | 2026-01-27 | perbikan transaksi report
+3444765 | 2026-01-27 | fix transaksi gaji
+fd1a821 | 2026-01-26 | fix tampilan transaksi gaji
+1247c9a | 2026-01-26 | perbaikan transaksi gaji
+bc88c3e | 2026-01-06 | perbaikn cut tiap tahun
+74aded8 | 2026-01-02 | perbaikan logion controller
+0f303b3 | 2025-12-24 | perbaikan absensi dan cuti
+2d97384 | 2025-12-24 | add wajah
+21d695d | 2025-12-17 | perbaik dinas update input dan absen
+1afee81 | 2025-12-16 | perbaikan tanggapan
+c540a5e | 2025-12-16 | perbaikan face js compress
+b6465e8 | 2025-12-15 | perbiakan face delay
+88fb774 | 2025-12-12 | Update absen-masuk.php
+8953b7a | 2025-12-12 | perbaikn search tertinggal
+1802391 | 2025-12-12 | Update tailwind_output.css
+7ca9331 | 2025-12-12 | Merge branch 'perbaikan-atasan-icon'
+1adf8de | 2025-12-12 | perbaikan icon
+720e927 | 2025-12-12 | Merge branch 'facejs'
+1b18fe7 | 2025-12-12 | Merge branch 'perbaikan_pengajuan'
+3b9159f | 2025-12-12 | Update .gitignore
+5da366a | 2025-12-12 | perbaikan design face js dan berhasil
+983f9f9 | 2025-12-11 | perbaikan face js sehingga berhasil
+fb6ea05 | 2025-12-10 | wajah expirience dan tidak mirror di absen masuk
+6cc2e8c | 2025-12-10 | berhasil wajah
+2be49ac | 2025-12-10 | Revert "Merge branch 'perbaikan_pengajuan' into facejs"
+b3037c7 | 2025-12-10 | Merge branch 'perbaikan_pengajuan' into facejs
+c6a8e90 | 2025-12-08 | perbaikan cuti & search
+d80f869 | 2025-12-04 | perbaikan face recognation
+2945e47 | 2025-12-02 | add facerocognation
+046f5b0 | 2025-12-01 | Merge branch 'perbaikan_pengajuan' into facejs
+2dcb7b6 | 2025-12-01 | perbaikan settingan umum
+5d66c3a | 2025-11-28 | perbaikan absensi dan pengajauan absensi
+fc33810 | 2025-11-27 | add face recognation
+b5ed078 | 2025-11-27 | dinas, penggajian
+71154cd | 2025-11-05 | perbaik wfh
+67b4ee9 | 2025-11-05 | perbaikan penggajian redierect
+8bac326 | 2025-11-04 | fixing kasbon
+f899e78 | 2025-11-03 | add kasbon
+19ed1dc | 2025-10-28 | tunjangan potongan
+ae6ae0d | 2025-10-24 | perbaikan tunjangan potongan
+4b771a9 | 2025-10-22 | fixing modal penggjian
+bd138cc | 2025-10-20 | fix bulan di report penggajian
+ba90b35 | 2025-10-20 | Update TransaksiGajiController.php
+4d1aed5 | 2025-10-20 | perbaikan rekap gaji
+a99a26d | 2025-10-16 | perbaikan form ambil data dari db
+6db93d3 | 2025-10-15 | Merge branch 'face-recognation'
+d530308 | 2025-10-15 | add penggajian
+8377a3a | 2025-08-25 | add new fiture rekap absensi
+97cda35 | 2025-08-20 | fixing revisi typografy
+ad1bf46 | 2025-08-14 | fixing vender mdm menu
+e661947 | 2025-08-14 | add mdm vendor
+a107578 | 2025-08-14 | perbaikan tanggapan
+77b88e8 | 2025-08-13 | fixing web camp and tugas luar
+056f784 | 2025-08-11 | fixing absensi face recognation
+03013ce | 2025-08-06 | update pengajuan luar
+297d75d | 2025-08-06 | Update index.php
+a323ee6 | 2025-08-06 | fix rekap absensi
+6b040e6 | 2025-08-05 | Merge branch 'fix-rekap-absensi'
+06fad7c | 2025-08-05 | revisi ajak absen
+05d995b | 2025-08-04 | Merge branch 'fix-rekap-absensi'
+023d9ff | 2025-08-04 | fixing pengajuan tugas luar
+1a81c50 | 2025-08-04 | perbaikan tugas luar
+07e8cb9 | 2025-08-01 | fixing tugas luar
+68a2acc | 2025-08-01 | perbaikan pulang cepat adndaat form tugas luar
+3205a7c | 2025-07-31 | fix rekap and tugas luar
+efdfe95 | 2025-07-30 | addding tugas luar
+3ba13b3 | 2025-07-29 | Merge branch 'fix-rekap-absensi'
+9f952c6 | 2025-07-29 | fix reakap absensi
+be31cdf | 2025-07-28 | Merge branch 'mdm'
+1954243 | 2025-07-28 | Update .gitignore
+db50485 | 2025-07-28 | perbaikan mdm
+2722661 | 2025-07-23 | perbaikan dashboard
+43e8cdf | 2025-07-21 | add mdm v2
+c94e9b6 | 2025-07-21 | add mdm
+b829efb | 2025-07-09 | applicate mdm
+6d8779b | 2025-07-08 | add premision
+7953fd0 | 2025-07-04 | perbaikan tanggal
+f0a7534 | 2025-07-04 | revisi perbaikan design
+d8329ed | 2025-06-26 | fixing
+d143d43 | 2025-06-12 | perbaikan absensi
+16f01cc | 2025-06-11 | rekap cuti updated
+e0caa4a | 2025-06-10 | perbaikan data karyawan
+07f8125 | 2025-06-07 | perbaikan rekap absensi
+37b20b8 | 2025-05-29 | perbaikan shift
+5f4184b | 2025-05-08 | perbaikan lembur
+ca51b72 | 2025-04-23 | perbaikan search
+c4b6042 | 2025-04-21 | perbaikan search
+f0d37d5 | 2025-04-21 | add settingan umum
+a5d2630 | 2025-04-15 | perbaikan pengajuan lembur
+2d27f56 | 2025-04-14 | perbaikan hitungan jam lembur
+32c11c5 | 2025-04-08 | perbaikan semua
+9a12eb4 | 2025-03-25 | perbaikan
+3467fd6 | 2025-03-17 | Update .gitignore
+d4e4001 | 2025-03-17 | perbaikan tanggapan admin
+bf8abdd | 2025-02-14 | perbaikan controller
+87c54e1 | 2025-02-06 | perbaikan web dan add notifikasi
+da9aa9e | 2025-02-06 | Update .gitignore
+7a104f3 | 2024-11-26 | minor change
+e06c0ea | 2024-11-25 | add sweet alert2
+630cb08 | 2024-11-25 | remove all DD
+fb09adf | 2024-11-25 | perbaikan transaksi gaji exel
+1f23ad5 | 2024-11-25 | perbaikan middleware user and admin
+ae809d1 | 2024-11-22 | minor change
+18c4dbe | 2024-11-22 | fix mobile and add exel eksport
+dace586 | 2024-11-21 | add periode gaji dan tunjangan-potongan  popup
+ab89ebf | 2024-11-21 | add revisi transaksi
+c519e2e | 2024-11-15 | fixing order
+df7cfd0 | 2024-11-13 | fixing rekap
+003793d | 2024-11-11 | fix transaksi potongandan tunjangan
+78b2227 | 2024-11-08 | add transaksi
+176c857 | 2024-11-07 | perbaikan transaksi
+fcc5ef5 | 2024-11-05 | add transaksi
+9ec5ee1 | 2024-11-04 | add gajitunjangan
+c736ff8 | 2024-11-01 | Merge branch 'backend' into penggajian
+3acaea8 | 2024-11-01 | add search pengajuan wfh
+47aad23 | 2024-11-01 | Merge branch 'backend' into penggajian
+9a93e7f | 2024-11-01 | perbaikan serach
+4f6c3d7 | 2024-11-01 | add tunjangan potongan
+457618f | 2024-10-30 | Delete backend.zip
+b8739d1 | 2024-10-30 | just payroll
+39f66db | 2024-10-28 | add rekap absensi
+d1f628a | 2024-10-28 | add total hari kerja by jam kerja
+85e2aa9 | 2024-10-28 | add total hari kerja
+37af664 | 2024-10-23 | perbaikan rekap absensi
+9d8d9e6 | 2024-10-16 | perbaikan pengajuan
+6960f6e | 2024-10-11 | pernambahan master gaji
+a9f1529 | 2024-10-09 | perbikan perusahaan dan rekap absensi
+4228ac7 | 2024-10-09 | add cetak kontrak
+157957f | 2024-10-03 | perbaikan ignore file
+3fb7a6a | 2024-10-03 | add rekap absensi
+2cc7a86 | 2024-10-02 | perbaikan absensi
+bcca98e | 2024-10-05 | perbaikan backend
+5596285 | 2024-09-30 | fixing backend
+f47d7cb | 2024-09-30 | perbaikan data karyawan
+1ac4a30 | 2024-09-30 | perbaikan revisi
+fbf3473 | 2024-09-20 | perbaikan dashboard
+c18247a | 2024-09-20 | finishng without dashboard
+16c9f40 | 2024-09-17 | perbaikan upload file
+1e8de58 | 2024-09-16 | perbaikan absensi
+f00b900 | 2024-09-12 | upload file and add session
+a2d5790 | 2024-09-10 | Update template-view.md
+92110df | 2024-09-10 | addignorefile
+f1592c8 | 2024-09-10 | hapu gt ignote
+222a5c6 | 2024-09-10 | upadte git ignore
+8467062 | 2024-09-10 | Update .gitignore
+95d7e1f | 2024-09-10 | Update template-view.md
+4d25b69 | 2024-09-10 | Update template-view.md
+c707116 | 2024-09-10 | Update template-view.md
+e87b91b | 2024-09-10 | Merge branch 'karyawan'
+48b3961 | 2024-09-10 | fix  karyawan absensi
+55db4f5 | 2024-09-09 | perbaikan form
+43fac32 | 2024-09-09 | perbaikan view
+c098b9c | 2024-09-08 | fix karyawan
+977fd79 | 2024-09-06 | Merge branch 'backend'
+19f8049 | 2024-09-06 | perbaikan cuti
+8071245 | 2024-09-05 | add dinamis geolocation
+1da99c5 | 2024-09-04 | fix fitur cuti
+087704d | 2024-09-02 | FIX SEARCH
+b004f1b | 2024-09-01 | fix all revisi
+5ea862d | 2024-08-28 | Merge pull request #3 from profaskes-id/backend
+51b0202 | 2024-08-28 | add super_admin
+5bd9818 | 2024-08-28 | fix middleware
+981708f | 2024-08-28 | fix account and profile
+6aa512a | 2024-08-27 | Merge pull request #2 from profaskes-id/backend
+5f00189 | 2024-08-27 | add base web
+6e0f265 | 2024-08-27 | Merge pull request #1 from profaskes-id/backend
+34afe15 | 2024-08-27 | add featre <backend> add pengumuman
+b7d943b | 2024-08-27 | fix profile
+da0aaf5 | 2024-08-27 | add pegajuan dinas
+7cdbf53 | 2024-08-22 | fix until lembur and absen
+76f006d | 2024-08-22 | Merge branch 'backend' into add_preline
+ae44ea4 | 2024-08-22 | Update absen-masuk.php
+bae861b | 2024-08-22 | add pengajuan-lembur
+3668407 | 2024-08-22 | Delete node_modules directory
+ee912ee | 2024-08-21 | Update .gitignore
+bcb18ca | 2024-08-21 | pengajuan cuti fe
+dff4323 | 2024-08-21 | fixing crud data saya
+a986785 | 2024-08-20 | add flow bite and fix design
+53a1cd3 | 2024-08-19 | add map
+3727935 | 2024-08-18 | add crus for personal data
+0c50dec | 2024-08-15 | add karrawan preview  and fix feature
+7163cef | 2024-08-12 | add mobile preview
+58d283e | 2024-08-08 | add middleware
+d97697f | 2024-08-08 | fix migration & absensi
+d8a76d9 | 2024-08-05 | fix typo
+af1b821 | 2024-08-01 | redesign ui
+2227e64 | 2024-07-31 | add models
+ee98da9 | 2024-07-31 | initial commit

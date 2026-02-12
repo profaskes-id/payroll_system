@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Absensi', 'url' => ['index']];
 
 $masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['status-hadir']])->andWhere(['!=', 'status', 0])->orderBy(['urutan' => SORT_ASC])->all();
 ?>
-<div class="absensi-view container mx-auto relative min-h-[90dvh] px-5 ">
+<div class="absensi-view container mx-auto relative z-50 min-h-[90dvh] px-5 ">
 
 
 
@@ -24,15 +24,15 @@ $masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['stat
 
 
 
-    <section class="w-full mt-5">
+    <section class="relative w-full mt-5">
         <?php $form = ActiveForm::begin([
             'method' => 'post',
         ]); ?>
 
         <input type="text" name="id_user" id="id_user" value="<?= Yii::$app->user->identity->id ?>" hidden>
-        <div class=" flex justify-between w-full space-x-1 items-center">
+        <div class="flex items-center justify-between w-full space-x-1 ">
 
-            <div class="relative   w-full ">
+            <div class="relative w-full ">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
@@ -72,8 +72,8 @@ $masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['stat
                     <?php foreach ($absensi as $key => $value) : ?>
                         <ul class="w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <li class="py-3">
-                                <div class="flex items-center space-x-4 justify-between">
-                                    <div class="flex items-center space-x-4 justify-between">
+                                <div class="flex items-center justify-between space-x-4">
+                                    <div class="flex items-center justify-between space-x-4">
                                         <?php if (strtolower($value['is_lembur'])) : ?>
                                             <div class="flex-shrink-0 w-[15px] h-[15px] rounded-xl bg-emerald-500 grid place-items-center">
                                             </div>
@@ -284,7 +284,7 @@ $masterKode = MasterKode::find()->where(['nama_group' => Yii::$app->params['stat
                                     </div>
                                 </div>
                                 <div id="accordion-collapse-body-<?= $key ?>" class="hidden" aria-labelledby="accordion-collapse-heading-<?= $key ?>">
-                                    <p class="text-sm font-normal text-gray-500 mt-2 px-8">
+                                    <p class="px-8 mt-2 text-sm font-normal text-gray-500">
                                         <?= $value['keterangan']  ?? 'Tidak Ada Keterangan' ?>
                                     </p>
                                 </div>

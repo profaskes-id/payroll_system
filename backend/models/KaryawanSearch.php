@@ -198,14 +198,14 @@ class KaryawanSearch extends Karyawan
             ->from('{{%karyawan}} k')
             ->where(['k.is_aktif' => 1])
             ->leftJoin('{{%absensi}} a', 'k.id_karyawan = a.id_karyawan AND a.tanggal = :tanggal')
-            ->leftJoin('{{%data_pekerjaan}} dp', 'k.id_karyawan = dp.id_karyawan')
+            ->leftJoin('{{%data_pekerjaan}} dp', 'k.id_karyawan = dp.id_karyawan AND dp.is_aktif = 1')
             ->leftJoin('{{%jam_kerja_karyawan}} jk', 'k.id_karyawan = jk.id_karyawan')
             ->leftJoin('{{%jam_kerja}} j', 'jk.id_jam_kerja = j.id_jam_kerja')
             ->leftJoin('{{%jadwal_kerja}} wj', 'jk.id_jam_kerja = wj.id_jam_kerja')
             ->leftJoin('{{%atasan_karyawan}} atsk', 'k.id_karyawan = atsk.id_karyawan')
             ->leftJoin('{{%master_lokasi}} msl', 'atsk.id_master_lokasi = msl.id_master_lokasi')
             ->leftJoin('{{%master_kode}} mk', 'j.jenis_shift = mk.kode and mk.nama_group = "jenis-shift"')
-            ->leftJoin('{{%master_kode}} mks', 'dp.status = mks.kode and mks.nama_group = "status-pekerjaan"')
+            ->leftJoin('{{%master_kode}} mks', 'dp.status = mks.kode and  mks.nama_group = "status-pekerjaan "')
             ->groupBy('k.id_karyawan')
             ->indexBy('nama_karyawan')
             ->orderBy(['k.nama' => SORT_ASC])
@@ -221,7 +221,7 @@ class KaryawanSearch extends Karyawan
 
         foreach ($results as $row) {
 
-            if ($row['status_karyawan'] == Yii::$app->params['Part-Time']) {
+            if ($row['status_karyawan'] == Yii::$app->params['Part-Time'] || $row['status_karyawan'] == null) {
                 continue;
             } else {
                 // Inisialisasi entri karyawan

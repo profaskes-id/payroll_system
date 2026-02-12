@@ -91,7 +91,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 '</g>' .
                                 '</svg>' .
                                 '</div>',
-                            ['/home/view', 'id_user' => Yii::$app->user->identity->id]
+                            ['/home/history', 'id_user' => Yii::$app->user->identity->id]
                         ) ?>
 
 

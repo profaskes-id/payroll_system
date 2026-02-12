@@ -14,11 +14,14 @@ $form = ActiveForm::begin(); ?>
 
     <div class="mb-5">
         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">jam mulai</label>
-        <?= $form->field($model, 'jam_mulai')->textInput(['type' => 'time', 'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '])->label(false) ?>
+        <?= $form->field($model, 'jam_mulai')->textInput(['type' => 'time', 'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ', 'id' => 'jam_mulai'])->label(false) ?>
+        <p class="mt-1 text-xs text-gray-500">* Jam harus dalam kelipatan 30 menit (contoh: 22:00, 21:30). Jika tidak sesuai, akan dibulatkan ke bawah otomatis.</p>
     </div>
+
     <div class="mb-5">
         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 capitalize">jam selesai</label>
-        <?= $form->field($model, 'jam_selesai')->textInput(['type' => 'time', 'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 '])->label(false) ?>
+        <?= $form->field($model, 'jam_selesai')->textInput(['type' => 'time', 'class' => 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ', 'id' => 'jam_selesai'])->label(false) ?>
+        <p class="mt-1 text-xs text-gray-500">* Jam harus dalam kelipatan 30 menit (contoh: 22:00, 21:30). Jika tidak sesuai, akan dibulatkan ke bawah otomatis.</p>
     </div>
 
 
@@ -70,6 +73,52 @@ $form = ActiveForm::begin(); ?>
     document.addEventListener("DOMContentLoaded", function() {
         const addItemButton = document.getElementById("add-item");
         const itemsContainer = document.getElementById("items-container");
+
+        // Fungsi untuk membulatkan jam ke bawah ke kelipatan 30 menit
+        function roundTimeDown(timeValue) {
+            if (!timeValue) return timeValue;
+
+            const [hours, minutes] = timeValue.split(':').map(Number);
+            let roundedMinutes;
+
+            // Bulatkan ke bawah
+            if (minutes === 0 || minutes === 30) {
+                // Sudah pas, tidak perlu diubah
+                return timeValue;
+            } else if (minutes < 30) {
+                // 1-29 menit -> bulatkan ke 00
+                roundedMinutes = '00';
+            } else {
+                // 31-59 menit -> bulatkan ke 30
+                roundedMinutes = '30';
+            }
+
+            return `${String(hours).padStart(2, '0')}:${roundedMinutes}`;
+        }
+
+        // Handle jam_mulai - hanya pada blur (kehilangan focus)
+        const jamMulaiInput = document.getElementById('jam_mulai');
+        if (jamMulaiInput) {
+            jamMulaiInput.addEventListener('blur', function() {
+                const originalValue = this.value;
+                const roundedValue = roundTimeDown(originalValue);
+
+                // Paksa ubah value yang ditampilkan
+                this.value = roundedValue;
+            });
+        }
+
+        // Handle jam_selesai - hanya pada blur (kehilangan focus)
+        const jamSelesaiInput = document.getElementById('jam_selesai');
+        if (jamSelesaiInput) {
+            jamSelesaiInput.addEventListener('blur', function() {
+                const originalValue = this.value;
+                const roundedValue = roundTimeDown(originalValue);
+
+                // Paksa ubah value yang ditampilkan
+                this.value = roundedValue;
+            });
+        }
 
         // Ensure $poinArray is an array, otherwise set itemCount to 0
         let itemCount = <?= is_array($poinArray) ? count($poinArray) : 0 ?>;

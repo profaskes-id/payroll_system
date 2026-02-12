@@ -49,7 +49,7 @@ use yii\widgets\ActiveForm;
                 if (!$model->isNewRecord) : ?>
 
                     <div class="col-12">
-                        <?= $form->field($model, 'durasi')->textInput(['format' => 'time']) ?>
+                        <?= $form->field($model, 'durasi')->textInput(['type' => 'time']) ?>
                     </div>
                 <?php endif; ?>
                 <?php
